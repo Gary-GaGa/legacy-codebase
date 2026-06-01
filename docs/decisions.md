@@ -18,6 +18,10 @@
 | 前端企業 scope | **`@internal`** → `http://88.8.70.216:8081/repository/npm-all/`（A2 已驗證） |
 | 前端版本 | Angular **14.2.x**（core/common/forms/router 等 ^14.2.0；cli ~14.2.13）、TypeScript ~4.7.2、RxJS ~7.5.0、zone.js ~0.11.4 |
 | 前端執行環境 | `engines.node` = **16.20.2**；無 `engines.yarn/npm`、無 `packageManager` 欄位 |
+| 前端架構慣例 | 根 `app-routing` → `main-layout` shell → feature module(lazy) → 清單 component + `popup-add-<feature>` 表單彈窗；參考 feature = `deputy`（見 `docs/golden-template/`） |
+| 前端設計模式 | **設定驅動 (config-driven)**：查詢/欄位/驗證以 `*-config.ts`（search-item / field-item / form / validate-rule…）宣告，由共用元件渲染 |
+| 前端共用元件 | `app-table-search`、`app-search-item`、`app-field-item`、`app-side-bar-list`、`app-user-menu`、`app-lang-menu`（app-local 可重用元件） |
+| 程式碼可見性 | **既有專案 source 不可外流**；本 repo 僅存「規格/樣板/慣例」，正式開發時於實際 repo 內複製 `deputy` feature 套用 |
 | 前端 UI 元件 | 企業自製元件庫（scope `@internal`）；**惟 package.json 亦含 `@angular/material@14.2.5`+cdk+material-moment-adapter** → 企業庫可能「包裝/擴充 Material」或兩者並用，待 C2 釐清 |
 | Maven registry | `http://88.8.70.216:8081/repository/maven-public/`（Nexus **group**，標準預設會代理 Maven Central + 託管 releases/snapshots） |
 | 後端 build 現況 | **A1 驗證：目前未走 Nexus，落到 Maven Central**；pom 無 `<repositories>`、無 user `~/.m2/settings.xml`、全域 settings 僅含 default http-blocker；Maven 3.9.16 |
@@ -49,7 +53,7 @@
 - [ ] 企業元件庫(@internal)：套件清單、module import 方式、selector、@Input/@Output、theming，**並釐清與 `@angular/material` 的關係（包裝？擴充？並用？）** — prompt C2（尚未真正執行，前一輪誤跑成 A2）
 - [ ] Reactive Forms + 企業表單元件的驗證/錯誤訊息寫法 — prompt C3
 - [ ] API service / HttpClient / interceptor / environment.ts — prompt C3
-- [ ] 一個完整 CRUD 頁面（黃金樣板候選）— prompt C4
+- [x] 一個完整 CRUD 頁面（黃金樣板）— C4 已驗證（僅結構/命名，**不含 source**）：見 `docs/golden-template/README.md`
 
 ### 舊專案 JSP
 - [ ] JSP 清單、共用版型機制、JSTL/EL/自訂 tag、前端 JS — prompt D1
