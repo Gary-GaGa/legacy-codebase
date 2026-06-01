@@ -55,6 +55,11 @@
 - [ ] API service / HttpClient / interceptor / environment.ts — prompt C3
 - [x] 一個完整 CRUD 頁面（黃金樣板）— C4 已驗證（僅結構/命名，**不含 source**）：見 `docs/golden-template/README.md`
 
+### 指令檔（已起草，含 TODO）
+- [x] `AGENTS.md`（完整規範）+ `.github/copilot-instructions.md`（精簡版）已起草，自包含可複製到實際 repo
+- [ ] 填補 `AGENTS.md` 的 TODO：後端 JPA 細節（B2）、後端橫切面/認證/OpenAPI（B3）、`@internal` 元件對應表（C2）、Spring Boot 確切版本
+- [ ] 確認前後端是否為獨立 repo → 決定指令檔要不要拆成兩份
+
 ### 舊專案 JSP
 - [ ] JSP 清單、共用版型機制、JSTL/EL/自訂 tag、前端 JS — prompt D1
 - [ ] 一個代表頁面的端到端鏈路（Servlet→Service/DAO→資料表）— prompt D2
