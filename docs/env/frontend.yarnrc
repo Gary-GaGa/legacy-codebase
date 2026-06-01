@@ -6,7 +6,8 @@
 # npm-all 已代理公開 npmjs 套件並託管 @internal，故公開與企業套件皆走內網，符合離線/合規。
 registry "http://88.8.70.216:8081/repository/npm-all/"
 
-# 企業自製元件庫 scope（@internal）明確綁回同一 Nexus group。
+# 註：本專案實際企業套件為「未加 scope」的 cub-lib-view-ng14plus / cub-lib-view-iconfont，
+#     由上方預設 registry(npm-all) 解析。下行 @internal scope 對應保留備用（指向同 group）。
 "@internal:registry" "http://88.8.70.216:8081/repository/npm-all/"
 
 # http（非 https）內網；若 Yarn 因憑證/strict 報錯再啟用：

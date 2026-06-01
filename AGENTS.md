@@ -14,7 +14,9 @@
 - **Maven**：使用 `~/.m2/settings.xml`（Windows：`%USERPROFILE%\.m2\settings.xml`），mirror 指向
   `http://88.8.70.216:8081/repository/maven-public/`，且 `<mirrorOf>*</mirrorOf>`。
 - **前端（Yarn Classic）**：`.yarnrc` 預設 `registry` 指向
-  `http://88.8.70.216:8081/repository/npm-all/`；`@internal` scope 亦指向同位址。
+  `http://88.8.70.216:8081/repository/npm-all/`。企業元件庫為**未加 scope** 的套件
+  （`cub-lib-view-ng14plus`、`cub-lib-view-iconfont`），由預設 registry 解析。
+  （`.yarnrc` 雖另設 `@internal` scope→同位址，但本專案實際未使用該 scope。）
 - **不得**新增或改寫任何指向 `registry.npmjs.org`、`repo.maven.apache.org` 等公開來源的設定。
 - 兩個 registry 都是 Nexus group（maven-public 代理 Maven Central、npm-all 代理 npmjs），故公開與私有套件皆走內網。
 
@@ -76,10 +78,13 @@ src/app/<feature>/
     └── role-id-config.ts
 ```
 
-### 4.4 UI 元件庫
-- 底層 `@internal/*`（企業自製，疑似包裝 **Angular Material 14.2.5** + cdk + material-moment-adapter）。
-- `TODO（待 C2）`：@internal 元件清單與 selector、與 `app-*`/Material 的關係、theming → 補「**JSP 控件 → 用哪個元件**」對應表。
-- 在未確認元件存在前，**勿臆造 `@internal/...` import**。
+### 4.4 UI 元件庫（cub-lib-view-ng14plus + Angular Material，混用）
+- 企業自製元件庫：**`cub-lib-view-ng14plus`**（`cub-*` 元件/指令）+ **`cub-lib-view-iconfont`**（icon font），未加 scope，從 Nexus npm-all 取得。
+- **與 Angular Material 14.2.5 混用**：低階控件（按鈕/分頁/checkbox/dialog 等）用 `mat-*`；企業控件用 `cub-*`。
+- **匯入慣例**：大部分 `Cub*Module` 與 `Mat*Module` 集中在 **`SharedModule`** 匯入並 re-export；feature module 匯入 `SharedModule` 取得（少數如 `CubBreadcrumbModule` 在 layout module 直接匯入）。**新增元件時於 `SharedModule` 補匯入/匯出**，勿在各 feature 散落直接 import。
+- **app-local 共用元件（`app-*`）包裝 `cub-*`/Material + config-driven**（如 `app-table-search` 內部用 `cub-table`）。使用優先序：**`app-*` → `cub-*` → `mat-*`**。
+- theming：於 `angular.json` 的 `styles` 配置（Material `indigo-pink.css` + 企業 `cathay-bank.scss` + `cub-lib-view-iconfont.min.css`）；`styles.scss` 僅少量覆寫，**勿用 `@import` 重新引入主題**。
+- 元件 selector / directive 清單與「JSP 控件→元件」對照見 `docs/golden-template/README.md`。
 
 ## 5. JSP → Angular 對應
 | JSP | 做法 |

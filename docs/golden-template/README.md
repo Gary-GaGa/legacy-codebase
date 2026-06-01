@@ -45,7 +45,54 @@
 | `app-lang-menu` | 語系選單（header） |
 
 > 關於「可移植性」：這些 `app-*` 是平台的**可重用基礎元件**，新功能本來就該複用它們，**不需要 mock/切除**（除非要做獨立發佈的樣板，但那不是本專案目標）。
-> 另有底層 `@internal/*` 元件庫（疑似包裝 Angular Material）——其與 `app-*` 的關係待 **C2** 釐清。
+> 底層 UI 庫見下方 §三之二（C2 已確認）。
+
+## 三之二、元件分層與企業庫（✅ C2 確認）
+
+**元件三層**（使用優先序：`app-*` → `cub-*` → `mat-*`）：
+1. **app-local 共用元件 `app-*`**（config-driven，包裝下層）— 如 `app-table-search` 內部用 `cub-table`。
+2. **企業庫 `cub-lib-view-ng14plus`**（`cub-*` 元件/指令）+ icon font `cub-lib-view-iconfont`（未加 scope，從 npm-all 取得）。
+3. **Angular Material 14.2.5**（`mat-*`，低階控件）。
+
+**匯入慣例**：`Cub*Module` 與 `Mat*Module` 集中於 **`SharedModule`** 匯入並 re-export；feature/AppModule 匯入 `SharedModule`（少數 `CubBreadcrumbModule` 在 layout module 直接匯入）。新增元件 → 改 `SharedModule`。
+
+**企業 `cub-*` 元件 selector（常用 @Input/@Output）**：
+
+| selector | 常用綁定 |
+|---|---|
+| `cub-table` | `[value]`,`[scrollable]`,`[scrollHeight]`,`[customSort]`,`[(selection)]`,`[dataKey]`,`(sortFunction)` |
+| `cub-paginator-page-jumping` | `[first]`,`[rows]`,`[totalRecords]`,`[rowsPerPageOptions]`,`(onPageChange)` |
+| `cub-select` | `[multiple]`,`[placeholder]`,`[filter]`,`[options]`,`[formControlName]`,`(selectionChange)`,`(blur)` |
+| `cub-datetimepicker` / `cub-datetimepicker-toggle` | `[type]` / `[for]` |
+| `cub-card` / `-header` / `-content` | `color`,`appearance`,`[formGroup]` |
+| `cub-nested-menu` / `cub-panel` / `cub-panel-menu` | `[multiple]`,`[model]`,`[items]`,`[selectedItem]`,`(onItemClick)`,`(onChange)` |
+| `cub-breadcrumb` | 搭配 `cubTemplate="item\|childrenItem"` |
+| `cub-mask` | `[supportedDevice]`,`[showCloseButton]`,`[language]` |
+| `cub-toast` | （MessageService 驅動） |
+| `cub-http-status` | `[error]`,`[mode]` |
+| `cub-table-checkbox`/`-radio-button`/`-header-checkbox`/`-sort-icon` | `[value]` / `[field]` |
+
+**常用 `cub*` directive**：`cubTemplate`（header/body/footer/emptymessage）、`cubFrozenColumn`、`cubSortableColumn`、`cubInputNumber`、`cubBadge/Color/Shape`、`cubRippleOnEnter`、`[cubDatetimepicker]`/`[cubDatetimepickerFilter]`。
+
+**核心服務/Token**：`MessageService`(as `CubMessageService`，toast)、`ConfirmDialogComponent`/`dialog.service`、`DEVICE_BREAKPOINT`、`CUB_DATETIME_FORMATS`、`EventLanguage`(i18n)。
+
+**theming**：於 `angular.json` 的 `styles` 配置 — Material `indigo-pink.css` + 企業主題 `cathay-bank.scss` + `cub-lib-view-iconfont.min.css`；`styles.scss` 僅少量覆寫（勿用 `@import` 重新引入主題）。
+
+## 三之三、JSP 控件 → 元件 對應
+
+| JSP 控件 | 建議元件 |
+|---|---|
+| 整頁查詢 + 結果表格 | `app-table-search`（config-driven，內含 `cub-table` + `cub-paginator-page-jumping`） |
+| 下拉選單 `<select>` | `cub-select`（或經 `app-field-item`/`app-search-item`） |
+| 日期欄位 | `cub-datetimepicker` + `cub-datetimepicker-toggle` |
+| 數字輸入 | `cubInputNumber` directive |
+| 文字輸入 / 表單欄位 | `app-field-item`（config）→ 內部 `mat-form-field`/`cub-form-field` |
+| 按鈕 | `mat-button` 系列 |
+| 卡片 / 區塊 | `cub-card` |
+| 麵包屑 / 側選單 | `cub-breadcrumb` / `cub-nested-menu` / `cub-panel-menu` |
+| 提示訊息 | `MessageService` → `cub-toast` |
+| 確認對話框 | `dialog.service` → `ConfirmDialogComponent`（或 `mat-dialog`） |
+| 表格凍結欄 / 排序 | `cubFrozenColumn` / `cubSortableColumn` directive |
 
 ## 四、泛化模板（把 `deputy` → `<feature>`）
 
@@ -90,5 +137,5 @@ src/app/<feature>/
 | session 屬性 | layout/feature service 狀態 + token |
 
 ## 七、待補（核對後更新本檔）
-- C2：`@internal` 元件庫清單、與 `app-*` 與 Angular Material 的關係 → 補「用哪個元件取代哪種 JSP 控件」對應表
-- 實際 source 拉下後：核對 §二的 config-driven 行為、§四的實體資料夾佈局
+- [x] C2 已完成：企業庫 = `cub-lib-view-ng14plus`(+iconfont)，與 Material 混用、經 `SharedModule` 匯入；見 §三之二、§三之三。
+- 實際 source 拉下後：核對 §二的 config-driven 行為、§四的實體資料夾佈局、各 `app-*` 內部如何包裝 `cub-*`。

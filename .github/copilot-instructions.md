@@ -16,7 +16,7 @@
 ## 前端
 - 架構：`app-routing` → `main-layout` shell → feature module（lazy）→ 清單 component + `popup-add-<feature>` 彈窗。
 - **設定驅動 (config-driven)**：用 `*-config.ts`（search-item / field-item / form / validate-rule）宣告，交給共用元件 `app-table-search` / `app-search-item` / `app-field-item` 渲染。**勿手刻查詢/表單 HTML。**
-- 新功能**照 `deputy` feature 結構複製改名**。UI 底層 `@internal/*`（疑包裝 Angular Material）；未確認前**勿臆造 `@internal` import**。
+- 新功能**照 `deputy` feature 結構複製改名**。UI 元件庫 = `cub-lib-view-ng14plus`（`cub-*`）+ Angular Material **混用**，集中於 `SharedModule` 匯入；feature 匯入 `SharedModule` 取得。使用優先序 `app-*` → `cub-*` → `mat-*`。
 
 ## 流程
 - 每個任務 = 複製 `deputy` 結構 + 寫 config + 接 `api.service`，對應一個 JSP 頁。

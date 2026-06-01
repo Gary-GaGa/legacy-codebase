@@ -15,14 +15,14 @@
 | 前端目標 | Angular 14.x |
 | 後端 DB 存取 | **Spring Data JPA** |
 | 前端套件管理器 | **Yarn Classic（`.yarnrc` 為設定入口；非 npm/`.npmrc`）** |
-| 前端企業 scope | **`@internal`** → `http://88.8.70.216:8081/repository/npm-all/`（A2 已驗證） |
+| 前端企業 scope | `.yarnrc` 設有 `@internal`→npm-all，但**本專案未使用該 scope**；實際企業套件為未加 scope 的 `cub-*`（見下） |
 | 前端版本 | Angular **14.2.x**（core/common/forms/router 等 ^14.2.0；cli ~14.2.13）、TypeScript ~4.7.2、RxJS ~7.5.0、zone.js ~0.11.4 |
 | 前端執行環境 | `engines.node` = **16.20.2**；無 `engines.yarn/npm`、無 `packageManager` 欄位 |
 | 前端架構慣例 | 根 `app-routing` → `main-layout` shell → feature module(lazy) → 清單 component + `popup-add-<feature>` 表單彈窗；參考 feature = `deputy`（見 `docs/golden-template/`） |
 | 前端設計模式 | **設定驅動 (config-driven)**：查詢/欄位/驗證以 `*-config.ts`（search-item / field-item / form / validate-rule…）宣告，由共用元件渲染 |
 | 前端共用元件 | `app-table-search`、`app-search-item`、`app-field-item`、`app-side-bar-list`、`app-user-menu`、`app-lang-menu`（app-local 可重用元件） |
 | 程式碼可見性 | **既有專案 source 不可外流**；本 repo 僅存「規格/樣板/慣例」，正式開發時於實際 repo 內複製 `deputy` feature 套用 |
-| 前端 UI 元件 | 企業自製元件庫（scope `@internal`）；**惟 package.json 亦含 `@angular/material@14.2.5`+cdk+material-moment-adapter** → 企業庫可能「包裝/擴充 Material」或兩者並用，待 C2 釐清 |
+| 前端 UI 元件 | 企業庫 **`cub-lib-view-ng14plus`**（`cub-*`）+ **`cub-lib-view-iconfont`**（未加 scope，npm-all）；**與 Angular Material 14.2.5 混用**；集中於 `SharedModule` 匯入；`app-*` 共用元件包裝 `cub-*`/Material；theming 於 angular.json（indigo-pink + cathay-bank.scss + iconfont） |
 | Maven registry | `http://88.8.70.216:8081/repository/maven-public/`（Nexus **group**，標準預設會代理 Maven Central + 託管 releases/snapshots） |
 | 後端 build 現況 | **A1 驗證：目前未走 Nexus，落到 Maven Central**；pom 無 `<repositories>`、無 user `~/.m2/settings.xml`、全域 settings 僅含 default http-blocker；Maven 3.9.16 |
 | npm registry (group) | `http://88.8.70.216:8081/repository/npm-all/`（Nexus **group**，已代理公開 npmjs + 託管 @internal；依 yarn.lock 多數套件 resolved 指向此） |
@@ -50,14 +50,14 @@
 
 ### 前端樣板
 - [ ] 專案結構（core/shared/feature、lazy load）— prompt C1
-- [ ] 企業元件庫(@internal)：套件清單、module import 方式、selector、@Input/@Output、theming，**並釐清與 `@angular/material` 的關係（包裝？擴充？並用？）** — prompt C2（尚未真正執行，前一輪誤跑成 A2）
+- [x] 企業元件庫（C2 已完成）：`cub-lib-view-ng14plus`+iconfont、與 Material **混用**、經 `SharedModule` 匯入；selector/directive/對照表詳見 `docs/golden-template/README.md` §三之二、§三之三
 - [ ] Reactive Forms + 企業表單元件的驗證/錯誤訊息寫法 — prompt C3
 - [ ] API service / HttpClient / interceptor / environment.ts — prompt C3
 - [x] 一個完整 CRUD 頁面（黃金樣板）— C4 已驗證（僅結構/命名，**不含 source**）：見 `docs/golden-template/README.md`
 
 ### 指令檔（已起草，含 TODO）
 - [x] `AGENTS.md`（完整規範）+ `.github/copilot-instructions.md`（精簡版）已起草，自包含可複製到實際 repo
-- [ ] 填補 `AGENTS.md` 的 TODO：後端 JPA 細節（B2）、後端橫切面/認證/OpenAPI（B3）、`@internal` 元件對應表（C2）、Spring Boot 確切版本
+- [ ] 填補 `AGENTS.md` 的 TODO：後端 JPA 細節（B2）、後端橫切面/認證/OpenAPI（B3）、Spring Boot 確切版本（C2 元件已補入 §4.4 與 golden-template）
 - [ ] 確認前後端是否為獨立 repo → 決定指令檔要不要拆成兩份
 
 ### 舊專案 JSP
