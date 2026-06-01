@@ -9,9 +9,11 @@
   - 勿新增 `registry.npmjs.org` / `repo.maven.apache.org` 等外部來源。
 - **版本鎖定，勿升降**：Java 17 / Spring Boot 3.x；Angular 14.2.x / TS ~4.7.2 / RxJS ~7.5 / zone.js ~0.11.4 / Node 16.20.2 / Yarn Classic。
 
-## 後端
-- `javax.* → jakarta.*`。分層 Controller / Service / Repository，**DTO ≠ Entity**。資料存取 **Spring Data JPA**。
-- Entity/Repository/交易/例外/認證/OpenAPI 等細節見 `/AGENTS.md`；標 TODO 處**先問再做，勿臆造**。
+## 後端（Spring Boot 3.3.0 / Java 17 / Oracle）
+- `jakarta.*`（非 javax）。分層 Controller / Service / Repository，**DTO ≠ Entity**。
+- JPA：`JpaRepository` + 大量 `@Query(nativeQuery=true)`（修改型加 `@Modifying`）；主鍵多複合鍵（`@EmbeddedId`/`@IdClass`）；**未用 Specification**。
+- 交易用 Spring `@Transactional`（service 層）；DTO 轉換新碼**優先 MapStruct**（`componentModel="spring"`）。設定用 `.properties`/profile，**機密外部化勿提交**。
+- 例外/驗證/認證/CORS/OpenAPI 見 `/AGENTS.md`（標 TODO 處先問再做，勿臆造）。
 
 ## 前端
 - 架構：`app-routing` → `main-layout` shell → feature module（lazy）→ 清單 component + `popup-add-<feature>` 彈窗。

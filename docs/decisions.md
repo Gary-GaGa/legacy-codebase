@@ -11,9 +11,9 @@
 |---|---|
 | 開發環境 | Windows + VSCode + Codex CLI + GitHub Copilot（**不使用 Claude 產品**；本 repo 僅作規劃與樣板） |
 | 重構方向 | 全端（Java 8 + JSP）→ 前後端分離 |
-| 後端目標 | Java 17 + Spring Boot 3.x |
+| 後端目標 | Java 17 + **Spring Boot 3.3.0**（parent 帶入，無額外 BOM） |
 | 前端目標 | Angular 14.x |
-| 後端 DB 存取 | **Spring Data JPA** |
+| 後端 DB 存取 | **Spring Data JPA**（`JpaRepository` + 大量 `@Query(nativeQuery=true)`）；DB = **Oracle**；設定用 `.properties`/profile |
 | 前端套件管理器 | **Yarn Classic（`.yarnrc` 為設定入口；非 npm/`.npmrc`）** |
 | 前端企業 scope | `.yarnrc` 設有 `@internal`→npm-all，但**本專案未使用該 scope**；實際企業套件為未加 scope 的 `cub-*`（見下） |
 | 前端版本 | Angular **14.2.x**（core/common/forms/router 等 ^14.2.0；cli ~14.2.13）、TypeScript ~4.7.2、RxJS ~7.5.0、zone.js ~0.11.4 |
@@ -40,10 +40,11 @@
 - [x] 後端 Maven 來源（A1 已驗證）：目前**未走 Nexus、落到 Maven Central**（詳見上表「後端 build 現況」）
 
 ### 後端 JPA 慣例
-- [ ] Entity annotation / 主鍵策略 / 是否 jakarta.persistence — prompt B2
-- [ ] Repository 風格（JpaRepository / 自訂 / @Query / Specification）— prompt B2
-- [ ] @Transactional 放置層級 — prompt B2
-- [ ] Entity↔DTO 轉換（MapStruct / 手寫）— prompt B2
+- [x] Entity（B2）：`jakarta.persistence`；`@Entity/@Table/@Column/@EmbeddedId/@Embeddable/@IdClass`；主鍵**多複合鍵**，少數 SEQUENCE
+- [x] Repository（B2）：`JpaRepository` 為主 + 大量 `@Query(nativeQuery=true)` + `@Modifying`；少數 custom impl 用 EntityManager；**未用 Specification**
+- [x] @Transactional（B2）：主要 service 層；修改型 repository 也標；既有**混用 jakarta/spring 兩種** → 新碼統一 Spring 版
+- [x] Entity↔DTO（B2）：混用 MapStruct / DTOMapper(反射) / ObjectMapper.convertValue / 手寫 → 新碼**優先 MapStruct**
+- [x] DB/設定（B2）：**Oracle**；`.properties`（非 yml），profile local/ut/uat/prod；uat/prod datasource 外部注入
 - [ ] 全域例外處理與 API 錯誤格式 — prompt B3
 - [ ] 認證/授權機制（Spring Security / JWT / session）— prompt B3
 - [ ] CORS、OpenAPI/Swagger — prompt B3
@@ -57,7 +58,7 @@
 
 ### 指令檔（已起草，含 TODO）
 - [x] `AGENTS.md`（完整規範）+ `.github/copilot-instructions.md`（精簡版）已起草，自包含可複製到實際 repo
-- [ ] 填補 `AGENTS.md` 的 TODO：後端 JPA 細節（B2）、後端橫切面/認證/OpenAPI（B3）、Spring Boot 確切版本（C2 元件已補入 §4.4 與 golden-template）
+- [ ] 填補 `AGENTS.md` 的 TODO：**僅剩** 後端橫切面/例外/認證/CORS/OpenAPI（B3）。（B2 後端 JPA、Spring Boot 3.3.0、C2 元件均已補入）
 - [ ] 確認前後端是否為獨立 repo → 決定指令檔要不要拆成兩份
 
 ### 舊專案 JSP

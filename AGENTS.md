@@ -31,14 +31,30 @@
 - **垂直切片**：先打通一條「畫面→API→DB」端到端，再規模化。
 - **Phase 0 門檻**：前後端骨架在**斷網**下可 build（後端 `mvn -o package`；前端 `yarn install --frozen-lockfile` + `ng build`）才往下走。
 
-## 3. 後端規範（Java 17 + Spring Boot 3）
-- **`javax.* → jakarta.*`** 全面遷移（servlet / persistence / validation）。可用 OpenRewrite recipe，recipe 亦須走內網 Nexus。
-- 分層：**Controller(REST) / Service / Repository**；DTO 與 Entity 分離。
-- 資料存取：**Spring Data JPA**。
-- 認證由舊 JSP 的 server-session 改為 token/stateless 或 cookie+CSRF（TODO：定案）。
-- `TODO（待 B2）`：Entity annotation 與主鍵策略、Repository 風格（JpaRepository / 自訂 / @Query / Specification）、`@Transactional` 放置層級、Entity↔DTO 轉換（MapStruct？手寫？）、datasource 設定慣例。
-- `TODO（待 B3）`：全域例外處理(@RestControllerAdvice)與 API 錯誤格式、Bean Validation、認證/授權(Spring Security/JWT?)、CORS、OpenAPI/Swagger。
-- `TODO`：Spring Boot 確切版本（環境 Maven 3.9.16）。
+## 3. 後端規範（Java 17 + Spring Boot 3.3.0）
+
+### 3.1 版本與遷移
+- **Spring Boot 3.3.0**（由 `spring-boot-starter-parent` 帶入，無額外 BOM）；Java 17；環境 Maven 3.9.16。
+- 舊專案 Java 8 → 17 時做 **`javax.* → jakarta.*`** 全面遷移（servlet/persistence/validation），可用 OpenRewrite recipe（亦走內網 Nexus）。**既有重構後端已是 jakarta**，可直接當目標慣例。
+
+### 3.2 分層
+**Controller(REST) / Service / Repository**；**DTO 與 Entity 分離**。
+
+### 3.3 JPA 慣例（✅ B2 確認）
+- **Entity**：`jakarta.persistence`；常用 `@Entity/@Table/@Column/@Id/@EmbeddedId/@Embeddable/@IdClass`。**主鍵多為複合鍵/業務鍵**（`@EmbeddedId`/`@IdClass`），少數 `@GeneratedValue(strategy=SEQUENCE)`。
+- **Repository**：以 `JpaRepository` 為主，**大量 `@Query(nativeQuery=true)`**；修改型用 `@Modifying`；少數自訂 interface + impl 以 `EntityManager` 拼 native SQL。**未用 Specification。**
+- **DB**：Oracle（`org.hibernate.dialect.OracleDialect`、`oracle.jdbc.OracleDriver`）。
+- **交易**：主要放 service 層；修改型 repository 方法也常直接標。⚠️ 既有混用 `jakarta.transaction.Transactional` 與 `org.springframework.transaction.annotation.Transactional` → **新程式碼一律用 Spring 版 `@Transactional`、放 service 層。**
+- **Entity↔DTO**：既有混用 MapStruct / 自寫 `DTOMapper`(反射) / `ObjectMapper.convertValue()` / 手寫轉換 → **新程式碼優先 MapStruct（`@Mapper(componentModel="spring")`）。**
+
+### 3.4 設定檔
+- 用 **`.properties`**（非 yaml），依 profile：`application-{local,ut,uat,prod}.properties`，預設 `spring.profiles.active=local`。
+- **機密外部化**：local/ut 可內含 datasource；uat/prod 由環境變數/容器注入，**勿提交帳密**。
+
+### 3.5 認證與 API
+- 契約優先：以 **OpenAPI** 當前後端合約。
+- 認證由舊 JSP server-session 改為 token/stateless 或 cookie+CSRF（`TODO`：定案）。
+- `TODO（待 B3）`：全域例外處理(@RestControllerAdvice)與 API 錯誤格式、Bean Validation、認證/授權(Spring Security/JWT?)、CORS、OpenAPI/Swagger 實作慣例。
 
 ## 4. 前端規範（Angular 14 / Yarn / @internal）
 
