@@ -16,7 +16,9 @@
 | 後端 DB 存取 | **Spring Data JPA** |
 | 前端套件管理器 | **Yarn Classic（`.yarnrc` 為設定入口；非 npm/`.npmrc`）** |
 | 前端企業 scope | **`@internal`** → `http://88.8.70.216:8081/repository/npm-all/`（A2 已驗證） |
-| 前端 UI 元件 | **企業自製 Angular 元件庫**（非 Material/PrimeNG），推測位於 `@internal/*` |
+| 前端版本 | Angular **14.2.x**（core/common/forms/router 等 ^14.2.0；cli ~14.2.13）、TypeScript ~4.7.2、RxJS ~7.5.0、zone.js ~0.11.4 |
+| 前端執行環境 | `engines.node` = **16.20.2**；無 `engines.yarn/npm`、無 `packageManager` 欄位 |
+| 前端 UI 元件 | 企業自製元件庫（scope `@internal`）；**惟 package.json 亦含 `@angular/material@14.2.5`+cdk+material-moment-adapter** → 企業庫可能「包裝/擴充 Material」或兩者並用，待 C2 釐清 |
 | Maven registry | `http://88.8.70.216:8081/repository/maven-public/`（Nexus **group**，標準預設會代理 Maven Central + 託管 releases/snapshots） |
 | 後端 build 現況 | **A1 驗證：目前未走 Nexus，落到 Maven Central**；pom 無 `<repositories>`、無 user `~/.m2/settings.xml`、全域 settings 僅含 default http-blocker；Maven 3.9.16 |
 | npm registry (group) | `http://88.8.70.216:8081/repository/npm-all/`（Nexus **group**，已代理公開 npmjs + 託管 @internal；依 yarn.lock 多數套件 resolved 指向此） |
@@ -28,7 +30,7 @@
 ### 環境 / 版本
 - [ ] 後端 Spring Boot 確切版本（BOM/parent 版本）— prompt A1
 - [ ] 後端 Java 版本設定方式（java.version / compiler.release）— prompt A1
-- [ ] 前端 `@angular/*` 確切版本、`engines.node` 設定 — prompt A2（registry 已驗證，版本仍待回填）
+- [x] 前端版本與 `engines.node`（A2 已驗證）：Angular 14.2.x / TS 4.7.2 / RxJS 7.5 / zone.js 0.11.4 / **Node 16.20.2**
 - [x] 前端企業自製元件庫 **scope = `@internal`** — A2 已確認（套件名稱仍待 C2）
 - [x] 前端設定入口 = `.yarnrc`（Yarn Classic，非 `.npmrc`）
 - [x] 後端 Maven 來源（A1 已驗證）：目前**未走 Nexus、落到 Maven Central**（詳見上表「後端 build 現況」）
@@ -44,7 +46,7 @@
 
 ### 前端樣板
 - [ ] 專案結構（core/shared/feature、lazy load）— prompt C1
-- [ ] 企業元件庫：module import 方式、元件 selector 清單、@Input/@Output、theming — prompt C2
+- [ ] 企業元件庫(@internal)：套件清單、module import 方式、selector、@Input/@Output、theming，**並釐清與 `@angular/material` 的關係（包裝？擴充？並用？）** — prompt C2（尚未真正執行，前一輪誤跑成 A2）
 - [ ] Reactive Forms + 企業表單元件的驗證/錯誤訊息寫法 — prompt C3
 - [ ] API service / HttpClient / interceptor / environment.ts — prompt C3
 - [ ] 一個完整 CRUD 頁面（黃金樣板候選）— prompt C4
