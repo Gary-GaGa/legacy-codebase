@@ -6,8 +6,8 @@
 ## 背景與硬限制
 - **套件來源一律走內網 Nexus，禁止連公開 registry。**
   - Maven：`http://88.8.70.216:8081/repository/maven-public/`
-  - npm：`http://88.8.70.216:8081/repository/npm-all/`
-  - 設定樣板見 `docs/env/`。
+  - npm（**Yarn Classic**）：`http://88.8.70.216:8081/repository/npm-all/`（Nexus group，已代理公開 npmjs；企業元件庫 scope = `@internal`）
+  - 前端設定入口為 `.yarnrc`（非 `.npmrc`）；設定樣板見 `docs/env/`。
 - 既有資產：已有重構後的前後端可參考。後端架構大致定案、DB 採 **JPA**；前端 UI 為 **企業自製元件庫**，需從中萃取樣板。
 
 ## 目標技術版本
@@ -30,7 +30,7 @@
 ## 階段里程碑
 | Phase | 內容 | 完成定義 |
 |---|---|---|
-| 0 | 離線環境就緒 | 前後端空骨架在斷網下可 build（`mvn -o package` / `npm ci --offline` + `ng build`） |
+| 0 | 離線環境就緒 | 前後端空骨架在斷網下可 build（`mvn -o package` / `yarn install --frozen-lockfile` + `ng build`） |
 | 1 | 後端一條垂直切片 + OpenAPI 合約 | 一個 API 端到端打通到 DB |
 | 2 | 前端黃金樣板頁面 | 一個畫面串通 Phase 1 API |
 | 3 | 批次遷移頁面（依 JSP 盤點清單） | proxy 逐條把路由切到 Angular |

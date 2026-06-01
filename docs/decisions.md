@@ -14,9 +14,11 @@
 | 後端目標 | Java 17 + Spring Boot 3.x |
 | 前端目標 | Angular 14.x |
 | 後端 DB 存取 | **Spring Data JPA** |
-| 前端 UI 元件 | **企業自製 Angular 元件庫**（非 Material/PrimeNG） |
-| Maven registry | `http://88.8.70.216:8081/repository/maven-public/`（Nexus） |
-| npm registry | `http://88.8.70.216:8081/repository/npm-all/`（Nexus） |
+| 前端套件管理器 | **Yarn Classic（`.yarnrc` 為設定入口；非 npm/`.npmrc`）** |
+| 前端企業 scope | **`@internal`** → `http://88.8.70.216:8081/repository/npm-all/`（A2 已驗證） |
+| 前端 UI 元件 | **企業自製 Angular 元件庫**（非 Material/PrimeNG），推測位於 `@internal/*` |
+| Maven registry | `http://88.8.70.216:8081/repository/maven-public/`（Nexus；待後端 workspace 驗證） |
+| npm registry (group) | `http://88.8.70.216:8081/repository/npm-all/`（Nexus **group**，已代理公開 npmjs + 託管 @internal；依 yarn.lock 多數套件 resolved 指向此） |
 | 套件來源限制 | **一律走內網 Nexus，禁止連公開 registry** |
 | 既有資產 | 已有「重構後的前後端」可參考；後端架構大致定案、前端需萃取樣板 |
 
@@ -25,9 +27,9 @@
 ### 環境 / 版本
 - [ ] 後端 Spring Boot 確切版本（BOM/parent 版本）— prompt A1
 - [ ] 後端 Java 版本設定方式（java.version / compiler.release）— prompt A1
-- [ ] 前端 `@angular/*` 確切版本、`engines.node` 設定 — prompt A2
-- [ ] 前端企業自製元件庫的 **scope / 套件名稱** — prompt A2 / C2
-- [ ] 既有 `.npmrc` / `settings.xml` 是否與本 repo 樣板一致 — prompt A1/A2
+- [ ] 前端 `@angular/*` 確切版本、`engines.node` 設定 — prompt A2（registry 已驗證，版本仍待回填）
+- [x] 前端企業自製元件庫 **scope = `@internal`** — A2 已確認（套件名稱仍待 C2）
+- [x] 前端設定入口 = `.yarnrc`（Yarn Classic，非 `.npmrc`）；後端 `settings.xml` 仍待 A1（後端 workspace）
 
 ### 後端 JPA 慣例
 - [ ] Entity annotation / 主鍵策略 / 是否 jakarta.persistence — prompt B2
@@ -50,6 +52,7 @@
 - [ ] 一個代表頁面的端到端鏈路（Servlet→Service/DAO→資料表）— prompt D2
 
 ## 三、待決架構議題
+- [ ] **npm 預設 registry 政策**：既有前端 `.yarnrc` 預設仍指向公開 `https://registry.npmjs.org/`（僅 @internal 走 Nexus），與「禁止公開 registry」衝突。新專案建議預設 registry 直接指向 `npm-all`（已代理公開套件），以符合離線/合規。**待確認採用。**
 - [ ] 認證模式：JSP server-session → 新架構採 JWT(stateless) 或 cookie+CSRF？過渡期橋接方式？
 - [ ] 過渡期 reverse proxy 路由規劃（/legacy、/app、/api）
 - [ ] DB schema 是否維持凍結（初期建議凍結）
