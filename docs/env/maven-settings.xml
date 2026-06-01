@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  企業內部 Maven 設定（離線 / 內網 mirror）
+  放置位置：%USERPROFILE%\.m2\settings.xml（Windows）
+  原則：所有依賴一律走內網 Nexus，不得連任何公開 registry（如 Maven Central）。
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <mirrors>
+    <mirror>
+      <id>nexus-maven-public</id>
+      <name>Enterprise Nexus (maven-public)</name>
+      <url>http://88.8.70.216:8081/repository/maven-public/</url>
+      <!-- *：強制所有 repository / pluginRepository 都走此 mirror，杜絕外連公開 registry -->
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+
+  <!-- 若 Nexus 需要帳密驗證再啟用；請勿提交真實帳密，改用環境變數或本機覆寫檔 -->
+  <!--
+  <servers>
+    <server>
+      <id>nexus-maven-public</id>
+      <username>${env.NEXUS_USER}</username>
+      <password>${env.NEXUS_PASS}</password>
+    </server>
+  </servers>
+  -->
+
+  <profiles>
+    <profile>
+      <id>nexus</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>http://88.8.70.216:8081/repository/maven-public/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>central</id>
+          <url>http://88.8.70.216:8081/repository/maven-public/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>nexus</activeProfile>
+  </activeProfiles>
+</settings>
+
+<!--
+  注意：
+  1. 此為 http（非 https）。Maven 3.8.1+ 內建會封鎖「外部」http repository，
+     但本檔以明確 mirror 指向內網，屬允許範圍；如遇 "blocked mirror" 錯誤，
+     確認沒有其他 pom 內嵌的外部 http repository 即可。
+  2. 與「已重構後端」實際 settings.xml 比對後再定稿（見 docs/decisions.md 待確認項）。
+-->
