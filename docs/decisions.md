@@ -14,6 +14,7 @@
 | 後端目標 | Java 17 + **Spring Boot 3.3.0**（parent 帶入，無額外 BOM） |
 | 前端目標 | Angular 14.x |
 | 後端 DB 存取 | **Spring Data JPA**（`JpaRepository` + 大量 `@Query(nativeQuery=true)`）；DB = **Oracle**；設定用 `.properties`/profile |
+| 後端 API/認證 | 統一 `EPROResponse<code,message,data>`；全域 `@ControllerAdvice`；**Spring Security + JWT (STATELESS)** + DB 權限表 + 外接 MIS；CORS 既有全開（待收斂）；OpenAPI 未落地（建議導入 springdoc） |
 | 前端套件管理器 | **Yarn Classic（`.yarnrc` 為設定入口；非 npm/`.npmrc`）** |
 | 前端企業 scope | `.yarnrc` 設有 `@internal`→npm-all，但**本專案未使用該 scope**；實際企業套件為未加 scope 的 `cub-*`（見下） |
 | 前端版本 | Angular **14.2.x**（core/common/forms/router 等 ^14.2.0；cli ~14.2.13）、TypeScript ~4.7.2、RxJS ~7.5.0、zone.js ~0.11.4 |
@@ -45,9 +46,11 @@
 - [x] @Transactional（B2）：主要 service 層；修改型 repository 也標；既有**混用 jakarta/spring 兩種** → 新碼統一 Spring 版
 - [x] Entity↔DTO（B2）：混用 MapStruct / DTOMapper(反射) / ObjectMapper.convertValue / 手寫 → 新碼**優先 MapStruct**
 - [x] DB/設定（B2）：**Oracle**；`.properties`（非 yml），profile local/ut/uat/prod；uat/prod datasource 外部注入
-- [ ] 全域例外處理與 API 錯誤格式 — prompt B3
-- [ ] 認證/授權機制（Spring Security / JWT / session）— prompt B3
-- [ ] CORS、OpenAPI/Swagger — prompt B3
+- [x] 全域例外處理（B3）：`@ControllerAdvice`(`CommonErrorHandler`)；統一格式 `EPROResponse<code,message,data>`（成功/錯誤同）
+- [x] 認證/授權（B3）：**Spring Security + JWT，STATELESS**；filter `JwtTokenAuthenticationFilter`→`APIAuthorizationFilter`(roleId+apiPath 查 DB)；外部 MIS session 驗證；前端附 `Authorization: Bearer`
+- [x] 驗證（B3）：`@Valid` on `@RequestBody` + 自訂驗證(@ValidDate/@CustomDigits)；訊息強制英文(LocaleValidatorConfig)
+- [x] CORS（B3）：在 `SecurityConfig`，既有**全開**(`*`)+allowCredentials → ⚠️ 正式環境收斂
+- [x] OpenAPI（B3）：README 要求但**未落地** → 建議導入 springdoc-openapi
 
 ### 前端樣板
 - [ ] 專案結構（core/shared/feature、lazy load）— prompt C1
@@ -58,7 +61,7 @@
 
 ### 指令檔（已起草，含 TODO）
 - [x] `AGENTS.md`（完整規範）+ `.github/copilot-instructions.md`（精簡版）已起草，自包含可複製到實際 repo
-- [ ] 填補 `AGENTS.md` 的 TODO：**僅剩** 後端橫切面/例外/認證/CORS/OpenAPI（B3）。（B2 後端 JPA、Spring Boot 3.3.0、C2 元件均已補入）
+- [x] `AGENTS.md` TODO 已全部填補（B2/B3/C2/版本/認證皆補入）；CORS 收斂與 OpenAPI 導入列為「正式環境/實作建議」
 - [ ] 確認前後端是否為獨立 repo → 決定指令檔要不要拆成兩份
 
 ### 舊專案 JSP
@@ -71,6 +74,6 @@
 
 - [ ] **後端 Maven 來源未合規**：既有後端機器無 Nexus settings.xml，實際從 Maven Central 下載，違反「禁止公開 registry」。修正：安裝 `docs/env/maven-settings.xml` 至 `%USERPROFILE%\.m2\settings.xml`（maven-public 為 group，會代理 Central，安裝後即全走內網）。
 - [ ] **npm 預設 registry 政策**：既有前端 `.yarnrc` 預設仍指向公開 `https://registry.npmjs.org/`（僅 @internal 走 Nexus），與「禁止公開 registry」衝突。新專案建議預設 registry 直接指向 `npm-all`（已代理公開套件），以符合離線/合規。**待確認採用。**
-- [ ] 認證模式：JSP server-session → 新架構採 JWT(stateless) 或 cookie+CSRF？過渡期橋接方式？
+- [x] 認證模式（已定案，依既有後端）：**Spring Security + JWT，STATELESS**（非 cookie+CSRF）；外部整合 MIS token/session verifier；前端 interceptor 附 Bearer
 - [ ] 過渡期 reverse proxy 路由規劃（/legacy、/app、/api）
 - [ ] DB schema 是否維持凍結（初期建議凍結）
