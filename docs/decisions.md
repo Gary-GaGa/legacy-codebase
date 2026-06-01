@@ -17,7 +17,8 @@
 | 前端套件管理器 | **Yarn Classic（`.yarnrc` 為設定入口；非 npm/`.npmrc`）** |
 | 前端企業 scope | **`@internal`** → `http://88.8.70.216:8081/repository/npm-all/`（A2 已驗證） |
 | 前端 UI 元件 | **企業自製 Angular 元件庫**（非 Material/PrimeNG），推測位於 `@internal/*` |
-| Maven registry | `http://88.8.70.216:8081/repository/maven-public/`（Nexus；待後端 workspace 驗證） |
+| Maven registry | `http://88.8.70.216:8081/repository/maven-public/`（Nexus **group**，標準預設會代理 Maven Central + 託管 releases/snapshots） |
+| 後端 build 現況 | **A1 驗證：目前未走 Nexus，落到 Maven Central**；pom 無 `<repositories>`、無 user `~/.m2/settings.xml`、全域 settings 僅含 default http-blocker；Maven 3.9.16 |
 | npm registry (group) | `http://88.8.70.216:8081/repository/npm-all/`（Nexus **group**，已代理公開 npmjs + 託管 @internal；依 yarn.lock 多數套件 resolved 指向此） |
 | 套件來源限制 | **一律走內網 Nexus，禁止連公開 registry** |
 | 既有資產 | 已有「重構後的前後端」可參考；後端架構大致定案、前端需萃取樣板 |
@@ -29,7 +30,8 @@
 - [ ] 後端 Java 版本設定方式（java.version / compiler.release）— prompt A1
 - [ ] 前端 `@angular/*` 確切版本、`engines.node` 設定 — prompt A2（registry 已驗證，版本仍待回填）
 - [x] 前端企業自製元件庫 **scope = `@internal`** — A2 已確認（套件名稱仍待 C2）
-- [x] 前端設定入口 = `.yarnrc`（Yarn Classic，非 `.npmrc`）；後端 `settings.xml` 仍待 A1（後端 workspace）
+- [x] 前端設定入口 = `.yarnrc`（Yarn Classic，非 `.npmrc`）
+- [x] 後端 Maven 來源（A1 已驗證）：目前**未走 Nexus、落到 Maven Central**（詳見上表「後端 build 現況」）
 
 ### 後端 JPA 慣例
 - [ ] Entity annotation / 主鍵策略 / 是否 jakarta.persistence — prompt B2
@@ -52,6 +54,10 @@
 - [ ] 一個代表頁面的端到端鏈路（Servlet→Service/DAO→資料表）— prompt D2
 
 ## 三、待決架構議題
+
+> 共同主軸：既有前後端在開發機上其實都**部分繞過 Nexus**（前端預設 registry=公開 npmjs、後端=Maven Central）。Phase 0 的核心工作即用 `docs/env/` 樣板把建置環境標準化，使一切走內網。
+
+- [ ] **後端 Maven 來源未合規**：既有後端機器無 Nexus settings.xml，實際從 Maven Central 下載，違反「禁止公開 registry」。修正：安裝 `docs/env/maven-settings.xml` 至 `%USERPROFILE%\.m2\settings.xml`（maven-public 為 group，會代理 Central，安裝後即全走內網）。
 - [ ] **npm 預設 registry 政策**：既有前端 `.yarnrc` 預設仍指向公開 `https://registry.npmjs.org/`（僅 @internal 走 Nexus），與「禁止公開 registry」衝突。新專案建議預設 registry 直接指向 `npm-all`（已代理公開套件），以符合離線/合規。**待確認採用。**
 - [ ] 認證模式：JSP server-session → 新架構採 JWT(stateless) 或 cookie+CSRF？過渡期橋接方式？
 - [ ] 過渡期 reverse proxy 路由規劃（/legacy、/app、/api）
