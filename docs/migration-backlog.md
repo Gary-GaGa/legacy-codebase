@@ -58,7 +58,7 @@
 ## 3. 風險 / 待確認決策
 - **R1 ✅ 已定：DB2 → Oracle 遷移**。目標 DB 為 Oracle（`OracleDialect`/`OracleDriver`，與新後端一致）；**既有 DB2 native SQL 需逐一改寫為 Oracle 方言**（分頁 `ROWNUM`/`OFFSET…FETCH`、函式 `NVL`/`FETCH FIRST`、序列、型別差異等），entity/SQL 一律以 Oracle 為準，勿原樣沿用 DB2 SQL。
 - **R2 ✅ 已定：改用新報表服務**（汰換 Jasper），為**獨立 track**，需另立評估（報表/匯出方案）。**含報表/列印的頁（`*_0181` CAD、z0 報表群、i0/c0 印表）暫緩，不納入 Phase 1～初期模組**，待報表服務拍板再排。
-- **R3（中）主流程是多頁籤複雜表單**，非 `deputy` 式 list+popup CRUD。`golden-template` 直接適用於 z0 查詢/管理與簡單清單；**主申貸流程需擴充「頁籤容器 + 子表單 + 跨頁狀態」子樣式**（建議 Phase 1 後補進 golden-template）。
+- **R3（中）主流程是多頁籤複雜表單**，非 `deputy` 式 list+popup CRUD。`golden-template` 直接適用於 z0 查詢/管理與簡單清單；主申貸流程 **✅ 已定子樣式「Workflow Shell + Section Tabs」**（外層 shell+子路由、內層 mat-tab、後端 pageMap 決定可見頁、一套 shell 多份 config）→ 見 `golden-template` §八 與 `module-is-iu-shell.md`。
 - **R4（中）後端是重寫非搬移**：自製 `HttpDispatcher`/`@CallMethod` action → 逐一對應成 REST endpoint + service/repository；DTO/驗證重新定義。
 - **R5（低）自訂 taglib 語意**：`CXL`/`cathaybk` TLD 在 jar，需原始碼/文件確認輸出，才能正確對應元件。
 - **R6（重用）**：is↔iu、cs↔cu、_0100↔_0200 高度平行 → 若各自搬會 4–8 倍重工。**務必先抽共用 shell 再展開。**
@@ -72,6 +72,6 @@
 - [x] **R1（DB 目標）= DB2→Oracle 遷移**、**R2（報表）= 換新報表服務（獨立 track）**
 - [x] **D2 完成**：Phase 1 切片 = `EPROZ0_0700` → build spec 已產出
 - [ ] 在實際 monorepo 依 spec 實作 Phase 1（補開放項 A1–A5：DDL/權限白名單/Self-Others/XD 連結）→ A1/A2 取得方式見 spec §9
-- [ ] **D3 進行中**：`is`/`iu` 共用 shell 盤點 → [`module-is-iu-shell.md`](module-is-iu-shell.md)（設計一次、is/iu/cs/cu 重用，解 R6/R3）
+- [x] **D3 完成**：`is`/`iu` 共用 shell = **兩層**（外層 pageMap 流程頁 + 內層區塊 tabs），主鍵 `APPLICATION_NO`，IS=有擔/IU=無擔 → 目標架構與子樣式見 [`module-is-iu-shell.md`](module-is-iu-shell.md)、`golden-template` §八（解 R6/R3）
 - [ ] 後續模組：`cs`/`cu` 重用 shell → `i0`/`c0` 檢視
 - [ ] **報表/列印頁**統一等 R2 報表服務拍板後另排（獨立 track）

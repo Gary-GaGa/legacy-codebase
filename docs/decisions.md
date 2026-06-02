@@ -76,6 +76,7 @@
 - taglib：JSTL + 自訂 `CXL`/`cathaybk`（TLD 在 jar，不在 repo）。前端 jQuery + 自家 JS 元件。
 - 認證 **MIS/SSO**（`SSOFilter`/`SSOUtils`）✅ 與新後端 JWT+MIS 一致；報表 **JasperReports 3.5.2**；檔案走 commons-fileupload 內部服務。
 - ≈250 JSP，但結構為 9 模組 × 兩平行流程（申請/覆核），`is↔iu`、`cs↔cu` 平行 → **重用度高，遷移單位是模組流程**。
+- 主流程 shell 為**兩層**（D3）：外層「流程頁籤」由後端 `pageMap`(`EPRO_Z0Z006.formatIS/IU`)驅動、切頁 server 重查；內層「區塊頁籤」僅主借款人頁 client 切換。主鍵 **`APPLICATION_NO`**；**IS=有擔、IU=無擔**（差 collateral 頁）。目標：一套 shell + 多份 config（見 `module-is-iu-shell.md`、`golden-template` §八）。
 - ⚠️ 舊系統 DB 為 **DB2**（`DB2PoolSvc.xml`），與新後端 Oracle 慣例不一致 → R1。
 
 #### 待確認決策（D1 浮現）
