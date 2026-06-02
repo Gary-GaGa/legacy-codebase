@@ -24,6 +24,7 @@
 | 前端共用元件 | `app-table-search`、`app-search-item`、`app-field-item`、`app-side-bar-list`、`app-user-menu`、`app-lang-menu`（app-local 可重用元件） |
 | 程式碼可見性 | **既有專案 source 不可外流**；本 repo 僅存「規格/樣板/慣例」，正式開發時於實際 repo 內複製 `deputy` feature 套用 |
 | 前端 UI 元件 | 企業庫 **`cub-lib-view-ng14plus`**（`cub-*`）+ **`cub-lib-view-iconfont`**（未加 scope，npm-all）；**與 Angular Material 14.2.5 混用**；集中於 `SharedModule` 匯入；`app-*` 共用元件包裝 `cub-*`/Material；theming 於 angular.json（indigo-pink + cathay-bank.scss + iconfont） |
+| 前端設計規範 | **Adobe XD** 標註每頁細節/通用版型；與 `cub-lib-view-ng14plus`+`cathay-bank` 主題**同一套設計系統**；定位為每頁視覺真實來源（用既有元件+主題變數，不重刻、不 override 樣式） |
 | Maven registry | `http://88.8.70.216:8081/repository/maven-public/`（Nexus **group**，標準預設會代理 Maven Central + 託管 releases/snapshots） |
 | 後端 build 現況 | **A1 驗證：目前未走 Nexus，落到 Maven Central**；pom 無 `<repositories>`、無 user `~/.m2/settings.xml`、全域 settings 僅含 default http-blocker；Maven 3.9.16 |
 | npm registry (group) | `http://88.8.70.216:8081/repository/npm-all/`（Nexus **group**，已代理公開 npmjs + 託管 @internal；依 yarn.lock 多數套件 resolved 指向此） |
@@ -67,6 +68,7 @@
 ### 舊專案 JSP
 - [ ] JSP 清單、共用版型機制、JSTL/EL/自訂 tag、前端 JS — prompt D1
 - [ ] 一個代表頁面的端到端鏈路（Servlet→Service/DAO→資料表）— prompt D2
+- [ ] 遷移清單每頁加一欄「對應 Adobe XD 畫面/連結」作為視覺依據與驗收基準（D1/D2 時一併）
 
 ## 三、待決架構議題
 

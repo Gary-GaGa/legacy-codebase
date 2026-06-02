@@ -123,7 +123,8 @@ src/app/<feature>/
 4. `api.service.ts`：對應後端 REST（list / by-id / create / update / delete）
 5. model `<feature>.ts`：對齊後端 DTO
 6. 表單彈窗 `popup-add-<feature>.*`：用 `app-field-item` + `field-item-config`/`form-config` 渲染，`validate-rule.ts` 驗證
-7. 權限 `role-id-config.ts`；語系搭配 `app-lang-menu` 機制
+7. 權限 `role-id-config.ts`；語系搭配 `app-lang-menu`
+8. **對照該頁 Adobe XD 標註**：用既有元件還原版面與**所有狀態**（空/載入中/錯誤/disabled/無權限），一律用主題變數、不寫死色碼，不為了像 XD override 元件樣式（XD 與元件庫為同一套設計系統） 機制
 
 ## 六、JSP → 本樣板 對應（加強版，善用 config-driven）
 

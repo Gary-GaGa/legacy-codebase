@@ -109,6 +109,14 @@ src/app/<feature>/
 - theming：於 `angular.json` 的 `styles` 配置（Material `indigo-pink.css` + 企業 `cathay-bank.scss` + `cub-lib-view-iconfont.min.css`）；`styles.scss` 僅少量覆寫，**勿用 `@import` 重新引入主題**。
 - 元件 selector / directive 清單與「JSP 控件→元件」對照見 `docs/golden-template/README.md`。
 
+### 4.5 設計規範（Adobe XD）
+- UI/UX 以 **Adobe XD** 標註每頁細節與通用版型；與既有元件庫(`cub-lib-view-ng14plus`)+`cathay-bank` 主題為**同一套設計系統**（XD 是標註版，色/字/間距一致）。
+- **視覺一律用既有元件 + 主題變數**；**禁止寫死色碼/間距魔術數字、禁止為了「像 XD」override 元件內部樣式**（兩者本就一致）。
+- XD 規範的是：**用哪個元件、版面排列、各種狀態（空/載入/錯誤/disabled/無權限）、文案、RWD 斷點**（`DEVICE_BREAKPOINT`、`cub-mask [supportedDevice]`）。
+- AI 工具讀不到 XD 檔 → 每頁遷移時由人把 XD 摘成「元件 + 版面 + 狀態」寫進 config / 任務 prompt；**AI 不自行還原像素或臆測視覺**。
+- 通用 cover / 共用版型 → 對應 `main-layout` shell 與 `app-*`/`cub-*` 共用元件。
+- XD 與元件庫若有衝突 → **標記並升級確認**，勿硬改 CSS。
+
 ## 5. JSP → Angular 對應
 | JSP | 做法 |
 |---|---|
