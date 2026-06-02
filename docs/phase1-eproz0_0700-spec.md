@@ -15,44 +15,39 @@
 
 ## 2. 資料模型（Oracle）
 
-### 2.1 主表 `OVSLXLON01.TB_EMP_PROXY`（寫入）
-✅ 欄位名與 **PK = (`EMP_ID`, `PROXY_ID`)** 已由 DAO 確認（A1）；`STR_TIME`/`END_TIME`/`UPDATE_DATE` 為 Timestamp、其餘為 String。
-⚠️ 仍缺：精確型別/長度/nullable（repo 無 DDL）→ 向 DBA 取 DDL 補 `length`。
+### 2.1 主表 `TB_EMP_PROXY`（寫入）✅ A1 已關閉（新 DB schema）
+新 DB：**無 schema 限定、無 `EPRO_` 前綴**；**PK = `EMP_ID`（單一鍵）**。
 
 ```java
-// 欄位名/PK 已由 DAO 確認；@Column length 為佔位、待實際 DDL 校正
 @Entity
-@Table(name = "TB_EMP_PROXY", schema = "OVSLXLON01")
-@IdClass(EmpProxyId.class)
+@Table(name = "TB_EMP_PROXY")
 public class EmpProxy {
-    @Id @Column(name = "EMP_ID",   length = 20) private String empId;     // length 待 DDL
-    @Id @Column(name = "PROXY_ID", length = 20) private String proxyId;   // length 待 DDL
-    @Column(name = "STR_TIME")                 private LocalDateTime strTime;
-    @Column(name = "END_TIME")                 private LocalDateTime endTime;
-    @Column(name = "UPDATE_EMP_ID", length = 20) private String updateEmpId;
-    @Column(name = "UPDATE_DATE")              private LocalDateTime updateDate;
-    @Column(name = "RETURN_CASE_TO_CA", length = 1) private String returnCaseToCa; // 旗標
-}
-
-public class EmpProxyId implements java.io.Serializable {   // 複合主鍵
-    private String empId;
-    private String proxyId;
-    // 預設建構子、equals/hashCode（依 empId+proxyId）
+    @Id
+    @Column(name = "EMP_ID", length = 10)           private String empId;          // 行編
+    @Column(name = "PROXY_ID", length = 10)         private String proxyId;        // 代理人員（可空）
+    @Column(name = "STR_TIME", nullable = false)    private LocalDateTime strTime;  // 開始時間（必填）
+    @Column(name = "END_TIME")                      private LocalDateTime endTime;  // 結束時間
+    @Column(name = "UPDATE_EMP_ID", length = 10)    private String updateEmpId;     // 創建/更新人員
+    @Column(name = "UPDATE_DATE")                   private LocalDateTime updateDate;
+    @Column(name = "RETURN_CASE_TO_CA", length = 1) private String returnCaseToCa;  // 是否退回 CA，default 'N'
 }
 ```
-> **PK 影響**：主鍵僅 (`EMP_ID`,`PROXY_ID`) → 每組 emp+proxy **僅一筆**；**重複檢查/刪除以 (`EMP_ID`,`PROXY_ID`) 為鍵**，`STR_TIME` 非鍵（為日期區間值）。⚠️ 若業務允許同一對多筆日期區間，real DDL 之 PK 可能另含 `STR_TIME` → 取 DDL 時一併確認。
+> **⚠️ PK 與舊 DAO 不一致（需業務確認）**：舊 DAO keyFields = (`EMP_ID`,`PROXY_ID`)，但**新 DB PK = `EMP_ID` 單鍵** → 語意變為**每位員工至多一筆代理設定**（再設定 = 覆蓋）。
+> 影響：**不需 `@IdClass`**；新增/更新 = 依 `EMP_ID` **upsert**；刪除依 `EMP_ID`。`STR_TIME` 為 `NOT NULL`（API 必填）。請業務確認「一人一筆」是否為預期（相對舊系統的行為簡化）。
 
-### 2.2 參考表（唯讀，用 projection 查詢、不必建完整 entity）✅ 欄位/PK 由 DAO 確認
-- **`OVSLXLON01.TB_EMP_PROFILE`** — PK (`ROLE_ID`, `EMP_ID`)；欄位：`ROLE_ID`、`EMP_ID`、`EMP_NAME`、`BRANCH_CODE`、`E_MAIL`、`DEPT_CODE`、`STATUS`（皆 String）→ 可代理人 / 部門申請人 / 角色 / 顯示名。
-  - ⚠️ **PK 含 `ROLE_ID` → 一員工多角色多列**；查代理人/顯示名（依 `EMP_ID`）時須 `DISTINCT` 或限定角色，避免 join 扇出重複。
-- **`OVSLXLON01.TB_BRANCH_PROFILE`** — PK (`BRANCH_CODE`, `DEPT_CODE`)；欄位：`BRANCH_CODE`、`BRANCH_NAME`、`DEPT_CODE`、`DEPT_NAME`、`DATA_SEQ`、`DISPLAY`、`T24_COMPANY`、`T24_BRANCH_CODE`、`T24_DEPT_CODE`（皆 String）→ 部門下拉。
-  - 註：DAO `fieldNames_general` 含 `T24_COMPANY` 但 insert/update SQL 未含 → DAO/SQL 不一致，取 DDL 時確認該欄是否存在。
+### 2.2 參考表（唯讀；新 DB 無 schema/`EPRO_` 前綴）✅ A1 已關閉
+- **`TB_EMP_PROFILE`** — PK (`ROLE_ID`, `EMP_ID`)：`ROLE_ID` VARCHAR2(5)、`EMP_ID` VARCHAR2(5)、`EMP_NAME` VARCHAR2(50)、`BRANCH_CODE` VARCHAR2(8)、`E_MAIL` VARCHAR2(100)、`DEPT_CODE` VARCHAR2(8)、`STATUS` VARCHAR2(10)（active/inactive）→ 可代理人 / 申請人 / 角色 / 顯示名。
+  - ⚠️ **PK 含 `ROLE_ID` → 一員工多角色多列**；依 `EMP_ID` 查時須 `DISTINCT` 或限定角色，避免 join 扇出。
+  - ⚠️ **長度不一致**：此表 `EMP_ID` VARCHAR2(**5**)，但 `TB_EMP_PROXY.EMP_ID` VARCHAR2(**10**)；`BRANCH_CODE` 8 vs `TB_BRANCH_PROFILE.BRANCH_CODE` 5。join 可行但留意。
+- **`TB_BRANCH_PROFILE`** — PK (`BRANCH_CODE`, `DEPT_CODE`)：`BRANCH_CODE` VARCHAR2(5)、`BRANCH_NAME` VARCHAR2(100)、`DEPT_CODE` VARCHAR2(3)、`DEPT_NAME` VARCHAR2(100)、`DATA_SEQ` NUMBER(3)、`DISPLAY` VARCHAR2(1)、`T24_BRANCH_CODE` VARCHAR2(5)、`T24_DEPT_CODE` VARCHAR2(5) → 部門下拉。
+  - ✅ 新 DB **無 `T24_COMPANY`**（確認舊 DAO/SQL 不一致 = 新 DB 已移除該欄）。
 
 ### 2.3 DB2 → Oracle 改寫注意
 - 時間一律用 **bind param**（`LocalDateTime`），勿用 DB2 `TIMESTAMP('…')` 字面值。
 - 日期顯示格式 `dd/MM/yyyy` 移到 **Java/DTO 層**，SQL 只回 raw timestamp。
 - 本頁無分頁需求 → 免 `ROWNUM`/`FETCH FIRST`。
-- `NVL`/`||` 兩邊皆支援；查詢多為 ANSI join，改動小（主要是 schema 限定 + bind）。
+- `NVL`/`||` 兩邊皆支援；查詢多為 ANSI join，改動小（主要是 bind param）。
+- **新 DB 表名無 schema、無 `EPRO_` 前綴** → entity `@Table(name="TB_…")` 不加 `schema=`，SQL 不加 `OVSLXLON01.` 前綴。
 
 ## 3. API 合約（REST，base `/api/emp-proxy`，統一回 `EPROResponse<T>`）
 
@@ -62,8 +57,8 @@ public class EmpProxyId implements java.io.Serializable {   // 複合主鍵
 | `GET /employees?deptCode=` | `queryEmp` | 該部門「請假/申請人」清單 | `deptCode` |
 | `GET /substitutes?empId=&deptCode=&strTime=` | `queryListOfSubstitute(2)` | 可代理人清單（依起日排除已占用）| `empId?`,`deptCode?`,`strTime?` |
 | `GET /?deptCode=&scope=self\|others` | `query`/`queryOthersResult` | 代理結果清單 | `scope`,`deptCode?` |
-| `POST /` | `execute` | 新增代理設定 | body=CreateRequest |
-| `DELETE /` | `deleteDetail` | 刪除代理設定 | body=DeleteRequest |
+| `PUT /{empId}` | `execute` | 新增/更新（upsert，PK=EMP_ID）| body=UpsertRequest |
+| `DELETE /{empId}` | `deleteDetail` | 刪除代理設定 | path `empId` |
 
 > 設計取捨：把 RPC 式 action 收斂為資源導向；`queryListOfSubstitute` 與 `queryListOfSubstitute2`（起日重查）合併為帶 `strTime` 的同一端點。API 日期一律 **ISO `yyyy-MM-dd`**，UI 端再格式化為 `dd/MM/yyyy`。
 
@@ -85,27 +80,25 @@ interface ProxyRow {
   substitute?: Option;            // PROXY_ID/PROXY_NAME（特定角色不顯示）
   returnCaseToCa?: string;
 }
-interface EmpProxyCreateRequest {
-  empId?: string;                 // others 模式指定申請人；self 模式後端用登入者
-  strTime: string; endTime: string;
+interface EmpProxyUpsertRequest {   // PK=EMP_ID → 新增/更新皆 upsert
+  empId?: string;                 // others 指定申請人；self 用登入者
+  strTime: string;                // 必填（DB NOT NULL）
+  endTime?: string;
   proxyId?: string;
-  returnCaseToCa: string;
+  returnCaseToCa: string;         // 'Y' / 'N'
 }
-interface EmpProxyDeleteRequest {
-  empId?: string; strTime: string; endTime: string;
-  proxyId?: string; scope: 'self' | 'others';
-}
+// 刪除：DELETE /{empId}（PK 單鍵，無需其他欄位）
 ```
 
 ### 驗證（DTO `@Valid` + 自訂，沿用 `@ValidDate` 模式）
-- `strTime`/`endTime` **至少一個必填**（class-level validator）。
-- `endTime >= strTime`；`strTime >= 今天`。
-- 後端 service 仍做**重複檢查**（同 `EMP_ID/PROXY_ID/時間` 不可重疊，對應舊 `find()` 重複檢查）。
+- `strTime` **必填**（DB `NOT NULL`）；`endTime` 選填。
+- `endTime >= strTime`（若有）；`strTime >= 今天`。
+- PK=`EMP_ID` → **不需重複檢查**；新增/更新為依 `EMP_ID` 的 **upsert**。
 
 ## 4. 後端骨架（Spring Boot 3.3 / Oracle）
 - `EmpProxyController extends BaseController`：上列路徑，`@Valid` 驗 body，回 `EPROResponse`，例外交全域 `CommonErrorHandler`。
-- `EmpProxyService`：寫入方法標 Spring `@Transactional`；含重複檢查 → insert → 重查回傳。
-- `EmpProxyRepository extends JpaRepository<EmpProxy, EmpProxyId>`：結果查詢用 `@Query(nativeQuery=true)`（Oracle）；簡單查詢用 derived/JPQL。
+- `EmpProxyService`：寫入方法標 Spring `@Transactional`；依 `EMP_ID` **upsert**（`save()`，PK 存在即更新）→ 重查回傳；刪除依 `EMP_ID`。
+- `EmpProxyRepository extends JpaRepository<EmpProxy, String>`（PK=`EMP_ID`）：結果查詢用 `@Query(nativeQuery=true)`（Oracle）；簡單查詢用 derived/JPQL。
 - `EmpProxyMapper`（MapStruct `componentModel="spring"`）：entity ↔ DTO。
 - Security：`APIAuthorizationFilter` 對 `apiPath=/api/emp-proxy/**`。✅ 舊權限為 **DB 驅動**（`AuthManager` source=db）：`TB_FUNCTION_INFO`(FUNC_ID,FUNC_URL,LANG_KEY) + `TB_FUNCTION_AUTH`(FUNC_ID,USER_ROLE)；`checkPermission` 把 bean 名**去底線**當 funcId → 本頁 funcId = **`EPROZ00700`**（`EPROZ0_0700` 去底線）。新後端：`apiPath=/api/emp-proxy/**` ↔ funcId `EPROZ00700` ↔ `USER_ROLE` 白名單（**遷移 `TB_FUNCTION_AUTH` 資料列**即可，與新 filter 同型）。實際 roleId 為 runtime DB 內容（§9 A2 查得）。
 
@@ -113,9 +106,9 @@ interface EmpProxyDeleteRequest {
 ```sql
 SELECT p.EMP_ID, p.PROXY_ID, p.STR_TIME, p.END_TIME, p.RETURN_CASE_TO_CA,
        a.EMP_NAME AS APP_NAME, s.EMP_NAME AS PROXY_NAME
-FROM   OVSLXLON01.TB_EMP_PROXY   p
-JOIN   OVSLXLON01.TB_EMP_PROFILE a ON a.EMP_ID = p.EMP_ID
-JOIN   OVSLXLON01.TB_EMP_PROFILE s ON s.EMP_ID = p.PROXY_ID
+FROM   TB_EMP_PROXY   p
+JOIN   TB_EMP_PROFILE a ON a.EMP_ID = p.EMP_ID
+JOIN   TB_EMP_PROFILE s ON s.EMP_ID = p.PROXY_ID
 WHERE  (p.STR_TIME >= :now OR :now BETWEEN p.STR_TIME AND p.END_TIME)
   AND  (:empId    IS NULL OR p.EMP_ID = :empId)
   AND  (:deptCode IS NULL OR a.DEPT_CODE = :deptCode)
@@ -153,7 +146,7 @@ src/app/emp-proxy/
 | 結果表格 | — | 表格欄：申請人/代理日期/代理人/(returnCaseToCa) + Del |
 
 ## 7. 開放項（不阻塞，落地前要補）
-- 🟡 **A1（部分完成）**：欄位名 + PK 已由 DAO 確認（§2）、entity 已可實作；**仍缺精確型別/長度/nullable**（repo 無 DDL）→ 向 DBA 取 DDL 補 `@Column(length=…)` 與 PK 是否含 `STR_TIME`。
+- ✅ **A1（完成）**：新 DB schema 已取得（型別/長度/nullable/PK/default）→ entity 定稿（§2）。⚠️ 衍生需業務確認：**PK=`EMP_ID` 單鍵與舊 DAO 複合鍵不一致**（語意 = 一人一筆代理）。
 - 🟡 **A2（機制已定）**：舊權限走 DB（`TB_FUNCTION_INFO`+`TB_FUNCTION_AUTH`，FUNC_ID/USER_ROLE），funcId=`EPROZ00700`（bean 去底線）。✅ 與新 `APIAuthorizationFilter`（apiPath+roleId 查 DB）**同型 → 遷移資料即可**。residual：實際 `USER_ROLE` 資料列為 runtime DB 內容（§9 A2 查），及 `FUNC_ID → apiPath` 對映。
 - **A3**：Self/Others 角色分支（`101`/`102`/`103`/`405` 等）細節 → 第一版可**只做 Self**，Others 標 TODO。
 - **A4**：`PROXY_ID` 與 `RETURN_CASE_TO_CA` 業務語意確認。
@@ -167,7 +160,7 @@ src/app/emp-proxy/
 ## 9. 附錄：A1 / A2 取得方式（拿回來我補 entity / 權限）
 
 ### A1 — `TB_EMP_PROXY` DDL（舊系統 DB2）
-> 🟡 狀態：欄位名 + PK 已由 DAO 取得（見 §2，entity 已可實作）；**repo 無 DDL** → 仍需 DBA 提供 DDL 補欄位長度/nullable，及確認 PK 是否含 `STR_TIME`。下列查詢供取得 DB 端精確型別。
+> ✅ **已關閉**：改由**新 DB schema Excel** 取得精確型別/長度/nullable/PK/default（見 §2 與 `db-schema-catalog.md`）。以下 DB2 查詢保留備查。
 
 先在 repo 找（Copilot）：
 ```

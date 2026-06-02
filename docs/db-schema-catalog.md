@@ -26,8 +26,15 @@
 - **CBC / 財報 / 財務評估 / Scorecard 的表未出現在 HOME**：D6 的 `TB_CBC_*`、`TB_FIN_STATEMENT_*`、`TB_FINANCIAL_EVALUATION_*`、`TB_IND_SCRCARD`、`TB_SCORE_CARD_PARAM_DETAIL`、`TB_CORP_SCRCARD` 都不在這份清單 → **這份 Excel 是否只涵蓋部分模組？i0/c0 的財報/評分/CBC 表在另一份/另一 schema 嗎？**（或 HOME 清單被截斷？）
 - **`EPRO_` 前綴消失 + schema**：新表名為 `TB_*`（無 `EPRO_`）→ entity `@Table` 需確認**是否仍有 schema（如 `OVSLXLON01`）**、前綴是否一律去除（Prompt B 會帶出 schema）。
 
-## 2. Phase 1 三表細節（Prompt B 回填）→ 定稿 `phase1-eproz0_0700-spec.md` §2
-- `TB_EMP_PROXY`、`TB_EMP_PROFILE`、`TB_BRANCH_PROFILE`
+## 2. Phase 1 三表細節（Prompt B）✅ 已回填、entity 定稿於 `phase1-eproz0_0700-spec.md` §2
+- `TB_EMP_PROXY` — PK **`EMP_ID` 單鍵**（⚠️ 與舊 DAO 複合鍵不一致 → 一人一筆代理，待業務確認）；`EMP_ID`/`PROXY_ID`/`UPDATE_EMP_ID` VARCHAR2(10)、`STR_TIME` TIMESTAMP(6) **NOT NULL**、`END_TIME`/`UPDATE_DATE` TIMESTAMP(6)、`RETURN_CASE_TO_CA` VARCHAR2(1) default `'N'`。
+- `TB_EMP_PROFILE` — PK (`ROLE_ID`,`EMP_ID`)；`EMP_ID` VARCHAR2(5)、`EMP_NAME`(50)、`BRANCH_CODE`(8)、`E_MAIL`(100)、`DEPT_CODE`(8)、`STATUS`(10)。
+- `TB_BRANCH_PROFILE` — PK (`BRANCH_CODE`,`DEPT_CODE`)；`BRANCH_CODE`(5)、`BRANCH_NAME`(100)、`DEPT_CODE`(3)、`DEPT_NAME`(100)、`DATA_SEQ` NUMBER(3)、`DISPLAY`(1)、`T24_BRANCH_CODE`(5)、`T24_DEPT_CODE`(5)；**無 `T24_COMPANY`**。
+
+### 全域學習（適用所有 entity）
+- 新 DB **無 schema 限定、無 `EPRO_` 前綴** → `@Table(name="TB_…")` 不加 `schema=`、SQL 不加前綴。
+- 多 entity 同欄位**長度可能不一致**（如 `EMP_ID` 5 vs 10）→ 以各表自身 schema 為準。
+- 各表 PK 一律以**新 DB schema 為準**（可能與舊 DAO 不同，遇不一致標業務確認）。
 
 ## 3. 後續高價值表（依模組，之後用 Prompt B 批次抽）
 - **CBC**：`EPRO_TB_CBC_BBL/_INFO`、`_BGL/_INFO`、`_GBGL/_INFO`
