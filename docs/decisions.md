@@ -68,7 +68,7 @@
 
 ### 舊專案 JSP
 - [x] JSP 清單、共用版型機制、JSTL/EL/自訂 tag、前端 JS — **D1 完成**，見 `migration-backlog.md`
-- [ ] 一個代表頁面的端到端鏈路（Servlet→Service/DAO→資料表）— prompt D2（待選定 Phase 1 切片頁）
+- [x] 一個代表頁面的端到端鏈路（Servlet→Service/DAO→資料表）— **D2 完成**：選定 `EPROZ0_0700`，build spec 見 `phase1-eproz0_0700-spec.md`
 - [ ] 遷移清單每頁加一欄「對應 Adobe XD 畫面/連結」作為視覺依據與驗收基準（D1/D2 時一併）
 
 #### 舊系統(EPRO) 架構事實（D1）

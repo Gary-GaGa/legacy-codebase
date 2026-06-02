@@ -63,13 +63,14 @@
 - **R5（低）自訂 taglib 語意**：`CXL`/`cathaybk` TLD 在 jar，需原始碼/文件確認輸出，才能正確對應元件。
 - **R6（重用）**：is↔iu、cs↔cu、_0100↔_0200 高度平行 → 若各自搬會 4–8 倍重工。**務必先抽共用 shell 再展開。**
 
-## 4. Phase 1 垂直切片（✅ 已選：z0 單純查詢/管理頁）
+## 4. Phase 1 垂直切片（✅ 已選：`EPROZ0_0700` 員工代理設定）
 目標：用**一條最單純的「查詢 → API → DB → Auth」**打通整套（不碰多頁籤/報表/上傳），驗證架構與離線環境。
-- 選定方向：**z0 的管理/查詢頁**（如 `EPROZ0_0500`/`0700` 類單表查詢）——避開 Jasper 與多頁籤。
-- D2 先協助**鎖定最單純的單表查詢頁**，再追完整鏈路（JSP 欄位 → CallMethod action → service/DAO → DB 表 → 權限），落成第一個 Angular feature + 後端 REST（DB 以 Oracle 為準）。
+- 選定頁：**`EPROZ0_0700` / Assign Substitute**——單一主寫入表 `OVSLXLON01.TB_EMP_PROXY`，僅查 `TB_EMP_PROFILE`/`TB_BRANCH_PROFILE`，無 Jasper/上傳/主流程連動（D2 比較 0200/0500/0700/0800 後選定）。
+- **D2 完成** → 詳細施工單見 **[`phase1-eproz0_0700-spec.md`](phase1-eproz0_0700-spec.md)**（API 合約 / DTO / Oracle entity+SQL / Angular feature 骨架 / 驗證 / 開放項）。
 
 ## 5. 下一步
 - [x] **R1（DB 目標）= DB2→Oracle 遷移**、**R2（報表）= 換新報表服務（獨立 track）**
-- [ ] 跑 **D2** 鎖定並深掘一個 z0 單純查詢頁 → 落成 Phase 1 切片
+- [x] **D2 完成**：Phase 1 切片 = `EPROZ0_0700` → build spec 已產出
+- [ ] 在實際 monorepo 依 spec 實作 Phase 1（補開放項 A1–A5：DDL/權限白名單/Self-Others/XD 連結）
 - [ ] 依模組逐步展開「逐頁明細」（建議順序：`z0` 簡單查詢 → `is`/`iu` 共用 shell → `cs`/`cu` 重用 → `i0`/`c0` 檢視）
 - [ ] **報表/列印頁**統一等 R2 報表服務拍板後另排（獨立 track）
