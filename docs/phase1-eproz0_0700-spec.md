@@ -16,27 +16,37 @@
 ## 2. 資料模型（Oracle）
 
 ### 2.1 主表 `OVSLXLON01.TB_EMP_PROXY`（寫入）
-寫入欄位：`EMP_ID`、`PROXY_ID`、`STR_TIME`、`END_TIME`、`UPDATE_EMP_ID`、`UPDATE_DATE`、`RETURN_CASE_TO_CA`。
+✅ 欄位名與 **PK = (`EMP_ID`, `PROXY_ID`)** 已由 DAO 確認（A1）；`STR_TIME`/`END_TIME`/`UPDATE_DATE` 為 Timestamp、其餘為 String。
+⚠️ 仍缺：精確型別/長度/nullable（repo 無 DDL）→ 向 DBA 取 DDL 補 `length`。
 
 ```java
-// ⚠️ A1：實際 DDL（型別/PK/schema）待確認，以下為依 D2 推測之草稿
+// 欄位名/PK 已由 DAO 確認；@Column length 為佔位、待實際 DDL 校正
 @Entity
 @Table(name = "TB_EMP_PROXY", schema = "OVSLXLON01")
-@IdClass(EmpProxyId.class)   // 複合鍵符合既有後端慣例（多為複合/業務鍵）
+@IdClass(EmpProxyId.class)
 public class EmpProxy {
-    @Id @Column(name = "EMP_ID")   private String empId;
-    @Id @Column(name = "PROXY_ID") private String proxyId;
-    @Id @Column(name = "STR_TIME") private LocalDateTime strTime;
-    @Column(name = "END_TIME")            private LocalDateTime endTime;
-    @Column(name = "UPDATE_EMP_ID")       private String updateEmpId;
-    @Column(name = "UPDATE_DATE")         private LocalDateTime updateDate;
-    @Column(name = "RETURN_CASE_TO_CA")   private String returnCaseToCa;
+    @Id @Column(name = "EMP_ID",   length = 20) private String empId;     // length 待 DDL
+    @Id @Column(name = "PROXY_ID", length = 20) private String proxyId;   // length 待 DDL
+    @Column(name = "STR_TIME")                 private LocalDateTime strTime;
+    @Column(name = "END_TIME")                 private LocalDateTime endTime;
+    @Column(name = "UPDATE_EMP_ID", length = 20) private String updateEmpId;
+    @Column(name = "UPDATE_DATE")              private LocalDateTime updateDate;
+    @Column(name = "RETURN_CASE_TO_CA", length = 1) private String returnCaseToCa; // 旗標
+}
+
+public class EmpProxyId implements java.io.Serializable {   // 複合主鍵
+    private String empId;
+    private String proxyId;
+    // 預設建構子、equals/hashCode（依 empId+proxyId）
 }
 ```
+> **PK 影響**：主鍵僅 (`EMP_ID`,`PROXY_ID`) → 每組 emp+proxy **僅一筆**；**重複檢查/刪除以 (`EMP_ID`,`PROXY_ID`) 為鍵**，`STR_TIME` 非鍵（為日期區間值）。⚠️ 若業務允許同一對多筆日期區間，real DDL 之 PK 可能另含 `STR_TIME` → 取 DDL 時一併確認。
 
-### 2.2 參考表（唯讀，可用 projection 查詢、不必建完整 entity）
-- `OVSLXLON01.TB_EMP_PROFILE`（`EMP_ID`、`EMP_NAME`、`DEPT_CODE`、`ROLE_ID`…）→ 可代理人 / 部門申請人 / 角色 / 顯示名。
-- `OVSLXLON01.TB_BRANCH_PROFILE`（`DEPT_CODE`、`DEPT_NAME`）→ 部門下拉。
+### 2.2 參考表（唯讀，用 projection 查詢、不必建完整 entity）✅ 欄位/PK 由 DAO 確認
+- **`OVSLXLON01.TB_EMP_PROFILE`** — PK (`ROLE_ID`, `EMP_ID`)；欄位：`ROLE_ID`、`EMP_ID`、`EMP_NAME`、`BRANCH_CODE`、`E_MAIL`、`DEPT_CODE`、`STATUS`（皆 String）→ 可代理人 / 部門申請人 / 角色 / 顯示名。
+  - ⚠️ **PK 含 `ROLE_ID` → 一員工多角色多列**；查代理人/顯示名（依 `EMP_ID`）時須 `DISTINCT` 或限定角色，避免 join 扇出重複。
+- **`OVSLXLON01.TB_BRANCH_PROFILE`** — PK (`BRANCH_CODE`, `DEPT_CODE`)；欄位：`BRANCH_CODE`、`BRANCH_NAME`、`DEPT_CODE`、`DEPT_NAME`、`DATA_SEQ`、`DISPLAY`、`T24_COMPANY`、`T24_BRANCH_CODE`、`T24_DEPT_CODE`（皆 String）→ 部門下拉。
+  - 註：DAO `fieldNames_general` 含 `T24_COMPANY` 但 insert/update SQL 未含 → DAO/SQL 不一致，取 DDL 時確認該欄是否存在。
 
 ### 2.3 DB2 → Oracle 改寫注意
 - 時間一律用 **bind param**（`LocalDateTime`），勿用 DB2 `TIMESTAMP('…')` 字面值。
@@ -112,6 +122,7 @@ WHERE  (p.STR_TIME >= :now OR :now BETWEEN p.STR_TIME AND p.END_TIME)
 ORDER  BY p.STR_TIME, p.UPDATE_DATE
 ```
 > 與 DB2 版差異很小（ANSI join）：改為 **schema 限定 + bind param**、移除 DB2 時間字面值；無分頁故不需方言分頁語法。`insert`/`delete` 同理以 entity/`@Modifying` native 處理。
+> ⚠️ `TB_EMP_PROFILE` PK 含 `ROLE_ID`（一員工多列）→ join `a`/`s` 可能扇出重複；視業務加 `DISTINCT` 或在 join 上限定 `ROLE_ID`（取最新/特定角色）。
 
 ## 5. 前端骨架（Angular 14，照 `deputy` 複製改名為 `emp-proxy`）
 ```
@@ -142,7 +153,7 @@ src/app/emp-proxy/
 | 結果表格 | — | 表格欄：申請人/代理日期/代理人/(returnCaseToCa) + Del |
 
 ## 7. 開放項（不阻塞，落地前要補）
-- ⚠️ **A1**：`TB_EMP_PROXY` 實際 DDL（欄位型別、PK、schema）→ 定 entity / `EmpProxyId`。
+- 🟡 **A1（部分完成）**：欄位名 + PK 已由 DAO 確認（§2）、entity 已可實作；**仍缺精確型別/長度/nullable**（repo 無 DDL）→ 向 DBA 取 DDL 補 `@Column(length=…)` 與 PK 是否含 `STR_TIME`。
 - ⚠️ **A2**：roleId **進頁授權白名單**（repo 找不到靜態 FunctionAuth，推測在執行環境 DB/共用權限）→ 填 `APIAuthorizationFilter`/權限表。
 - **A3**：Self/Others 角色分支（`101`/`102`/`103`/`405` 等）細節 → 第一版可**只做 Self**，Others 標 TODO。
 - **A4**：`PROXY_ID` 與 `RETURN_CASE_TO_CA` 業務語意確認。
@@ -156,6 +167,8 @@ src/app/emp-proxy/
 ## 9. 附錄：A1 / A2 取得方式（拿回來我補 entity / 權限）
 
 ### A1 — `TB_EMP_PROXY` DDL（舊系統 DB2）
+> 🟡 狀態：欄位名 + PK 已由 DAO 取得（見 §2，entity 已可實作）；**repo 無 DDL** → 仍需 DBA 提供 DDL 補欄位長度/nullable，及確認 PK 是否含 `STR_TIME`。下列查詢供取得 DB 端精確型別。
+
 先在 repo 找（Copilot）：
 ```
 @workspace 找 TB_EMP_PROXY 的建表 DDL 或 ORM mapping：搜尋 "TB_EMP_PROXY" 的
