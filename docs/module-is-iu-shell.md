@@ -63,6 +63,7 @@ loan-application/                          # 流程 shell feature（lazy，掛 m
 ```
 - 每個流程頁是 **routed child**，`ngOnInit` 用 `APPLICATION_NO` 自己 `initQuery`（對映舊「切頁重查」）。**不共用大 store**，只共用 context（案號/mode/type）→ 忠於舊模型、各頁可獨立測試。
 - `main-borrower` 內用 `mat-tab-group` 做 Personal/Work/Family（client 切換、不重查）。
+  ⚠️ **內層 tabs 是「每頁可選」，非主借款頁專屬**：此 3-tab 為 IS/IU 特有；企金 `cs/cu` 的 `0110` 為**單頁**、多 tab 反而在擔保品 `0250`（見 `module-cs-cu-shell.md` §2.3）。
 - `approval` 頁依 `mode`：edit 對 `0170` 群、review 對 `0270`。
 
 ### 5.2 參數化軸（一套 shell 重用）
@@ -80,12 +81,20 @@ interface PageDescriptor {
   route: string;      // 'co-borrower'
   label: string;
   pageType: 'form' | 'view' | 'upload' | 'report';
+  group: 'borrower' | 'collateral' | 'conditions' | 'scoring' | 'approval';  // B3
   mode: 'edit' | 'review' | 'both';
   order: number;
-  visibleRule?: string;   // 由後端 pageMap 決定（見 5.4）
+  sections?: string[];     // 頁內 tab（可選；多數頁 0/1，collateral 0250 等才多個）— B3
+  checkStatus?: boolean;   // 對應舊 pageCheckMap（評分/檢核完成度）— B3
+  visibleRule?: string;    // 由後端 pageMap 決定（見 5.4）
 }
 ```
-IS config 含 collateral 頁；IU 省略（或單一 config + `securedOnly: true` 旗標）。
+- **descriptor set 為「每模組 × mode」一份**（is/iu/cs/cu × edit/review），由後端 `pageMap`(formatIS/IU/CS/CU) 產出；前端 shell 泛型，不硬寫頁清單（B3）。
+- 有擔/無擔差異（collateral 頁）+ 個人/企金頁差異全由 descriptor set 表達，**不是單一 config + 旗標**。
+
+### 5.5 企金延伸（B3，見 `module-cs-cu-shell.md`）
+- cs/cu **重用本外層 shell 機制**；差異 = 每模組 descriptor config + 企金內層元件（collateral `0250` 三分頁）+ **c0 評分/檢核橋接層**（`EPROC0_0110` 掛入 pageMap，`group=scoring`，用 `checkStatus` 追完成度）。
+- 連帶：M6/M7（i0/c0）的 c0 部分與主流程綁定，排程一起考慮。
 
 ### 5.4 後端對應（重要）
 - 把 `EPRO_Z0Z006.formatIS()/formatIU()`（pageMap）移植為

@@ -147,10 +147,10 @@ src/app/<feature>/
 > 舊系統為兩層：外層「流程頁籤」（pageMap 驅動、切頁 **server 重查**）+ 內層「區塊頁籤」（僅主借款人頁、client 切換）。對映：
 
 - **外層 = shell component + 子路由**：`<feature>-shell.component` 放流程頁籤 nav + `<router-outlet>`；每個流程頁是 **routed child**，`ngOnInit` 用案號（`APPLICATION_NO`）自取資料（對映「切頁重查」）。**勿做成單一巨型 component。**
-- **內層 = `mat-tab-group`**：只在含區塊 tabs 的頁（如主借款人 Personal/Work/Family），同頁切換不重查。
-- **可見頁由後端決定**：流程頁清單/順序/權限來自後端 `GET …/{appNo}/pages?type=&mode=`（移植舊 `pageMap`/`formatIS|IU`），前端 shell 照回傳 render，**勿前端硬寫**。
-- **參數化（一套 shell 重用）**：個人/企金 × 有擔/無擔（控 collateral 頁）× 申請(edit)/覆核(review)，全走 route data + `page-descriptor-config.ts`。
+- **內層 = `mat-tab-group`（每頁可選）**：只在含區塊 tabs 的頁切換、不重查。⚠️ **勿假設主借款頁必有多 tab**——IS/IU 主借款頁有 Personal/Work/Family，但企金 cs/cu 主借款頁是單頁、多 tab 反而在擔保品頁（見 `module-cs-cu-shell.md`）。
+- **可見頁由後端決定**：流程頁清單/順序/權限來自後端 `GET …/{appNo}/pages?type=&mode=`（移植舊 `pageMap`/`formatIS|IU|CS|CU`），**每模組 × mode 一份 descriptor set**，前端 shell 泛型、勿硬寫。
+- **參數化（一套 shell 重用）**：個人/企金 × 有擔/無擔 × 申請/覆核，全走 route data + descriptor set；企金另有 **c0 評分/檢核橋接頁**（`group=scoring`，`checkStatus` 追完成度）掛入同一 shell。
 - **共用 context service**：只存 `APPLICATION_NO`/`mode`/`type`，**不做大 store**；各頁資料各自取。
 - popup（補件/退件/條件調整）→ `mat-dialog`；report/upload 頁依 R2 暫緩。
 
-`PageDescriptor` 欄位：`funcId / route / label / pageType(form|view|upload|report) / mode(edit|review|both) / order / visibleRule`。
+`PageDescriptor` 欄位：`funcId / route / label / pageType(form|view|upload|report) / group(borrower|collateral|conditions|scoring|approval) / mode(edit|review|both) / order / sections?(頁內 tab，可選) / checkStatus?(評分檢核完成度) / visibleRule`。

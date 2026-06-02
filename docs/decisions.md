@@ -77,6 +77,7 @@
 - 認證 **MIS/SSO**（`SSOFilter`/`SSOUtils`）✅ 與新後端 JWT+MIS 一致；報表 **JasperReports 3.5.2**；檔案走 commons-fileupload 內部服務。
 - ≈250 JSP，但結構為 9 模組 × 兩平行流程（申請/覆核），`is↔iu`、`cs↔cu` 平行 → **重用度高，遷移單位是模組流程**。
 - 主流程 shell 為**兩層**（D3）：外層「流程頁籤」由後端 `pageMap`(`EPRO_Z0Z006.formatIS/IU`)驅動、切頁 server 重查；內層「區塊頁籤」僅主借款人頁 client 切換。主鍵 **`APPLICATION_NO`**；**IS=有擔、IU=無擔**（差 collateral 頁）。目標：一套 shell + 多份 config（見 `module-is-iu-shell.md`、`golden-template` §八）。
+- 企金 cs/cu（B3）：**重用外層 shell 機制**（有 `formatCS/CU`），但差異需每模組 descriptor config + 企金內層元件；**內層 tabs 為每頁可選**（企金 `0110` 單頁、多 tab 在 `0250`）；企金特有 **c0 評分/檢核橋接層**（`EPROC0_0110` 掛入 pageMap）→ c0 與主流程綁定。PageDescriptor 加 `group`/`sections?`/`checkStatus?`。
 - ⚠️ 舊系統 DB 為 **DB2**（`DB2PoolSvc.xml`），與新後端 Oracle 慣例不一致 → R1。
 - 權限（A2）：`AuthManager` **source=db**，function→role 在 `TB_FUNCTION_INFO`+`TB_FUNCTION_AUTH`(FUNC_ID/USER_ROLE)；funcId = bean 名**去底線**（`EPROZ0_0700`→`EPROZ00700`）。與新 `APIAuthorizationFilter`(apiPath+roleId) **同型** → 整系統權限為「搬資料 + `FUNC_ID↔apiPath`」（R7），實際 roleId 為 runtime DB 內容。
 
