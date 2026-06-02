@@ -79,8 +79,9 @@
 - ⚠️ 舊系統 DB 為 **DB2**（`DB2PoolSvc.xml`），與新後端 Oracle 慣例不一致 → R1。
 
 #### 待確認決策（D1 浮現）
-- [ ] **R1（高）DB：舊 DB2 vs 新後端 Oracle** — 是否 DB2→Oracle 遷移？或新後端先連 DB2？（影響 entity/native SQL）
-- [ ] **R2（高）報表 Jasper 策略** — 沿用 Jasper 產 PDF/前端只觸發下載，還是換報表服務？（獨立 track）
+- [x] **R1 已定：DB2 → Oracle 遷移**。目標 Oracle（`OracleDialect`/`OracleDriver`）；DB2 native SQL 逐一改寫為 Oracle 方言。
+- [x] **R2 已定：改用新報表服務**（汰換 Jasper，獨立 track）；含報表/列印頁初期暫緩、不納入 Phase 1～初期模組。
+- [x] **Phase 1 切片已定：z0 單純查詢/管理頁**（避開 Jasper/多頁籤）→ 下一步 D2 鎖定具體頁。
 
 ## 三、待決架構議題
 

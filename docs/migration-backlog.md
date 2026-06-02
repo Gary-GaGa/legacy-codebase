@@ -12,8 +12,8 @@
 | View：JSP + JSTL + 自訂 taglib（`CXL`/`cathaybk`/`input`）| Angular component + config-driven |
 | 前端：jQuery + 自家 JS 元件（CSRUtil/Tabs/TableUI/FileUpload/Validate/ZRUtil…）| Angular + `cub-*`/Material + HttpClient |
 | 認證：**MIS/SSO**（`SSOFilter`/`SSOUtils`，MIS token）| Spring Security + JWT(STATELESS)，驗 MIS session ✅ **與新後端一致** |
-| DB：**DB2**（`DB2PoolSvc.xml`）| ⚠️ 新後端慣例為 **Oracle** → 見風險 **R1** |
-| 報表：**JasperReports 3.5.2**（`RptUtils`、printPDF/printProposal）| 報表策略待定 → 見風險 **R2** |
+| DB：**DB2**（`DB2PoolSvc.xml`）| **遷移至 Oracle**（R1 已定）；DB2 native SQL 改寫為 Oracle 方言 |
+| 報表：**JasperReports 3.5.2**（`RptUtils`、printPDF/printProposal）| **改用新報表服務**（R2 已定，獨立 track，Jasper 頁暫緩）|
 | 檔案：commons-fileupload，內部 upload/downloadFile | 檔案上傳/下載 API（待設計） |
 | 權限/選單：`AuthManager`/`MenuService`（FunctionAuth/MenuTree/UserRole.xml）| `APIAuthorizationFilter`（roleId+apiPath 查 DB）+ 前端 `role-id-config` |
 
@@ -56,19 +56,20 @@
 - **外部整合**：MIS/SSO 登入與權限、JasperReports、應用內部檔案上傳/下載、CBC/Scorecard/MIS 報表、**DB2**。
 
 ## 3. 風險 / 待確認決策
-- **R1（高）DB：舊 DB2 vs 新後端 Oracle**。新重構後端慣例為 Oracle，舊系統為 DB2 → 是否做 DB2→Oracle 遷移？或新後端先連 DB2？**需與團隊確認**（影響 entity / native SQL 全面性，且既有 native SQL 多為 DB2 方言）。
-- **R2（高）報表 Jasper**：i0/c0/z0 大量 printPDF/printProposal + Excel 匯出，佔比高。前端不重刻；報表要嘛沿用 Jasper（後端產 PDF、前端只觸發/下載），要嘛改報表服務 → **獨立 track 決策**。
+- **R1 ✅ 已定：DB2 → Oracle 遷移**。目標 DB 為 Oracle（`OracleDialect`/`OracleDriver`，與新後端一致）；**既有 DB2 native SQL 需逐一改寫為 Oracle 方言**（分頁 `ROWNUM`/`OFFSET…FETCH`、函式 `NVL`/`FETCH FIRST`、序列、型別差異等），entity/SQL 一律以 Oracle 為準，勿原樣沿用 DB2 SQL。
+- **R2 ✅ 已定：改用新報表服務**（汰換 Jasper），為**獨立 track**，需另立評估（報表/匯出方案）。**含報表/列印的頁（`*_0181` CAD、z0 報表群、i0/c0 印表）暫緩，不納入 Phase 1～初期模組**，待報表服務拍板再排。
 - **R3（中）主流程是多頁籤複雜表單**，非 `deputy` 式 list+popup CRUD。`golden-template` 直接適用於 z0 查詢/管理與簡單清單；**主申貸流程需擴充「頁籤容器 + 子表單 + 跨頁狀態」子樣式**（建議 Phase 1 後補進 golden-template）。
 - **R4（中）後端是重寫非搬移**：自製 `HttpDispatcher`/`@CallMethod` action → 逐一對應成 REST endpoint + service/repository；DTO/驗證重新定義。
 - **R5（低）自訂 taglib 語意**：`CXL`/`cathaybk` TLD 在 jar，需原始碼/文件確認輸出，才能正確對應元件。
 - **R6（重用）**：is↔iu、cs↔cu、_0100↔_0200 高度平行 → 若各自搬會 4–8 倍重工。**務必先抽共用 shell 再展開。**
 
-## 4. Phase 1 垂直切片（建議）
+## 4. Phase 1 垂直切片（✅ 已選：z0 單純查詢/管理頁）
 目標：用**一條最單純的「查詢 → API → DB → Auth」**打通整套（不碰多頁籤/報表/上傳），驗證架構與離線環境。
-- 建議從 **z0 的管理/查詢頁**（如 `EPROZ0_0500`/`0700` 類單表查詢）或一個**單純清單**著手——避開 Jasper 與多頁籤。
-- 待 **D2** 對選定頁追完整鏈路（JSP 欄位 → CallMethod action → service/DAO → DB 表 → 權限）後，落成第一個 Angular feature + 後端 REST。
+- 選定方向：**z0 的管理/查詢頁**（如 `EPROZ0_0500`/`0700` 類單表查詢）——避開 Jasper 與多頁籤。
+- D2 先協助**鎖定最單純的單表查詢頁**，再追完整鏈路（JSP 欄位 → CallMethod action → service/DAO → DB 表 → 權限），落成第一個 Angular feature + 後端 REST（DB 以 Oracle 為準）。
 
 ## 5. 下一步
-- [ ] 確認 **R1（DB 目標）**、**R2（報表策略）**
-- [ ] 選定 Phase 1 切片頁 → 跑 **D2** 深掘
-- [ ] 依模組逐步展開「逐頁明細」（建議順序：`z0` 簡單頁 → `is`/`iu` 共用 shell → `cs`/`cu` 重用 → `i0`/`c0` 報表檢視 → 主流程文件/列印）
+- [x] **R1（DB 目標）= DB2→Oracle 遷移**、**R2（報表）= 換新報表服務（獨立 track）**
+- [ ] 跑 **D2** 鎖定並深掘一個 z0 單純查詢頁 → 落成 Phase 1 切片
+- [ ] 依模組逐步展開「逐頁明細」（建議順序：`z0` 簡單查詢 → `is`/`iu` 共用 shell → `cs`/`cu` 重用 → `i0`/`c0` 檢視）
+- [ ] **報表/列印頁**統一等 R2 報表服務拍板後另排（獨立 track）

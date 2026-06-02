@@ -5,6 +5,8 @@
 ## 1. 版本與遷移
 - **Spring Boot 3.3.0**（由 `spring-boot-starter-parent` 帶入，無額外 BOM）；Java 17；環境 Maven 3.9.16。
 - 舊專案 Java 8 → 17 時做 **`javax.* → jakarta.*`** 全面遷移（servlet/persistence/validation），可用 OpenRewrite recipe（亦走內網 Nexus）。**既有重構後端已是 jakarta**，可直接當目標慣例。
+- **DB：DB2 → Oracle（本專案定案）**。目標 DB 為 Oracle（`OracleDialect`/`OracleDriver`）；舊 EPRO 系統為 DB2，其 native SQL 需**逐一改寫為 Oracle 方言**（分頁 `ROWNUM`/`OFFSET…FETCH`、函式 `NVL`/`FETCH FIRST`、序列、型別差異等），**勿原樣沿用 DB2 SQL**。
+- 舊系統路由為自製 `HttpDispatcher`/`@CallMethod`（非 Spring MVC）→ 各 action **重寫為 REST endpoint** + service/repository，非直接搬移。
 
 ## 2. 分層
 **Controller(REST) / Service / Repository**；**DTO 與 Entity 分離**。
