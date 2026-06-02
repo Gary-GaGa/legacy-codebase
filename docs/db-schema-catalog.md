@@ -22,9 +22,15 @@
 - **`TB_FUNCTION_AUTH`/`TB_API_AUTH`/`TB_ROLE_TASK`/`TB_ROLE_DEFINE` = 新權限模型已建表** → 解 **R7**（apiPath/roleId 對映就在這幾張）。
 - **退/刪/結/取消原因表** → 對映審批 popup（0174/0175）與 z0 報表（Application Delete/Cancel）。
 
-### 1.3 ⚠️ 缺口（需你確認）
-- **CBC / 財報 / 財務評估 / Scorecard 的表未出現在 HOME**：D6 的 `TB_CBC_*`、`TB_FIN_STATEMENT_*`、`TB_FINANCIAL_EVALUATION_*`、`TB_IND_SCRCARD`、`TB_SCORE_CARD_PARAM_DETAIL`、`TB_CORP_SCRCARD` 都不在這份清單 → **這份 Excel 是否只涵蓋部分模組？i0/c0 的財報/評分/CBC 表在另一份/另一 schema 嗎？**（或 HOME 清單被截斷？）
-- **`EPRO_` 前綴消失 + schema**：新表名為 `TB_*`（無 `EPRO_`）→ entity `@Table` 需確認**是否仍有 schema（如 `OVSLXLON01`）**、前綴是否一律去除（Prompt B 會帶出 schema）。
+### 1.3 ✅ 缺口已釐清：全在同一份 Excel（先前 HOME 輸出被截斷）
+- 先前 HOME 看似缺 CBC/財報/評分，實為**工具輸出截斷**（HOME 為單一工作表、內容很長，非 Excel 缺表）。Excel **約 70+ 張工作表、一表一 sheet**。
+- ✅ i0/c0 表**全在此 Excel**（新名、無 `EPRO_`）：
+  - CBC：`TB_CBC_BBL(_INFO)`、`TB_CBC_BGL(_INFO)`、`TB_CBC_GBGL(_INFO)`
+  - 財報：`TB_FIN_STATEMENT_MAIN`、`_BALANCE_FI/GI`、`_CASHFLOW_FI/GI`、`_INCOME_FI/GI`
+  - 財務評估：`TB_FINANCIAL_EVALUATION_FI/GI/INFO/INFO_CORP/INFO_S`
+  - Scorecard：`TB_SCORE_CARD_PARAM_MAIN/SUB/DETAIL`、`TB_IND_SCRCARD`、`TB_CORP_SCRCARD`、`TB_COLL_ASS`
+- **操作結論**：因 HOME 輸出會截斷，**一律用「指定表名」的 Prompt B 抽**（不依賴完整 HOME）。
+- 新表名 `TB_*`（無 `EPRO_`、Phase 1 三表 schema 為「-」即無 schema 限定）。
 
 ## 2. Phase 1 三表細節（Prompt B）✅ 已回填、entity 定稿於 `phase1-eproz0_0700-spec.md` §2
 - `TB_EMP_PROXY` — PK **`EMP_ID` 單鍵**（⚠️ 與舊 DAO 複合鍵不一致 → 一人一筆代理，待業務確認）；`EMP_ID`/`PROXY_ID`/`UPDATE_EMP_ID` VARCHAR2(10)、`STR_TIME` TIMESTAMP(6) **NOT NULL**、`END_TIME`/`UPDATE_DATE` TIMESTAMP(6)、`RETURN_CASE_TO_CA` VARCHAR2(1) default `'N'`。
@@ -50,5 +56,8 @@
 - 條件/原因：`TB_LOAN_CONDITION_FEE`、`TB_REVISED_ITEM(_DETAIL)`、`TB_RETURN_INFO`/`TB_DEL_REASON`/`TB_CLO_REASON`/`TB_CAN_REASON`
 - checkpoint：`TB_CHECK_POINTS_IS/IU/CS/CU`
 
-**待 §1.3 缺口確認後再排（HOME 未見）**
-- CBC：`TB_CBC_*`；財報：`TB_FIN_STATEMENT_*`；財務評估：`TB_FINANCIAL_EVALUATION_*`；Scorecard：`TB_IND_SCRCARD`/`TB_CORP_SCRCARD`/`TB_SCORE_CARD_PARAM_DETAIL`
+**B3 — i0/c0 財報 / 評分 / CBC（✅ 確認在同一 Excel）**
+- CBC：`TB_CBC_BBL(_INFO)`、`TB_CBC_BGL(_INFO)`、`TB_CBC_GBGL(_INFO)`
+- 財報：`TB_FIN_STATEMENT_MAIN`、`_BALANCE_FI/GI`、`_CASHFLOW_FI/GI`、`_INCOME_FI/GI`
+- 財務評估：`TB_FINANCIAL_EVALUATION_FI/GI/INFO/INFO_CORP/INFO_S`
+- Scorecard：`TB_SCORE_CARD_PARAM_MAIN/SUB/DETAIL`、`TB_IND_SCRCARD`、`TB_CORP_SCRCARD`、`TB_COLL_ASS`

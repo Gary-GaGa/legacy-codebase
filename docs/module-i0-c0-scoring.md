@@ -34,11 +34,11 @@
 - `pageCheckMap` = **整個 shell 的頁面完成狀態集合**（非單頁），讓 `pageMenu` 依整體完成度更新外層 done。
 - c0 評分**是主流程檢核步驟**（切業務型態會連同 `0218` 重置）→ **維持綁定，勿拆旁路**。
 
-## 4. 資料來源（節錄）
-- **CBC**：`EPRO_TB_CBC_BBL/_INFO`、`_BGL/_INFO`、`_GBGL/_INFO`（i0/c0 同結構）。查詢/維護，非報表。
-- **財報**：`EPRO_TB_FIN_STATEMENT_MAIN`、`_BALANCE_GI`、`_CASHFLOW_GI`、`_INCOME_GI`（FI 版 `_FI`）；`0216`/`0219` 加 `RptUtils`/`ReportUtil` 產 PDF。
-- **財務評估**：`EPRO_TB_FINANCIAL_EVALUATION_INFO`/`_GI`/`_FI`/`_INFO_S`(staff)、`EPRO_TB_IND_SCRCARD`、`EPRO_TB_CHECK_POINT_RC_CORP`/`CU`。
-- **Scorecard**：`EPRO_TB_SCORE_CARD_PARAM_DETAIL`、`EPRO_TB_MAIN_BORROWER_PERSONAL/WORK/FAMILY_INFO`、`EPRO_TB_COLL_ASS`、`EPRO_TB_CORP_SCRCARD`。
+## 4. 資料來源（✅ 新 DB 名，無 `EPRO_` 前綴；明細 schema 見 `db-schema-catalog.md` B3）
+- **CBC**：`TB_CBC_BBL(_INFO)`、`TB_CBC_BGL(_INFO)`、`TB_CBC_GBGL(_INFO)`。查詢/維護，非報表。
+- **財報**：`TB_FIN_STATEMENT_MAIN`、`_BALANCE_FI/GI`、`_CASHFLOW_FI/GI`、`_INCOME_FI/GI`；`0216`/`0219` 加 `RptUtils`/`ReportUtil` 產 PDF（R2）。
+- **財務評估**：`TB_FINANCIAL_EVALUATION_INFO`/`_INFO_CORP`/`_GI`/`_FI`/`_INFO_S`(staff)、`TB_IND_SCRCARD`、checkpoint `TB_CHECK_POINTS_IS/IU/CS/CU`。
+- **Scorecard**：`TB_SCORE_CARD_PARAM_MAIN/SUB/DETAIL`、`TB_MAIN_BORROWER_PERSONAL/WORK/FAMILY_INFO`、`TB_COLL_ASS`、`TB_CORP_SCRCARD`。
 - **輸入（寫回）**：0111/0211、0112/0212、0113/0213、0114/0214、0115/0215、0117/0217、0118/0218、0120/0220。
 - **可編輯也可列印**：0116/0119、0216/0219。
 
