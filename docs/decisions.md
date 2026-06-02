@@ -67,9 +67,20 @@
 - [x] repo 結構：**monorepo**（`backend/` + `frontend/`）→ 指令檔採階層式：root `AGENTS.md`(共用) + `backend/AGENTS.md` + `frontend/AGENTS.md`；Copilot repo-wide `.github/copilot-instructions.md` + `.github/instructions/{backend,frontend}.instructions.md`（`applyTo` 依資料夾自動套用）。若實際資料夾名非 backend/frontend，改 `applyTo` glob 與連結即可。
 
 ### 舊專案 JSP
-- [ ] JSP 清單、共用版型機制、JSTL/EL/自訂 tag、前端 JS — prompt D1
-- [ ] 一個代表頁面的端到端鏈路（Servlet→Service/DAO→資料表）— prompt D2
+- [x] JSP 清單、共用版型機制、JSTL/EL/自訂 tag、前端 JS — **D1 完成**，見 `migration-backlog.md`
+- [ ] 一個代表頁面的端到端鏈路（Servlet→Service/DAO→資料表）— prompt D2（待選定 Phase 1 切片頁）
 - [ ] 遷移清單每頁加一欄「對應 Adobe XD 畫面/連結」作為視覺依據與驗收基準（D1/D2 時一併）
+
+#### 舊系統(EPRO) 架構事實（D1）
+- 自製框架 **`HttpDispatcher` + `@CallMethod`**（非 Spring MVC）；版型靠 `<%@ include %>`（無 Tiles/tag files）。
+- taglib：JSTL + 自訂 `CXL`/`cathaybk`（TLD 在 jar，不在 repo）。前端 jQuery + 自家 JS 元件。
+- 認證 **MIS/SSO**（`SSOFilter`/`SSOUtils`）✅ 與新後端 JWT+MIS 一致；報表 **JasperReports 3.5.2**；檔案走 commons-fileupload 內部服務。
+- ≈250 JSP，但結構為 9 模組 × 兩平行流程（申請/覆核），`is↔iu`、`cs↔cu` 平行 → **重用度高，遷移單位是模組流程**。
+- ⚠️ 舊系統 DB 為 **DB2**（`DB2PoolSvc.xml`），與新後端 Oracle 慣例不一致 → R1。
+
+#### 待確認決策（D1 浮現）
+- [ ] **R1（高）DB：舊 DB2 vs 新後端 Oracle** — 是否 DB2→Oracle 遷移？或新後端先連 DB2？（影響 entity/native SQL）
+- [ ] **R2（高）報表 Jasper 策略** — 沿用 Jasper 產 PDF/前端只觸發下載，還是換報表服務？（獨立 track）
 
 ## 三、待決架構議題
 
