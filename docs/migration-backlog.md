@@ -15,7 +15,7 @@
 | DB：**DB2**（`DB2PoolSvc.xml`）| **遷移至 Oracle**（R1 已定）；DB2 native SQL 改寫為 Oracle 方言 |
 | 報表：**JasperReports 3.5.2**（`RptUtils`、printPDF/printProposal）| **改用新報表服務**（R2 已定，獨立 track，Jasper 頁暫緩）|
 | 檔案：commons-fileupload，內部 upload/downloadFile | 檔案上傳/下載 API（待設計） |
-| 權限/選單：`AuthManager`/`MenuService`（FunctionAuth/MenuTree/UserRole.xml）| `APIAuthorizationFilter`（roleId+apiPath 查 DB）+ 前端 `role-id-config` |
+| 權限：`AuthManager` **source=db** → `TB_FUNCTION_INFO`+`TB_FUNCTION_AUTH`(FUNC_ID/USER_ROLE)，funcId=bean **去底線**（`EPROZ0_0700`→`EPROZ00700`）| `APIAuthorizationFilter`（apiPath+roleId 查 DB）**同型** → 遷移資料、`FUNC_ID↔apiPath`；前端 `role-id-config` |
 
 ## 1. 模組地圖（遷移單位 = 模組流程）
 > 共通樣式：每個業務模組有兩套近乎平行流程——`_0100` 申請、`_0200` 覆核；且 `is↔iu`、`cs↔cu` 兩兩平行。
@@ -62,6 +62,7 @@
 - **R4（中）後端是重寫非搬移**：自製 `HttpDispatcher`/`@CallMethod` action → 逐一對應成 REST endpoint + service/repository；DTO/驗證重新定義。
 - **R5（低）自訂 taglib 語意**：`CXL`/`cathaybk` TLD 在 jar，需原始碼/文件確認輸出，才能正確對應元件。
 - **R6（重用）**：is↔iu、cs↔cu、_0100↔_0200 高度平行 → 若各自搬會 4–8 倍重工。**務必先抽共用 shell 再展開。**
+- **R7（跨頁通用，正面）權限遷移**：舊權限已是 DB 驅動（`TB_FUNCTION_INFO`/`TB_FUNCTION_AUTH`，FUNC_ID/USER_ROLE），與新 `APIAuthorizationFilter` 同型 → **整系統權限 = 搬資料 + `FUNC_ID(去底線)↔apiPath` 對映**，每頁低成本、可建一張對映表統一處理（非逐頁重寫）。
 
 ## 4. Phase 1 垂直切片（✅ 已選：`EPROZ0_0700` 員工代理設定）
 目標：用**一條最單純的「查詢 → API → DB → Auth」**打通整套（不碰多頁籤/報表/上傳），驗證架構與離線環境。

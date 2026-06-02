@@ -107,7 +107,7 @@ interface EmpProxyDeleteRequest {
 - `EmpProxyService`：寫入方法標 Spring `@Transactional`；含重複檢查 → insert → 重查回傳。
 - `EmpProxyRepository extends JpaRepository<EmpProxy, EmpProxyId>`：結果查詢用 `@Query(nativeQuery=true)`（Oracle）；簡單查詢用 derived/JPQL。
 - `EmpProxyMapper`（MapStruct `componentModel="spring"`）：entity ↔ DTO。
-- Security：`APIAuthorizationFilter` 對 `apiPath=/api/emp-proxy/**`、functionId `EPROZ0_0700`。⚠️ **roleId 進頁白名單待補（A2）**。
+- Security：`APIAuthorizationFilter` 對 `apiPath=/api/emp-proxy/**`。✅ 舊權限為 **DB 驅動**（`AuthManager` source=db）：`TB_FUNCTION_INFO`(FUNC_ID,FUNC_URL,LANG_KEY) + `TB_FUNCTION_AUTH`(FUNC_ID,USER_ROLE)；`checkPermission` 把 bean 名**去底線**當 funcId → 本頁 funcId = **`EPROZ00700`**（`EPROZ0_0700` 去底線）。新後端：`apiPath=/api/emp-proxy/**` ↔ funcId `EPROZ00700` ↔ `USER_ROLE` 白名單（**遷移 `TB_FUNCTION_AUTH` 資料列**即可，與新 filter 同型）。實際 roleId 為 runtime DB 內容（§9 A2 查得）。
 
 ### 4.4 SQL 改寫範例（`SQL_QUERY_001` → Oracle，代理結果清單）
 ```sql
@@ -154,7 +154,7 @@ src/app/emp-proxy/
 
 ## 7. 開放項（不阻塞，落地前要補）
 - 🟡 **A1（部分完成）**：欄位名 + PK 已由 DAO 確認（§2）、entity 已可實作；**仍缺精確型別/長度/nullable**（repo 無 DDL）→ 向 DBA 取 DDL 補 `@Column(length=…)` 與 PK 是否含 `STR_TIME`。
-- ⚠️ **A2**：roleId **進頁授權白名單**（repo 找不到靜態 FunctionAuth，推測在執行環境 DB/共用權限）→ 填 `APIAuthorizationFilter`/權限表。
+- 🟡 **A2（機制已定）**：舊權限走 DB（`TB_FUNCTION_INFO`+`TB_FUNCTION_AUTH`，FUNC_ID/USER_ROLE），funcId=`EPROZ00700`（bean 去底線）。✅ 與新 `APIAuthorizationFilter`（apiPath+roleId 查 DB）**同型 → 遷移資料即可**。residual：實際 `USER_ROLE` 資料列為 runtime DB 內容（§9 A2 查），及 `FUNC_ID → apiPath` 對映。
 - **A3**：Self/Others 角色分支（`101`/`102`/`103`/`405` 等）細節 → 第一版可**只做 Self**，Others 標 TODO。
 - **A4**：`PROXY_ID` 與 `RETURN_CASE_TO_CA` 業務語意確認。
 - **A5**：對應 XD 畫面連結（你補）。
@@ -198,4 +198,14 @@ repo / 設定查找（Copilot）：
 MenuTree.xml / UserRole.xml 或權限 DB 表中與 "EPROZ0_0700" 對應的角色；
 說明 function→role 對映的來源（XML 還是 DB 表名）。
 ```
-→ 若在執行環境 DB：找到權限表後 `WHERE function_id='EPROZ0_0700'`。回來我把白名單填進新後端 `APIAuthorizationFilter`/權限表（`apiPath=/api/emp-proxy/**` ↔ roleId）。
+→ ✅ 已查明機制：權限在 DB 表 `TB_FUNCTION_AUTH`（非 XML）。取實際 roleId 清單（⚠️ **funcId 去底線** = `EPROZ00700`）：
+```sql
+SELECT a.USER_ROLE
+FROM   OVSLXLON01.TB_FUNCTION_AUTH a
+WHERE  a.FUNC_ID = 'EPROZ00700';
+-- 一併確認 funcId 寫法（含/不含底線）：
+SELECT FUNC_ID, FUNC_URL, LANG_KEY
+FROM   OVSLXLON01.TB_FUNCTION_INFO
+WHERE  FUNC_ID IN ('EPROZ00700','EPROZ0_0700');
+```
+回來我把 `USER_ROLE` 清單填進新後端權限表（`apiPath=/api/emp-proxy/**` ↔ funcId `EPROZ00700` ↔ roleId）。
