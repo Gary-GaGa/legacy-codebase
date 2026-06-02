@@ -28,8 +28,8 @@
 | M3 | `iu` | 個人申貸（另一套，與 is 平行）| 20 | 同 is | L–XL | A |
 | M4 | `cs` | 企金申貸（_0100/_0200）| 20 | 多頁籤主表單 + CAD 報表 | L–XL | B |
 | M5 | `cu` | 企金申貸（與 cs 平行）| 17 | 同 cs | L–XL | B |
-| M6 | `i0` | 個人 財報/評分/CBC（容器 + 子報表頁）| 42 | 唯讀報表/評分檢視 + printPDF | L | C |
-| M7 | `c0` | 企金 財報/評分/CBC | 38 | 同 i0 | L | C |
+| M6 | `i0` | 個人 財報/評分/CBC（容器 + 子頁）| 42 | **輸入表單**（財報/財務評估/Scorecard/BGE/CBC）+ 少數 printPDF | L | C |
+| M7 | `c0` | 企金 財報/評分/CBC | 38 | 同 i0（與企金主流程經 pageCheckMap 綁定）| L | C |
 | M8 | `z0` | 管理 / 報表 / 工具 | 18 | 查詢/管理 + 報表群 + 上傳 | M（查詢）/ L（報表）| — |
 | M9 | common/demo/resource | 共用版型 / 例外頁 / demo | ~50 | 版型 / error / 範例 | — | → main-layout / error pages |
 
@@ -63,6 +63,8 @@
 - **R5（低）自訂 taglib 語意**：`CXL`/`cathaybk` TLD 在 jar，需原始碼/文件確認輸出，才能正確對應元件。
 - **R6（重用）**：is↔iu、cs↔cu、_0100↔_0200 高度平行 → 若各自搬會 4–8 倍重工。**務必先抽共用 shell 再展開。**
 - **R7（跨頁通用，正面）權限遷移**：舊權限已是 DB 驅動（`TB_FUNCTION_INFO`/`TB_FUNCTION_AUTH`，FUNC_ID/USER_ROLE），與新 `APIAuthorizationFilter` 同型 → **整系統權限 = 搬資料 + `FUNC_ID(去底線)↔apiPath` 對映**，每頁低成本、可建一張對映表統一處理（非逐頁重寫）。
+- **R8（外部整合 track）CBC 聯徵資料接入**：i0/c0 的 CBC 為外部信用/聯徵資料的接入與維護（本地 `EPRO_TB_CBC_*` 表讀寫），非報表軌 → **獨立資料接入 track**（shell 可共用、資料來源/adapter 分開），初期不混入。
+- **共用資產（D3+B3+D6 收斂）**：主流程與 i0/c0 共用同一機制 → 一次做好 ① tab shell ② `pageCheckMap`/checkpoint 回寫 ③ done 狀態聚合 ④ print/open 封裝。
 
 ## 4. Phase 1 垂直切片（✅ 已選：`EPROZ0_0700` 員工代理設定）
 目標：用**一條最單純的「查詢 → API → DB → Auth」**打通整套（不碰多頁籤/報表/上傳），驗證架構與離線環境。
@@ -76,5 +78,6 @@
 - [x] **D3 完成**：`is`/`iu` 共用 shell = **兩層**（外層 pageMap 流程頁 + 內層區塊 tabs），主鍵 `APPLICATION_NO`，IS=有擔/IU=無擔 → 目標架構與子樣式見 [`module-is-iu-shell.md`](module-is-iu-shell.md)、`golden-template` §八（解 R6/R3）
 - [x] **B3 完成**：cs/cu **重用外層 shell 機制**；差異 = 每模組 descriptor config + 企金內層元件（collateral `0250` 三分頁）+ **c0 評分/檢核橋接層**（`EPROC0_0110` 掛入 pageMap）→ [`module-cs-cu-shell.md`](module-cs-cu-shell.md)。M4/M5：殼免費、需 config + 企金 section（非「幾乎免費」但遠低於重做 shell）。
 - [ ] **c0 與主流程綁定**：M6/M7（i0/c0）的 c0 評分部分嵌在企金流程中 → 盤點 i0/c0 時與 M4/M5 一起考慮
-- [ ] **D6 進行中**：`i0`/`c0` 財報/評分/CBC 盤點（含 c0 評分橋接、i0↔c0 平行性、CBC 外部整合）→ [`module-i0-c0-scoring.md`](module-i0-c0-scoring.md)
+- [ ] **D6 完成**：i0/c0 **可共用 shell + config**（各頁 trx/表分開）；多為**輸入表單**非唯讀；c0 評分經 `pageCheckMap` 綁主流程；CBC=獨立資料接入 track（R8）→ [`module-i0-c0-scoring.md`](module-i0-c0-scoring.md)
+- [ ] 待選下一批：D4 審批段（`0170~`/`0270`）細掘｜各模組逐頁 config 展開｜或進實作
 - [ ] **報表/列印頁**統一等 R2 報表服務拍板後另排（獨立 track）

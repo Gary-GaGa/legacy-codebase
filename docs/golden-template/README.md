@@ -151,6 +151,7 @@ src/app/<feature>/
 - **可見頁由後端決定**：流程頁清單/順序/權限來自後端 `GET …/{appNo}/pages?type=&mode=`（移植舊 `pageMap`/`formatIS|IU|CS|CU`），**每模組 × mode 一份 descriptor set**，前端 shell 泛型、勿硬寫。
 - **參數化（一套 shell 重用）**：個人/企金 × 有擔/無擔 × 申請/覆核，全走 route data + descriptor set；企金另有 **c0 評分/檢核橋接頁**（`group=scoring`，`checkStatus` 追完成度）掛入同一 shell。
 - **共用 context service**：只存 `APPLICATION_NO`/`mode`/`type`，**不做大 store**；各頁資料各自取。
+- **完成度 / done 機制（共用）**：沿用舊 `pageCheckMap` 概念——各頁回報完成狀態集合，後端聚合算 `isAllTabsCheck` → 更新外層流程節點 `done`；**loan flow 與 i0/c0 scoring shell 共用此機制**（見 `module-i0-c0-scoring.md`）。建議一次抽好：tab shell + pageCheckMap 回寫 + done 聚合 + print/open 封裝。
 - popup（補件/退件/條件調整）→ `mat-dialog`；report/upload 頁依 R2 暫緩。
 
 `PageDescriptor` 欄位：`funcId / route / label / pageType(form|view|upload|report) / group(borrower|collateral|conditions|scoring|approval) / mode(edit|review|both) / order / sections?(頁內 tab，可選) / checkStatus?(評分檢核完成度) / visibleRule`。
