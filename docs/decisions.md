@@ -11,6 +11,7 @@
 |---|---|
 | 開發環境 | Windows + VSCode + Codex CLI + GitHub Copilot（**不使用 Claude 產品**；本 repo 僅作規劃與樣板） |
 | 重構方向 | 全端（Java 8 + JSP）→ 前後端分離 |
+| repo 結構 | **monorepo**：`backend/` + `frontend/`；指令檔分資料夾自動套用 |
 | 後端目標 | Java 17 + **Spring Boot 3.3.0**（parent 帶入，無額外 BOM） |
 | 前端目標 | Angular 14.x |
 | 後端 DB 存取 | **Spring Data JPA**（`JpaRepository` + 大量 `@Query(nativeQuery=true)`）；DB = **Oracle**；設定用 `.properties`/profile |
@@ -63,7 +64,7 @@
 ### 指令檔（已起草，含 TODO）
 - [x] `AGENTS.md`（完整規範）+ `.github/copilot-instructions.md`（精簡版）已起草，自包含可複製到實際 repo
 - [x] `AGENTS.md` TODO 已全部填補（B2/B3/C2/版本/認證皆補入）；CORS 收斂與 OpenAPI 導入列為「正式環境/實作建議」
-- [ ] 確認前後端是否為獨立 repo → 決定指令檔要不要拆成兩份
+- [x] repo 結構：**monorepo**（`backend/` + `frontend/`）→ 指令檔採階層式：root `AGENTS.md`(共用) + `backend/AGENTS.md` + `frontend/AGENTS.md`；Copilot repo-wide `.github/copilot-instructions.md` + `.github/instructions/{backend,frontend}.instructions.md`（`applyTo` 依資料夾自動套用）。若實際資料夾名非 backend/frontend，改 `applyTo` glob 與連結即可。
 
 ### 舊專案 JSP
 - [ ] JSP 清單、共用版型機制、JSTL/EL/自訂 tag、前端 JS — prompt D1

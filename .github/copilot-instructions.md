@@ -1,27 +1,17 @@
-# Copilot Instructions
+# Copilot Instructions（repo-wide）
 
-專案：全端（Java 8 + JSP）→ 前後端分離（後端 **Java 17 + Spring Boot 3.x**；前端 **Angular 14.2.x**）。絞殺者模式逐頁遷移。完整規範見 `/AGENTS.md` 與 `/docs`。
+專案：**monorepo**（`backend/` + `frontend/`）；全端（Java 8 + JSP）→ 前後端分離（後端 **Java 17 + Spring Boot 3.x**；前端 **Angular 14.2.x**）。絞殺者模式逐頁遷移。
 
-## 必守硬規則（違反即錯）
+> 後端/前端的詳細規則放在依資料夾自動套用的指令檔：`.github/instructions/backend.instructions.md`（`backend/**`）、`.github/instructions/frontend.instructions.md`（`frontend/**`）。完整規範見 `/AGENTS.md`、`backend/AGENTS.md`、`frontend/AGENTS.md` 與 `/docs`。
+
+## 必守硬規則（違反即錯，全 repo 適用）
 - **套件一律走內網 Nexus，禁止公開 registry。**
   - Maven：`~/.m2/settings.xml` mirror = `http://88.8.70.216:8081/repository/maven-public/`（`mirrorOf=*`）。
-  - 前端 **Yarn Classic**：`.yarnrc` `registry` = `http://88.8.70.216:8081/repository/npm-all/`，`@internal` scope 同。
+  - 前端 **Yarn Classic**：`.yarnrc` `registry` = `http://88.8.70.216:8081/repository/npm-all/`（企業套件 `cub-lib-view-ng14plus` 等未加 scope，由此解析）。
   - 勿新增 `registry.npmjs.org` / `repo.maven.apache.org` 等外部來源。
 - **版本鎖定，勿升降**：Java 17 / Spring Boot 3.x；Angular 14.2.x / TS ~4.7.2 / RxJS ~7.5 / zone.js ~0.11.4 / Node 16.20.2 / Yarn Classic。
 
-## 後端（Spring Boot 3.3.0 / Java 17 / Oracle）
-- `jakarta.*`（非 javax）。分層 Controller / Service / Repository，**DTO ≠ Entity**。
-- JPA：`JpaRepository` + 大量 `@Query(nativeQuery=true)`（修改型加 `@Modifying`）；主鍵多複合鍵（`@EmbeddedId`/`@IdClass`）；**未用 Specification**。
-- 交易用 Spring `@Transactional`（service 層）；DTO 轉換新碼**優先 MapStruct**（`componentModel="spring"`）。設定用 `.properties`/profile，**機密外部化勿提交**。
-- API 統一回 `EPROResponse<code,message,data>`；全域 `@ControllerAdvice`(`CommonErrorHandler`) 處理例外，**勿各自 try-catch**；`@Valid` 驗證 `@RequestBody`。
-- 認證 **Spring Security + JWT（STATELESS）**：filter `JwtTokenAuthenticationFilter` → `APIAuthorizationFilter`（roleId+apiPath 查 DB）；前端附 `Authorization: Bearer`。CORS 既有全開→正式環境收斂；OpenAPI 未落地→建議補 springdoc。細節見 `/AGENTS.md`。
-
-## 前端
-- 架構：`app-routing` → `main-layout` shell → feature module（lazy）→ 清單 component + `popup-add-<feature>` 彈窗。
-- **設定驅動 (config-driven)**：用 `*-config.ts`（search-item / field-item / form / validate-rule）宣告，交給共用元件 `app-table-search` / `app-search-item` / `app-field-item` 渲染。**勿手刻查詢/表單 HTML。**
-- 新功能**照 `deputy` feature 結構複製改名**。UI 元件庫 = `cub-lib-view-ng14plus`（`cub-*`）+ Angular Material **混用**，集中於 `SharedModule` 匯入；feature 匯入 `SharedModule` 取得。使用優先序 `app-*` → `cub-*` → `mat-*`。
-- 視覺依 **Adobe XD**（與 `cub-*`/`cathay-bank` **同一套設計系統**）：一律用既有元件 + 主題變數，**勿寫死色碼或 override 元件樣式**；XD 決定元件/版面/狀態/文案/RWD。每頁要涵蓋 空/載入/錯誤/disabled 等狀態。
-
 ## 流程
 - 每個任務 = 複製 `deputy` 結構 + 寫 config + 接 `api.service`，對應一個 JSP 頁。
-- 改動後確保**離線可 build**：後端 `mvn -o package`；前端 `yarn install --frozen-lockfile` + `ng build`。
+- 改動後確保**離線可 build**：後端於 `backend/` 跑 `mvn -o package`；前端於 `frontend/` 跑 `yarn install --frozen-lockfile` + `ng build`。
+- 遇未定項先向人確認，勿臆造慣例或外部來源。

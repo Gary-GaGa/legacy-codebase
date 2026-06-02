@@ -1,7 +1,9 @@
-# AGENTS.md — 全端 → 前後端分離 重構規範
+# AGENTS.md — 全端 → 前後端分離 重構規範（共用）
 
 > 給 **Codex CLI / GitHub Copilot** 的專案規範，實作前**必讀並遵守**。
-> 本檔涵蓋前端與後端；若前後端為**獨立 repo**，請把對應段落分別放到各自 repo 根目錄。
+> 本 repo 為 **monorepo**（`backend/` + `frontend/`）。本檔為**跨前後端的共用規則**；
+> 後端規範見 [`backend/AGENTS.md`](backend/AGENTS.md)、前端見 [`frontend/AGENTS.md`](frontend/AGENTS.md)。
+> Codex 會自動讀「最接近被編輯檔案」的 AGENTS.md（root 共用 + 子目錄專屬會疊加）。
 > 標 `TODO` 之處尚待確認——遇到時**先詢問或保守處理，切勿臆造**。
 
 ## 0. 專案目標
@@ -29,116 +31,14 @@
 - **契約優先**：後端先產出 OpenAPI 當前後端合約。
 - **DB schema 初期凍結**：新後端先包住既有資料存取，先不動資料表。
 - **垂直切片**：先打通一條「畫面→API→DB」端到端，再規模化。
-- **Phase 0 門檻**：前後端骨架在**斷網**下可 build（後端 `mvn -o package`；前端 `yarn install --frozen-lockfile` + `ng build`）才往下走。
+- **Phase 0 門檻**：前後端骨架在**斷網**下可 build（後端於 `backend/` 跑 `mvn -o package`；前端於 `frontend/` 跑 `yarn install --frozen-lockfile` + `ng build`）才往下走。
 
-## 3. 後端規範（Java 17 + Spring Boot 3.3.0）
-
-### 3.1 版本與遷移
-- **Spring Boot 3.3.0**（由 `spring-boot-starter-parent` 帶入，無額外 BOM）；Java 17；環境 Maven 3.9.16。
-- 舊專案 Java 8 → 17 時做 **`javax.* → jakarta.*`** 全面遷移（servlet/persistence/validation），可用 OpenRewrite recipe（亦走內網 Nexus）。**既有重構後端已是 jakarta**，可直接當目標慣例。
-
-### 3.2 分層
-**Controller(REST) / Service / Repository**；**DTO 與 Entity 分離**。
-
-### 3.3 JPA 慣例（✅ B2 確認）
-- **Entity**：`jakarta.persistence`；常用 `@Entity/@Table/@Column/@Id/@EmbeddedId/@Embeddable/@IdClass`。**主鍵多為複合鍵/業務鍵**（`@EmbeddedId`/`@IdClass`），少數 `@GeneratedValue(strategy=SEQUENCE)`。
-- **Repository**：以 `JpaRepository` 為主，**大量 `@Query(nativeQuery=true)`**；修改型用 `@Modifying`；少數自訂 interface + impl 以 `EntityManager` 拼 native SQL。**未用 Specification。**
-- **DB**：Oracle（`org.hibernate.dialect.OracleDialect`、`oracle.jdbc.OracleDriver`）。
-- **交易**：主要放 service 層；修改型 repository 方法也常直接標。⚠️ 既有混用 `jakarta.transaction.Transactional` 與 `org.springframework.transaction.annotation.Transactional` → **新程式碼一律用 Spring 版 `@Transactional`、放 service 層。**
-- **Entity↔DTO**：既有混用 MapStruct / 自寫 `DTOMapper`(反射) / `ObjectMapper.convertValue()` / 手寫轉換 → **新程式碼優先 MapStruct（`@Mapper(componentModel="spring")`）。**
-
-### 3.4 設定檔
-- 用 **`.properties`**（非 yaml），依 profile：`application-{local,ut,uat,prod}.properties`，預設 `spring.profiles.active=local`。
-- **機密外部化**：local/ut 可內含 datasource；uat/prod 由環境變數/容器注入，**勿提交帳密**。
-
-### 3.5 API 橫切慣例（✅ B3 確認）
-- **統一回應格式**：所有 API 回傳 `EPROResponse<T>`（欄位 `code` / `message` / `data`），成功與錯誤皆同格式（成功見 `BaseController`）。
-- **全域例外處理**：`@ControllerAdvice`（`CommonErrorHandler`）集中處理 —— `EPROApiException`、`MethodArgumentNotValidException`、`Exception`，及 DB/交易例外（`TransactionSystemException`/`DataIntegrityViolationException`/`JpaSystemException`）→ 轉 `EPROResponse`。**沿用此模式，勿在 controller 各自 try-catch。**（注意既有用 `@ControllerAdvice` 而非 `@RestControllerAdvice`，保持一致。）
-- **驗證**：controller 對 `@RequestBody` 標 `@Valid`/`@Validated`；DTO 用 `@NotBlank`/`@Pattern` 等與自訂驗證（`@ValidDate`/`@CustomDigits`）；巢狀/集合 `List<@NotNull @Valid ...>`；錯誤經全域處理轉統一格式；訊息語系由 `LocaleValidatorConfig` 強制英文。
-- **認證/授權（已定案：Spring Security + JWT，STATELESS）**：
-  - `SessionCreationPolicy.STATELESS`；filter 鏈 `JwtTokenAuthenticationFilter`（讀 `Authorization: Bearer`、驗 EPRO token → 塞 `SecurityContextHolder`、失敗回統一錯誤 JSON）→ `APIAuthorizationFilter`（依 `roleId`+`apiPath` 查 DB 權限表）。
-  - `JwtUtil`：建立/驗證 EPRO JWT、驗 MIS token、取目前登入者。
-  - 登入流程驗證**外部 MIS session key**（`misSessionVerifier`），非傳統 `HttpSession`。
-  - → **前端須在 HTTP interceptor 附 `Authorization: Bearer <JWT>`。**
-- **CORS**：設定在 `SecurityConfig`（非獨立 WebMvcConfig），兩條 chain 皆套用，`allowCredentials(true)` + `setExposedHeaders(...)`。⚠️ 既有為**全開**（`allowedOriginPatterns/Methods/Headers = "*"`）→ **正式環境應收斂 `allowedOrigins`**。
-- **OpenAPI（契約優先）**：README 要求但**實作未落地**（pom 無 `springdoc`、無 `@OpenAPIDefinition`/`@Operation`）→ **建議導入 `springdoc-openapi`（從 Nexus 取）** 補上合約。
-
-## 4. 前端規範（Angular 14 / Yarn / @internal）
-
-### 4.1 架構分層
-根 `app-routing.module.ts` → `main-layout` shell（所有功能頁外框）→ feature module（**lazy load**）→ 清單 component + `popup-add-<feature>` 表單彈窗。
-
-### 4.2 設定驅動 (config-driven) — 核心慣例
-查詢條件、表單欄位、驗證規則以 `*-config.ts` **宣告**，交由站台共用元件渲染。**不要每頁手刻查詢/表單 HTML。**
-
-| Config | 搭配共用元件 | 用途 |
-|---|---|---|
-| `search-item-config.ts` | `app-table-search` / `app-search-item` | 清單頁查詢列 |
-| `field-item-config.ts` / `form-config.ts` | `app-field-item` | 表單/詳情欄位 |
-| `add-<feature>-config.ts` | popup 表單 | 新增表單專屬設定 |
-| `validate-rule.ts` | — | 驗證規則 |
-| `role-id-config.ts` | — | 權限/角色 |
-
-共用元件（app-local）：`app-table-search`、`app-search-item`、`app-field-item`、`app-side-bar-list`、`app-user-menu`、`app-lang-menu`。**複用，勿重造。**
-
-### 4.3 新功能結構（照參考 feature `deputy` 複製改名）
-```
-src/app/<feature>/
-├── <feature>.module.ts
-├── <feature>-routing.module.ts
-├── <feature>.component.{ts,html,scss}     # 清單頁（查詢 + 表格）
-├── api.service.ts                         # 後端 API：list/get/create/update/delete
-├── <feature>.ts                           # model / DTO 型別
-├── popup-add-<feature>/                    # 新增/編輯 表單彈窗
-│   ├── popup-add-<feature>.module.ts
-│   └── popup-add-<feature>.component.{ts,html,scss}
-└── config/
-    ├── search-item-config.ts
-    ├── field-item-config.ts
-    ├── form-config.ts
-    ├── add-<feature>-config.ts
-    ├── validate-rule.ts
-    └── role-id-config.ts
-```
-
-### 4.4 UI 元件庫（cub-lib-view-ng14plus + Angular Material，混用）
-- 企業自製元件庫：**`cub-lib-view-ng14plus`**（`cub-*` 元件/指令）+ **`cub-lib-view-iconfont`**（icon font），未加 scope，從 Nexus npm-all 取得。
-- **與 Angular Material 14.2.5 混用**：低階控件（按鈕/分頁/checkbox/dialog 等）用 `mat-*`；企業控件用 `cub-*`。
-- **匯入慣例**：大部分 `Cub*Module` 與 `Mat*Module` 集中在 **`SharedModule`** 匯入並 re-export；feature module 匯入 `SharedModule` 取得（少數如 `CubBreadcrumbModule` 在 layout module 直接匯入）。**新增元件時於 `SharedModule` 補匯入/匯出**，勿在各 feature 散落直接 import。
-- **app-local 共用元件（`app-*`）包裝 `cub-*`/Material + config-driven**（如 `app-table-search` 內部用 `cub-table`）。使用優先序：**`app-*` → `cub-*` → `mat-*`**。
-- theming：於 `angular.json` 的 `styles` 配置（Material `indigo-pink.css` + 企業 `cathay-bank.scss` + `cub-lib-view-iconfont.min.css`）；`styles.scss` 僅少量覆寫，**勿用 `@import` 重新引入主題**。
-- 元件 selector / directive 清單與「JSP 控件→元件」對照見 `docs/golden-template/README.md`。
-
-### 4.5 設計規範（Adobe XD）
-- UI/UX 以 **Adobe XD** 標註每頁細節與通用版型；與既有元件庫(`cub-lib-view-ng14plus`)+`cathay-bank` 主題為**同一套設計系統**（XD 是標註版，色/字/間距一致）。
-- **視覺一律用既有元件 + 主題變數**；**禁止寫死色碼/間距魔術數字、禁止為了「像 XD」override 元件內部樣式**（兩者本就一致）。
-- XD 規範的是：**用哪個元件、版面排列、各種狀態（空/載入/錯誤/disabled/無權限）、文案、RWD 斷點**（`DEVICE_BREAKPOINT`、`cub-mask [supportedDevice]`）。
-- AI 工具讀不到 XD 檔 → 每頁遷移時由人把 XD 摘成「元件 + 版面 + 狀態」寫進 config / 任務 prompt；**AI 不自行還原像素或臆測視覺**。
-- 通用 cover / 共用版型 → 對應 `main-layout` shell 與 `app-*`/`cub-*` 共用元件。
-- XD 與元件庫若有衝突 → **標記並升級確認**，勿硬改 CSS。
-
-## 5. JSP → Angular 對應
-| JSP | 做法 |
-|---|---|
-| 查詢表單 | `search-item-config` 條目 + `app-table-search` |
-| 結果表格（`c:forEach`） | 清單 component 的 table（資料來自 `api.service`） |
-| 新增/編輯表單 | `popup-add-<feature>` + `field-item-config`/`form-config` |
-| `c:if`/`c:choose` | `*ngIf`/`ngSwitch` |
-| `${expr}` (EL) | 插值 / property binding |
-| 後端驗證訊息 | `validate-rule.ts` + API error 對應 |
-| include/layout(header/側欄) | `main-layout` shell + `app-side-bar-list`/`app-user-menu`/`app-lang-menu` |
-| session 屬性 | layout/feature service 狀態 + token |
-
-## 6. 每頁遷移 Checklist（JSP → Angular feature）
-1. shell/根路由加一條 lazy route 指向 `<feature>.module`
-2. 建 `<feature>.module.ts` + `<feature>-routing.module.ts`
-3. 清單頁：`app-table-search` + `search-item-config` 查詢、表格呈現
-4. `api.service.ts`：對應後端 REST
-5. model `<feature>.ts`：對齊後端 DTO
-6. 表單彈窗 `popup-add-<feature>.*`：`app-field-item` + `field-item-config`/`form-config`，`validate-rule.ts` 驗證
-7. 權限 `role-id-config.ts`；語系搭配 `app-lang-menu`
-
-## 7. 工作流程約定
+## 3. 工作流程約定
 - 每個遷移任務 = 「複製 `deputy` 結構 + 寫 config + 接 `api.service`」對應一個 JSP 頁。
-- 任一改動後，確保**離線可 build**（見 §2 Phase 0 指令）。
+- 任一改動後，確保**離線可 build**（見 §2 Phase 0 指令，於對應資料夾執行）。
 - 遇 `TODO` 標記的未定項：**先向人確認，不要臆造慣例或外部來源。**
+
+## 子目錄規範（依資料夾）
+- 後端：[`backend/AGENTS.md`](backend/AGENTS.md)
+- 前端：[`frontend/AGENTS.md`](frontend/AGENTS.md)
+- 前端黃金樣板與「JSP 控件→元件」對照：`docs/golden-template/README.md`
