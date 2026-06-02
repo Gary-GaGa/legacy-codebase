@@ -76,5 +76,5 @@
 - [x] **D3 完成**：`is`/`iu` 共用 shell = **兩層**（外層 pageMap 流程頁 + 內層區塊 tabs），主鍵 `APPLICATION_NO`，IS=有擔/IU=無擔 → 目標架構與子樣式見 [`module-is-iu-shell.md`](module-is-iu-shell.md)、`golden-template` §八（解 R6/R3）
 - [x] **B3 完成**：cs/cu **重用外層 shell 機制**；差異 = 每模組 descriptor config + 企金內層元件（collateral `0250` 三分頁）+ **c0 評分/檢核橋接層**（`EPROC0_0110` 掛入 pageMap）→ [`module-cs-cu-shell.md`](module-cs-cu-shell.md)。M4/M5：殼免費、需 config + 企金 section（非「幾乎免費」但遠低於重做 shell）。
 - [ ] **c0 與主流程綁定**：M6/M7（i0/c0）的 c0 評分部分嵌在企金流程中 → 盤點 i0/c0 時與 M4/M5 一起考慮
-- [ ] 後續：`i0`/`c0` 財報/評分/CBC 檢視頁盤點（含 c0 評分橋接 `EPROC0_0110`）
+- [ ] **D6 進行中**：`i0`/`c0` 財報/評分/CBC 盤點（含 c0 評分橋接、i0↔c0 平行性、CBC 外部整合）→ [`module-i0-c0-scoring.md`](module-i0-c0-scoring.md)
 - [ ] **報表/列印頁**統一等 R2 報表服務拍板後另排（獨立 track）
