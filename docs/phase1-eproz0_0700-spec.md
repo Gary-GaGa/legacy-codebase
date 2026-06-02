@@ -152,3 +152,37 @@ src/app/emp-proxy/
 - **離線 build**：後端 `backend/` `mvn -o package`；前端 `frontend/` `yarn install --frozen-lockfile` + `ng build`。
 - **端到端**：登入(JWT) → 進頁(functionId 授權) → 查詢 → 新增一筆 → 表格出現 → 刪除 → 消失，全落 **Oracle 實表**。
 - **狀態**：空 / 載入 / 錯誤 / 驗證失敗 皆正確呈現。
+
+## 9. 附錄：A1 / A2 取得方式（拿回來我補 entity / 權限）
+
+### A1 — `TB_EMP_PROXY` DDL（舊系統 DB2）
+先在 repo 找（Copilot）：
+```
+@workspace 找 TB_EMP_PROXY 的建表 DDL 或 ORM mapping：搜尋 "TB_EMP_PROXY" 的
+CREATE TABLE、.ddl/.sql、hbm.xml 或 entity 定義，列出欄位型別/長度/nullable/primary key。
+同樣給 TB_EMP_PROFILE、TB_BRANCH_PROFILE 的欄位。
+```
+找不到就直接查 DB2（syscat）：
+```sql
+-- 欄位
+SELECT colname, typename, length, scale, nulls, "DEFAULT"
+FROM   syscat.columns
+WHERE  tabschema='OVSLXLON01' AND tabname='TB_EMP_PROXY'
+ORDER  BY colno;
+-- 主鍵
+SELECT kc.colname, kc.colseq
+FROM   syscat.tabconst tc
+JOIN   syscat.keycoluse kc ON tc.constname = kc.constname
+WHERE  tc.tabschema='OVSLXLON01' AND tc.tabname='TB_EMP_PROXY' AND tc.type='P'
+ORDER  BY kc.colseq;
+```
+→ 回來我把 DB2 型別映射到 Oracle（`VARCHAR→VARCHAR2`、`TIMESTAMP→TIMESTAMP`、`DECIMAL→NUMBER`…）並定稿 `EmpProxy` / `EmpProxyId`（§2.1）。
+
+### A2 — roleId 進頁授權白名單
+repo / 設定查找（Copilot）：
+```
+@workspace AuthManager 怎麼決定哪些 roleId 能進某個 functionId？找 FunctionAuth.xml /
+MenuTree.xml / UserRole.xml 或權限 DB 表中與 "EPROZ0_0700" 對應的角色；
+說明 function→role 對映的來源（XML 還是 DB 表名）。
+```
+→ 若在執行環境 DB：找到權限表後 `WHERE function_id='EPROZ0_0700'`。回來我把白名單填進新後端 `APIAuthorizationFilter`/權限表（`apiPath=/api/emp-proxy/**` ↔ roleId）。

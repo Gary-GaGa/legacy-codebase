@@ -71,6 +71,7 @@
 ## 5. 下一步
 - [x] **R1（DB 目標）= DB2→Oracle 遷移**、**R2（報表）= 換新報表服務（獨立 track）**
 - [x] **D2 完成**：Phase 1 切片 = `EPROZ0_0700` → build spec 已產出
-- [ ] 在實際 monorepo 依 spec 實作 Phase 1（補開放項 A1–A5：DDL/權限白名單/Self-Others/XD 連結）
-- [ ] 依模組逐步展開「逐頁明細」（建議順序：`z0` 簡單查詢 → `is`/`iu` 共用 shell → `cs`/`cu` 重用 → `i0`/`c0` 檢視）
+- [ ] 在實際 monorepo 依 spec 實作 Phase 1（補開放項 A1–A5：DDL/權限白名單/Self-Others/XD 連結）→ A1/A2 取得方式見 spec §9
+- [ ] **D3 進行中**：`is`/`iu` 共用 shell 盤點 → [`module-is-iu-shell.md`](module-is-iu-shell.md)（設計一次、is/iu/cs/cu 重用，解 R6/R3）
+- [ ] 後續模組：`cs`/`cu` 重用 shell → `i0`/`c0` 檢視
 - [ ] **報表/列印頁**統一等 R2 報表服務拍板後另排（獨立 track）
