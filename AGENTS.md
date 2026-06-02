@@ -1,9 +1,8 @@
 # AGENTS.md — 全端 → 前後端分離 重構規範（共用）
 
 > 給 **Codex CLI / GitHub Copilot** 的專案規範，實作前**必讀並遵守**。
-> 本 repo 為 **monorepo**（`backend/` + `frontend/`）。本檔為**跨前後端的共用規則**；
-> 後端規範見 [`backend/AGENTS.md`](backend/AGENTS.md)、前端見 [`frontend/AGENTS.md`](frontend/AGENTS.md)。
-> Codex 會自動讀「最接近被編輯檔案」的 AGENTS.md（root 共用 + 子目錄專屬會疊加）。
+> 重構系統實際為**前後端兩個獨立專案**（原始碼**不外流、不上 GitHub**）。本規劃 repo 以 `backend/`+`frontend/` 對應之，僅放**規範/規格/backlog，不放原始碼**。
+> 部署：把 [`frontend/AGENTS.md`](frontend/AGENTS.md) 放到**前端專案**根目錄、[`backend/AGENTS.md`](backend/AGENTS.md) 放到**後端專案**根目錄；各專案 `.github/copilot-instructions.md` 用對應的 `frontend|backend.instructions.md` 內容。本檔（共用規則）兩專案皆適用。
 > 標 `TODO` 之處尚待確認——遇到時**先詢問或保守處理，切勿臆造**。
 
 ## 0. 專案目標
