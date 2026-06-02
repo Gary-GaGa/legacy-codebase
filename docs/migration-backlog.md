@@ -80,4 +80,5 @@
 - [ ] **c0 與主流程綁定**：M6/M7（i0/c0）的 c0 評分部分嵌在企金流程中 → 盤點 i0/c0 時與 M4/M5 一起考慮
 - [ ] **D6 完成**：i0/c0 **可共用 shell + config**（各頁 trx/表分開）；多為**輸入表單**非唯讀；c0 評分經 `pageCheckMap` 綁主流程；CBC=獨立資料接入 track（R8）→ [`module-i0-c0-scoring.md`](module-i0-c0-scoring.md)
 - [ ] 待選下一批：D4 審批段（`0170~`/`0270`）細掘｜各模組逐頁 config 展開｜或進實作
+- [ ] **新 DB schema（`db-schema-catalog.md`）**：跑 Prompt B 抽 Phase 1 三表 → 收掉 A1；確認 CBC/財報/評分表是否在另一份 Excel；高價值表 `TB_APP_NO_SEQ`(B4)/`TB_PAGE_MENU`(shell)/`TB_FUNCTION_AUTH`(R7) 之後批次抽
 - [ ] **報表/列印頁**統一等 R2 報表服務拍板後另排（獨立 track）

@@ -98,7 +98,7 @@ interface PageDescriptor {
 
 ### 5.4 後端對應（重要）
 - 把 `EPRO_Z0Z006.formatIS()/formatIU()`（pageMap）移植為
-  **`GET /api/loan-application/{applicationNo}/pages?type=IS&mode=edit`** → 回傳 **server 權威的 page descriptor 清單**（可見頁/順序/權限）。
+  **`GET /api/loan-application/{applicationNo}/pages?type=IS&mode=edit`** → 回傳 **server 權威的 page descriptor 清單**（可見頁/順序/權限）。新 DB 已有 **`TB_PAGE_MENU`** 表，可作為流程頁清單來源。
 - 前端 shell **照後端回傳 render，不前端硬寫可見頁**（忠於舊系統由後端決定）。
 - 各頁：`GET …/{section}`（initQuery）+ `POST …/{section}/execute`（回寫）。
 
@@ -109,4 +109,4 @@ interface PageDescriptor {
 - **B1**：審批段（`0170~0176` vs `0270`）欄位/動作細節 → 做 approval 頁前再開 D4 深掘。
 - **B2**：upload/report 頁依 R2 暫緩（報表服務未定）。
 - **B3**：cs/cu 是否與 is/iu 共用同一 shell（預期是，僅 config 差）→ 盤點 cs 時確認。
-- **B4**：`APPLICATION_NO` 從何產生 / 進件入口（疑為 `EPROZ0_0200`）→ 串接點待確認。
+- **B4**：✅ **（解）** `APPLICATION_NO` 序號來自新表 **`TB_APP_NO_SEQ`**（HOME 標「系統更新」）；進件入口仍待確認（疑 `EPROZ0_0200`）。
