@@ -98,7 +98,8 @@ interface PageDescriptor {
 
 ### 5.4 後端對應（重要）
 - 把 `EPRO_Z0Z006.formatIS()/formatIU()`（pageMap）移植為
-  **`GET /api/loan-application/{applicationNo}/pages?type=IS&mode=edit`** → 回傳 **server 權威的 page descriptor 清單**（可見頁/順序/權限）。新 DB 已有 **`TB_PAGE_MENU`** 表，可作為流程頁清單來源。
+  **`GET /api/loan-application/{applicationNo}/pages?...`** → 回傳 **server 權威的 page descriptor 清單**（可見頁/順序/權限）。資料源 = 新 DB **`TB_PAGE_MENU`**。
+- `TB_PAGE_MENU` 鍵 = `LON_ATTRIBUTE`(個/企) + `SECURE_ATTRIBUTE`(有擔/無擔) + `PRODUCT_CODE` + `LON_TYPE_CODE`(新/增/展/變) → `PAGE_CODE`（頁籤頁面清單字串）。**descriptor set 的真正鍵比原設想多 `PRODUCT_CODE`/`LON_TYPE_CODE` 兩軸**；頁面存取/編輯權再查 `TB_FUNCTION_AUTH`/`TB_ROLE_TASK`（見 `db-schema-catalog.md` §4）。
 - 前端 shell **照後端回傳 render，不前端硬寫可見頁**（忠於舊系統由後端決定）。
 - 各頁：`GET …/{section}`（initQuery）+ `POST …/{section}/execute`（回寫）。
 

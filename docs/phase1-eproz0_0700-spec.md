@@ -100,7 +100,7 @@ interface EmpProxyUpsertRequest {   // PK=EMP_ID → 新增/更新皆 upsert
 - `EmpProxyService`：寫入方法標 Spring `@Transactional`；依 `EMP_ID` **upsert**（`save()`，PK 存在即更新）→ 重查回傳；刪除依 `EMP_ID`。
 - `EmpProxyRepository extends JpaRepository<EmpProxy, String>`（PK=`EMP_ID`）：結果查詢用 `@Query(nativeQuery=true)`（Oracle）；簡單查詢用 derived/JPQL。
 - `EmpProxyMapper`（MapStruct `componentModel="spring"`）：entity ↔ DTO。
-- Security：`APIAuthorizationFilter` 對 `apiPath=/api/emp-proxy/**`。✅ 舊權限為 **DB 驅動**（`AuthManager` source=db）：`TB_FUNCTION_INFO`(FUNC_ID,FUNC_URL,LANG_KEY) + `TB_FUNCTION_AUTH`(FUNC_ID,USER_ROLE)；`checkPermission` 把 bean 名**去底線**當 funcId → 本頁 funcId = **`EPROZ00700`**（`EPROZ0_0700` 去底線）。新後端：`apiPath=/api/emp-proxy/**` ↔ funcId `EPROZ00700` ↔ `USER_ROLE` 白名單（**遷移 `TB_FUNCTION_AUTH` 資料列**即可，與新 filter 同型）。實際 roleId 為 runtime DB 內容（§9 A2 查得）。
+- Security（✅ 新 DB 權限模型，三層）：`APIAuthorizationFilter` 讀 **`TB_API_AUTH`**（`API_ID`=apiPath → `ROLE`，`REF_FUNCTION_ID` 連回功能）。本頁遷移：新增 `TB_API_AUTH` 列 → `API_ID=/api/emp-proxy/**`、`REF_FUNCTION_ID=EPROZ00700`、`ROLE` 取自 `TB_FUNCTION_AUTH`（`FUNCTION_ID=EPROZ00700` 的 `ROLE`）。頁面存取/編輯權另查 `TB_FUNCTION_AUTH`/`TB_ROLE_TASK`（前端 `role-id-config`）。實際 `ROLE` 值為 runtime 資料（§9 A2）。
 
 ### 4.4 SQL 改寫範例（`SQL_QUERY_001` → Oracle，代理結果清單）
 ```sql
@@ -147,7 +147,7 @@ src/app/emp-proxy/
 
 ## 7. 開放項（不阻塞，落地前要補）
 - ✅ **A1（完成）**：新 DB schema 已取得（型別/長度/nullable/PK/default）→ entity 定稿（§2）。⚠️ 衍生需業務確認：**PK=`EMP_ID` 單鍵與舊 DAO 複合鍵不一致**（語意 = 一人一筆代理）。
-- 🟡 **A2（機制已定）**：舊權限走 DB（`TB_FUNCTION_INFO`+`TB_FUNCTION_AUTH`，FUNC_ID/USER_ROLE），funcId=`EPROZ00700`（bean 去底線）。✅ 與新 `APIAuthorizationFilter`（apiPath+roleId 查 DB）**同型 → 遷移資料即可**。residual：實際 `USER_ROLE` 資料列為 runtime DB 內容（§9 A2 查），及 `FUNC_ID → apiPath` 對映。
+- 🟡 **A2（機制 + 表已定）**：新 DB 權限三層 —— `TB_FUNCTION_AUTH`(FUNCTION_ID→ROLE)、`TB_API_AUTH`(API_ID→ROLE + `REF_FUNCTION_ID` 連回功能，filter 讀此)、`TB_ROLE_TASK`(PAGE_CODE+FUNCTION→ROLE 編輯權)、`TB_ROLE_DEFINE`(角色主檔)。funcId=`EPROZ00700`（bean 去底線）。residual：① 查 runtime `ROLE` 值；② 建本頁 `TB_API_AUTH` 列（見 §9 A2）。
 - **A3**：Self/Others 角色分支（`101`/`102`/`103`/`405` 等）細節 → 第一版可**只做 Self**，Others 標 TODO。
 - **A4**：`PROXY_ID` 與 `RETURN_CASE_TO_CA` 業務語意確認。
 - **A5**：對應 XD 畫面連結（你補）。
@@ -191,14 +191,13 @@ repo / 設定查找（Copilot）：
 MenuTree.xml / UserRole.xml 或權限 DB 表中與 "EPROZ0_0700" 對應的角色；
 說明 function→role 對映的來源（XML 還是 DB 表名）。
 ```
-→ ✅ 已查明機制：權限在 DB 表 `TB_FUNCTION_AUTH`（非 XML）。取實際 roleId 清單（⚠️ **funcId 去底線** = `EPROZ00700`）：
+→ ✅ 已查明機制 + 新 DB 表（權限三層）。取實際角色清單與建本頁授權（⚠️ funcId 去底線 = `EPROZ00700`；`ROLE` 為角色清單字串）：
 ```sql
-SELECT a.USER_ROLE
-FROM   OVSLXLON01.TB_FUNCTION_AUTH a
-WHERE  a.FUNC_ID = 'EPROZ00700';
--- 一併確認 funcId 寫法（含/不含底線）：
-SELECT FUNC_ID, FUNC_URL, LANG_KEY
-FROM   OVSLXLON01.TB_FUNCTION_INFO
-WHERE  FUNC_ID IN ('EPROZ00700','EPROZ0_0700');
+-- 功能→角色（頁存取白名單）
+SELECT ROLE FROM TB_FUNCTION_AUTH WHERE FUNCTION_ID = 'EPROZ00700';
+-- API→角色（APIAuthorizationFilter 實際讀此；遷移時為本頁新增列）
+SELECT API_ID, ROLE, REF_FUNCTION_ID FROM TB_API_AUTH WHERE REF_FUNCTION_ID = 'EPROZ00700';
+-- 頁面操作（可否編輯）
+SELECT PAGE_CODE, FUNCTION, ROLE FROM TB_ROLE_TASK WHERE PAGE_CODE = 'EPROZ00700';
 ```
-回來我把 `USER_ROLE` 清單填進新後端權限表（`apiPath=/api/emp-proxy/**` ↔ funcId `EPROZ00700` ↔ roleId）。
+回來我把：① `ROLE` 清單對映、② 本頁 `TB_API_AUTH` 列（`API_ID=/api/emp-proxy/**`、`REF_FUNCTION_ID=EPROZ00700`、`ROLE` 同 `TB_FUNCTION_AUTH`）寫進設計。

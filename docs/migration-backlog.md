@@ -62,7 +62,7 @@
 - **R4（中）後端是重寫非搬移**：自製 `HttpDispatcher`/`@CallMethod` action → 逐一對應成 REST endpoint + service/repository；DTO/驗證重新定義。
 - **R5（低）自訂 taglib 語意**：`CXL`/`cathaybk` TLD 在 jar，需原始碼/文件確認輸出，才能正確對應元件。
 - **R6（重用）**：is↔iu、cs↔cu、_0100↔_0200 高度平行 → 若各自搬會 4–8 倍重工。**務必先抽共用 shell 再展開。**
-- **R7（跨頁通用，正面）權限遷移**：舊權限已是 DB 驅動（`TB_FUNCTION_INFO`/`TB_FUNCTION_AUTH`，FUNC_ID/USER_ROLE），與新 `APIAuthorizationFilter` 同型 → **整系統權限 = 搬資料 + `FUNC_ID(去底線)↔apiPath` 對映**，每頁低成本、可建一張對映表統一處理（非逐頁重寫）。
+- **R7（跨頁通用，正面）權限遷移**：新 DB 權限三層 —— `TB_FUNCTION_AUTH`(FUNCTION_ID→ROLE 頁存取)、**`TB_API_AUTH`(API_ID→ROLE + `REF_FUNCTION_ID` 連回功能；`APIAuthorizationFilter` 讀此)**、`TB_ROLE_TASK`(PAGE_CODE+FUNCTION→ROLE 操作/編輯權)、`TB_ROLE_DEFINE`(角色主檔)。→ 每頁遷移 = 依 funcId 建 `TB_API_AUTH` 列（`REF_FUNCTION_ID` 即 `FUNC_ID↔apiPath` 橋接），`ROLE` 取自 `TB_FUNCTION_AUTH`。統一處理、非逐頁重寫。
 - **R8（外部整合 track）CBC 聯徵資料接入**：i0/c0 的 CBC 為外部信用/聯徵資料的接入與維護（本地 `EPRO_TB_CBC_*` 表讀寫），非報表軌 → **獨立資料接入 track**（shell 可共用、資料來源/adapter 分開），初期不混入。
 - **共用資產（D3+B3+D6 收斂）**：主流程與 i0/c0 共用同一機制 → 一次做好 ① tab shell ② `pageCheckMap`/checkpoint 回寫 ③ done 狀態聚合 ④ print/open 封裝。
 

@@ -61,3 +61,16 @@
 - 財報：`TB_FIN_STATEMENT_MAIN`、`_BALANCE_FI/GI`、`_CASHFLOW_FI/GI`、`_INCOME_FI/GI`
 - 財務評估：`TB_FINANCIAL_EVALUATION_FI/GI/INFO/INFO_CORP/INFO_S`
 - Scorecard：`TB_SCORE_CARD_PARAM_MAIN/SUB/DETAIL`、`TB_IND_SCRCARD`、`TB_CORP_SCRCARD`、`TB_COLL_ASS`
+
+## 4. B1 基礎建設表細節（shell / 案號 / 權限）✅ 已回填
+### `TB_PAGE_MENU`（shell 流程頁來源）
+- 邏輯鍵：`LON_ATTRIBUTE`(個/企) + `SECURE_ATTRIBUTE`(有擔/無擔) + `PRODUCT_CODE` + `LON_TYPE_CODE`(新/增/展/變)；`PAGE_CODE` VARCHAR2(350) = 該組合下「頁框的頁籤頁面清單」（分隔字串）。
+- → **shell PageDescriptor set 的後端來源**；可見頁 = 依這 4 個業務屬性查 `PAGE_CODE`。**新增軸：`PRODUCT_CODE`、`LON_TYPE_CODE`**（比原設想的 個/企 × 有擔無擔 × 申請覆核 更細）。
+### `TB_APP_NO_SEQ`（APPLICATION_NO 序號）
+- PK (`APP_GEN_DATE` YYMMDD, `APP_TYPE` 個/企有擔無擔, `LON_TYPE_CODE` 新增展變) + `MAX_SEQ` NUMBER(5)。
+- → 案號 = 日期 + 類型 + 貸放類型 + 流水號（依此鍵遞增）。
+### 權限三層（R7 具體化）
+- **`TB_FUNCTION_AUTH`**（頁/功能存取）：`FUNCTION_ID`(20) → `ROLE`(100，角色清單字串)。無顯式 PK（FUNCTION_ID 為邏輯鍵）。
+- **`TB_API_AUTH`**（API 端點存取 ← `APIAuthorizationFilter` 讀）：PK `API_ID`(100) → `ROLE`(100) + **`REF_FUNCTION_ID`(100，連回功能)** ← **R7 的 `FUNC_ID↔apiPath` 橋接已建模**。
+- **`TB_ROLE_TASK`**（頁面操作權，如可否編輯）：PK (`PAGE_CODE`(20), `FUNCTION`(20，暫 `E`=EDIT)) → `ROLE`(300)、`PAGE_NAME`。→ 控 review/readonly、欄位可編輯。
+- **`TB_ROLE_DEFINE`**（角色主檔）：PK `ROLE_ID`(3) → `ROLE_NAME`/`ROLE_DESC`。⚠️ 此處 `ROLE_ID` VARCHAR2(3)，但 `TB_EMP_PROFILE.ROLE_ID` VARCHAR2(5) → 留意。
