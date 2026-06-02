@@ -74,7 +74,7 @@
 ## 5. 下一步
 - [x] **R1（DB 目標）= DB2→Oracle 遷移**、**R2（報表）= 換新報表服務（獨立 track）**
 - [x] **D2 完成**：Phase 1 切片 = `EPROZ0_0700` → build spec 已產出
-- [ ] 在實際 monorepo 依 spec 實作 Phase 1。開放項：🟡 A1（欄位/PK 已確認、entity 可實作，僅缺 DBA 的欄位長度/nullable）、⬜ A2（roleId 授權白名單，仍待查）、A3 Self/Others、A5 XD 連結。A1/A2 取得方式見 spec §9
+- [ ] 在實際 monorepo 依 spec 實作 Phase 1。開放項：🟡 A1（欄位/PK 已確認、entity 可實作；**精確型別/長度/nullable 改由新 DB schema Excel 取得** → `db-schema-catalog.md`）、⬜ A2（roleId 授權白名單，runtime 查）、A3 Self/Others、A5 XD 連結。A1/A2 取得方式見 spec §9
 - [x] **D3 完成**：`is`/`iu` 共用 shell = **兩層**（外層 pageMap 流程頁 + 內層區塊 tabs），主鍵 `APPLICATION_NO`，IS=有擔/IU=無擔 → 目標架構與子樣式見 [`module-is-iu-shell.md`](module-is-iu-shell.md)、`golden-template` §八（解 R6/R3）
 - [x] **B3 完成**：cs/cu **重用外層 shell 機制**；差異 = 每模組 descriptor config + 企金內層元件（collateral `0250` 三分頁）+ **c0 評分/檢核橋接層**（`EPROC0_0110` 掛入 pageMap）→ [`module-cs-cu-shell.md`](module-cs-cu-shell.md)。M4/M5：殼免費、需 config + 企金 section（非「幾乎免費」但遠低於重做 shell）。
 - [ ] **c0 與主流程綁定**：M6/M7（i0/c0）的 c0 評分部分嵌在企金流程中 → 盤點 i0/c0 時與 M4/M5 一起考慮
