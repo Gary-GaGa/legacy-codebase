@@ -72,7 +72,7 @@
 | 新頁 | 名稱 | FE | BE | 補法（打既有 endpoint）|
 |---|---|---|---|---|
 | `EPROZ00700` | Assign Substitute | 未做 | ✅ `DeputyController` | 做前端 → `epl-case-deputy-options/-query-deputy/-insert-deputy/-delete-deputy`（任務單已更新）|
-| `EPROZ00610` | Credit Reviewer On Hand Status | 未做 | ✅ | → `epl-case-credit-reviewer-onhandstatus-query-list` |
+| `EPROZ00610` | Credit Reviewer On Hand Status | 未做 | ✅ | → `epl-case-credit-reviewer-onhandstatus-query-list`（任務單 `build-tasks/B-z0-reports-status-frontend.md`）|
 | `EPROZ00660` | CAD On Hand Status | 未做 | ✅ | → `epl-case-CAD-onhandstatus-query-list` |
 | `EPROZ00620` | Application Delete Report | 未做 | ✅ | → `epl-case-application-delete-report-btn-search/-query-list` |
 | `EPROZ00630` | Deviation Case Report | 未做 | ✅（含 download）| → `epl-list-deviation`/`-file-download-deviation`/`-sele-dept-loantype-deviation` |
