@@ -1,0 +1,59 @@
+# === legacy-codebase 統一 .gitignore ===
+# 規劃文件 + frontend/（Angular 14）+ backend/（Spring Boot）合一
+# pattern 會比對任意深度，故同時涵蓋 frontend/ 與 backend/ 子資料夾
+
+# --- 相依 / build 產出（前端 Angular） ---
+node_modules/
+dist/
+tmp/
+out-tsc/
+.angular/cache/
+coverage/
+
+# --- build 產出（後端 Maven/Java） ---
+target/
+build/
+*.class
+hs_err_pid*
+replay_pid*
+
+# --- logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# --- 環境 / 機密（勿提交帳密；視實況解除註解） ---
+.env
+.env.*
+# backend/src/main/resources/application-uat.properties
+# backend/src/main/resources/application-prod.properties
+# backend/src/main/resources/application-local.properties
+# frontend/src/environments/environment.local.ts
+
+# --- IDE ---
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+.classpath
+.project
+.settings/
+.factorypath
+.springBeans
+.sts4-cache/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# ⚠️ 勿忽略（要進版控）：AGENTS.md、frontend/.yarnrc、frontend/yarn.lock、
+#   frontend/angular.json、各 package.json/pom.xml、frontend|backend/src/**、mvnw、.mvn/wrapper/
