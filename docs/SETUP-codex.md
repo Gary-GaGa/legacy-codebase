@@ -98,6 +98,7 @@
 | Codex 自己編欄位 | 沒叫它讀後端 controller → 在任務裡明確加「先讀後端 `XxxController` 的 DTO 再做」 |
 | 沒套慣例（沒用 config-driven 等）| `AGENTS.md` 沒在專案根、或你不是在專案根啟動 Codex → 確認位置後重啟 |
 | 離線 build 裝不到套件 | 沒走 Nexus → 檢查 `.yarnrc` / `~/.m2/settings.xml`（樣板見 `docs/env/`）|
+| 切 Node 後 `yarn`/`ng` 不認得 | 全域工具綁 Node 版本 → 為 16.20.2 重裝 yarn（走 Nexus：`npm i -g yarn --registry=http://88.8.70.216:8081/repository/npm-all/`）；`ng` **不裝全域**，`yarn install` 後用 `yarn ng` / `npx ng`（專案內建 CLI 14.2.13）|
 | Codex 改太多 / 跑偏 | `git restore .` 還原，把任務**拆更小**再給（例如先只做查詢、再做表格）|
 | 同型頁要做很多次 | 把共用提示存成 `~/.codex/prompts/`（見 §2），之後叫 `/指令` 只補頁名 |
 
