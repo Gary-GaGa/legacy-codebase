@@ -57,8 +57,8 @@
    - （若各專案還沒有 `.gitignore`）複製 `docs/env/frontend.gitignore`→前端、`docs/env/backend.gitignore`→後端，各改名為 `.gitignore`。
 3. **確認基準可 build**（先確定原本是好的，之後才分得出是不是你改壞）：
    - **⚠️ 前端 Node 必須 = 16.20.2**（專案鎖定；Node 18/20+ 會壞 OpenSSL/node-sass）。用 nvm 切：`nvm install 16.20.2` → `nvm use 16.20.2` → `node -v` 確認 v16；**切版後刪 `node_modules` 重裝**（原生模組綁 Node ABI，走 Nexus）。前端專案放 `.nvmrc`（內容 `16.20.2`）可固定。**勿用「升 Node + `--openssl-legacy-provider`」硬撐。**
-   - 後端：`mvn -o package`
-   - 前端：`yarn install --frozen-lockfile` 然後 `ng build`
+   - 後端：先裝 Nexus 設定 `copy docs\env\maven-settings.xml %USERPROFILE%\.m2\settings.xml`（否則走 Maven Central、找不到 `ojdbc8`/`cub.util` 內部套件）；build：`mvn clean package -Dmaven.test.skip=true`（baseline 測試與 main 不同步 → **暫跳過測試編譯**；離線檢查再加 `-o`）。
+   - 前端：`yarn install --frozen-lockfile` 然後 `yarn ng build`
 4. **開工作分支**：`git switch -c feat/eproz00610`。
 
 ### Step 1 — 實作一頁（選頁 → 開做 → build → 自驗）
@@ -101,6 +101,8 @@
 | 離線 build 裝不到套件 | 沒走 Nexus → 檢查 `.yarnrc` / `~/.m2/settings.xml`（樣板見 `docs/env/`）|
 | 切 Node 後 `yarn`/`ng` 不認得 | 全域工具綁 Node 版本 → 為 16.20.2 重裝 yarn（走 Nexus：`npm i -g yarn --registry=http://88.8.70.216:8081/repository/npm-all/`）；`ng` **不裝全域**，`yarn install` 後用 `yarn ng` / `npx ng`（專案內建 CLI 14.2.13）|
 | PowerShell 擋 `yarn.ps1`（執行原則 Restricted、UnauthorizedAccess）| `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`（免 admin）；若公司用 Group Policy 鎖住改不了 → 改用 `yarn.cmd`，或在 **CMD / Git Bash** 跑（不受 PS 執行原則限制）|
+| 後端 build 連到 `repo.maven.apache.org`、找不到 `ojdbc8`/`cub.util:db-encrypt` | 沒裝 Nexus settings.xml → 複製 `docs/env/maven-settings.xml`→`%USERPROFILE%\.m2\settings.xml`，`mvn -U clean package`（`-U` 強制清掉「找不到」失敗快取；必要時刪 `~/.m2/repository/com/oracle`、`~/.m2/repository/cub`）|
+| 後端 testCompile `cannot find symbol`（FileService/JwtUtil/LoginEmployee…）| **既有測試與 main 不同步、非你造成** → baseline 用 `mvn clean package -Dmaven.test.skip=true`（連測試編譯都跳；勿用 `-DskipTests`，那仍會編譯測試）。測試修復另列工作 |
 | Codex 改太多 / 跑偏 | `git restore .` 還原，把任務**拆更小**再給（例如先只做查詢、再做表格）|
 | 同型頁要做很多次 | 把共用提示存成 `~/.codex/prompts/`（見 §2），之後叫 `/指令` 只補頁名 |
 
