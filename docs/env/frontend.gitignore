@@ -1,0 +1,51 @@
+# === 前端 .gitignore — Angular 14 + Yarn Classic + Node 16 ===
+# 用法：複製到「前端專案」根目錄並改名為 .gitignore
+
+# 相依套件
+/node_modules/
+
+# build 產出
+/dist/
+/tmp/
+/out-tsc/
+/bazel-out/
+
+# Angular 快取
+/.angular/cache/
+
+# 測試 / 覆蓋率
+/coverage/
+/.nyc_output/
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 環境 / 機密（勿提交；視專案實況解除註解）
+.env
+.env.*
+# src/environments/environment.local.ts
+
+# IDE / 編輯器
+.idea/
+.project
+.classpath
+.settings/
+*.iml
+*.launch
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# ⚠️ 要「版本控管、勿忽略」：yarn.lock、.yarnrc、angular.json、package.json、tsconfig*.json、src/**

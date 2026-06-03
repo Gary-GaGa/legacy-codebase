@@ -1,0 +1,57 @@
+# === 後端 .gitignore — Spring Boot 3.3 + Java 17 + Maven ===
+# 用法：複製到「後端專案」根目錄並改名為 .gitignore
+
+# Maven build
+target/
+!.mvn/wrapper/maven-wrapper.jar
+build/
+
+# 編譯產物
+*.class
+
+# logs
+*.log
+/logs/
+
+# Spring Initializr
+HELP.md
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# IDE - Eclipse / STS
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+# IDE - NetBeans
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+
+# IDE - VS Code
+.vscode/
+
+# JVM 當機記錄
+hs_err_pid*
+replay_pid*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 機密外部化（勿提交帳密；uat/prod 由環境/容器注入）；視實況解除註解：
+# src/main/resources/application-uat.properties
+# src/main/resources/application-prod.properties
+# src/main/resources/application-local.properties
+
+# ⚠️ 要「版本控管、勿忽略」：pom.xml、mvnw、mvnw.cmd、.mvn/wrapper/、src/**

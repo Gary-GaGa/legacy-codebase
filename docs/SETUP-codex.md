@@ -54,6 +54,7 @@
 1. **裝 Codex CLI**：`npm install -g @openai/codex`，再 `codex login`（或設環境變數 `OPENAI_API_KEY`，依官方）。
 2. **放 AGENTS.md**（§1 的 `cat`）：確認**前端專案根目錄**、**後端專案根目錄**各有一份 `AGENTS.md`。
    - 驗證有讀到：在專案根啟 `codex`，問一句「你現在遵循哪些專案規範？」→ 它應該複述 AGENTS.md 重點。
+   - （若各專案還沒有 `.gitignore`）複製 `docs/env/frontend.gitignore`→前端、`docs/env/backend.gitignore`→後端，各改名為 `.gitignore`。
 3. **確認基準可 build**（先確定原本是好的，之後才分得出是不是你改壞）：
    - **⚠️ 前端 Node 必須 = 16.20.2**（專案鎖定；Node 18/20+ 會壞 OpenSSL/node-sass）。用 nvm 切：`nvm install 16.20.2` → `nvm use 16.20.2` → `node -v` 確認 v16；**切版後刪 `node_modules` 重裝**（原生模組綁 Node ABI，走 Nexus）。前端專案放 `.nvmrc`（內容 `16.20.2`）可固定。**勿用「升 Node + `--openssl-legacy-provider`」硬撐。**
    - 後端：`mvn -o package`
