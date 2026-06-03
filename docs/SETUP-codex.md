@@ -60,3 +60,10 @@ cat AGENTS.md backend/AGENTS.md > <你的後端專案路徑>/AGENTS.md
 - 要 entity/欄位：`db-schema-catalog.md`（JIT 抽）
 - 頁面內部結構（頁籤/區塊）：`module-is-iu-shell.md`/`module-cs-cu-shell.md`/`module-i0-c0-scoring.md`
 - 所有定案：`decisions.md`
+
+## 6. 需要加 Skill / Agent 嗎？→ 不用
+- 「Skill / Subagent」是 **Claude Code** 的功能，**Codex CLI 沒有對應機制** → 專案裡不需要裝 skill 或定義 agent。
+- Codex CLI 的等價物：**`AGENTS.md`（必要，= config）** + `~/.codex/prompts/`（可選，存重複任務為 slash 指令）+ `~/.codex/config.toml`（可選，模型/approval）+ MCP（這次用不到）。
+- 補完 30%（複製既有 pattern + 寫 config/controller）**只靠 `AGENTS.md` 就夠**。
+- 不需要協調 agent 串前後端 → 手動在兩專案各跑 Codex、用 DTO 橋接（§3）。
+- 可選小優化：B 批/A 批同型頁多 → 把各批「共用提示」存成 `~/.codex/prompts/`（如 `/fe-z0-page`、`/be-mirror-i0`），叫出來只補頁名。純省打字。
