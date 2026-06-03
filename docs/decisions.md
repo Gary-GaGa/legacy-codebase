@@ -32,6 +32,7 @@
 | npm registry (group) | `http://88.8.70.216:8081/repository/npm-all/`（Nexus **group**，已代理公開 npmjs + 託管 @internal；依 yarn.lock 多數套件 resolved 指向此） |
 | 套件來源限制 | **一律走內網 Nexus，禁止連公開 registry** |
 | 既有資產 | 已有「重構後的前後端」可參考；後端架構大致定案、前端需萃取樣板 |
+| 文件語言 | **繁中 + 英文技術術語（維持現狀）**；程式識別字/表名/endpoint/config key 一律英文。Codex 與團隊皆可讀，不全英文化 |
 
 ## 二、待確認項目（用 Copilot 在實際專案查證後回填）
 
