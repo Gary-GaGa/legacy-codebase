@@ -2,6 +2,8 @@
 
 > 全端（Java 8 + JSP）→ 後端 Java 17 + Spring Boot 3.x／前端 Angular 14.x。
 > 實作由 Codex CLI / GitHub Copilot 執行（不使用 Claude 產品）；本 repo 作為規劃、設定樣板與黃金樣板來源。
+>
+> ⚠️ **已超越（2026-06）/ 僅存歷史**：本檔為最初「從零遷移（絞殺者 + reverse proxy）」計畫。實情為**重構專案已完成 ~70%、現為補完剩 30%**（非從零、無絞殺 proxy）。**最新事實/策略以 `decisions.md`、`page-mapping.md` 為準**；本檔部分內容（reverse proxy 階段、`scope=@internal` 等）已不適用。
 
 ## 背景與硬限制
 - **套件來源一律走內網 Nexus，禁止連公開 registry。**

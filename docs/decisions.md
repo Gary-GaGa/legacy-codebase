@@ -3,7 +3,7 @@
 > 本檔記錄已確認事實與待確認項目，作為產出 `AGENTS.md` /
 > `.github/copilot-instructions.md` 與各樣板的依據。每輪討論更新。
 
-最後更新：2026-06-01
+最後更新：2026-06-03
 
 ## 一、已確認事實
 
@@ -39,7 +39,7 @@
 - [ ] 後端 Spring Boot 確切版本（BOM/parent 版本）— prompt A1
 - [ ] 後端 Java 版本設定方式（java.version / compiler.release）— prompt A1
 - [x] 前端版本與 `engines.node`（A2 已驗證）：Angular 14.2.x / TS 4.7.2 / RxJS 7.5 / zone.js 0.11.4 / **Node 16.20.2**
-- [x] 前端企業自製元件庫 **scope = `@internal`** — A2 已確認（套件名稱仍待 C2）
+- [x] 前端企業自製元件庫（A2→C2 修正）：實際為**未加 scope 的 `cub-lib-view-ng14plus` / `cub-lib-view-iconfont`**（`.yarnrc` 雖設 `@internal` 但本專案未使用該 scope）
 - [x] 前端設定入口 = `.yarnrc`（Yarn Classic，非 `.npmrc`）
 - [x] 後端 Maven 來源（A1 已驗證）：目前**未走 Nexus、落到 Maven Central**（詳見上表「後端 build 現況」）
 
