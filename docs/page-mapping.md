@@ -72,7 +72,7 @@
 
 | 優先 | 新頁 | 名稱 | 類型 | 狀態 | 備註 |
 |---|---|---|---|---|---|
-| **P1** | `EPROZ00700` | Assign Substitute | 單表 CRUD | 未做 | **spec 已就緒** → `phase1-eproz0_0700-spec.md`；先做、驗證 pipeline |
+| **P1** | `EPROZ00700` | Assign Substitute | 單表 CRUD | 未做 | **Codex 任務單就緒** → `build-tasks/EPROZ00700-assign-substitute.md`（spec：`phase1-eproz0_0700-spec.md`）|
 | **P1** | `EPROCSU0130` | Corporate Guarantor Info | 主流程頁 | 半成品 | 個金版 `EPROISU0130` 已完成可照抄；清內部 TODO |
 | **P2** | `EPROZ00610` | Credit Reviewer On Hand Status | 查詢/狀態清單 | 未做 | config-driven list（仿既有 z0 查詢頁）|
 | **P2** | `EPROZ00660` | CAD On Hand Status | 查詢/狀態清單 | 未做 | config-driven list |
