@@ -12,7 +12,7 @@
 | 開發環境 | Windows + VSCode + Codex CLI + GitHub Copilot（**不使用 Claude 產品**；本 repo 僅作規劃與樣板） |
 | 重構方向 | 全端（Java 8 + JSP）→ 前後端分離 |
 | repo 結構 | **monorepo**：`backend/` + `frontend/`；指令檔分資料夾自動套用 |
-| 執行策略 | 重構系統實際為**前後端兩個獨立專案**（不上 GitHub）、**已完成 ~70%**；目標 = **補完剩 30%**（gap 分析驅動，非從零）。原始碼不外流 → 本 repo 只放規格/backlog/任務單。**載具 = Codex CLI**（在各專案內跑，讀該專案 AGENTS.md）。工作單位 = **新系統頁**（多舊頁合併為一新頁）。對應/backlog 見 `page-mapping.md`、任務單見 `build-tasks/` |
+| 執行策略 | 重構系統實際為**前後端兩個獨立專案**（不上 GitHub）、**已完成 ~70%**；目標 = **補完剩 30%**（gap 分析驅動，非從零）。原始碼不外流 → 本 repo 只放規格/backlog/任務單。**載具 = Codex CLI**（兩專案放同一**母資料夾**、在母資料夾啟動 → 同時看前後端、階層式讀 AGENTS.md，**免手動橋接 DTO**；見 `SETUP-codex.md`）。工作單位 = **新系統頁**（多舊頁合併為一新頁）。對應/backlog 見 `page-mapping.md`、任務單見 `build-tasks/` |
 | 後端目標 | Java 17 + **Spring Boot 3.3.0**（parent 帶入，無額外 BOM） |
 | 前端目標 | Angular 14.x |
 | 後端 DB 存取 | **Spring Data JPA**（`JpaRepository` + 大量 `@Query(nativeQuery=true)`）；DB = **Oracle**；設定用 `.properties`/profile |

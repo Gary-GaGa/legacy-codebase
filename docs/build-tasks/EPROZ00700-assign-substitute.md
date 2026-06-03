@@ -4,13 +4,9 @@
 > ⚠️ **後端已完成** = `DeputyController`（endpoints `epl-case-deputy-options`/`epl-case-query-deputy`/`epl-case-insert-deputy`/`epl-case-delete-deputy`）→ **不要重做後端、也不要用 spec 裡的 `/api/emp-proxy` REST**。本頁只缺**前端**。
 > 規格參考 `phase1-eproz0_0700-spec.md`（DTO/欄位/狀態/級聯/驗證；但 **API 改打上述 `epl-*`**）。
 
-## 前置（取得後端契約）
-前端要打既有 `DeputyController`，先確認它的 request/response。最快：在**後端專案**用 Codex CLI 問一句——
-```
-貼出 DeputyController 的 4 個 endpoint（epl-case-deputy-options / -query-deputy /
--insert-deputy / -delete-deputy）的 request 參數與 response DTO 結構。
-```
-拿到後，前端就照真實欄位接。
+## 前置（後端契約）
+後端已是 `DeputyController`。在**母資料夾**啟動 Codex（同時看得到後端），於前端任務裡直接叫它讀（免手動抓）：
+> 先讀後端 `DeputyController` 的 4 個 endpoint（`epl-case-deputy-options` / `-query-deputy` / `-insert-deputy` / `-delete-deputy`）的 request/response DTO，前端欄位對齊。
 
 ## 前端任務（在「前端專案」跑 Codex CLI）
 

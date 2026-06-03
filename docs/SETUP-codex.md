@@ -9,25 +9,26 @@
 | **前端專案** | 實際 Angular code | 在這裡跑 Codex 做前端頁 |
 | **後端專案** | 實際 Spring Boot code | 在這裡跑 Codex 做後端 API |
 
-> Codex 一次只看「它所在的那個專案」→ 跨專案 context（前端要後端 DTO）要手動橋接（見 §3）。
+> 在**母資料夾**啟動 Codex → 它**同時看到前後端**；前端要後端的 DTO 它自己讀，**免手動橋接**（見 §1、§3）。
 
 ## 1. 資料夾放置（一次性設定）
-每個專案**根目錄**要有一份**自包含的 `AGENTS.md`**（Codex 會自動讀、自動套）。因為是兩個獨立專案，要把「共用 + 該域」兩份合成一份：
+把兩個專案放進**同一個母資料夾**，依**本 repo 的結構**擺 3 個 `AGENTS.md`。在**母資料夾**啟動 Codex 時，它會「母目錄共用 + 最近子目錄專屬」自動疊加，且同時看得到前後端：
 
-**前端專案：**
 ```
-cat AGENTS.md frontend/AGENTS.md > <你的前端專案路徑>/AGENTS.md
+<母資料夾>/                  ← 在這裡執行 codex（同時看到前後端）
+├── AGENTS.md               ← 複製本 repo 根 AGENTS.md（共用：Nexus/版本/策略/流程）
+├── frontend/               ← 你的前端專案（可為獨立 git repo）
+│   └── AGENTS.md           ← 複製本 repo frontend/AGENTS.md（前端慣例）
+└── backend/                ← 你的後端專案（可為獨立 git repo）
+    └── AGENTS.md           ← 複製本 repo backend/AGENTS.md（後端慣例）
 ```
-**後端專案：**
-```
-cat AGENTS.md backend/AGENTS.md > <你的後端專案路徑>/AGENTS.md
-```
-- `AGENTS.md`(repo 根) = 共用硬規則（Nexus/版本/策略/流程）。
-- `frontend|backend/AGENTS.md` = 該域慣例（前端 config-driven/元件庫…；後端 分層/JPA/API…）。
+- **不用 `cat` 合併** —— 3 個檔原樣丟到對應位置即可（Codex 階層式自動疊加）。
+- 兩專案**即使各自是獨立 git repo 也沒關係**：本機放同一母資料夾即可；母目錄 `AGENTS.md` 不屬於任一 repo（純本機給 Codex 讀）。
+- 子資料夾名若非 `frontend`/`backend`，改成你的實際名即可。
 
-放好後 → Codex 在該專案任何地方執行都自動遵守這些 → **prompt 裡不用再寫它們**。
+放好後 → 在母資料夾執行 Codex 就自動遵守全部慣例 → **prompt 裡不用再寫它們**。
 
-> （可選）若也用 Copilot：把 `.github/instructions/frontend.instructions.md` 內容放進前端專案的 `.github/copilot-instructions.md`，後端同理。用 Codex 的話 `AGENTS.md` 就夠。
+> （可選）若也用 Copilot：path-scoped `.github/instructions/*.instructions.md` 同理放各子目錄。用 Codex 的話 `AGENTS.md` 就夠。
 
 ## 2. 不用每次重打 prompt 的關鍵
 重複的「慣例」（config-driven、`app-*→cub-*→mat-*`、空/載入/錯誤狀態、JWT、分層、`EPROResponse`…）**已在 `AGENTS.md` 裡** → Codex 自動吃。**每張任務你只貼「頁面專屬」那一小段**（從 `docs/build-tasks/*.md` 複製）。
@@ -46,8 +47,8 @@ cat AGENTS.md backend/AGENTS.md > <你的後端專案路徑>/AGENTS.md
 
 ## 3. 完整操作步驟（SOP，以 `EPROZ00610` 為實例）
 
-> 一句話流程：**設定一次 → 做一頁（選頁→取契約→做→build→自驗）→ 出報告給人審 → commit → 回填**。
-> Codex 一次只看「它啟動所在的那個專案」，所以前後端要分開操作、用 DTO 橋接。
+> 一句話流程：**設定一次 → 做一頁（選頁→做→build→自驗）→ 出報告給人審 → commit → 回填**。
+> 在**母資料夾**啟動 Codex → 同時看到前後端，前端要後端 DTO 它自己讀（**免手動橋接**）。
 
 ### Step 0 — 一次性前置（每個專案做一次）
 1. **裝 Codex CLI**：`npm install -g @openai/codex`，再 `codex login`（或設環境變數 `OPENAI_API_KEY`，依官方）。
@@ -58,26 +59,23 @@ cat AGENTS.md backend/AGENTS.md > <你的後端專案路徑>/AGENTS.md
    - 前端：`yarn install --frozen-lockfile` 然後 `ng build`
 4. **開工作分支**：`git switch -c feat/eproz00610`。
 
-### Step 1 — 實作一頁（選頁 → 取契約 → 開做 → build → 自驗）
-> 一氣呵成把一頁做到「自己驗過」。前端頁中間會切去後端抓 DTO（Codex 一次只看一個專案）。
+### Step 1 — 實作一頁（選頁 → 開做 → build → 自驗）
+> 在**母資料夾**啟動 Codex（同時看得到前後端），一氣呵成把一頁做到「自己驗過」。
 
 **1a. 選頁**（規劃 repo 文件上看，不動 code）
 - 開 `page-mapping.md` §2 挑一列（例 `EPROZ00610`），判斷在 **§2A（前端補）** 或 **§2B（後端補）**；到 `build-tasks/` 找該頁任務段。
 
-**1b. 取契約**（前端頁才做；純查不改。§2B 後端頁或不需新 API 就跳過）
-- `cd <後端專案>` → `codex` → 「貼出 `CreditReviewerOnHandStatusController` 的 `epl-case-credit-reviewer-onhandstatus-query-list` 的 request/response DTO（欄位名+型別），**不要改檔**。」→ **複製 DTO**。
-
-**1c. 開做**
-- `cd <目標專案>`（前端頁→前端、後端頁→後端）→ `codex` → 貼「任務段 +（前端）1b 的 DTO」：
+**1b. 開做**（在母資料夾啟 `codex`）
+- 貼該頁 build-tasks 的 prompt。**前端頁**再加一句叫它自己讀後端契約（免手動抓）：
   > （貼該頁 build-tasks 的 prompt）
-  > 後端契約如下，欄位請對齊：（貼 1b 的 DTO）
-- Codex 讀 `AGENTS.md` → 找既有同類頁範本 → 提出改動；**逐個 diff 看過再核准**（看不懂先追問再批）。
+  > 先讀後端 `CreditReviewerOnHandStatusController` 的 `epl-case-credit-reviewer-onhandstatus-query-list` 的 DTO，前端送/收欄位與它對齊。
+- Codex 讀 `AGENTS.md` + 既有同類頁範本 +（前端）後端 controller → 提出改動；**逐個 diff 看過再核准**（看不懂先追問再批）。
 
-**1d. Build**
+**1c. Build**
 - 讓 Codex 跑 `ng build`（後端 `mvn -o package`）。有錯**把訊息整段貼回 Codex** 修到綠燈。想看畫面 `ng serve`。
 
-**1e. 自驗**（Codex 先自查，見 `page-mapping.md` §2E）
-- 契約對齊（欄位 == 1b DTO）、狀態（空/載入/錯誤/disabled）、慣例（叫 Codex「檢查有沒有違反 AGENTS.md」）。
+**1d. 自驗**（Codex 先自查，見 `page-mapping.md` §2E）
+- 契約對齊（前端欄位 == 後端 DTO）、狀態（空/載入/錯誤/disabled）、慣例（叫 Codex「檢查有沒有違反 AGENTS.md」）。
 
 ### Step 2 — 產出審查報告（給人審查）
 > commit 前叫 Codex 產一份**完工報告**讓 reviewer 快速覆核（人審通過才進版）。
@@ -96,7 +94,7 @@ cat AGENTS.md backend/AGENTS.md > <你的後端專案路徑>/AGENTS.md
 ### 疑難排解
 | 症狀 | 原因 / 解法 |
 |---|---|
-| Codex 自己編欄位 | 你沒餵後端 DTO → 回 Step 1b 抓了再餵 |
+| Codex 自己編欄位 | 沒叫它讀後端 controller → 在任務裡明確加「先讀後端 `XxxController` 的 DTO 再做」 |
 | 沒套慣例（沒用 config-driven 等）| `AGENTS.md` 沒在專案根、或你不是在專案根啟動 Codex → 確認位置後重啟 |
 | 離線 build 裝不到套件 | 沒走 Nexus → 檢查 `.yarnrc` / `~/.m2/settings.xml`（樣板見 `docs/env/`）|
 | Codex 改太多 / 跑偏 | `git restore .` 還原，把任務**拆更小**再給（例如先只做查詢、再做表格）|

@@ -2,7 +2,7 @@
 
 > 載具：**Codex CLI**（前端專案，讀 `AGENTS.md`）。**後端皆已就緒**（打既有 `epl-*`）。
 > 原型一致：**查詢表單（篩選）→ 結果清單（+報表的 export/download）**。**做法：鏡像一個已完成的 z0 查詢/清單頁**（如 `EPROZ00600` Search / `EPROZ00400` Case Distribution），config-driven（`app-table-search` + `search-item-config`），元件 `app-*`→`cub-*`→`mat-*`，狀態 空/載入/錯誤，API 經 JWT interceptor。
-> ⚠️ **篩選欄位與表格欄位以後端 controller 的 query DTO 為準**（Codex 在後端專案可讀；或前端比照舊頁），**勿臆造**。
+> ⚠️ **篩選欄位與表格欄位以後端 controller 的 query DTO 為準**（在母資料夾啟 Codex 可同時讀後端；任務裡叫它「先讀對應 controller 的 DTO」），**勿臆造**。
 
 ## 共用提示（每張任務前綴）
 ```
