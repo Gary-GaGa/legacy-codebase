@@ -65,30 +65,41 @@
 - 共用 API：`EPROZZ_0100`（查詢地址欄位選單）。
 - `EPROISU0181` 同時是企金 CAD 報表的對映頁（個/企共用）。
 
-## 2. 剩餘 30% 補完 backlog
+## 2. 剩餘 30% 補完 backlog（✅ 前後端 cross-check 已對齊）
+> 對齊兩份後，真正缺口 = **前端 8 項 + 後端 7 項**（多為「一邊有殼/API、另一邊缺」）。
 
-### 前端（✅ cross-check 完成；判定：有 route/component = 已實作）
-> 多數已完成；剩下集中在 z0 報表/狀態頁 + 1 個半成品。
+### 2A. 前端要補（後端多已就緒）
+| 新頁 | 名稱 | FE | BE | 補法（打既有 endpoint）|
+|---|---|---|---|---|
+| `EPROZ00700` | Assign Substitute | 未做 | ✅ `DeputyController` | 做前端 → `epl-case-deputy-options/-query-deputy/-insert-deputy/-delete-deputy`（任務單已更新）|
+| `EPROZ00610` | Credit Reviewer On Hand Status | 未做 | ✅ | → `epl-case-credit-reviewer-onhandstatus-query-list` |
+| `EPROZ00660` | CAD On Hand Status | 未做 | ✅ | → `epl-case-CAD-onhandstatus-query-list` |
+| `EPROZ00620` | Application Delete Report | 未做 | ✅ | → `epl-case-application-delete-report-btn-search/-query-list` |
+| `EPROZ00630` | Deviation Case Report | 未做 | ✅（含 download）| → `epl-list-deviation`/`-file-download-deviation`/`-sele-dept-loantype-deviation` |
+| `EPROZ00640` | Scorecard Report | 未做 | ✅（含 pdf/excel export）| → `epl-case-mis-report-scorecard-query-list`/`-export-pdf`/`-export-excel` |
+| `EPROZ00650` | Application Cancel Report | 未做 | ✅ | → `epl-sele-dept-loantype-canreason`/`epl-list-cancelreport` |
+| `EPROCSU0130` | Corporate Guarantor Info | 半成品 | ✅ `CsuGuarantorController` | 清前端 TODO（照個金 `EPROISU0130`）|
 
-| 優先 | 新頁 | 名稱 | 類型 | 狀態 | 備註 |
-|---|---|---|---|---|---|
-| **P1** | `EPROZ00700` | Assign Substitute | 單表 CRUD | 未做 | **Codex 任務單就緒** → `build-tasks/EPROZ00700-assign-substitute.md`（spec：`phase1-eproz0_0700-spec.md`）|
-| **P1** | `EPROCSU0130` | Corporate Guarantor Info | 主流程頁 | 半成品 | 個金版 `EPROISU0130` 已完成可照抄；清內部 TODO |
-| **P2** | `EPROZ00610` | Credit Reviewer On Hand Status | 查詢/狀態清單 | 未做 | config-driven list（仿既有 z0 查詢頁）|
-| **P2** | `EPROZ00660` | CAD On Hand Status | 查詢/狀態清單 | 未做 | config-driven list |
-| **P3** | `EPROZ00620` | Application Delete Report | 報表 | 未做 | **R2 報表 track**（待報表服務）|
-| **P3** | `EPROZ00630` | Deviation Case Report | 報表 | 未做 | R2 |
-| **P3** | `EPROZ00640` | Scorecard Report | 報表 | 未做 | R2 |
-| **P3** | `EPROZ00650` | Application Cancel Report | 報表 | 未做 | R2 |
+### 2B. 後端要補（前端多已就緒）
+| 新頁 | 名稱 | FE | BE | 補法（鏡像既有）|
+|---|---|---|---|---|
+| `EPROISU0920` | Disbursement Process | ✅ | **未做** | 建後端 API（只有授權 page-map，無 controller）|
+| `EPROC00115` | c0 Borrower Group Exposure | ✅ | 半成品 | 鏡像 i0 `BorrowerGroupExposureController` |
+| `EPROC00116` | c0 Financial Statement GI | ✅ | 半成品 | 鏡像 i0 `FinancialStatementController`（含 ppdf/pxls）|
+| `EPROC00117` | c0 Financial Evaluation GI | ✅ | 半成品 | 鏡像 i0 `FinancialStaffController` |
+| `EPROC00118` | c0 Corporate Scorecard | ✅ | 半成品 | 鏡像 i0 `CorporateScorecardController` |
+| `EPROC00119` | c0 Financial Statement FI | ✅ | 半成品 | 鏡像 i0 `FinancialStatementCmtsFiController` |
+| `EPROC00120` | c0 Financial Evaluation FI | ✅ | 半成品 | 鏡像 i0 `FinancialEvaluationTableController` |
+> c0 半成品已有 service/checkpoint（`TBCheckPointsCs/Cu`）痕跡，只缺對外 controller/endpoint。
 
-清理（非頁級）：borrower-info 共用驗證 TODO（`validate-rule-finish.ts`、`family-info.component.ts`）。
-
-### 後端（待 cross-check 回填）
-> 跑後端 prompt 後回填。⚠️ 前端「完成」≠ 後端 API 完成 → 需獨立確認每頁的 controller/endpoint/entity。
+### 2C. API 慣例（重要，所有任務遵循）
+- 後端 endpoint = **RPC 式 `epl-{verb}-{scope}-{feature}`**（verb：`sele`/`info`/`save`/`case`/`quer`/`calc`/`comm`/`resu`/`list`/`ppdf`(印PDF)/`pxls`(匯Excel)/`file`…），**非 REST 資源路徑**。
+- 前端一律打**既有同名 endpoint**；新後端頁**鏡像既有 i0/isu 控制器**的命名與結構。
+- ⚠️ `phase1-eproz0_0700-spec.md` 的 `/api/emp-proxy` REST 為理想化版，**實際以 `DeputyController` 的 `epl-*` 為準**。
 
 ### 觀察
-- 前端主流程(ISU/CSU)、評分(i0/c0)、多數 z0 已完成 → 30% 集中在 **z0 報表(R2)+ 狀態頁 + 半成品 + 後端缺口**。
-- 報表 4 頁(00620/00630/00640/00650)綁 **R2 報表服務**決策 → 可先做查詢/清單、匯出待服務定案。
+- 30% 缺口集中在：① **6 個企金評分頁**缺後端 controller（鏡像 i0 即可）② **撥貸 0920** 缺後端 ③ **7 個 z0/共用前端頁**（後端已就緒）。
+- 報表 00620–00650 後端**已含 export** → 前端做查詢+觸發既有 export 即可，**R2 對這幾頁影響小**。
 
 ## 3. 下一步：對照兩專案找出未完成（cross-check）
 在**前端專案**與**後端專案**各跑一次（prompt 見對話），用 §1 新頁代碼逐一確認「已實作/半成品/未做 + 對應 component/route 或 controller/endpoint」→ 回填本檔狀態欄、彙整 §2 backlog。
