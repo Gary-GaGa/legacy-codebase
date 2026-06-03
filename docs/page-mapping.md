@@ -56,15 +56,39 @@
 
 ### 1E. 共用 `EPROZ00*`
 `00100` TO DO LIST、`00200` New Case Application、`00300` Document Checklist、`00400` Case Distribution、`00410` Related Party Information、`00500` Comparison table…CUBC、`00600` Search、`00610` Credit Reviewer On Hand Status、`00620` Application Delete Report(R2)、`00630` Deviation Case Report(R2)、`00640` Scorecard Report(R2)、`00650` Application Cancel Report(R2)、`00660` CAD On Hand Status、**`00700` Assign Substitute（= 我們的 Phase 1）**、`00800` Revised Item。
+> 前端狀態：**未做** = `00610`/`00620`/`00630`/`00640`/`00650`/`00660`/`00700`；其餘完成（`00800` 完成）。
 
-### 1F. 特例
-- **已無使用（drop，不做）**：`EPROCS_0240`、`EPROIS_0140`（Property Info）。
-- **待確認**：`EPROC0_0211`、`EPROC0_0213`（流程中無對應頁籤）。
-- **共用 API**：`EPROZZ_0100`（查詢地址欄位選單）→ 共用 API。
+### 1F. 特例（不開發）
+- **對應重構頁空白**（已合併上去）或標 **「已無使用」** → **不開發**。
+- 已無使用（drop）：`EPROCS_0240`、`EPROIS_0140`（Property Info）。
+- 待確認：`EPROC0_0211`、`EPROC0_0213`（流程中無對應頁籤）。
+- 共用 API：`EPROZZ_0100`（查詢地址欄位選單）。
 - `EPROISU0181` 同時是企金 CAD 報表的對映頁（個/企共用）。
 
-## 2. 剩餘 30% 補完 backlog（待「對兩專案」後產出）
-> 以 §3 cross-check 結果，挑出「未做/半成品」新頁，排優先序（共用件先、報表 R2 / CBC R8 另track）。
+## 2. 剩餘 30% 補完 backlog
+
+### 前端（✅ cross-check 完成；判定：有 route/component = 已實作）
+> 多數已完成；剩下集中在 z0 報表/狀態頁 + 1 個半成品。
+
+| 優先 | 新頁 | 名稱 | 類型 | 狀態 | 備註 |
+|---|---|---|---|---|---|
+| **P1** | `EPROZ00700` | Assign Substitute | 單表 CRUD | 未做 | **spec 已就緒** → `phase1-eproz0_0700-spec.md`；先做、驗證 pipeline |
+| **P1** | `EPROCSU0130` | Corporate Guarantor Info | 主流程頁 | 半成品 | 個金版 `EPROISU0130` 已完成可照抄；清內部 TODO |
+| **P2** | `EPROZ00610` | Credit Reviewer On Hand Status | 查詢/狀態清單 | 未做 | config-driven list（仿既有 z0 查詢頁）|
+| **P2** | `EPROZ00660` | CAD On Hand Status | 查詢/狀態清單 | 未做 | config-driven list |
+| **P3** | `EPROZ00620` | Application Delete Report | 報表 | 未做 | **R2 報表 track**（待報表服務）|
+| **P3** | `EPROZ00630` | Deviation Case Report | 報表 | 未做 | R2 |
+| **P3** | `EPROZ00640` | Scorecard Report | 報表 | 未做 | R2 |
+| **P3** | `EPROZ00650` | Application Cancel Report | 報表 | 未做 | R2 |
+
+清理（非頁級）：borrower-info 共用驗證 TODO（`validate-rule-finish.ts`、`family-info.component.ts`）。
+
+### 後端（待 cross-check 回填）
+> 跑後端 prompt 後回填。⚠️ 前端「完成」≠ 後端 API 完成 → 需獨立確認每頁的 controller/endpoint/entity。
+
+### 觀察
+- 前端主流程(ISU/CSU)、評分(i0/c0)、多數 z0 已完成 → 30% 集中在 **z0 報表(R2)+ 狀態頁 + 半成品 + 後端缺口**。
+- 報表 4 頁(00620/00630/00640/00650)綁 **R2 報表服務**決策 → 可先做查詢/清單、匯出待服務定案。
 
 ## 3. 下一步：對照兩專案找出未完成（cross-check）
 在**前端專案**與**後端專案**各跑一次（prompt 見對話），用 §1 新頁代碼逐一確認「已實作/半成品/未做 + 對應 component/route 或 controller/endpoint」→ 回填本檔狀態欄、彙整 §2 backlog。
