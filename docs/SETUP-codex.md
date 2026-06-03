@@ -46,7 +46,7 @@ cat AGENTS.md backend/AGENTS.md > <你的後端專案路徑>/AGENTS.md
 
 ## 3. 完整操作步驟（SOP，以 `EPROZ00610` 為實例）
 
-> 一句話流程：**設定一次 → 選頁 →（前端頁先抓後端 DTO）→ 叫 Codex 做 → 看 diff + build → 驗 → commit → 回填狀態**。
+> 一句話流程：**設定一次 → 做一頁（選頁→取契約→做→build→自驗）→ 出報告給人審 → commit → 回填**。
 > Codex 一次只看「它啟動所在的那個專案」，所以前後端要分開操作、用 DTO 橋接。
 
 ### Step 0 — 一次性前置（每個專案做一次）
@@ -58,44 +58,40 @@ cat AGENTS.md backend/AGENTS.md > <你的後端專案路徑>/AGENTS.md
    - 前端：`yarn install --frozen-lockfile` 然後 `ng build`
 4. **開工作分支**：`git switch -c feat/eproz00610`。
 
-### Step 1 — 選頁 → 取契約 → 開做（每頁的核心循環）
-> 把「挑哪頁、拿後端契約、叫 Codex 動工」串成一氣。前端頁中間會切去後端抓 DTO（Codex 一次只看一個專案）。
+### Step 1 — 實作一頁（選頁 → 取契約 → 開做 → build → 自驗）
+> 一氣呵成把一頁做到「自己驗過」。前端頁中間會切去後端抓 DTO（Codex 一次只看一個專案）。
 
-**1a. 選頁**（在規劃 repo 的文件上看，不動 code）
-- 開 `page-mapping.md` §2 挑一列。例：`EPROZ00610` Credit Reviewer On Hand Status。
-- 判斷在 **§2A（前端補、後端已就緒）** 或 **§2B（後端補、前端已就緒）**。`EPROZ00610` = §2A。
-- 到 `build-tasks/` 找該頁任務段（這裡是 `B-z0-reports-status-frontend.md` 的「§1) EPROZ00610」）。
+**1a. 選頁**（規劃 repo 文件上看，不動 code）
+- 開 `page-mapping.md` §2 挑一列（例 `EPROZ00610`），判斷在 **§2A（前端補）** 或 **§2B（後端補）**；到 `build-tasks/` 找該頁任務段。
 
 **1b. 取契約**（前端頁才做；純查不改。§2B 後端頁或不需新 API 就跳過）
-- `cd <後端專案>` → `codex`
-- 輸入：「貼出 `CreditReviewerOnHandStatusController` 的 `epl-case-credit-reviewer-onhandstatus-query-list` 的 request 參數與 response DTO（欄位名+型別），**不要改任何檔案**。」
-- **複製**回傳的 DTO，結束（沒動 code）。
+- `cd <後端專案>` → `codex` → 「貼出 `CreditReviewerOnHandStatusController` 的 `epl-case-credit-reviewer-onhandstatus-query-list` 的 request/response DTO（欄位名+型別），**不要改檔**。」→ **複製 DTO**。
 
-**1c. 開做**（到目標專案叫 Codex）
-- `cd <目標專案>`（前端頁→前端專案；後端頁→後端專案）→ `codex`
-- 貼「任務段 +（前端）1b 的 DTO」：
+**1c. 開做**
+- `cd <目標專案>`（前端頁→前端、後端頁→後端）→ `codex` → 貼「任務段 +（前端）1b 的 DTO」：
   > （貼該頁 build-tasks 的 prompt）
   > 後端契約如下，欄位請對齊：（貼 1b 的 DTO）
-- Codex 讀 `AGENTS.md` → 找既有同類頁當範本 → 提出檔案改動。
-- **逐個 diff 看過再核准**（依版本按 `y` 或選 Approve）；看不懂先別批，追問「這檔為什麼這樣改」。
+- Codex 讀 `AGENTS.md` → 找既有同類頁範本 → 提出改動；**逐個 diff 看過再核准**（看不懂先追問再批）。
 
-### Step 2 — Build + 看結果
-1. 讓 Codex 跑 `ng build`（或你自己跑）。有錯就**把錯誤訊息整段貼回 Codex** 讓它修，反覆到綠燈。
-2. 想看畫面：`ng serve` 開該 route（例 `/credit-reviewer-onhand-status`）確認版面/查詢正常。
+**1d. Build**
+- 讓 Codex 跑 `ng build`（後端 `mvn -o package`）。有錯**把訊息整段貼回 Codex** 修到綠燈。想看畫面 `ng serve`。
 
-### Step 3 — 驗證（正確性，見 `page-mapping.md` §2E）
-- **① 契約對齊（最重要）**：前端送出/接收的欄位 == Step 1b 的後端 DTO。
-- **② 狀態**：空清單、載入中、查詢失敗 都正確顯示。
-- **③ 慣例自查**：可叫 Codex「檢查這次改動有沒有違反 AGENTS.md（config-driven？有沒有寫死色碼？元件優先序？）」。
-- ④ 這類查詢頁通常**不用**對舊系統；有疑慮才 sanity check「該有哪些欄位」。
+**1e. 自驗**（Codex 先自查，見 `page-mapping.md` §2E）
+- 契約對齊（欄位 == 1b DTO）、狀態（空/載入/錯誤/disabled）、慣例（叫 Codex「檢查有沒有違反 AGENTS.md」）。
 
-### Step 4 — commit（在**實際專案**，不是規劃 repo）
+### Step 2 — 產出審查報告（給人審查）
+> commit 前叫 Codex 產一份**完工報告**讓 reviewer 快速覆核（人審通過才進版）。
+- 在目標專案 Codex 輸入（**不要動 code**）：
+  > 針對這次改動產出「完工報告」(Markdown)：① 頁面/funcId ② 新增/修改檔案清單 ③ 接的 endpoint + **契約對齊**(前端欄位 vs 後端 DTO 是否一致) ④ 涵蓋狀態(空/載入/錯誤/disabled) ⑤ 遵循/違反 AGENTS.md 哪些慣例 ⑥ 與既有頁/舊系統的**差異或 TODO**(待人判斷) ⑦ build 結果 ⑧ 風險/待確認。
+- 報告交 reviewer（或貼進 PR 描述）。**人審通過 → Step 3；有問題 → 回 1c 修。**
+
+### Step 3 — commit（人審通過後，在**實際專案**）
 1. `git add -A`
 2. `git commit -m "feat: EPROZ00610 Credit Reviewer On Hand Status (frontend)"`
-3. 依你們內部流程推送 / 開 PR。
+3. 依你們內部流程推送 / 開 PR（報告可貼 PR 描述）。
 
-### Step 5 — 回填狀態
-- 回**規劃 repo** 的 `page-mapping.md` §2A，把 `EPROZ00610` 標成 ✅ 完成，commit。
+### Step 4 — 回填狀態
+- 回**規劃 repo** 的 `page-mapping.md` §2A，把 `EPROZ00610` 標 ✅ 完成，commit。
 
 ### 疑難排解
 | 症狀 | 原因 / 解法 |
