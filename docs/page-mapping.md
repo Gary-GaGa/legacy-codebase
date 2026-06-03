@@ -115,6 +115,7 @@
 ### 觀察
 - 30% 缺口集中在：① **6 個企金評分頁**缺後端 controller（鏡像 i0 即可）② **撥貸 0920** 缺後端 ③ **7 個 z0/共用前端頁**（後端已就緒）。
 - 報表 00620–00650 後端**已含 export** → 前端做查詢+觸發既有 export 即可，**R2 對這幾頁影響小**。
+- ⚠️ **以 build manifest 校正（2026-06-03 `ng build`）**：前端已存在 lazy module —— `credit-reviewer-onhand-status`、`cad-onhand-status`、`deviation-case-report`、`scorecard-report`、`application-delete-report`、`application-cancel-report`、`deputy`（size 多很小=骨架）。→ 不少「未做」其實是**骨架待補、非從零**；**選頁前先看既有 module 完成度**（build chunk 大小可當粗略指標）。cross-check(Copilot 搜尋)會漏，**build manifest 為準**。
 
 ## 3. 下一步：對照兩專案找出未完成（cross-check）
 在**前端專案**與**後端專案**各跑一次（prompt 見對話），用 §1 新頁代碼逐一確認「已實作/半成品/未做 + 對應 component/route 或 controller/endpoint」→ 回填本檔狀態欄、彙整 §2 backlog。
