@@ -84,7 +84,7 @@
 | 新頁 | 名稱 | FE | BE | 補法（鏡像既有）|
 |---|---|---|---|---|
 | `EPROISU0920` | Disbursement Process | ✅ | **未做** | 建後端 API（只有授權 page-map，無 controller）|
-| `EPROC00115` | c0 Borrower Group Exposure | ✅ | 缺 controller+DTO+service | 🟢**起手頁**（最乾淨：info/save/sele、單表 `TB_GROUP_EXPOSURE`、無 PDF/XLS、無 GI/FI、無計分）。鏡像 i0 `BorrowerGroupExposureController`（`epl-info/save/sele-i0-borrower-group-exposure`），checkpoint 改 `TBCheckPointsCs/Cu`=`EPROC00115` |
+| `EPROC00115` | c0 Borrower Group Exposure | ✅ | ✅實作（待整合驗證）| 🟢**c0 範本完成（build 綠）**：新增 `CsuBorrowerGroupExposureController`/`Service(Impl)`/DTO（7 新檔、0 改既有）；endpoint `epl-info/save/sele-c0-borrower-group-exposure`；DTO 1:1 鏡像 i0（僅改 class/package，JSON property 不變）；checkpoint→`Cs/Cu.EPROC00115`（`isFinish` true→"N"/false→"Y"）；重用既有 entity/repo、未動 i0/既有 `Csu*`。**待驗**：① CS/CU 判斷（用 `lonAttribute+secureAttribute`）與鄰頁一致 ② endpoint `TB_API_AUTH`/`TB_ROLE_TASK` 授權列。|
 | `EPROC00116` | c0 Financial Statement GI | ✅ | 缺 controller+DTO+service | 鏡像 i0 `FinancialStatementController`（含 ppdf/pxls；sele/quer/info/calc/save）|
 | `EPROC00117` | c0 Financial Evaluation GI | ✅ | 缺 controller+DTO+service | ⚠️鏡像 i0 **`FinancialStaffController`（不是同名的 `FinancialEvaluationController`）**；i0 此頁混 INFO/INFO_S/GI 三組資料，c0 須先確認是否成立 |
 | `EPROC00118` | c0 Corporate Scorecard | ✅ | 缺 controller+DTO+service | 鏡像 i0 `CorporateScorecardController`；⚠️計分邏輯已散在 `CsuCreditEvalAndCreditDecisionServiceImpl` → 抽**獨立 service**，勿再包一層、勿另寫一套算法（防分叉）|
@@ -114,7 +114,8 @@
 4. **舊系統 = 最終業務基準**，但新系統已**刻意合併/改動** → 「對照 + 人工判斷差異」，**非逐欄硬比**；後端業務邏輯（計算/規則）正確性最依賴它（但多已 done 或由 i0 鏡像承接）。
 
 ### 觀察
-- 30% 缺口集中在：① **6 個企金評分頁**缺後端 controller（鏡像 i0 即可）② **撥貸 0920** 缺後端 ③ **7 個 z0/共用前端頁**（後端已就緒）。
+- 30% 缺口（**2026-06-04 校正後**）：① **企金評分後端 controller**（鏡像 i0）—— `EPROC00115` ✅完成（範本），餘 **5**（`00116/00117/00118/00119/00120`）② **撥貸 `0920`** 缺後端 ③ 前端 ~~7 頁~~ **基本完成**（僅 `EPROCSU0130` 收尾）。
+- 📋 **待整合驗證清單**（dev/uat 後端真資料時集中跑，build 階段不阻擋）：`EPROZ00610` CR 呈現/資料；`EPROC00115` CS/CU 判斷正確性 + 新 `epl-*-c0-*` endpoint 的 `TB_API_AUTH`/`TB_ROLE_TASK` 授權列；報表 `00620–00650` 呈現（`00640` scorecard export FE POST blob vs BE GET `@RequestBody` 介面不一致需對）。
 - 報表 00620–00650 後端**已含 export** → 前端做查詢+觸發既有 export 即可，**R2 對這幾頁影響小**。
 - ⚠️ **以 build manifest 校正（2026-06-03 `ng build`）**：前端已存在 lazy module —— `credit-reviewer-onhand-status`、`cad-onhand-status`、`deviation-case-report`、`scorecard-report`、`application-delete-report`、`application-cancel-report`、`deputy`（size 多很小=骨架）。→ 不少「未做」其實是**骨架待補、非從零**；**選頁前先看既有 module 完成度**（build chunk 大小可當粗略指標）。cross-check(Copilot 搜尋)會漏，**build manifest 為準**。
 - ⚠️ **2026-06-04 再校正（Codex 逐頁盤點）**：`00620–00650` 報表頁**全部頁面結構已接好**（非骨架）；其中 `delete`/`cancel` 共用 `base-application-report`，**功能在共用 base 裡 → build chunk 小但完成度高** → build-size 啟發法會**低估「共用 base 的頁」**。教訓：**選頁/開做前一律先讓 Codex 唯讀盤點該頁實際完成度**，避免重做。
