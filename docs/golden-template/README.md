@@ -39,6 +39,8 @@
 |---|---|
 | `app-table-search` | 清單頁查詢列（吃 search-item-config） |
 | `app-search-item` | 單一查詢欄位 |
+
+> ⚠️ **實際慣例（核實於 `cad-onhand-status`）**：**查詢列 = `app-search-item` + `search-item-config.ts`；結果表格 = `app-table-search`**（內含 `cub-table` + paginator）。本檔他處若把查詢列寫成 `app-table-search`，以此為準。
 | `app-field-item` | 表單/詳情欄位（吃 field-item-config） |
 | `app-side-bar-list` | 側邊選單 |
 | `app-user-menu` | 使用者選單（header） |

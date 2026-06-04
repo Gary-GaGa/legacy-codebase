@@ -11,13 +11,14 @@
 
 | Config | 搭配共用元件 | 用途 |
 |---|---|---|
-| `search-item-config.ts` | `app-table-search` / `app-search-item` | 清單頁查詢列 |
+| `search-item-config.ts` | `app-search-item`（查詢列）；`app-table-search`（結果表格）| 清單頁查詢 + 表格 |
 | `field-item-config.ts` / `form-config.ts` | `app-field-item` | 表單/詳情欄位 |
 | `add-<feature>-config.ts` | popup 表單 | 新增表單專屬設定 |
 | `validate-rule.ts` | — | 驗證規則 |
 | `role-id-config.ts` | — | 權限/角色 |
 
 共用元件（app-local）：`app-table-search`、`app-search-item`、`app-field-item`、`app-side-bar-list`、`app-user-menu`、`app-lang-menu`。**複用，勿重造。**
+> ⚠️ **實際慣例（核實於 `cad-onhand-status`）**：**查詢列 = `app-search-item` + `search-item-config.ts`；結果表格 = `app-table-search`**（內含 `cub-table` + paginator）。勿把查詢列誤當 `app-table-search`。
 
 ## 3. 新功能結構（照參考 feature `deputy` 複製改名）
 ```
