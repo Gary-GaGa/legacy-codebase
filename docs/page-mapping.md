@@ -88,8 +88,8 @@
 | `EPROC00116` | c0 Financial Statement GI | ✅ | ✅實作（待整合驗證）| **build 綠**。新增 `CsuFinancialStatementController`/`Service(Impl)`/15 DTO；7 endpoint `epl-{sele/quer/info/calc/save/ppdf/pxls}-c0-financial-statement-comments`；**自足鏡像** i0（不注入/不反射/不委派 i0），checkpoint→`Cs/Cu.EPROC00116`；重用 4 個 FinStmt GI entity/repo。曾修 CJK 編碼壞檔（`ServiceImpl` 418 處字串常數+大量註解，已 strict-UTF-8 驗）。**待驗**：export 模板沿用 i0 `EPROI00116` 是否可接受 / `TB_API_AUTH` 授權列。|
 | `EPROC00117` | c0 Financial Evaluation GI | ✅ | 缺 controller+DTO+service | ⚠️鏡像 i0 **`FinancialStaffController`（不是同名的 `FinancialEvaluationController`）**；i0 此頁混 INFO/INFO_S/GI 三組資料，c0 須先確認是否成立 |
 | `EPROC00118` | c0 Corporate Scorecard | ✅ | 缺 controller+DTO+service | 鏡像 i0 `CorporateScorecardController`；⚠️計分邏輯已散在 `CsuCreditEvalAndCreditDecisionServiceImpl` → 抽**獨立 service**，勿再包一層、勿另寫一套算法（防分叉）|
-| `EPROC00119` | c0 Financial Statement FI | ✅ | 缺 controller+DTO+service | 鏡像 i0 `FinancialStatementCmtsFiController`（含 ppdf/pxls）|
-| `EPROC00120` | c0 Financial Evaluation FI | ✅ | 缺 controller+DTO+service | ⚠️i0 功能拆在**兩支**：`FinancialEvaluationTableController` + `FinancialStaffController` 的 `epl-save-i0-financial-evaluation-staff-fi` → c0 先決定要不要也拆兩支 |
+| `EPROC00119` | c0 Financial Statement FI | ✅ | ✅實作（待整合驗證）| **build 綠**。新增 `CsuFinancialStatementCmtsFiController`/`Service(Impl)`/9 DTO；6 endpoint（無 sele）`epl-{quer/info/calc/save/ppdf/pxls}-c0-financial-statement-cmts-fi`；**自足鏡像** i0；checkpoint→`Cs/Cu`：`doCalc` `00119="Y"`、`doSave` `00119=isFinish?"N":"Y"` **且 `00120="Y"`**（鏡像 i0 跨頁副作用，同一條 CS/CU row）；重用 4 個 FinStmt FI entity/repo；strict-UTF-8 12/12。**待驗**：`TB_API_AUTH` 授權列 / export 模板沿用 i0 `EPROI00119`。|
+| `EPROC00120` | c0 Financial Evaluation FI | ✅ | 缺 controller+DTO+service | ⚠️i0 功能拆在**兩支**：`FinancialEvaluationTableController` + `FinancialStaffController` 的 `epl-save-i0-financial-evaluation-staff-fi` → c0 先決定要不要也拆兩支。⚠️**checkpoint 耦合**：`00120` 已被 `00119` 的 save 設為 `"Y"`，本頁自己的 save 又依自身 `isFinish` 寫 `00120` → 對齊勿打架。**plan-first 細審**。|
 > c0 已有 entity/repo/checkpoint（`TBCheckPointsCs/Cu`=`EPROC001xx`）+ 部分邏輯散在既有 `Csu*` service；**缺 controller + corporate DTO package + 獨立 feature service**（非只缺 endpoint）。
 > ⚠️ c0 **G/F 分流寫死在 `CsuCreditInvestigationServiceImpl`**：businessType=G 用 `EPROC00116+00117`、F 用 `EPROC00119+00120`，切換時清另一組 → 鏡像時沿用此既有 c0 規則，勿照 i0 重寫。c0 **無 `EPROC00111/00113`** → 不可把 i0 `FinancialEvaluationController`/`IndividualScoreCardController` 當 c0 對應頁。
 
@@ -114,8 +114,8 @@
 4. **舊系統 = 最終業務基準**，但新系統已**刻意合併/改動** → 「對照 + 人工判斷差異」，**非逐欄硬比**；後端業務邏輯（計算/規則）正確性最依賴它（但多已 done 或由 i0 鏡像承接）。
 
 ### 觀察
-- 30% 缺口（**2026-06-04 校正後**）：① **企金評分後端 controller**（鏡像 i0）—— `EPROC00115`/`00116` ✅完成（範本），餘 **4**（`00117/00118/00119/00120`）② **撥貸 `0920`** 缺後端 ③ 前端 ~~7 頁~~ **基本完成**（僅 `EPROCSU0130` 收尾）。
-- 📋 **待整合驗證清單**（dev/uat 後端真資料時集中跑，build 階段不阻擋）：`EPROZ00610` CR 呈現/資料；`EPROC00115` 新 `epl-*-c0-*` endpoint 的 `TB_API_AUTH`/`TB_ROLE_TASK` 授權列（CS/CU 判斷已 code review 確認正確）；`EPROC00116` 新 endpoint 授權列 + export 模板沿用 i0 `EPROI00116` 是否需 c0 專屬；報表 `00620–00650` 呈現（`00640` scorecard export FE POST blob vs BE GET `@RequestBody` 介面不一致需對）。
+- 30% 缺口（**2026-06-04 校正後**）：① **企金評分後端 controller**（鏡像 i0）—— `EPROC00115`/`00116`/`00119` ✅完成，餘 **3**（`00117/00118/00120`）② **撥貸 `0920`** 缺後端 ③ 前端 ~~7 頁~~ **基本完成**（僅 `EPROCSU0130` 收尾）。
+- 📋 **待整合驗證清單**（dev/uat 後端真資料時集中跑，build 階段不阻擋）：`EPROZ00610` CR 呈現/資料；`EPROC00115` 新 `epl-*-c0-*` endpoint 的 `TB_API_AUTH`/`TB_ROLE_TASK` 授權列（CS/CU 判斷已 code review 確認正確）；`EPROC00116`/`00119` 新 endpoint 授權列 + export 模板沿用 i0（`EPROI00116`/`EPROI00119`）是否需 c0 專屬；報表 `00620–00650` 呈現（`00640` scorecard export FE POST blob vs BE GET `@RequestBody` 介面不一致需對）。
 - 報表 00620–00650 後端**已含 export** → 前端做查詢+觸發既有 export 即可，**R2 對這幾頁影響小**。
 - ⚠️ **以 build manifest 校正（2026-06-03 `ng build`）**：前端已存在 lazy module —— `credit-reviewer-onhand-status`、`cad-onhand-status`、`deviation-case-report`、`scorecard-report`、`application-delete-report`、`application-cancel-report`、`deputy`（size 多很小=骨架）。→ 不少「未做」其實是**骨架待補、非從零**；**選頁前先看既有 module 完成度**（build chunk 大小可當粗略指標）。cross-check(Copilot 搜尋)會漏，**build manifest 為準**。
 - ⚠️ **2026-06-04 再校正（Codex 逐頁盤點）**：`00620–00650` 報表頁**全部頁面結構已接好**（非骨架）；其中 `delete`/`cancel` 共用 `base-application-report`，**功能在共用 base 裡 → build chunk 小但完成度高** → build-size 啟發法會**低估「共用 base 的頁」**。教訓：**選頁/開做前一律先讓 Codex 唯讀盤點該頁實際完成度**，避免重做。
