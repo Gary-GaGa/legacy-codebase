@@ -80,6 +80,7 @@
 
 **1d. 自驗**（Codex 先自查，見 `page-mapping.md` §2E）
 - 契約對齊（前端欄位 == 後端 DTO）、狀態（空/載入/錯誤/disabled）、慣例（叫 Codex「檢查有沒有違反 AGENTS.md」）。
+- **本機預覽標準**：版面/查詢列/欄位/狀態正確 render 即算前端 OK ——**「有皮沒資料」是正常的**（本機無真 session、API 會 401）。**真實資料**走整合測試：把前端 `environment` 的 API base 指向 dev/uat 後端 + 正常登入（勿把該指向 commit 進正式 profile）。
 
 ### Step 2 — 產出審查報告（給人審查）
 > commit 前叫 Codex 產一份**完工報告**讓 reviewer 快速覆核（人審通過才進版）。
