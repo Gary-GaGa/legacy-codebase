@@ -56,7 +56,7 @@
 
 ### 1E. 共用 `EPROZ00*`
 `00100` TO DO LIST、`00200` New Case Application、`00300` Document Checklist、`00400` Case Distribution、`00410` Related Party Information、`00500` Comparison table…CUBC、`00600` Search、`00610` Credit Reviewer On Hand Status、`00620` Application Delete Report(R2)、`00630` Deviation Case Report(R2)、`00640` Scorecard Report(R2)、`00650` Application Cancel Report(R2)、`00660` CAD On Hand Status、**`00700` Assign Substitute（= 我們的 Phase 1）**、`00800` Revised Item。
-> 前端狀態（2026-06-04 Codex 逐頁盤點校正）：真正**未做** = `00700`（Assign Substitute）。`00610` 本期實作（待整合驗證）；`00620`/`00630`/`00640`/`00650` 報表頁**頁面結構已完成**（module/routing/component/service/config 齊全，僅 `spec.ts` 為樣板）→ 待整合驗證、**非從零**；`00660` CAD On Hand 已完成（即 CR 範本）。其餘完成。
+> 前端狀態（2026-06-04 Codex 逐頁盤點校正）：`00610` 本期實作（待整合驗證）；`00620`/`00630`/`00640`/`00650` 報表頁**頁面結構已完成**（module/routing/component/service/config 齊全，僅 `spec.ts` 為樣板）→ 待整合驗證、**非從零**；`00660` CAD On Hand 已完成（即 CR 範本）；**`00700` Assign Substitute = 既有 `pages/deputy` feature，已完整實作**（清單+查詢+新增彈窗+刪除+role 驅動+options 動態載入；route `/deputy`、breadcrumb `E_DEPUTY`、選單來自後端 `epl-auth-menutree`）。→ **前端已無「從零新建」頁**，僅 `EPROCSU0130` 半成品收尾。
 
 ### 1F. 特例（不開發）
 - **對應重構頁空白**（已合併上去）或標 **「已無使用」** → **不開發**。
@@ -66,12 +66,12 @@
 - `EPROISU0181` 同時是企金 CAD 報表的對映頁（個/企共用）。
 
 ## 2. 剩餘 30% 補完 backlog（✅ 前後端 cross-check 已對齊）
-> 對齊兩份後原列「前端 8 項 + 後端 7 項」。**2026-06-04 Codex 盤點校正**：報表 `00620–00650` + `00660` 其實**頁面結構已完成**、`00610` 本期完成 → 前端真正待開發僅 **`00700` Assign Substitute + `EPROCSU0130` 收尾**。缺口因此**集中在後端 7 項**（6 個企金評分 controller + 撥貸 0920）。
+> 對齊兩份後原列「前端 8 項 + 後端 7 項」。**2026-06-04 Codex 逐頁盤點校正**：`00610` 本期完成；報表 `00620–00650`+`00660` **結構已完成**；`00700` = 既有 `pages/deputy` **已完整實作** → 前端**僅剩 `EPROCSU0130` 半成品收尾**（無從零新建頁）。**真正 30% 缺口集中在後端 7 項**（6 個企金評分 controller + 撥貸 0920）。
 
 ### 2A. 前端要補（後端多已就緒）
 | 新頁 | 名稱 | FE | BE | 補法（打既有 endpoint）|
 |---|---|---|---|---|
-| `EPROZ00700` | Assign Substitute | 未做 | ✅ `DeputyController` | 做前端 → `epl-case-deputy-options/-query-deputy/-insert-deputy/-delete-deputy`（任務單已更新）|
+| `EPROZ00700` | Assign Substitute | ✅已完成（= `pages/deputy`）| ✅ `DeputyController` | 既有 `pages/deputy` 已完整串 `epl-case-deputy-options/-query-deputy/-insert-deputy/-delete-deputy`，role 驅動、options 動態載入 → **不需新建**；嚴謹可做「deputy ↔ 00700 規格 gap-check」（欄位/role/流程差異、route 命名）。|
 | `EPROZ00610` | Credit Reviewer On Hand Status | ✅實作（待整合驗證）| ✅ | **onhand-status 子頁**（在 `case-assignment/sub-pages/onhand-status/credit-reviewer-onhand-status`）：比照雙胞胎 `cad-onhand-status`、共用 `base-onhand-status`、既有 route。Codex 補共用 base 的 error handling；build 綠、結構對齊 CAD。**呈現/資料待整合測試（dev/uat 後端）**。→ `epl-case-credit-reviewer-onhandstatus-query-list` |
 | `EPROZ00660` | CAD On Hand Status | ✅已完成（CR 範本）| ✅ | `cad-onhand-status` 完整實作，本身即 `00610` 的範本 → **不需開發**。→ `epl-case-CAD-onhandstatus-query-list` |
 | `EPROZ00620` | Application Delete Report | ✅結構完成（待整合驗證）| ✅ | `application-delete-report` 已接 module/routing/component/service/config，繼承 `base-application-report`（與 cancel 雙胞胎）→ **不需開發**。→ `epl-case-application-delete-report-btn-search/-query-list` |
@@ -116,7 +116,8 @@
 - 30% 缺口集中在：① **6 個企金評分頁**缺後端 controller（鏡像 i0 即可）② **撥貸 0920** 缺後端 ③ **7 個 z0/共用前端頁**（後端已就緒）。
 - 報表 00620–00650 後端**已含 export** → 前端做查詢+觸發既有 export 即可，**R2 對這幾頁影響小**。
 - ⚠️ **以 build manifest 校正（2026-06-03 `ng build`）**：前端已存在 lazy module —— `credit-reviewer-onhand-status`、`cad-onhand-status`、`deviation-case-report`、`scorecard-report`、`application-delete-report`、`application-cancel-report`、`deputy`（size 多很小=骨架）。→ 不少「未做」其實是**骨架待補、非從零**；**選頁前先看既有 module 完成度**（build chunk 大小可當粗略指標）。cross-check(Copilot 搜尋)會漏，**build manifest 為準**。
-- ⚠️ **2026-06-04 再校正（Codex 逐頁盤點）**：`00620–00650` 報表頁**全部頁面結構已接好**（非骨架）；其中 `delete`/`cancel` 共用 `base-application-report`，**功能在共用 base 裡 → build chunk 小但完成度高** → build-size 啟發法會**低估「共用 base 的頁」**。教訓：**選頁/開做前一律先讓 Codex 唯讀盤點該頁實際完成度**——已兩次發現「未做」其實已完成（CAD→CR、4 報表），避免重做。
+- ⚠️ **2026-06-04 再校正（Codex 逐頁盤點）**：`00620–00650` 報表頁**全部頁面結構已接好**（非骨架）；其中 `delete`/`cancel` 共用 `base-application-report`，**功能在共用 base 裡 → build chunk 小但完成度高** → build-size 啟發法會**低估「共用 base 的頁」**。教訓：**選頁/開做前一律先讓 Codex 唯讀盤點該頁實際完成度**，避免重做。
+- ⚠️ **2026-06-04 三度校正**：`00700` Assign Substitute 也早已實作（= `pages/deputy`，**非新建**）。三次「未做其實已完成」（CAD→CR、4 報表、deputy）顯示**前端 cross-check（Copilot 關鍵字搜尋）系統性低估完成度**，主因：① build-size 啟發法低估共用 base 頁 ② 頁以 **domain 命名**（`deputy`）非 funcId（`assign-substitute`）→ 關鍵字搜尋漏掉。**結論：前端基本完成，剩餘 30% 真正落在後端**（6 個 c0 評分 controller + 撥貸 0920）。後端任一頁開做前仍照「先唯讀盤點實際完成度」紀律（半成品也可能比想像完整）。
 
 ## 3. 下一步：對照兩專案找出未完成（cross-check）
 在**前端專案**與**後端專案**各跑一次（prompt 見對話），用 §1 新頁代碼逐一確認「已實作/半成品/未做 + 對應 component/route 或 controller/endpoint」→ 回填本檔狀態欄、彙整 §2 backlog。

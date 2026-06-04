@@ -1,5 +1,8 @@
 # Build Task — `EPROZ00700` Assign Substitute（前端唯一）
 
+> 🟢 **已完成（2026-06-04 Codex 盤點）**：本頁**不需新建**。前端早已實作為既有 feature **`frontend/src/app/pages/deputy`**（清單 `app-table-search` + 查詢 `app-search-item` + 新增彈窗 `popup-add-deputy` + 刪除；四個 `epl-case-deputy-*` 全串好；role 驅動、部門/人員/代理人 options 動態載入；route `/deputy`、breadcrumb `E_DEPUTY`、選單來自後端 `epl-auth-menutree`）。
+> 下面的建置步驟**保留作參考**；實際只剩可選的「**deputy ↔ 00700 規格 gap-check**」（欄位/role/流程差異、route 命名是否要對齊 funcId）。**勿重建新 feature**。
+
 > 載具：**Codex CLI**（在前端專案內執行；自動讀 `AGENTS.md`）。
 > ⚠️ **後端已完成** = `DeputyController`（endpoints `epl-case-deputy-options`/`epl-case-query-deputy`/`epl-case-insert-deputy`/`epl-case-delete-deputy`）→ **不要重做後端、也不要用 spec 裡的 `/api/emp-proxy` REST**。本頁只缺**前端**。
 > 規格參考 `phase1-eproz0_0700-spec.md`（DTO/欄位/狀態/級聯/驗證；但 **API 改打上述 `epl-*`**）。
