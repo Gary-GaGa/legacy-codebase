@@ -72,7 +72,7 @@
 | 新頁 | 名稱 | FE | BE | 補法（打既有 endpoint）|
 |---|---|---|---|---|
 | `EPROZ00700` | Assign Substitute | 未做 | ✅ `DeputyController` | 做前端 → `epl-case-deputy-options/-query-deputy/-insert-deputy/-delete-deputy`（任務單已更新）|
-| `EPROZ00610` | Credit Reviewer On Hand Status | 骨架 | ✅ | **onhand-status 子頁**（在 `case-assignment/sub-pages/onhand-status/credit-reviewer-onhand-status`）：比照已完成雙胞胎 `cad-onhand-status`、共用 `base-onhand-status`、**補既有骨架、用既有 route `/credit-reviewer-on-hand-status`**；**勿做成獨立 z0 頁、勿改 route、勿用 search 當範本**。→ `epl-case-credit-reviewer-onhandstatus-query-list` |
+| `EPROZ00610` | Credit Reviewer On Hand Status | ✅實作（待整合驗證）| ✅ | **onhand-status 子頁**（在 `case-assignment/sub-pages/onhand-status/credit-reviewer-onhand-status`）：比照雙胞胎 `cad-onhand-status`、共用 `base-onhand-status`、既有 route。Codex 補共用 base 的 error handling；build 綠、結構對齊 CAD。**呈現/資料待整合測試（dev/uat 後端）**。→ `epl-case-credit-reviewer-onhandstatus-query-list` |
 | `EPROZ00660` | CAD On Hand Status | ⚠️待查（疑已完成＝CR 範本）| ✅ | onhand-status 子頁；`cad-onhand-status` 已存在且作為 CR 範本 → 可能已完成，**先確認再決定要不要動**。→ `epl-case-CAD-onhandstatus-query-list` |
 | `EPROZ00620` | Application Delete Report | 未做 | ✅ | → `epl-case-application-delete-report-btn-search/-query-list` |
 | `EPROZ00630` | Deviation Case Report | 未做 | ✅（含 download）| → `epl-list-deviation`/`-file-download-deviation`/`-sele-dept-loantype-deviation` |
