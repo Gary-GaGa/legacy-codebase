@@ -84,13 +84,14 @@
 | 新頁 | 名稱 | FE | BE | 補法（鏡像既有）|
 |---|---|---|---|---|
 | `EPROISU0920` | Disbursement Process | ✅ | **未做** | 建後端 API（只有授權 page-map，無 controller）|
-| `EPROC00115` | c0 Borrower Group Exposure | ✅ | 半成品 | 鏡像 i0 `BorrowerGroupExposureController` |
-| `EPROC00116` | c0 Financial Statement GI | ✅ | 半成品 | 鏡像 i0 `FinancialStatementController`（含 ppdf/pxls）|
-| `EPROC00117` | c0 Financial Evaluation GI | ✅ | 半成品 | 鏡像 i0 `FinancialStaffController` |
-| `EPROC00118` | c0 Corporate Scorecard | ✅ | 半成品 | 鏡像 i0 `CorporateScorecardController` |
-| `EPROC00119` | c0 Financial Statement FI | ✅ | 半成品 | 鏡像 i0 `FinancialStatementCmtsFiController` |
-| `EPROC00120` | c0 Financial Evaluation FI | ✅ | 半成品 | 鏡像 i0 `FinancialEvaluationTableController` |
-> c0 半成品已有 service/checkpoint（`TBCheckPointsCs/Cu`）痕跡，只缺對外 controller/endpoint。
+| `EPROC00115` | c0 Borrower Group Exposure | ✅ | 缺 controller+DTO+service | 🟢**起手頁**（最乾淨：info/save/sele、單表 `TB_GROUP_EXPOSURE`、無 PDF/XLS、無 GI/FI、無計分）。鏡像 i0 `BorrowerGroupExposureController`（`epl-info/save/sele-i0-borrower-group-exposure`），checkpoint 改 `TBCheckPointsCs/Cu`=`EPROC00115` |
+| `EPROC00116` | c0 Financial Statement GI | ✅ | 缺 controller+DTO+service | 鏡像 i0 `FinancialStatementController`（含 ppdf/pxls；sele/quer/info/calc/save）|
+| `EPROC00117` | c0 Financial Evaluation GI | ✅ | 缺 controller+DTO+service | ⚠️鏡像 i0 **`FinancialStaffController`（不是同名的 `FinancialEvaluationController`）**；i0 此頁混 INFO/INFO_S/GI 三組資料，c0 須先確認是否成立 |
+| `EPROC00118` | c0 Corporate Scorecard | ✅ | 缺 controller+DTO+service | 鏡像 i0 `CorporateScorecardController`；⚠️計分邏輯已散在 `CsuCreditEvalAndCreditDecisionServiceImpl` → 抽**獨立 service**，勿再包一層、勿另寫一套算法（防分叉）|
+| `EPROC00119` | c0 Financial Statement FI | ✅ | 缺 controller+DTO+service | 鏡像 i0 `FinancialStatementCmtsFiController`（含 ppdf/pxls）|
+| `EPROC00120` | c0 Financial Evaluation FI | ✅ | 缺 controller+DTO+service | ⚠️i0 功能拆在**兩支**：`FinancialEvaluationTableController` + `FinancialStaffController` 的 `epl-save-i0-financial-evaluation-staff-fi` → c0 先決定要不要也拆兩支 |
+> c0 已有 entity/repo/checkpoint（`TBCheckPointsCs/Cu`=`EPROC001xx`）+ 部分邏輯散在既有 `Csu*` service；**缺 controller + corporate DTO package + 獨立 feature service**（非只缺 endpoint）。
+> ⚠️ c0 **G/F 分流寫死在 `CsuCreditInvestigationServiceImpl`**：businessType=G 用 `EPROC00116+00117`、F 用 `EPROC00119+00120`，切換時清另一組 → 鏡像時沿用此既有 c0 規則，勿照 i0 重寫。c0 **無 `EPROC00111/00113`** → 不可把 i0 `FinancialEvaluationController`/`IndividualScoreCardController` 當 c0 對應頁。
 
 ### 2C. API 慣例（重要，所有任務遵循）
 - 後端 endpoint = **RPC 式 `epl-{verb}-{scope}-{feature}`**（verb：`sele`/`info`/`save`/`case`/`quer`/`calc`/`comm`/`resu`/`list`/`ppdf`(印PDF)/`pxls`(匯Excel)/`file`…），**非 REST 資源路徑**。
