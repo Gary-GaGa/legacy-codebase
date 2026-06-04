@@ -73,8 +73,10 @@
   > 先讀後端 `CreditReviewerOnHandStatusController` 的 `epl-case-credit-reviewer-onhandstatus-query-list` 的 DTO，前端送/收欄位與它對齊。
 - Codex 讀 `AGENTS.md` + 既有同類頁範本 +（前端）後端 controller → 提出改動；**逐個 diff 看過再核准**（看不懂先追問再批）。
 
-**1c. Build**
-- 讓 Codex 跑 `ng build`（後端 `mvn -o package`）。有錯**把訊息整段貼回 Codex** 修到綠燈。想看畫面 `ng serve`。
+**1c. Build**（⚠️ **自己跑，別讓 Codex 跑長 build**）
+- `ng build` ~170s、輸出量大 → **Codex 等不到結束會卡住**。**在你自己的終端機跑**：前端 `yarn ng build`、後端 `mvn clean package "-Dmaven.test.skip=true"`。Codex 只負責改 code。
+- 有錯 → **把錯誤訊息整段貼回 Codex** 修，反覆到綠燈。
+- 想看畫面：`yarn ng serve`（長駐程序，**絕不要在 Codex 裡跑**，它會永遠等不到結束）。
 
 **1d. 自驗**（Codex 先自查，見 `page-mapping.md` §2E）
 - 契約對齊（前端欄位 == 後端 DTO）、狀態（空/載入/錯誤/disabled）、慣例（叫 Codex「檢查有沒有違反 AGENTS.md」）。
@@ -104,6 +106,7 @@
 | 後端 build 連到 `repo.maven.apache.org`、找不到 `ojdbc8`/`cub.util:db-encrypt` | 沒裝 Nexus settings.xml → 複製 `docs/env/maven-settings.xml`→`%USERPROFILE%\.m2\settings.xml`，`mvn -U clean package`（`-U` 強制清掉「找不到」失敗快取；必要時刪 `~/.m2/repository/com/oracle`、`~/.m2/repository/cub`）|
 | 後端 testCompile `cannot find symbol`（FileService/JwtUtil/LoginEmployee…）| **既有測試與 main 不同步、非你造成** → baseline 用 `mvn clean package "-Dmaven.test.skip=true"`（連測試編譯都跳；勿用 `-DskipTests`，那仍會編譯測試）。測試修復另列工作 |
 | PowerShell：`Unknown lifecycle phase '.test.skip=true'` | PowerShell 把 `-D` 參數拆掉 → **加引號** `mvn ... "-Dmaven.test.skip=true"`；或用 `--%`，或改在 CMD 跑。之後所有 `-D...` 在 PowerShell 都要加引號 |
+| Codex 跑 `yarn ng build` 卡住不結束 | build ~170s + 大量輸出，agent 等不到結束 → **改由你在獨立終端機跑 build，Codex 只改 code**；錯誤再貼回 Codex。**勿讓 Codex 跑 `ng serve`/`--watch`**（長駐、永不結束）。需 Codex 自己 build 時加 `--progress=false` 並確認其指令逾時夠長 |
 | Codex 改太多 / 跑偏 | `git restore .` 還原，把任務**拆更小**再給（例如先只做查詢、再做表格）|
 | 同型頁要做很多次 | 把共用提示存成 `~/.codex/prompts/`（見 §2），之後叫 `/指令` 只補頁名 |
 
