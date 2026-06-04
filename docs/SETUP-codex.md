@@ -107,6 +107,7 @@
 | 後端 testCompile `cannot find symbol`（FileService/JwtUtil/LoginEmployee…）| **既有測試與 main 不同步、非你造成** → baseline 用 `mvn clean package "-Dmaven.test.skip=true"`（連測試編譯都跳；勿用 `-DskipTests`，那仍會編譯測試）。測試修復另列工作 |
 | PowerShell：`Unknown lifecycle phase '.test.skip=true'` | PowerShell 把 `-D` 參數拆掉 → **加引號** `mvn ... "-Dmaven.test.skip=true"`；或用 `--%`，或改在 CMD 跑。之後所有 `-D...` 在 PowerShell 都要加引號 |
 | Codex 跑 `yarn ng build` 卡住不結束 | build ~170s + 大量輸出，agent 等不到結束 → **改由你在獨立終端機跑 build，Codex 只改 code**；錯誤再貼回 Codex。**勿讓 Codex 跑 `ng serve`/`--watch`**（長駐、永不結束）。需 Codex 自己 build 時加 `--progress=false` 並確認其指令逾時夠長 |
+| `ng serve` 強制 login、想預覽頁面 | **看版面**：問 Codex「auth guard 看哪個 storage key」→ DevTools 在 local/sessionStorage 塞 dummy token → 進頁（API 會 401 但版面 render，看完清掉還原）。**看真實資料**：後端跑起來 + dev 帳號真登入。⚠️ 任何 auth bypass **只限本機、絕不 commit**（改 code 關 guard 尤其危險）|
 | Codex 改太多 / 跑偏 | `git restore .` 還原，把任務**拆更小**再給（例如先只做查詢、再做表格）|
 | 同型頁要做很多次 | 把共用提示存成 `~/.codex/prompts/`（見 §2），之後叫 `/指令` 只補頁名 |
 
