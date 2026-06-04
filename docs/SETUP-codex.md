@@ -111,6 +111,8 @@
 | `ng serve` 強制 login、想預覽頁面 | **看版面**：問 Codex「auth guard 看哪個 storage key」→ DevTools 在 local/sessionStorage 塞 dummy token → 進頁（API 會 401 但版面 render，看完清掉還原）。**看真實資料**：後端跑起來 + dev 帳號真登入。⚠️ 任何 auth bypass **只限本機、絕不 commit**（改 code 關 guard 尤其危險）|
 | Codex 改太多 / 跑偏 | `git restore .` 還原，把任務**拆更小**再給（例如先只做查詢、再做表格）|
 | 同型頁要做很多次 | 把共用提示存成 `~/.codex/prompts/`（見 §2），之後叫 `/指令` 只補頁名 |
+| Codex 鏡像既有頁時**偷換成 reflection / runtime 委派**原服務（注入原 service、呼叫其 private method）| 違反「自足新 feature」、**build 會綠但 runtime 才爆**、原檔一改就壞 → **不收**。要求**複製鏡像邏輯**（接受程式碼重複）；真的太大才**有意識地**抽共用 service，**絕不用 reflection 繞**。計畫寫「鏡像」時，實作回報要逐項核對沒換成委派（曾在 `00116` 發生）|
+| Codex 新增 Java 檔的中文**註解/字串常數變亂碼**（無 BOM 但非有效 UTF-8）| Codex 寫 CJK 偶爾吐壞位元組（曾在 `00116` 一個檔壞 400+ 處字串常數）→ **每頁新檔建立後先驗**：strict-UTF-8 解碼 + BOM 檢查。壞了：因 c0 是 i0 的 1:1 鏡像，**照對應 i0 檔還原中文**再套 c0 差異，存**乾淨 UTF-8 / 無 BOM**。⚠️**字串常數壞掉是 bug**（進 log/UI），要**全掃**、不能只補抽查到的那個。順手查 PowerShell 漏進來的 `` `r`n `` 字面量 |
 
 ## 4. 哪些不用做
 - `page-mapping.md` 中對應重構頁**空白** 或標 **「已無使用」** → 不開發。
