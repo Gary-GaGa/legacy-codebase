@@ -56,7 +56,7 @@
 
 ### 1E. 共用 `EPROZ00*`
 `00100` TO DO LIST、`00200` New Case Application、`00300` Document Checklist、`00400` Case Distribution、`00410` Related Party Information、`00500` Comparison table…CUBC、`00600` Search、`00610` Credit Reviewer On Hand Status、`00620` Application Delete Report(R2)、`00630` Deviation Case Report(R2)、`00640` Scorecard Report(R2)、`00650` Application Cancel Report(R2)、`00660` CAD On Hand Status、**`00700` Assign Substitute（= 我們的 Phase 1）**、`00800` Revised Item。
-> 前端狀態：**未做** = `00610`/`00620`/`00630`/`00640`/`00650`/`00660`/`00700`；其餘完成（`00800` 完成）。
+> 前端狀態（2026-06-04 Codex 逐頁盤點校正）：真正**未做** = `00700`（Assign Substitute）。`00610` 本期實作（待整合驗證）；`00620`/`00630`/`00640`/`00650` 報表頁**頁面結構已完成**（module/routing/component/service/config 齊全，僅 `spec.ts` 為樣板）→ 待整合驗證、**非從零**；`00660` CAD On Hand 已完成（即 CR 範本）。其餘完成。
 
 ### 1F. 特例（不開發）
 - **對應重構頁空白**（已合併上去）或標 **「已無使用」** → **不開發**。
@@ -66,18 +66,18 @@
 - `EPROISU0181` 同時是企金 CAD 報表的對映頁（個/企共用）。
 
 ## 2. 剩餘 30% 補完 backlog（✅ 前後端 cross-check 已對齊）
-> 對齊兩份後，真正缺口 = **前端 8 項 + 後端 7 項**（多為「一邊有殼/API、另一邊缺」）。
+> 對齊兩份後原列「前端 8 項 + 後端 7 項」。**2026-06-04 Codex 盤點校正**：報表 `00620–00650` + `00660` 其實**頁面結構已完成**、`00610` 本期完成 → 前端真正待開發僅 **`00700` Assign Substitute + `EPROCSU0130` 收尾**。缺口因此**集中在後端 7 項**（6 個企金評分 controller + 撥貸 0920）。
 
 ### 2A. 前端要補（後端多已就緒）
 | 新頁 | 名稱 | FE | BE | 補法（打既有 endpoint）|
 |---|---|---|---|---|
 | `EPROZ00700` | Assign Substitute | 未做 | ✅ `DeputyController` | 做前端 → `epl-case-deputy-options/-query-deputy/-insert-deputy/-delete-deputy`（任務單已更新）|
 | `EPROZ00610` | Credit Reviewer On Hand Status | ✅實作（待整合驗證）| ✅ | **onhand-status 子頁**（在 `case-assignment/sub-pages/onhand-status/credit-reviewer-onhand-status`）：比照雙胞胎 `cad-onhand-status`、共用 `base-onhand-status`、既有 route。Codex 補共用 base 的 error handling；build 綠、結構對齊 CAD。**呈現/資料待整合測試（dev/uat 後端）**。→ `epl-case-credit-reviewer-onhandstatus-query-list` |
-| `EPROZ00660` | CAD On Hand Status | ⚠️待查（疑已完成＝CR 範本）| ✅ | onhand-status 子頁；`cad-onhand-status` 已存在且作為 CR 範本 → 可能已完成，**先確認再決定要不要動**。→ `epl-case-CAD-onhandstatus-query-list` |
-| `EPROZ00620` | Application Delete Report | 未做 | ✅ | → `epl-case-application-delete-report-btn-search/-query-list` |
-| `EPROZ00630` | Deviation Case Report | 未做 | ✅（含 download）| → `epl-list-deviation`/`-file-download-deviation`/`-sele-dept-loantype-deviation` |
-| `EPROZ00640` | Scorecard Report | 未做 | ✅（含 pdf/excel export）| → `epl-case-mis-report-scorecard-query-list`/`-export-pdf`/`-export-excel` |
-| `EPROZ00650` | Application Cancel Report | 未做 | ✅ | → `epl-sele-dept-loantype-canreason`/`epl-list-cancelreport` |
+| `EPROZ00660` | CAD On Hand Status | ✅已完成（CR 範本）| ✅ | `cad-onhand-status` 完整實作，本身即 `00610` 的範本 → **不需開發**。→ `epl-case-CAD-onhandstatus-query-list` |
+| `EPROZ00620` | Application Delete Report | ✅結構完成（待整合驗證）| ✅ | `application-delete-report` 已接 module/routing/component/service/config，繼承 `base-application-report`（與 cancel 雙胞胎）→ **不需開發**。→ `epl-case-application-delete-report-btn-search/-query-list` |
+| `EPROZ00630` | Deviation Case Report | ✅結構完成（待整合驗證）| ✅（含 download）| `deviation-case-report` 已含查詢/統計卡/表格/Excel export/選單；無共用 base → **不需開發**。→ `epl-list-deviation`/`-file-download-deviation`/`-sele-dept-loantype-deviation` |
+| `EPROZ00640` | Scorecard Report | ✅結構完成（待整合驗證）| ✅（含 pdf/excel export）| `scorecard-report` 已含 radio 動態欄位/footer/Excel+PDF export → **不需開發**。⚠️**整合風險**：前端 export 用 POST blob，後端 controller 宣告 GET `@RequestBody`，介面風格不一致 → 整合測試時優先驗。→ `epl-case-mis-report-scorecard-query-list`/`-export-pdf`/`-export-excel` |
+| `EPROZ00650` | Application Cancel Report | ✅結構完成（待整合驗證）| ✅ | `application-cancel-report` 已接全套，繼承 `base-application-report`（最乾淨的報表範本）→ **不需開發**。→ `epl-sele-dept-loantype-canreason`/`epl-list-cancelreport` |
 | `EPROCSU0130` | Corporate Guarantor Info | 半成品 | ✅ `CsuGuarantorController` | 清前端 TODO（照個金 `EPROISU0130`）|
 
 ### 2B. 後端要補（前端多已就緒）
@@ -116,6 +116,7 @@
 - 30% 缺口集中在：① **6 個企金評分頁**缺後端 controller（鏡像 i0 即可）② **撥貸 0920** 缺後端 ③ **7 個 z0/共用前端頁**（後端已就緒）。
 - 報表 00620–00650 後端**已含 export** → 前端做查詢+觸發既有 export 即可，**R2 對這幾頁影響小**。
 - ⚠️ **以 build manifest 校正（2026-06-03 `ng build`）**：前端已存在 lazy module —— `credit-reviewer-onhand-status`、`cad-onhand-status`、`deviation-case-report`、`scorecard-report`、`application-delete-report`、`application-cancel-report`、`deputy`（size 多很小=骨架）。→ 不少「未做」其實是**骨架待補、非從零**；**選頁前先看既有 module 完成度**（build chunk 大小可當粗略指標）。cross-check(Copilot 搜尋)會漏，**build manifest 為準**。
+- ⚠️ **2026-06-04 再校正（Codex 逐頁盤點）**：`00620–00650` 報表頁**全部頁面結構已接好**（非骨架）；其中 `delete`/`cancel` 共用 `base-application-report`，**功能在共用 base 裡 → build chunk 小但完成度高** → build-size 啟發法會**低估「共用 base 的頁」**。教訓：**選頁/開做前一律先讓 Codex 唯讀盤點該頁實際完成度**——已兩次發現「未做」其實已完成（CAD→CR、4 報表），避免重做。
 
 ## 3. 下一步：對照兩專案找出未完成（cross-check）
 在**前端專案**與**後端專案**各跑一次（prompt 見對話），用 §1 新頁代碼逐一確認「已實作/半成品/未做 + 對應 component/route 或 controller/endpoint」→ 回填本檔狀態欄、彙整 §2 backlog。
