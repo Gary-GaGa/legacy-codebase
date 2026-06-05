@@ -30,7 +30,7 @@
 
 ### R4 — `crScoreCardCompleted` 兩碼契約（00118 = 第 2 碼）
 - save 在既有值上改**第 2 碼**：`substring(1,2)` 再組 `Y/N + oldSecondChar`（00114 管第 1 碼，互補）。i0：`CorporateScoreCardServiceImpl.java:271`。
-- ⚠️ 跨 service 共享狀態 → 實作前唯讀確認「無第三者寫第 2 碼」。
+- ⚠️ 跨 service 共享狀態。**gate-b 已查（2026-06-05）**：00118 本身正確（只動第 2 碼、保留第 1 碼）；但「無第三者寫第 2 碼」**不成立**——既有 `CsuCreditEvalAndCreditDecisionServiceImpl:2890` 會整欄覆寫 `"NN"`。屬既有碼、§6.1 不改 → 見 R9-PENDING。
 
 ### R5 — `loanDefDayFlag == "Y"` → Default / -1 score（**照 i0 1:1，不裁剪**）
 - `loanDefDayFlag=Y` 時走 Default、score = -1，**仍呼叫 funcGetRate**。業務規則，照 i0 原樣複製。
@@ -45,6 +45,11 @@
 ### R8-PENDING — CU return checkpoint 衝突
 - 既有 `CsuCreditEvalAndCreditDecisionServiceImpl` Return(98) **硬編碼只清 `TB_CHECK_POINTS_CS`、無 CU 分流**（`:2985`）；§6.1 禁改既有 `Csu*`。
 - → CU（無擔企金）案件 return 會留下錯的 checkpoint。**本頁不修**；先唯讀確認 CU 是否真走到 `00118`，列 `page-mapping.md` §2B escalation。
+
+### R9-PENDING — crScoreCardCompleted 整欄被既有 CreditEval 覆寫（gate-b 2026-06-05 發現）
+- 既有 `CsuCreditEvalAndCreditDecisionServiceImpl:2890` 把 `crScoreCardCompleted` **整欄寫成 `"NN"`**（非只動一碼），與「00114=第1碼 / 00118=第2碼」雙位元契約並存。
+- 屬企金信用決策生命週期之**既有行為**（非 00118 引入；corporate-flow 特有）；§6.1 禁改既有 `Csu*` → **本頁不修**，00118 自身鏡像 i0 已驗正確。
+- **待 CreditEval owner 確認**：整欄 "NN" 覆寫是 intended（決策步驟重置）還是 latent bug；整合驗證時確認與 00118 save 的時序（覆寫前/後、是否影響 submit gate 期望值，含 Y/N 語意）。
 
 ## 硬界線
 - 不得修改既有 i0 / `Csu*`（含 Return(98)）；只新增。

@@ -16,7 +16,8 @@
 | R6 sele 清單 | QA9 |
 | R7 info AO/CR map | QA8 |
 | R8-PENDING CU return | QA10 `@PENDING` |
-→ R1–R7 全綠才放行；R8 為已知 PENDING（不阻擋本頁，但必須顯性存在）。
+| R9-PENDING crScoreCardCompleted 整欄覆寫 | QA11 `@PENDING` |
+→ R1–R7 全綠才放行；R8/R9 為已知 PENDING（不阻擋本頁，但必須顯性存在，待 CreditEval owner）。
 
 ---
 
@@ -85,4 +86,12 @@ Scenario: QA10 CU 案件 return(98) 後 checkpoint 應正確
   Then TB_CHECK_POINTS_CU.EPROC00118 應被重設為 'Y'
   # 目前既有碼硬編碼只清 CS（:2985）→ 此 case 預期 FAIL，標 @PENDING；
   # 待確認 CU 是否真走到 00118，再決定是否授權改既有 service（見 page-mapping §2B escalation）。
+
+# covers: R9-PENDING  @PENDING
+Scenario: QA11 crScoreCardCompleted 兩碼契約不被整欄覆寫
+  Given 00114 已設第1碼、00118 已設第2碼（crScoreCardCompleted 應為兩碼各自值）
+  When 既有 CsuCreditEvalAndCreditDecisionServiceImpl 走信用決策步驟（:2890）
+  Then crScoreCardCompleted 兩碼應各自保留
+  # 既有碼會整欄覆寫成 "NN"（:2890）→ 此 case 預期 FAIL，標 @PENDING；
+  # 00118 本身鏡像 i0 正確（只動第2碼）；待 CreditEval owner 確認覆寫 intended/bug + Y/N 語意（見 page-mapping §2B escalation）。
 ```

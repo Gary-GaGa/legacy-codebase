@@ -39,4 +39,10 @@
 - 落地方式見該資料夾 `README.md` + `docs/vision-pipeline.md`。
 
 ## 完成判準
-照 `runbook-30pct.md` §2 gate：`verify-c0` PASS + build 綠 + 對 i0 自檢 + 回填 `page-mapping.md`。對齊「驗收邊界」：openapi 欄位填實、QA1–QA9 可跑綠、R8 留 `@PENDING`。
+照 `runbook-30pct.md` §2 gate：`verify-c0` PASS + build 綠 + 對 i0 自檢 + 回填 `page-mapping.md`。對齊「驗收邊界」：openapi 欄位填實、QA1–QA9 可跑綠、R8/R9 留 `@PENDING`。
+
+## ✅ 完成（2026-06-05）
+- 閘門 a `verify-c0 --git` **PASS**（含 0-修改既有檔 + UTF-8）；閘門 c `mvn ... -Dmaven.test.skip=true` **綠**。
+- 閘門 b 獨立語意審查 **9 PASS / 1 FAIL**；FAIL 在 item 5，經人審判定**不阻擋**：00118 自身鏡像 i0 正確（只動第2碼），FAIL 點是**既有** `CsuCreditEvalAndCreditDecisionServiceImpl:2890` 整欄覆寫 `"NN"` → 既有碼、§6.1 不改 → **升級為 escalation 2**（見 `page-mapping.md §2B` / spec R9-PENDING）。
+- 產物：`CsuCorporateScorecardController`/`Service(Impl)`/DTO/enum/assembler，純新增 12 檔、0 改既有。
+- **遺留**（待 CreditEval owner + 整合驗證）：escalation 1 CU-return checkpoint、escalation 2 crScoreCardCompleted 整欄覆寫、新 endpoint `TB_API_AUTH`/`TB_ROLE_TASK` 授權列。

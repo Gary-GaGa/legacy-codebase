@@ -5,14 +5,14 @@
 
 ## 0. 已完成（**勿重做**）
 - 前端：基本完成（`00610`✅ 本期；`00620–00650`/`00660`/`00700`=`deputy` 早已實作）。僅 `EPROCSU0130` 半成品收尾。
-- 後端 c0 評分：`00115`✅ `00116`✅ `00119`✅ `00120`✅（皆 build 綠、待整合驗證）。
+- 後端 c0 評分：`00115`✅ `00116`✅ `00118`✅ `00119`✅ `00120`✅（皆 build 綠、待整合驗證；`00118` 另過獨立語意審查 9 PASS，帶 2 條既有-service escalation）。
 - 詳見 `page-mapping.md` §2A/§2B 狀態欄。
 
 ## 1. 剩餘 backlog（依序；標明可否自走）
 | 順序 | 項目 | 鏡像/來源 | 自走？ |
 |---|---|---|---|
 | 1 | `EPROC00117` c0 FinEval GI | i0 `FinancialStaffController`（**非** `FinancialEvaluationController`）；staff 只取 `-financial-staff`→`00117` 分支 | ✅ 計畫已審，可自走（守 §6） |
-| 2 | `EPROC00118` c0 Corporate Scorecard | i0 `CorporateScorecardController`；**calc 算法在 i0 `FunctionService.funcGetRate`** | ✅ **calc 已定案（2026-06-05）**：注入 `FunctionService`、不分叉；shell/DTO/checkpoint 自足；CU-return＝已知 escalation。**可自走**（守 §6 + 頁卡「人審結論」+ boundary bundle）；僅**新出現**的算法分歧才停 |
+| ~~2~~ | ~~`EPROC00118` c0 Corporate Scorecard~~ | i0 `CorporateScorecardController`；calc 注入 `FunctionService.funcGetRate` | ✅ **完成（2026-06-05）**：build 綠 + verify-c0 + 語意審查 9 PASS；2 條既有-service escalation（CU-return、crScoreCardCompleted 整欄覆寫）留待 owner。詳見 `page-mapping §2B` |
 | 3 | `EPROISU0920` Disbursement | **無 i0 可鏡像** → 追舊系統 `EPROIS_0920` | 🛑 **不可直接開做**：先出「舊鏈路盤點 + 計畫」等人審 |
 | 4 | `EPROCSU0130` 企金保證人（前端） | 照個金 `EPROISU0130` 清前端 TODO | ✅ 前端可自走（守 `frontend/AGENTS.md`） |
 
@@ -38,6 +38,6 @@
 - 安全做法：**預設序列**；要並行只挑**真正獨立**的（如後端 `00117` 與前端 `CSU0130` 可平行，因不同專案/不同檔）。
 
 ## 5. 完成定義（整個 30%）
-- `00117`/`00118`/`0920`(後端) + `CSU0130`(前端) 各自 gate 通過、backfill 完成。
+- `00117`/`0920`(後端) + `CSU0130`(前端) 各自 gate 通過、backfill 完成（`00118` ✅ 已完成 2026-06-05，帶 2 條 escalation）。
 - `page-mapping.md` §2 backlog 全部 ✅；待整合驗證清單交付給 dev/uat 整合測試（含 `TB_API_AUTH` 授權列、export 模板、CR/報表呈現）。
 - **整合驗證**（真資料、授權列、模板）為**獨立後續階段**，非 build 階段；本 runbook 只負責「程式補完 + build 綠 + 形式驗證」。
