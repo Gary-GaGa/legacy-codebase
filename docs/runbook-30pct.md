@@ -11,7 +11,7 @@
 ## 1. 剩餘 backlog（依序；標明可否自走）
 | 順序 | 項目 | 鏡像/來源 | 自走？ |
 |---|---|---|---|
-| 1 | `EPROC00117` c0 FinEval GI | i0 `FinancialStaffController`（**非** `FinancialEvaluationController`）；staff 只取 `-financial-staff`→`00117` 分支 | ✅ 計畫已審，可自走（守 §6） |
+| 1 | `EPROC00117` c0 FinEval GI | i0 `FinancialStaffController`（**非** `FinancialEvaluationController`）；staff 只取 `-financial-staff`→`00117` 分支 | ⚠️ **改 audit（2026-06-05）**：既有 c0 `CsuFinancialStaff*` 模組已存在 → 先唯讀 audit vs 規格，**勿重建**；有缺再裁示 patch。sele 用 `commonFunctionService.funcIsStaffLoan`（`service.common`，允許）|
 | ~~2~~ | ~~`EPROC00118` c0 Corporate Scorecard~~ | i0 `CorporateScorecardController`；calc 注入 `FunctionService.funcGetRate` | ✅ **完成（2026-06-05）**：build 綠 + verify-c0 + 語意審查 9 PASS；2 條既有-service escalation（CU-return、crScoreCardCompleted 整欄覆寫）留待 owner。詳見 `page-mapping §2B` |
 | 3 | `EPROISU0920` Disbursement | **無 i0 可鏡像** → 追舊系統 `EPROIS_0920` | 🛑 **不可直接開做**：先出「舊鏈路盤點 + 計畫」等人審 |
 | 4 | `EPROCSU0130` 企金保證人（前端） | 照個金 `EPROISU0130` 清前端 TODO | ✅ 前端可自走（守 `frontend/AGENTS.md`） |

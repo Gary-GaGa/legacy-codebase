@@ -40,7 +40,8 @@
 ### 6.1 鏡像原則（自足，不耦合 i0）
 - 每個 c0 頁 = **新增一套自足 feature**（controller + service(+interface) + DTO package），鏡像對應 i0。
 - **禁止**：注入/委派 i0 service、reflection（`java.lang.reflect`/`getDeclaredMethod`/`setAccessible`）、呼叫 i0 private method、在 c0 檔 import `*.individual.*`。需要 i0 邏輯 → **複製進 c0**（接受重複，不抽共用）。
-- **唯一例外（2026-06-05 核准，限「共用計分引擎」）**：c0 calc **可注入 `individual.FunctionService` 並呼叫 `funcGetRate`/`funcGetCollateralTotalScore`**（含其 function DTO）。理由：它是**共用 compute 引擎**（既有企金頁 `00114 CsuCollateralAssessment` 已注入它在用）、為計分**單一真相**；若複製進 c0 等於**分叉算法、違反 §6.6**。**僅 `FunctionService` 一支**例外，其餘 i0 page service / page DTO 仍一律禁止耦合。`verify-c0.py` 已對此 allowlist（`ALLOW_SHARED_FUNC`）。
+- **唯一例外（2026-06-05 核准，限「共用計分引擎」）**：c0 calc **可注入 `individual.FunctionService` 並呼叫 `funcGetRate`/`funcGetCollateralTotalScore`**（含其 function DTO）。理由：它是**共用 compute 引擎**（既有企金頁 `00114 CsuCollateralAssessment` 已注入它在用）、為計分**單一真相**；若複製進 c0 等於**分叉算法、違反 §6.6**。**僅 `service.individual.FunctionService` 一支**例外，其餘 i0 page service / page DTO 仍一律禁止耦合。`verify-c0.py` 已對此 allowlist（`ALLOW_SHARED_FUNC`）。
+- **`service.common.*` 共用基礎建設＝直接可用（非例外）**：如 `commonFunctionService`（`service.common.impl.FunctionServiceImpl`，例 `funcIsStaffLoan`）是個金/企金**共用 common 層、非 `individual`**，可直接注入使用，**不算 §6.1 的 i0 耦合**（`verify-c0` 只擋 `.individual.`）。⚠️ 注意它與上條 `service.individual.FunctionServiceImpl.funcGetRate`（在 individual 底下、需例外）**不同支**，勿混淆。
 - **不得修改**任何既有 i0 / 既有 `Csu*` / `CsuCreditInvestigationServiceImpl` 的 G/F 分流。**只新增**。
 
 ### 6.2 命名與契約
