@@ -12,7 +12,7 @@
 | 順序 | 項目 | 鏡像/來源 | 自走？ |
 |---|---|---|---|
 | 1 | `EPROC00117` c0 FinEval GI | i0 `FinancialStaffController`（**非** `FinancialEvaluationController`）；staff 只取 `-financial-staff`→`00117` 分支 | ✅ 計畫已審，可自走（守 §6） |
-| 2 | `EPROC00118` c0 Corporate Scorecard | i0 `CorporateScorecardController`；計分邏輯散在 `CsuCreditEvalAndCreditDecisionServiceImpl` | ⚠️ **半自走**：可建 controller/DTO/service 外殼，但**算法一旦無法 1:1 鏡像 → 停下回報**（§6.6，嚴禁分叉） |
+| 2 | `EPROC00118` c0 Corporate Scorecard | i0 `CorporateScorecardController`；**calc 算法在 i0 `FunctionService.funcGetRate`** | ✅ **calc 已定案（2026-06-05）**：注入 `FunctionService`、不分叉；shell/DTO/checkpoint 自足；CU-return＝已知 escalation。**可自走**（守 §6 + 頁卡「人審結論」+ boundary bundle）；僅**新出現**的算法分歧才停 |
 | 3 | `EPROISU0920` Disbursement | **無 i0 可鏡像** → 追舊系統 `EPROIS_0920` | 🛑 **不可直接開做**：先出「舊鏈路盤點 + 計畫」等人審 |
 | 4 | `EPROCSU0130` 企金保證人（前端） | 照個金 `EPROISU0130` 清前端 TODO | ✅ 前端可自走（守 `frontend/AGENTS.md`） |
 
@@ -27,7 +27,7 @@
 5. **commit**（實際產品專案，非本規劃 repo）：訊息描述頁碼 + 鏡像來源。
 
 ## 3. 🛑 停止點（停下回報、不准猜）
-- 算法/計分無法 1:1 鏡像（特別 `00118`）。
+- 算法/計分無法 1:1 鏡像（`00118` calc 已定案＝注入 `FunctionService`，見頁卡；此條指**新出現、未定案**的算法分歧）。
 - 無 i0 可鏡像（`0920`）→ 只能先盤點+計畫。
 - 需改既有 i0/`Csu*`、跨頁 checkpoint 副作用不確定、DTO 契約要變。
 - `verify-c0` / 審查 agent / build **連續兩輪**修不過 → 停下回報卡點，別硬湊。

@@ -1,7 +1,7 @@
 # Build Task — `EPROC00118` c0 Corporate Scorecard（後端）
 
 > 載具：Codex（後端專案/母資料夾）。**硬規則見 `backend/AGENTS.md` §6**；自走順序見 `docs/runbook-30pct.md`。
-> ⚠️ **半自走**：外殼可自走，**算法不准分叉**——見下方煞車。
+> ✅ **calc 已定案**（2026-06-05，見下方「人審結論」）：calc 注入 `FunctionService`、不分叉；shell/DTO/checkpoint 自足；CU-return＝已知 escalation（不阻擋本 build）。下方「煞車」仍適用於任何**新出現**的算法分歧。
 
 ## 鏡像來源
 - i0 `CorporateScorecardController` + `CorporateScorecardServiceImpl`。
@@ -27,5 +27,16 @@
 - **可直接做**：sele/info/save 外殼 + 4 corporate DTO（+ RiskLevelMap nested）、重用 `TBCorpScrcardEntity`/`TBScoreCardParamDetailRepository`、CS/CU + `EPROC00118` checkpoint（`isFinish?"N":"Y"`）。
 - **自動處理項**：`crScoreCardCompleted` 兩碼契約（00114=第1碼 / 00118=第2碼）→ Codex 唯讀確認後照 i0 `substring(1,2)` 寫法；`loanDefDayFlag=Y → Default/-1 score` → 照 i0 1:1 複製、不裁剪。
 
+## 🔄 跑這頁前：同步到產品後端專案（你本機 = Codex 執行處）
+本 repo 是來源；Codex 跑 00118 前，確認下列**最新版**已在後端專案資料夾（否則跑到舊規則、核准的 `FunctionService` 注入會被舊 gate 擋）：
+- `scripts/verify-c0.py`（含 `FunctionService` allowlist + 「0 修改既有檔」檢查）
+- `backend/AGENTS.md`（§6.1 例外、§6.5 DoD）
+-（若用語意閘門）`docs/review-c0-prompt.md`、`.codex/agents/reviewer-c0.toml`
+
+## 📐 驗收邊界（boundary bundle）
+本頁可驗證邊界範本見 [`../golden-template/boundary-bundle/EPROC00118/`](../golden-template/boundary-bundle/EPROC00118/)：
+- `spec.md`（規則 R1–R8）/ `openapi.yaml`（契約·閘門1·TODO 對 i0 DTO 填實）/ `schema.sql`（閘門2）/ `qa-cases.md`（QA1–QA10，含 R8 `@PENDING` = CU-return）。
+- 落地方式見該資料夾 `README.md` + `docs/vision-pipeline.md`。
+
 ## 完成判準
-照 `runbook-30pct.md` §2 gate：`verify-c0` PASS + build 綠 + 對 i0 自檢 + 回填 `page-mapping.md`。
+照 `runbook-30pct.md` §2 gate：`verify-c0` PASS + build 綠 + 對 i0 自檢 + 回填 `page-mapping.md`。對齊「驗收邊界」：openapi 欄位填實、QA1–QA9 可跑綠、R8 留 `@PENDING`。
