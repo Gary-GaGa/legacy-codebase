@@ -63,3 +63,7 @@ backend/*
 frontend/*
 !frontend/AGENTS.md
 # 進版控的只有：上述兩個 AGENTS.md、根 AGENTS.md、docs/、scripts/、本 .gitignore
+
+# Python bytecode
+__pycache__/
+*.pyc
