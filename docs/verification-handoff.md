@@ -31,6 +31,7 @@
 | **D5** | checkpoint 走 `CASE_PROGRESS` + `TB_DISBUR_DATE.EPORIS_0921`、**非** `TB_CHECK_POINTS_IS/IU` | 盤點 | 確認此為撥貸流程**正常設計**（非缺漏）|
 | **D6** | cleanup：`/epl-case-submit-isu-summary` stub（FE 未用）| `SummaryController:43` | 確認移除或補實作（FE 用的是 `epl-case-isu-summary-submit`）|
 | **D7** | `TB_DISBUR_*` 三表未在 `db-schema-catalog` authority 首段 | 盤點 | 以既有 entity/repo 為準，或回補 catalog |
+| **D8** | **schema-map 風險**（DB2→Oracle/整併；Step A2 2026-06-05）| `legacy-extract/disbursement-schema-map.md`（本機）| 🔴 **T24 組檔欄位來源**：舊有欄新無（如 `BRANCH_PROFILE.T24_COMPANY`）→ 新 `funcIsuT24Authorize` 漏欄/改源/併欄？🟠 **金額精度**：舊 VO 無 DB2 length/precision（UNKNOWN）→ 需舊 DDL/DBA，非 VO 可定；查新碼有無 `round/truncate/setScale` 🟡 `NOTIFICATION_INFO` `NO`→`No`（同欄 vs quoted-id）🟡 `LON_SUMMARY_INFO` 新增 `PROJECT_CODE`（是否需填）|
 
 ## 3. 🟡 授權列（owner：DB / ops）— 新 c0 endpoint 的 `TB_API_AUTH` / `TB_ROLE_TASK`
 > `00117` 為既有模組（授權列應已有）；其餘新建 c0 頁的新 `epl-*-c0-*` endpoint 需建授權列。
