@@ -33,7 +33,8 @@
 | 套件來源限制 | **一律走內網 Nexus，禁止連公開 registry** |
 | 既有資產 | 已有「重構後的前後端」可參考；後端架構大致定案、前端需萃取樣板 |
 | 文件語言 | **繁中 + 英文技術術語（維持現狀）**；程式識別字/表名/endpoint/config key 一律英文。Codex 與團隊皆可讀，不全英文化 |
-| c0 鏡像策略（2026-06-05 釐清） | **c0 頁一律自足鏡像 i0**（`backend/AGENTS.md` §6.1：禁注入/委派 i0 service、禁 reflection、禁 import `*.individual.*`；需 i0 邏輯則**複製進 c0、接受重複、不抽共用**）。既有 `Csu*`（如 `00114 CsuCollateralAssessment` 注入 `individual.FunctionService`、import individual function DTO）為 **grandfathered 既有主流程慣例 → 不得作為新 c0 頁範本、不得修改**（§6.1）。已完成 c0 頁（狀態見 `page-mapping.md` §2B）皆符合此鐵則，`00115` 之 CS/CU 判斷另經 code review 確認正確。「是否比照既有頁耦合 i0」之風格題**結案＝維持自足**，不回頭改。唯一活著的風險是 §6.6「計分算法不准分叉」，只適用於有真正計分的 `00118`（其 calc 散在 `CsuCreditEvalAndCreditDecisionServiceImpl`，無法 1:1 鏡像即停、產報告、等人審）。 |
+| c0 鏡像策略（2026-06-05 釐清） | **c0 頁一律自足鏡像 i0**（`backend/AGENTS.md` §6.1：禁注入/委派 i0 service、禁 reflection、禁 import `*.individual.*`；需 i0 邏輯則**複製進 c0、接受重複、不抽共用**）。既有 `Csu*`（如 `00114 CsuCollateralAssessment` 注入 `individual.FunctionService`、import individual function DTO）為 **grandfathered 既有主流程慣例 → 不得作為新 c0 頁範本、不得修改**（§6.1）。已完成 c0 頁（狀態見 `page-mapping.md` §2B）皆符合此鐵則，`00115` 之 CS/CU 判斷另經 code review 確認正確。「是否比照既有頁耦合 i0」之風格題**結案＝維持自足**，不回頭改。唯一活著的風險是 §6.6「計分算法不准分叉」，只適用於有真正計分的 `00118`。 |
+| 00118 calc 兩決策（2026-06-05 人審定案） | Codex recon 確認：**計分算法不在既有 `CsuCreditEval*`**（只做讀/submit gate/return 清欄位），唯一算法在 i0 `FunctionServiceImpl.funcGetRate`。**① calc 引擎＝注入 `FunctionService`**（§6.1 唯一例外，循 00114 precedent；複製進 c0 = 分叉算法、違反 §6.6）→ `verify-c0.py` 加 `ALLOW_SHARED_FUNC` allowlist、`AGENTS.md` §6.1 記錄例外。**② CU-return checkpoint 衝突＝另案上報**：既有 `CsuCreditEvalAndCreditDecisionServiceImpl` Return(98) 硬編碼只清 `TB_CHECK_POINTS_CS`、無 CU 分流，§6.1 禁改既有 `Csu*` → 不在 00118 修，列 `page-mapping.md` §2B escalation。shell/DTO/checkpoint 仍全自足。詳見 `build-tasks/EPROC00118-corporate-scorecard.md`。 |
 
 ## 二、待確認項目（用 Copilot 在實際專案查證後回填）
 

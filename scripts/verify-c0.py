@@ -18,15 +18,21 @@ import subprocess
 import sys
 
 # 禁用樣式：只在 c0（路徑含 /corporate/）的 .java 檔檢查
+# 第三元素 exemptible=True：可被「共用計分引擎」allowlist 豁免（見 ALLOW_SHARED_FUNC）。
 FORBIDDEN = [
-    (re.compile(r"\bjava\.lang\.reflect\b"), "reflection import（禁止反射繞 i0）"),
-    (re.compile(r"\bgetDeclaredMethod\s*\("), "getDeclaredMethod（禁止反射）"),
-    (re.compile(r"\bsetAccessible\s*\("), "setAccessible（禁止反射）"),
-    (re.compile(r"import\s+[\w.]*\.individual\.[\w.]*;"), "import i0 individual.*（禁止耦合 i0；需鏡像就複製進 c0）"),
-    (re.compile(r"\.service\.individual\."), "引用 i0 service.individual（禁止委派 i0）"),
-    (re.compile(r"\bTBCheckPoints?I[su]\b|\bTB_CHECK_POINTS?_I[SU]\b"), "i0 checkpoint 表 Is/Iu（c0 應用 Cs/Cu）"),
-    (re.compile(r'epl-[A-Za-z]+-i0-'), "i0 endpoint 字串 -i0-（c0 應為 -c0-）"),
+    (re.compile(r"\bjava\.lang\.reflect\b"), "reflection import（禁止反射繞 i0）", False),
+    (re.compile(r"\bgetDeclaredMethod\s*\("), "getDeclaredMethod（禁止反射）", False),
+    (re.compile(r"\bsetAccessible\s*\("), "setAccessible（禁止反射）", False),
+    (re.compile(r"import\s+[\w.]*\.individual\.[\w.]*;"), "import i0 individual.*（禁止耦合 i0；需鏡像就複製進 c0）", True),
+    (re.compile(r"\.service\.individual\."), "引用 i0 service.individual（禁止委派 i0）", True),
+    (re.compile(r"\bTBCheckPoints?I[su]\b|\bTB_CHECK_POINTS?_I[SU]\b"), "i0 checkpoint 表 Is/Iu（c0 應用 Cs/Cu）", False),
+    (re.compile(r'epl-[A-Za-z]+-i0-'), "i0 endpoint 字串 -i0-（c0 應為 -c0-）", False),
 ]
+# §6.1 唯一例外（2026-06-05 核准，限「共用計分引擎」）：c0 calc 可注入 individual.FunctionService
+# 呼叫 funcGetRate/funcGetCollateralTotalScore（含其 function DTO）。它是共用 compute 引擎（00114
+# 既有企金頁已用）、計分單一真相；複製進 c0 = 分叉算法、違反 §6.6。僅此一支例外，其餘 i0 page
+# service / page DTO 仍禁止。註：若實際 function DTO 不在 *.function.* 套件下，於此 allowlist 補 token。
+ALLOW_SHARED_FUNC = re.compile(r"\bFunctionService\b|\.function\.")
 # mapping 標註：用來找 endpoint 路徑字串
 MAPPING = re.compile(r'@(?:Post|Get|Put|Delete|Request)Mapping\s*\(\s*(?:value\s*=\s*)?"([^"]+)"')
 
@@ -82,8 +88,10 @@ def check(path):
             s = line.strip()
             if s.startswith("//") or s.startswith("*"):
                 continue  # 略過註解行，避免「鏡像來源 i0」之類說明誤判
-            for pat, msg in FORBIDDEN:
+            for pat, msg, exemptible in FORBIDDEN:
                 if pat.search(line):
+                    if exemptible and ALLOW_SHARED_FUNC.search(line):
+                        continue  # 共用計分引擎 FunctionService 例外（§6.1）
                     v.append(f"L{i}: {msg}")
         # 4. mapping 命名：corporate 端點不得含 -i0-（c0/csu 不可呼叫 i0 端點）。
         #    合法慣例：主流程 -csu-、評分 -c0- 皆可 → 不對其它 epl- 命名告警。
