@@ -129,8 +129,8 @@
 > ⚠️ 舊版本寫「Codex 沒有 skill/subagent」**已過時**。截至 2026/06，Codex CLI 原生已有 **hooks、custom subagents、`/review`、skills**。**確切 TOML/JSON 鍵名以官方為準**（developers.openai.com/codex 的 hooks / subagents / config-reference）；本節依官方頁摘要 + 第三方整理。
 - **Hooks**（`~/.codex/hooks.json` 或專案 `.codex/`）：5 事件 `SessionStart`/`PreToolUse`/`PostToolUse`/`UserPromptSubmit`/`Stop`；hook = 讀 stdin JSON、寫 stdout JSON 的可執行檔；**`PreToolUse` 可擋掉違規工具呼叫**。→ 把 `verify-c0.py` **接成 hook 自動跑**（範本 `docs/env/codex/hooks.json`）。trust 以腳本 hash 綁定，改了要重審。
 - **Custom subagents**（`.codex/agents/*.toml`）：可定 `name`/`description`/`model`/`model_reasoning_effort`/`sandbox_mode`/`developer_instructions`；**官方範例就是 read-only reviewer**（`sandbox_mode="read-only"`、指示「Never modify files」）。→ 我們的審查 agent **定義成原生唯讀 agent**（範本 `docs/env/codex/reviewer-c0.toml`），sandbox 強制只讀，勝過 prompt「請別改」。`[agents] max_depth` 預設 1（只允直接子代）；專案 `.codex/` 僅在專案 trusted 時載入。
-- **`/review`** 內建 + `review_model`：唯讀審 diff、報 prioritized findings、不動 working tree；`review_model` 可釘高推理模型專供審查。
-- **Approval/Sandbox**（`config.toml`）：`approval_policy`=`untrusted`/`on-request`/`never`；`sandbox_mode`=`read-only`/`workspace-write`/`danger-full-access`；`--full-auto`=`on-request`+`workspace-write`（網路預設關）。→ **goal mode 自走 = `--full-auto`（或 `approval_policy="never"`）**，但保留 hooks 當閘門。
+- **`/review`** 內建：唯讀審 diff、報 prioritized findings、不動 working tree；`review_model` 可釘高推理模型。**0.136 有頂層子指令 `codex review`（非互動跑），TUI 內為 `/review`** → 可當語意閘門。
+- **Approval/Sandbox**：旗標 `-a/--ask-for-approval`=`untrusted`/`on-request`/`never`、`-s/--sandbox`=`read-only`/`workspace-write`/`danger-full-access`（亦可寫 `config.toml` 的 `approval_policy`/`sandbox_mode`）。⚠️ **`--full-auto` 在 0.136 企業版不存在** → 自己組 `codex -a on-request -s workspace-write`。**我們的流程用 `on-request`，不要 `never`/`--dangerously-bypass-*`**（會讓 Codex 自跑 `mvn`/`ng build` 卡死）。企業版有無鎖功能用 `codex features` / `codex doctor` 查。
 - **AGENTS.md / skills / `~/.codex/prompts/` / MCP** 仍照用。
 
 ## 7. 自走（goal mode）補完剩餘 30%
