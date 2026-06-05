@@ -19,10 +19,10 @@
 ## 2. 每頁自走迴圈
 1. **plan**：先盤 i0 來源（端點集合 / entity / checkpoint / 跨頁副作用），列計畫。判斷題 → 停（§6.6）。
 2. **implement**：自足鏡像（§6.1–6.4），純新增、不動 i0/`Csu*`。
-3. **gate（硬閘門，全過才算完成）**：
-   - `python scripts/verify-c0.py --git` → **PASS**
-   - `mvn clean package "-Dmaven.test.skip=true"` → **綠**（獨立終端機，勿自跑長 build 卡住）
-   - 對 i0 自檢語意：calc/save 邏輯、checkpoint 欄位與值、跨頁副作用、info 端點 side-effect 有無照鏡像
+3. **gate（硬閘門，全過才算完成；順序很重要）**：
+   - **a. 形式**：`python scripts/verify-c0.py --git` → **PASS**
+   - **b. 語意（獨立審查 agent）**：**另起一個全新 Codex session**（乾淨上下文、review-only、與實作 agent 分離），照 `docs/review-c0-prompt.md` 對照 i0 逐項審（PASS/FAIL/UNSURE + 引用 i0:line↔c0:line）。**全 PASS 才往下；任何 FAIL/UNSURE → 回實作修，重跑 a→b**。（用獨立 agent 是因為實作者自審有偏誤；但它仍是 LLM，非萬無一失。）
+   - **c. 編譯**：`mvn clean package "-Dmaven.test.skip=true"` → **綠**（獨立終端機，勿自跑長 build 卡住）
 4. **backfill**：更新 `page-mapping.md` §2B 該列為「✅實作（待整合驗證）」+ 補待整合驗證清單（新 endpoint `TB_API_AUTH` 授權列、export 模板沿用 i0 路徑等）。
 5. **commit**（實際產品專案，非本規劃 repo）：訊息描述頁碼 + 鏡像來源。
 
@@ -30,7 +30,8 @@
 - 算法/計分無法 1:1 鏡像（特別 `00118`）。
 - 無 i0 可鏡像（`0920`）→ 只能先盤點+計畫。
 - 需改既有 i0/`Csu*`、跨頁 checkpoint 副作用不確定、DTO 契約要變。
-- `verify-c0` 或 build **連續兩輪**修不過 → 停下回報卡點，別硬湊。
+- `verify-c0` / 審查 agent / build **連續兩輪**修不過 → 停下回報卡點，別硬湊。
+- 審查 agent 與實作 agent **反覆對同一點 FAIL↔改** 兩輪仍喬不攏 → 停下，把雙方說法一起回報人審。
 
 ## 4. 並行（multi-agent）注意
 - 這些頁**彼此有耦合**（`00119↔00120`、G 對 `00116/00117`、scorecard 散在共用 service）→ 並行 agent 改同一 backend 易撞。

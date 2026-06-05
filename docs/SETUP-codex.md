@@ -135,6 +135,7 @@
 - **控制文件**：`docs/runbook-30pct.md`（剩餘 backlog 順序、每頁迴圈、閘門、停止點、並行注意）。
 - **硬閘門腳本**：`python scripts/verify-c0.py --git`（每頁做完跑，PASS 才算完成）—— 驗 strict-UTF-8 + No BOM、禁用樣式、`-c0-` 命名。**只攔形式錯；語意正確性仍需對 i0/人審**。
 - **頁卡**：`docs/build-tasks/EPROC00118-*`、`EPROISU0920-*`、`EPROCSU0130-*`（含鏡像來源與煞車）。
+- **獨立審查 agent**：每頁 `verify-c0` PASS 後，**另起全新 Codex session**（review-only）跑 `docs/review-c0-prompt.md` 對照 i0 逐項審（PASS/FAIL/UNSURE + 引用 i0:line↔c0:line），全 PASS 才 build。用獨立 agent 避免實作者自審偏誤；仍非萬無一失（human + 整合測試留著）。
 - **必須有人審的頁**：`00118`（算法不准分叉）、`0920`（無 i0、先盤點+計畫）。其餘可自走但每頁過閘門。
 - ⚠️ 上述 `AGENTS.md` / `scripts/` / 頁卡，需**存在於 Codex 實際執行的資料夾**（你本機後端專案）；本 repo 為來源，請同步過去。
 - ⚠️ 並行 multi-agent：頁間有耦合（`00119↔00120`、`00116/00117`、scorecard）→ 預設**序列**；要並行只挑真正獨立的（如後端 `00117` 與前端 `CSU0130`）。
