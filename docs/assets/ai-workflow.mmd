@@ -1,0 +1,45 @@
+%% 未來 AI 工作流 — AI-native SDLC pipeline
+%% 在 GitHub / Mermaid Live (mermaid.live) 直接 render；可編輯。
+flowchart LR
+  Legacy[("Legacy 系統<br/>既有碼 · DB · JSP")] -->|EPRO Expert AI<br/>反推 · 證據接地| Bible
+  Bible["<b>Bible 業務聖經</b><br/>user story · 北極星 · 黃金旅程"] -->|PM/PO + AI| PRD
+  PRD["<b>PRD</b><br/>what"] -->|SA + AI| SRS
+  SRS["<b>SRS</b><br/>OpenAPI · spec · DB schema"] -->|QA + AI| QA
+  QA["<b>QA cases 1~∞</b><br/>可跑驗收 · covers Rn"] --> RD
+  RD["<b>RD-Agent</b><br/>開發 + 測試<br/>Code → CICD"] --> GATE
+
+  subgraph GATE["DoD 閘門牆 — RD 通過 SA/QA 邊界"]
+    direction TB
+    G1["① Contract · OpenAPI snapshot"]
+    G2["② Schema · entity ↔ DB"]
+    G3["③ verify-c0 · 結構 / 只新增"]
+    G4["④ QA 驗收 · 跑 QA cases"]
+    G5["⑤ 覆蓋率 · ID 對表"]
+    G6["⑥ Build 綠"]
+    G7["⑦ LLM 語意審查 · advisory"]
+    G1 ~~~ G2 ~~~ G3 ~~~ G4 ~~~ G5 ~~~ G6 ~~~ G7
+  end
+
+  GATE -->|①–⑥ 全綠| Done["✅ Done"]
+  GATE -.->|❌ FAIL → 修，重跑| RD
+  Done --> Issue["Issue<br/>bug → 回歸 case"]
+  Issue -.->|新 QA case · 回歸 1~∞| QA
+
+  SRS -. 定義 ①②③ .-> GATE
+  QA  -. 定義 ④⑤ .-> GATE
+
+  %% 追溯 ID 骨幹：funcId(例 EPROC00118) 串 Bible→PRD→SRS→QA→code/test
+  %% 原則：↑往上可追溯 ↓往下可驗證(①–⑥ deterministic 可信 / ⑦ LLM 只輔助) ★Bible 證據接地
+
+  classDef biz fill:#FFF3E0,stroke:#FB8C00,color:#5D4037;
+  classDef prod fill:#E3F2FD,stroke:#1E88E5,color:#0D47A1;
+  classDef spec fill:#E0F2F1,stroke:#00897B,color:#004D40;
+  classDef qa fill:#F3E5F5,stroke:#8E24AA,color:#4A148C;
+  classDef rd fill:#E8EAF6,stroke:#3949AB,color:#1A237E;
+  classDef done fill:#E8F5E9,stroke:#43A047,color:#1B5E20;
+  classDef issue fill:#FFF8E1,stroke:#F9A825,color:#E65100;
+  classDef legacy fill:#ECEFF1,stroke:#607D8B,color:#37474F;
+  classDef gate fill:#FFEBEE,stroke:#E53935,color:#B71C1C;
+  class Legacy legacy; class Bible biz; class PRD prod; class SRS spec;
+  class QA qa; class RD rd; class Done done; class Issue issue;
+  class G1,G2,G3,G4,G5,G6,G7 gate;
