@@ -56,7 +56,7 @@
 
 ### 1E. 共用 `EPROZ00*`
 `00100` TO DO LIST、`00200` New Case Application、`00300` Document Checklist、`00400` Case Distribution、`00410` Related Party Information、`00500` Comparison table…CUBC、`00600` Search、`00610` Credit Reviewer On Hand Status、`00620` Application Delete Report(R2)、`00630` Deviation Case Report(R2)、`00640` Scorecard Report(R2)、`00650` Application Cancel Report(R2)、`00660` CAD On Hand Status、**`00700` Assign Substitute（= 我們的 Phase 1）**、`00800` Revised Item。
-> 前端狀態（2026-06-04 Codex 逐頁盤點校正）：`00610` 本期實作（待整合驗證）；`00620`/`00630`/`00640`/`00650` 報表頁**頁面結構已完成**（module/routing/component/service/config 齊全，僅 `spec.ts` 為樣板）→ 待整合驗證、**非從零**；`00660` CAD On Hand 已完成（即 CR 範本）；**`00700` Assign Substitute = 既有 `pages/deputy` feature，已完整實作**（清單+查詢+新增彈窗+刪除+role 驅動+options 動態載入；route `/deputy`、breadcrumb `E_DEPUTY`、選單來自後端 `epl-auth-menutree`）。→ **前端已無「從零新建」頁**，僅 `EPROCSU0130` 半成品收尾。
+> 前端狀態（2026-06-04 Codex 逐頁盤點校正）：`00610` 本期實作（待整合驗證）；`00620`/`00630`/`00640`/`00650` 報表頁**頁面結構已完成**（module/routing/component/service/config 齊全，僅 `spec.ts` 為樣板）→ 待整合驗證、**非從零**；`00660` CAD On Hand 已完成（即 CR 範本）；**`00700` Assign Substitute = 既有 `pages/deputy` feature，已完整實作**（清單+查詢+新增彈窗+刪除+role 驅動+options 動態載入；route `/deputy`、breadcrumb `E_DEPUTY`、選單來自後端 `epl-auth-menutree`）。→ **前端已無「從零新建」頁**；`EPROCSU0130` 已於 2026-06-05 收尾（ng build 綠）→ **前端全數完成**。
 
 ### 1F. 特例（不開發）
 - **對應重構頁空白**（已合併上去）或標 **「已無使用」** → **不開發**。
@@ -66,7 +66,7 @@
 - `EPROISU0181` 同時是企金 CAD 報表的對映頁（個/企共用）。
 
 ## 2. 剩餘 30% 補完 backlog（✅ 前後端 cross-check 已對齊）
-> 對齊兩份後原列「前端 8 項 + 後端 7 項」。**2026-06-04 Codex 逐頁盤點校正**：`00610` 本期完成；報表 `00620–00650`+`00660` **結構已完成**；`00700` = 既有 `pages/deputy` **已完整實作** → 前端**僅剩 `EPROCSU0130` 半成品收尾**（無從零新建頁）。**真正 30% 缺口集中在後端 7 項**（6 個企金評分 controller + 撥貸 0920）。
+> 對齊兩份後原列「前端 8 項 + 後端 7 項」。**2026-06-04 Codex 逐頁盤點校正**：`00610` 本期完成；報表 `00620–00650`+`00660` **結構已完成**；`00700` = 既有 `pages/deputy` **已完整實作** → 前端**僅剩 `EPROCSU0130` 半成品收尾**（無從零新建頁；`EPROCSU0130` 已於 2026-06-05 收尾 → 前端全數完成）。後端 6 個企金評分 controller 全數結清 → **真正 30% 缺口只剩撥貸 `0920`**。
 
 ### 2A. 前端要補（後端多已就緒）
 | 新頁 | 名稱 | FE | BE | 補法（打既有 endpoint）|
@@ -78,7 +78,7 @@
 | `EPROZ00630` | Deviation Case Report | ✅結構完成（待整合驗證）| ✅（含 download）| `deviation-case-report` 已含查詢/統計卡/表格/Excel export/選單；無共用 base → **不需開發**。→ `epl-list-deviation`/`-file-download-deviation`/`-sele-dept-loantype-deviation` |
 | `EPROZ00640` | Scorecard Report | ✅結構完成（待整合驗證）| ✅（含 pdf/excel export）| `scorecard-report` 已含 radio 動態欄位/footer/Excel+PDF export → **不需開發**。⚠️**整合風險**：前端 export 用 POST blob，後端 controller 宣告 GET `@RequestBody`，介面風格不一致 → 整合測試時優先驗。→ `epl-case-mis-report-scorecard-query-list`/`-export-pdf`/`-export-excel` |
 | `EPROZ00650` | Application Cancel Report | ✅結構完成（待整合驗證）| ✅ | `application-cancel-report` 已接全套，繼承 `base-application-report`（最乾淨的報表範本）→ **不需開發**。→ `epl-sele-dept-loantype-canreason`/`epl-list-cancelreport` |
-| `EPROCSU0130` | Corporate Guarantor Info | 半做（收尾中）| ✅ `CsuGuarantorController` | **2026-06-05 audit**：非空白，主流程/lazy route/表單 config/BE sele·info·save 多已接，且**同構鏡像個金 twin `EPROISU0130`**。**裁決：oracle＝twin、非 deputy 樣板**（本頁是案件編輯流程子頁/展開式編輯，非查詢清單）→ deputy 缺項（search/table/add-config/role-id/popup-dir/檔名）**豁免**。真正要修：① 🔴 `getGuarantorCorpResume()` 誤打 `epl-resu-isu-guarantor`→`-csu-` ② 補 error handling+loading reset（對齊 twin） ③ popup `enumGuarantor` 去個金 model 耦合 ④ 狀態對齊 twin。|
+| `EPROCSU0130` | Corporate Guarantor Info | ✅實作（待整合驗證）| ✅ `CsuGuarantorController` | **✅ 2026-06-05 收尾完成（`ng build` 綠、3 檔）**：4 項全修——① `getGuarantorCorpResume()` 端點 `epl-resu-isu-guarantor`→`-csu-`（全檔掃 `-isu-/-iu-/-is-/-i0-` 僅此 1 筆、已清）② api.service/`getData()` 補 `catchError`+`finalize` loading reset（對齊 twin，失敗回空 DTO 不灌 mock）③ popup `enumGuarantor` 改引 corporate model ④ 狀態維持與個金 twin `EPROISU0130` 同級（未 gold-plate）。**裁決保留**：本頁＝案件編輯流程子頁，oracle＝twin、非 deputy 樣板（deputy 缺項豁免）。|
 
 ### 2B. 後端要補（前端多已就緒）
 | 新頁 | 名稱 | FE | BE | 補法（鏡像既有）|
@@ -114,7 +114,7 @@
 4. **舊系統 = 最終業務基準**，但新系統已**刻意合併/改動** → 「對照 + 人工判斷差異」，**非逐欄硬比**；後端業務邏輯（計算/規則）正確性最依賴它（但多已 done 或由 i0 鏡像承接）。
 
 ### 觀察
-- 30% 缺口（**2026-06-05 校正**）：① **企金評分後端 controller 全數結清**——`EPROC00115`/`00116`/`00117`/`00118`/`00119`/`00120` ✅（`00117` 為既有模組、audit 確認已滿足；`00118` 本期新建+語意審查）② **撥貸 `0920`** 缺後端（**無 i0、需先盤舊鏈路+計畫**）③ 前端僅 `EPROCSU0130` 收尾。→ **剩 `0920`（後端）+ `CSU0130`（前端）**。
+- 30% 缺口（**2026-06-05 校正**）：① **企金評分後端 controller 全數結清**——`EPROC00115`/`00116`/`00117`/`00118`/`00119`/`00120` ✅（`00117` 為既有模組、audit 確認已滿足；`00118` 本期新建+語意審查）② **撥貸 `0920`** 缺後端（**無 i0、需先盤舊鏈路+計畫**）③ 前端 **全數完成**（`EPROCSU0130` 2026-06-05 收尾、ng build 綠）。→ **30% 只剩最後 1 塊：`EPROISU0920`（後端·無 i0）**。
 - ⚠️ **2026-06-05 教訓（後端版）**：`00117` 經 Codex Step-1 唯讀盤點發現 c0 模組**早已存在**（cross-check 誤判為「缺」）→ 證實**「未做其實已完成」在後端也會發生**，先前「後端 cross-check 較可靠」需修正。**任一頁開做前一律先 Codex 唯讀盤點實際完成度**（不分前後端），避免重造。
 - 🚩 **escalation 1（待 `CsuCreditEval*` owner 人審，2026-06-05）**：`EPROC00118` 之 CU-return checkpoint 缺陷——既有 `CsuCreditEvalAndCreditDecisionServiceImpl` Return(98) 硬編碼只清 `TB_CHECK_POINTS_CS`、無 CU 分流（`:2985`）；§6.1 禁改既有 `Csu*`，故不在 00118 修。**待辦**：先 Codex 唯讀確認 CU（無擔企金）案件是否真會走到 `00118` checkpoint；若會→排既有 service 加 CU 分流之獨立修正（需授權破 §6.1「禁改 Csu*」），若不會→此非 bug、結案。
 - 🚩 **escalation 2（gate-b 2026-06-05 發現，待同一 owner 人審）**：`crScoreCardCompleted` 兩碼契約（00114=第1碼 / 00118=第2碼）被既有 `CsuCreditEvalAndCreditDecisionServiceImpl:2890` **整欄覆寫成 `"NN"`**。00118 自身鏡像 i0 已驗正確（只動第2碼）；此覆寫屬企金信用決策生命週期之既有行為、§6.1 不改。**待辦**：確認整欄 "NN" 是 intended（決策重置）還是 latent bug + 與 00118 save 時序（含 Y/N 語意）→ 整合驗證涵蓋。
