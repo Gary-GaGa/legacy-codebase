@@ -7,6 +7,7 @@
 ## 0. 原則
 - 程式已到位 → 本階段只驗**正確性 / 授權 / 呈現**，**不再 build、不重寫、不臆測**。
 - 驗證 oracle 優先用新系統等價物（`c0`對`i0`、`csu`對`isu`）；無等價物者（撥貸）回對**舊系統 / domain owner**。
+- **怎麼跑**（分階段、context-bounded、可重複、含舊系統「抽取→比對」兩步）見 [`verification-execution.md`](verification-execution.md)；每項驗完在本檔對應列標 **☐→✅/⚠️** 並 commit（context window 拋棄式、進度存 doc）。
 
 ---
 
