@@ -40,11 +40,17 @@
 >
 > → 兩步都**不載入整個舊系統**，各自塞得下；且都可重跑。大頁（如 D2 T24 組檔 16 表）再把 Step A/B 各自拆更小。
 
+### 3.1 ⚠️ DB2 → Oracle + 欄位整併（撥貸比對前必讀；c0/csu 遇整併也適用）
+- **DB2 ↔ Oracle 方言差異 = 預期、不算 discrepancy**：比**業務語意**（WHERE 條件、join 意義、排序意圖、結果集、算出的值、狀態轉移），**不是 SQL 文字**。`FETCH FIRST`/`WITH UR`/`SYSIBM.SYSDUMMY1`/`days()`/型別 ↔ Oracle `ROWNUM`/`DUAL`/日期運算 等改寫**一律不報 bug**（否則整頁假紅）。
+- **欄位整併 = 真風險，要先有 mapping**：某些舊表欄位在新系統併表/併欄。**沒有 old↔new 欄位 mapping 就比 →（a）假紅**（以為新少欄、其實併到別處）**（b）漏抓真 bug**（整併時掉欄/錯映關鍵欄：撥貸金額精度、狀態碼合併丟值）。
+- → **新增 Step A2（schema mapping）**：就比對範圍觸及的表，對「舊 `EPRO_TB_*.java` VO 欄位 ↔ 新 `db-schema-catalog`/entity 欄位」逐欄對映，標**同名直映 / 改名 / 整併（多舊→一新 或 拆）/ 新增 / 移除 / 型別變更（DB2→Oracle：`CHAR/VARCHAR2`、`DECIMAL/NUMBER`、`DATE/TIMESTAMP`、`CLOB` 等）**。輸出 `docs/legacy-extract/<domain>-schema-map.md`（本機 only），含每表「⚠️ 整併/型別風險」清單（哪些併欄、是否可能掉精度/丟狀態值）。
+- **Step B 以此 mapping 對齊欄位**，並明寫上面兩條規則。此 mapping 方法 c0/csu 頁若也遇整併可重用。
+
 ## 4. 各群組怎麼切（對 `verification-handoff.md` 五組）
 | 組 | 切法 | session 數（約）|
 |---|---|---|
 | §1 c0 escalation E1/E2 | 各 1 session：讀指定 `CsuCreditEval*:line` + i0 對照；可選對舊系統 spot-check「整欄覆寫/CS-only 是否舊行為」 | 2（+2 可選舊比） |
-| §2 撥貸 D1–D7 | **走 §3 兩步**：先抽舊 `0920/0921/0922`，再比新 `DataInput/Summary`；D2（T24 16 表）再拆 | 抽 ~3 + 比 ~7 |
+| §2 撥貸 D1–D7 | **走 §3 三步**：A 抽舊 `0920/0921/0922` → A2 schema mapping（DB2→Oracle/整併）→ B 比新 `DataInput/Summary`；D2（T24 16 表）再拆 | 抽 ~3 + map 1 + 比 ~7 |
 | §3 授權列 | **非 Codex 任務**：DB/ops 查 `TB_API_AUTH`/`TB_ROLE_TASK` | 0 |
 | §4 export/報表 | dev/uat 跑頁面，非 context 重任務 | 0（人工/整測）|
 | §5 契約對齊 | 每頁 1 session：讀 FE service + BE controller DTO（指名），對欄位 | ~7 |
