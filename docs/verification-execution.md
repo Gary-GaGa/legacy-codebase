@@ -26,9 +26,11 @@
 > - 次要＝2 條 CreditEval escalation（確認整欄覆寫 / CS-only-clear 是否**本來就是舊行為**）。
 > - c0/csu 頁**只做業務語意 spot-check、不逐欄硬比**（已對 i0/isu 驗過，且新系統「刻意合併/改動」過 → 逐欄硬比會誤判）。
 >
-> **前提：先讓 Codex 讀得到舊 source（二選一）**
-> - (a) 把舊 EPRO repo 以**唯讀**放進母資料夾當 sibling（Codex 同時看舊 + 新）。
-> - (b) 拿不到整包 → 只就**該頁**抽（見 Step A）。
+> **前提：舊 source 已就緒（採方案 a，2026-06-05 確認）**——舊 EPRO repo 以**唯讀 sibling** 放母資料夾（`legacy-epro/`），Codex 同時看舊 + 新。
+> ⚠️ **鐵則**：① **本機 only，勿 commit/push 到任何 repo**（舊銀行原始碼，外流嚴重）② 放**母資料夾 sibling、不要放進 `backend/`**（否則被 Maven build 拉進、被 git 追蹤）③ 任務**一律唯讀**舊碼。
+> ⚠️ 抽取出的 `docs/legacy-extract/*.md` 含舊系統內部（撥貸 SQL/T24/狀態機）→ **本機 only、已 gitignore，不進 GitHub**；只有**比對結論**（PASS/FAIL/UNSURE）進 `verification-handoff`，且不逐字貼敏感 SQL。
+>
+> **有了舊源後**：**小頁可一個 session 直接比**（讀「舊頁指名檔 + 新 service」對比）；**大頁（如撥貸 `0920`）仍先抽再比**（Step A→B）以控 context。**兩種都仍守：指名檔、一頁一 session。**
 >
 > **Step A — 抽（context = 只有舊那一頁）**
 > 一個 session 只讀舊系統**該頁**的 trx/action/DAO/SQL（**指名檔**），輸出一份**小 spec** 到 `docs/legacy-extract/<page>.md`：步驟 / 表 / 關鍵 SQL / 狀態轉移 / DB2 方言點。**不比對、不碰新碼。**

@@ -19,8 +19,10 @@
 ├── AGENTS.md               ← 複製本 repo 根 AGENTS.md（共用：Nexus/版本/策略/流程）
 ├── frontend/               ← 你的前端專案（可為獨立 git repo）
 │   └── AGENTS.md           ← 複製本 repo frontend/AGENTS.md（前端慣例）
-└── backend/                ← 你的後端專案（可為獨立 git repo）
-    └── AGENTS.md           ← 複製本 repo backend/AGENTS.md（後端慣例）
+├── backend/                ← 你的後端專案（可為獨立 git repo）
+│   └── AGENTS.md           ← 複製本 repo backend/AGENTS.md（後端慣例）
+└── legacy-epro/            ← （驗證階段才放）舊 EPRO 系統 repo，唯讀參考
+                              ⚠️ 本機 only：勿 commit/push、勿放進 backend/、勿納入 build；任務一律唯讀
 ```
 - **不用 `cat` 合併** —— 3 個檔原樣丟到對應位置即可（Codex 階層式自動疊加）。
 - 兩專案**即使各自是獨立 git repo 也沒關係**：本機放同一母資料夾即可；母目錄 `AGENTS.md` 不屬於任一 repo（純本機給 Codex 讀）。

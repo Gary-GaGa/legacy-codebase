@@ -64,6 +64,12 @@ frontend/*
 !frontend/AGENTS.md
 # 進版控的只有：上述兩個 AGENTS.md、根 AGENTS.md、docs/、scripts/、本 .gitignore
 
+# === ⚠️ 舊系統比對：舊 source 與抽取 spec 一律本機 only ===
+# 舊 EPRO repo 放「母資料夾 sibling」（不在本 repo 內），天然不被追蹤；勿放進 backend/。
+# 抽取出的舊行為 spec 含舊系統內部（撥貸 SQL/T24/狀態機）→ 不進 GitHub：
+docs/legacy-extract/
+legacy-epro/
+
 # Python bytecode
 __pycache__/
 *.pyc
