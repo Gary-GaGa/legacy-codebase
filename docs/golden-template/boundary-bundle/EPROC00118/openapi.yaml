@@ -1,0 +1,112 @@
+# OpenAPI 契約 — EPROC00118 c0 Corporate Scorecard（SA → RD 邊界，DoD 閘門 1）
+#
+# 用途：code-first + snapshot（vision §6）。產品專案 springdoc 從既有 controller 生 OpenAPI，
+#       與本檔比對；契約有改 = 有意改本 snapshot（否則閘門 1 FAIL）。
+# ⚠️ 欄位為「已知結構 + TODO」：request/response 的確切欄位與 @JsonProperty 需對既有 i0
+#    CorporateScorecard DTO 填齊（前端契約不可變，與 i0 完全相同、只改 class/package）。
+# API 慣例：RPC 式 epl-{verb}-{scope}-{feature}（非 REST）；統一回應 EPROResponse<code,message,data>。
+
+openapi: 3.0.3
+info:
+  title: EPROC00118 c0 Corporate Scorecard
+  version: 0.1.0-template
+  description: >
+    鏡像 i0 CorporateScorecardController。base path 待產品專案確認（TODO）。
+
+paths:
+  /epl-sele-c0-corporateScorecard-list:
+    post:
+      operationId: seleC0CorporateScorecardList
+      summary: 下拉/評分參數清單（covers spec R6）
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SeleCorporateScorecardListRequest' } } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/EPROResponse_SeleCorporateScorecardListResponse' } } } } }
+
+  /epl-info-c0-corporateScorecard:
+    post:
+      operationId: infoC0CorporateScorecard
+      summary: 讀取既有評分、回填 AO/CR map（covers spec R7）
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/GetCorporateScorecardInfoRequest' } } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/EPROResponse_GetCorporateScorecardInfoResponse' } } } } }
+
+  /epl-calc-c0-corporateScorecard:
+    post:
+      operationId: calcC0CorporateScorecard
+      summary: 計分（covers spec R1, R5）— 委派 individual.FunctionService.funcGetRate
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/CalCorporateScoreCardRequest' } } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/EPROResponse_CalCorporateScoreCardResponse' } } } } }
+
+  /epl-save-c0-corporateScorecard:
+    post:
+      operationId: saveC0CorporateScorecard
+      summary: 寫回 TB_CORP_SCRCARD + checkpoint（covers spec R2, R3, R4）
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/SaveCorporateScorecardRequest' } } } }
+      responses: { '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/EPROResponse_Void' } } } } }
+
+components:
+  schemas:
+    # ---- 統一回應包裝（全 API 共用）----
+    EPROResponse_base:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string, example: '0000' }
+        message: { type: string }
+
+    EPROResponse_Void:
+      allOf: [ { $ref: '#/components/schemas/EPROResponse_base' }, { type: object, properties: { data: { nullable: true } } } ]
+
+    # ---- 本頁 DTO（TODO：欄位對 i0 填齊，@JsonProperty 與 i0 相同）----
+    SeleCorporateScorecardListRequest:
+      type: object
+      properties:
+        applicationNo: { type: string }
+        # TODO: 其餘欄位對 i0 SeleCorporateScorecardListRequest
+
+    SeleCorporateScorecardListResponse:
+      type: object
+      properties:
+        # TODO: 評分參數 / 下拉項目清單（對 i0 response）
+        items: { type: array, items: { type: object } }
+    EPROResponse_SeleCorporateScorecardListResponse:
+      allOf: [ { $ref: '#/components/schemas/EPROResponse_base' }, { type: object, properties: { data: { $ref: '#/components/schemas/SeleCorporateScorecardListResponse' } } } ]
+
+    GetCorporateScorecardInfoRequest:
+      type: object
+      required: [applicationNo]
+      properties:
+        applicationNo: { type: string }
+    GetCorporateScorecardInfoResponse:
+      type: object
+      properties:
+        # TODO: AO/CR map 欄位（對 i0 response，R7）
+        aoMap: { type: object, additionalProperties: true }
+        crMap: { type: object, additionalProperties: true }
+    EPROResponse_GetCorporateScorecardInfoResponse:
+      allOf: [ { $ref: '#/components/schemas/EPROResponse_base' }, { type: object, properties: { data: { $ref: '#/components/schemas/GetCorporateScorecardInfoResponse' } } } ]
+
+    CalCorporateScoreCardRequest:
+      type: object
+      description: 22 個評分欄位（B_V1..B_V22）+ applicationNo；對 i0 CalCorporateScoreCardRequest 填確切名稱。
+      required: [applicationNo]
+      properties:
+        applicationNo: { type: string }
+        loanDefDayFlag: { type: string, enum: ['Y', 'N'], description: 'R5：Y → Default/-1 score' }
+        # TODO: B_V1..B_V22 對應的 22 個 request 欄位（5 數值 + 17 代碼），名稱對 i0
+    CalCorporateScoreCardResponse:
+      type: object
+      properties:
+        riskLevel: { type: string, description: 'R1：COR_RISK_LV(totalScore) 查得' }
+        scoreDatetime: { type: string, description: '計分時間' }
+        # TODO: 其餘對 i0 response（如 totalScore 是否回傳）
+    EPROResponse_CalCorporateScoreCardResponse:
+      allOf: [ { $ref: '#/components/schemas/EPROResponse_base' }, { type: object, properties: { data: { $ref: '#/components/schemas/CalCorporateScoreCardResponse' } } } ]
+
+    SaveCorporateScorecardRequest:
+      type: object
+      required: [applicationNo]
+      properties:
+        applicationNo: { type: string }
+        isFinish: { type: boolean, description: 'R3：true→checkpoint "N"、false→"Y"' }
+        lonAttribute: { type: string, description: 'R3：與 secureAttribute 一起決定 CS/CU' }
+        secureAttribute: { type: string }
+        # TODO: 寫回 TB_CORP_SCRCARD 的欄位（對 i0 SaveCorporateScorecardRequest，R2）
