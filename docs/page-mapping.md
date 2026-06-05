@@ -78,7 +78,7 @@
 | `EPROZ00630` | Deviation Case Report | ✅結構完成（待整合驗證）| ✅（含 download）| `deviation-case-report` 已含查詢/統計卡/表格/Excel export/選單；無共用 base → **不需開發**。→ `epl-list-deviation`/`-file-download-deviation`/`-sele-dept-loantype-deviation` |
 | `EPROZ00640` | Scorecard Report | ✅結構完成（待整合驗證）| ✅（含 pdf/excel export）| `scorecard-report` 已含 radio 動態欄位/footer/Excel+PDF export → **不需開發**。⚠️**整合風險**：前端 export 用 POST blob，後端 controller 宣告 GET `@RequestBody`，介面風格不一致 → 整合測試時優先驗。→ `epl-case-mis-report-scorecard-query-list`/`-export-pdf`/`-export-excel` |
 | `EPROZ00650` | Application Cancel Report | ✅結構完成（待整合驗證）| ✅ | `application-cancel-report` 已接全套，繼承 `base-application-report`（最乾淨的報表範本）→ **不需開發**。→ `epl-sele-dept-loantype-canreason`/`epl-list-cancelreport` |
-| `EPROCSU0130` | Corporate Guarantor Info | 半成品 | ✅ `CsuGuarantorController` | 清前端 TODO（照個金 `EPROISU0130`）|
+| `EPROCSU0130` | Corporate Guarantor Info | 半做（收尾中）| ✅ `CsuGuarantorController` | **2026-06-05 audit**：非空白，主流程/lazy route/表單 config/BE sele·info·save 多已接，且**同構鏡像個金 twin `EPROISU0130`**。**裁決：oracle＝twin、非 deputy 樣板**（本頁是案件編輯流程子頁/展開式編輯，非查詢清單）→ deputy 缺項（search/table/add-config/role-id/popup-dir/檔名）**豁免**。真正要修：① 🔴 `getGuarantorCorpResume()` 誤打 `epl-resu-isu-guarantor`→`-csu-` ② 補 error handling+loading reset（對齊 twin） ③ popup `enumGuarantor` 去個金 model 耦合 ④ 狀態對齊 twin。|
 
 ### 2B. 後端要補（前端多已就緒）
 | 新頁 | 名稱 | FE | BE | 補法（鏡像既有）|
