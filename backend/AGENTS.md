@@ -33,3 +33,37 @@
   - → **前端須在 HTTP interceptor 附 `Authorization: Bearer <JWT>`。**
 - **CORS**：設定在 `SecurityConfig`（非獨立 WebMvcConfig），兩條 chain 皆套用，`allowCredentials(true)` + `setExposedHeaders(...)`。⚠️ 既有為**全開**（`allowedOriginPatterns/Methods/Headers = "*"`）→ **正式環境應收斂 `allowedOrigins`**。
 - **OpenAPI（契約優先）**：README 要求但**實作未落地**（pom 無 `springdoc`、無 `@OpenAPIDefinition`/`@Operation`）→ **建議導入 `springdoc-openapi`（從 Nexus 取）** 補上合約。
+
+## 6. c0 評分頁鏡像 i0 — 自走硬規則（goal-mode 必讀）
+> 補完剩餘 30%（企金評分 c0 controller + 撥貸 0920）的強制規則。違反任一條 = 該頁**不算完成**。亦見 `docs/runbook-30pct.md`（順序/閘門/煞車）。
+
+### 6.1 鏡像原則（自足，不耦合 i0）
+- 每個 c0 頁 = **新增一套自足 feature**（controller + service(+interface) + DTO package），鏡像對應 i0。
+- **禁止**：注入/委派 i0 service、reflection（`java.lang.reflect`/`getDeclaredMethod`/`setAccessible`）、呼叫 i0 private method、在 c0 檔 import `*.individual.*`。需要 i0 邏輯 → **複製進 c0**（接受重複，不抽共用）。
+- **不得修改**任何既有 i0 / 既有 `Csu*` / `CsuCreditInvestigationServiceImpl` 的 G/F 分流。**只新增**。
+
+### 6.2 命名與契約
+- endpoint = `epl-{verb}-c0-{feature}`（鏡像 i0 的 `-i0-` 改 `-c0-`）；先翻既有 c0 controller 確認慣例。
+- DTO **只改 class/package 名**；`@JsonProperty`/欄位名與 i0 **完全相同**（前端契約不可變）。
+- export 模板沿用 i0 實際存在路徑（如 `EPROI001xx`），**不**硬改成 `EPROC001xx`。
+
+### 6.3 checkpoint（最易錯）
+- c0 一律寫 `TBCheckPointsCs/Cu`（**禁** `Is/Iu`），欄位 `EPROC001xx`。
+- CS/CU 判斷用 **`lonAttribute + secureAttribute`**（同 `CsuCreditInvestigationServiceImpl`/`CsuMainBorrowerInfoServiceImpl`），**不要**用 i0 的 `secureAttribute=="S"` 單條件；寫法用既有 `DynamicUpdateSqlUtils`。
+- 值規則照 i0：`isFinish=true→"N"`、`false→"Y"`。
+- **跨頁副作用逐字照 i0，不自創**：已知 `00119` save 會 seed `00120="Y"`；但 `00116` save **不** seed `00117`（GI/FI 不對稱）。其餘頁**先確認 i0 實際行為再寫**。
+- i0 若有「info 端點也寫 DB」的 side-effect（如 `00117` 的 `info-financial-business` 算 ratios 寫回 GI）→ **照鏡像，別簡化成純讀**。
+
+### 6.4 共用 service 的 URI 分支（00117/00120）
+- i0 `FinancialStaffServiceImpl` 用 URI 同時服務 `00117`(`-financial-staff`→`EPROI00117`) 與 `00120`(`-financial-evaluation-staff-fi`→`EPROI00120`）。c0 **每頁只取自己那條分支**，不得夾帶另一頁的分支或 checkpoint。
+
+### 6.5 每頁完成判準（Definition of Done）
+1. `python scripts/verify-c0.py --git` **通過**（strict-UTF-8 + **No BOM**、無禁用樣式、`-c0-` 命名）。
+2. `mvn clean package "-Dmaven.test.skip=true"` 綠（在獨立終端機；Codex 勿自跑長 build）。
+3. 回填 `docs/page-mapping.md` §2B 狀態 + 待整合驗證清單。
+
+### 6.6 ⚠️ 遇到判斷題就停（goal-mode 的煞車）
+以下情況**不准自行決定、不准猜**，停下產出報告等人審：
+- 計分/算法邏輯需改動或無法 1:1 鏡像（尤其 `00118` Corporate Scorecard：邏輯散在 `CsuCreditEvalAndCreditDecisionServiceImpl`，**嚴禁另寫一套或分叉算法**）。
+- **無 i0 可鏡像**的頁（`EPROISU0920` 撥貸）→ 先出「舊鏈路盤點 + 計畫」等人審，**不得直接開做**。
+- 任何需要改既有 i0/`Csu*`、跨頁 checkpoint 副作用不確定、或 DTO 契約要變的情況。

@@ -1,0 +1,42 @@
+# Runbook — 自走補完剩餘 30%（goal mode）
+
+> 給 Codex 自走（goal mode）完成剩餘 backlog 的控制文件。**硬規則見 `backend/AGENTS.md` §6**；本檔定**順序、閘門、煞車、停止點**。
+> 原則：**build 綠 ≠ 正確**（本專案已多次「綠但有 bug」：reflection / 亂碼 / BOM / checkpoint）→ 閘門 = **驗證腳本 + build 綠 + 對 i0 語意自檢**，且判斷題一律**停下回報**。
+
+## 0. 已完成（**勿重做**）
+- 前端：基本完成（`00610`✅ 本期；`00620–00650`/`00660`/`00700`=`deputy` 早已實作）。僅 `EPROCSU0130` 半成品收尾。
+- 後端 c0 評分：`00115`✅ `00116`✅ `00119`✅ `00120`✅（皆 build 綠、待整合驗證）。
+- 詳見 `page-mapping.md` §2A/§2B 狀態欄。
+
+## 1. 剩餘 backlog（依序；標明可否自走）
+| 順序 | 項目 | 鏡像/來源 | 自走？ |
+|---|---|---|---|
+| 1 | `EPROC00117` c0 FinEval GI | i0 `FinancialStaffController`（**非** `FinancialEvaluationController`）；staff 只取 `-financial-staff`→`00117` 分支 | ✅ 計畫已審，可自走（守 §6） |
+| 2 | `EPROC00118` c0 Corporate Scorecard | i0 `CorporateScorecardController`；計分邏輯散在 `CsuCreditEvalAndCreditDecisionServiceImpl` | ⚠️ **半自走**：可建 controller/DTO/service 外殼，但**算法一旦無法 1:1 鏡像 → 停下回報**（§6.6，嚴禁分叉） |
+| 3 | `EPROISU0920` Disbursement | **無 i0 可鏡像** → 追舊系統 `EPROIS_0920` | 🛑 **不可直接開做**：先出「舊鏈路盤點 + 計畫」等人審 |
+| 4 | `EPROCSU0130` 企金保證人（前端） | 照個金 `EPROISU0130` 清前端 TODO | ✅ 前端可自走（守 `frontend/AGENTS.md`） |
+
+## 2. 每頁自走迴圈
+1. **plan**：先盤 i0 來源（端點集合 / entity / checkpoint / 跨頁副作用），列計畫。判斷題 → 停（§6.6）。
+2. **implement**：自足鏡像（§6.1–6.4），純新增、不動 i0/`Csu*`。
+3. **gate（硬閘門，全過才算完成）**：
+   - `python scripts/verify-c0.py --git` → **PASS**
+   - `mvn clean package "-Dmaven.test.skip=true"` → **綠**（獨立終端機，勿自跑長 build 卡住）
+   - 對 i0 自檢語意：calc/save 邏輯、checkpoint 欄位與值、跨頁副作用、info 端點 side-effect 有無照鏡像
+4. **backfill**：更新 `page-mapping.md` §2B 該列為「✅實作（待整合驗證）」+ 補待整合驗證清單（新 endpoint `TB_API_AUTH` 授權列、export 模板沿用 i0 路徑等）。
+5. **commit**（實際產品專案，非本規劃 repo）：訊息描述頁碼 + 鏡像來源。
+
+## 3. 🛑 停止點（停下回報、不准猜）
+- 算法/計分無法 1:1 鏡像（特別 `00118`）。
+- 無 i0 可鏡像（`0920`）→ 只能先盤點+計畫。
+- 需改既有 i0/`Csu*`、跨頁 checkpoint 副作用不確定、DTO 契約要變。
+- `verify-c0` 或 build **連續兩輪**修不過 → 停下回報卡點，別硬湊。
+
+## 4. 並行（multi-agent）注意
+- 這些頁**彼此有耦合**（`00119↔00120`、G 對 `00116/00117`、scorecard 散在共用 service）→ 並行 agent 改同一 backend 易撞。
+- 安全做法：**預設序列**；要並行只挑**真正獨立**的（如後端 `00117` 與前端 `CSU0130` 可平行，因不同專案/不同檔）。
+
+## 5. 完成定義（整個 30%）
+- `00117`/`00118`/`0920`(後端) + `CSU0130`(前端) 各自 gate 通過、backfill 完成。
+- `page-mapping.md` §2 backlog 全部 ✅；待整合驗證清單交付給 dev/uat 整合測試（含 `TB_API_AUTH` 授權列、export 模板、CR/報表呈現）。
+- **整合驗證**（真資料、授權列、模板）為**獨立後續階段**，非 build 階段；本 runbook 只負責「程式補完 + build 綠 + 形式驗證」。

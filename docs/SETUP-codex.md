@@ -128,6 +128,16 @@
 ## 6. 需要加 Skill / Agent 嗎？→ 不用
 - 「Skill / Subagent」是 **Claude Code** 的功能，**Codex CLI 沒有對應機制** → 專案裡不需要裝 skill 或定義 agent。
 - Codex CLI 的等價物：**`AGENTS.md`（必要，= config）** + `~/.codex/prompts/`（可選，存重複任務為 slash 指令）+ `~/.codex/config.toml`（可選，模型/approval）+ MCP（這次用不到）。
+
+## 7. 自走（goal mode）補完剩餘 30%
+> 把「人工 review」寫進 repo，讓自走盡量安全。**`build 綠 ≠ 正確`**（本專案已多次綠但有 bug）。
+- **硬規則**：`backend/AGENTS.md` §6（自足鏡像、禁反射/委派/individual、checkpoint、UTF-8 No BOM、`-c0-` 命名、§6.6 煞車）。
+- **控制文件**：`docs/runbook-30pct.md`（剩餘 backlog 順序、每頁迴圈、閘門、停止點、並行注意）。
+- **硬閘門腳本**：`python scripts/verify-c0.py --git`（每頁做完跑，PASS 才算完成）—— 驗 strict-UTF-8 + No BOM、禁用樣式、`-c0-` 命名。**只攔形式錯；語意正確性仍需對 i0/人審**。
+- **頁卡**：`docs/build-tasks/EPROC00118-*`、`EPROISU0920-*`、`EPROCSU0130-*`（含鏡像來源與煞車）。
+- **必須有人審的頁**：`00118`（算法不准分叉）、`0920`（無 i0、先盤點+計畫）。其餘可自走但每頁過閘門。
+- ⚠️ 上述 `AGENTS.md` / `scripts/` / 頁卡，需**存在於 Codex 實際執行的資料夾**（你本機後端專案）；本 repo 為來源，請同步過去。
+- ⚠️ 並行 multi-agent：頁間有耦合（`00119↔00120`、`00116/00117`、scorecard）→ 預設**序列**；要並行只挑真正獨立的（如後端 `00117` 與前端 `CSU0130`）。
 - 補完 30%（複製既有 pattern + 寫 config/controller）**只靠 `AGENTS.md` 就夠**。
 - 不需要協調 agent 串前後端 → 手動在兩專案各跑 Codex、用 DTO 橋接（§3）。
 - 可選小優化：B 批/A 批同型頁多 → 把各批「共用提示」存成 `~/.codex/prompts/`（如 `/fe-z0-page`、`/be-mirror-i0`），叫出來只補頁名。純省打字。
