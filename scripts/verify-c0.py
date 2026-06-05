@@ -85,14 +85,13 @@ def check(path):
             for pat, msg in FORBIDDEN:
                 if pat.search(line):
                     v.append(f"L{i}: {msg}")
-        # 4. mapping 命名：corporate controller 的端點不得含 -i0-，且 epl- 端點應含 -c0-
+        # 4. mapping 命名：corporate 端點不得含 -i0-（c0/csu 不可呼叫 i0 端點）。
+        #    合法慣例：主流程 -csu-、評分 -c0- 皆可 → 不對其它 epl- 命名告警。
         if "/controller/corporate/" in path.replace(os.sep, "/"):
             for m in MAPPING.finditer(text):
                 route = m.group(1)
                 if "-i0-" in route:
-                    v.append(f"endpoint `{route}` 含 -i0-（應為 -c0-）")
-                elif route.startswith("/epl-") and "-c0-" not in route:
-                    v.append(f"endpoint `{route}` 非 -c0- 命名（請確認）")
+                    v.append(f"endpoint `{route}` 含 -i0-（c0/csu 不可呼叫 i0 端點）")
     return v
 
 
