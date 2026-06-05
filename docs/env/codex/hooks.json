@@ -1,0 +1,16 @@
+{
+  "_comment_1": "Codex hooks 範本：放本機 ~/.codex/hooks.json 或專案 .codex/hooks.json。",
+  "_comment_2": "目的：每頁完成時自動跑形式硬閘門 verify-c0，不靠人記得。",
+  "_comment_3": "⚠️ 確切 JSON 契約（事件名、stdin/stdout schema、如何 block/warn）以官方為準：developers.openai.com/codex/hooks。",
+  "_comment_4": "trust 以腳本 hash 綁定；scripts/verify-c0.py 改了要在 Codex 重新信任。",
+  "_comment_5": "verify-c0 目前印人類可讀文字 + 退出碼；若 Codex 需 stdout JSON 來 block，包一層 wrapper 把 exit!=0 轉成 hook 的 block JSON。",
+  "hooks": {
+    "Stop": [
+      { "command": "python scripts/verify-c0.py --git" }
+    ],
+    "_PostToolUse_optional": [
+      { "command": "python scripts/verify-c0.py --git" }
+    ],
+    "_PreToolUse_optional_comment": "進階：在 PreToolUse 解析將寫入的內容，發現 reflection/individual import 直接 deny，達到即時擋違規。需自寫解析 stdin 的 wrapper。"
+  }
+}

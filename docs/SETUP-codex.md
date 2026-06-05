@@ -125,17 +125,21 @@
 - 頁面內部結構（頁籤/區塊）：`module-is-iu-shell.md`/`module-cs-cu-shell.md`/`module-i0-c0-scoring.md`
 - 所有定案：`decisions.md`
 
-## 6. 需要加 Skill / Agent 嗎？→ 不用
-- 「Skill / Subagent」是 **Claude Code** 的功能，**Codex CLI 沒有對應機制** → 專案裡不需要裝 skill 或定義 agent。
-- Codex CLI 的等價物：**`AGENTS.md`（必要，= config）** + `~/.codex/prompts/`（可選，存重複任務為 slash 指令）+ `~/.codex/config.toml`（可選，模型/approval）+ MCP（這次用不到）。
+## 6. Codex 原生機制（2026/06 更新）— 用官方功能取代土法
+> ⚠️ 舊版本寫「Codex 沒有 skill/subagent」**已過時**。截至 2026/06，Codex CLI 原生已有 **hooks、custom subagents、`/review`、skills**。**確切 TOML/JSON 鍵名以官方為準**（developers.openai.com/codex 的 hooks / subagents / config-reference）；本節依官方頁摘要 + 第三方整理。
+- **Hooks**（`~/.codex/hooks.json` 或專案 `.codex/`）：5 事件 `SessionStart`/`PreToolUse`/`PostToolUse`/`UserPromptSubmit`/`Stop`；hook = 讀 stdin JSON、寫 stdout JSON 的可執行檔；**`PreToolUse` 可擋掉違規工具呼叫**。→ 把 `verify-c0.py` **接成 hook 自動跑**（範本 `docs/env/codex/hooks.json`）。trust 以腳本 hash 綁定，改了要重審。
+- **Custom subagents**（`.codex/agents/*.toml`）：可定 `name`/`description`/`model`/`model_reasoning_effort`/`sandbox_mode`/`developer_instructions`；**官方範例就是 read-only reviewer**（`sandbox_mode="read-only"`、指示「Never modify files」）。→ 我們的審查 agent **定義成原生唯讀 agent**（範本 `docs/env/codex/reviewer-c0.toml`），sandbox 強制只讀，勝過 prompt「請別改」。`[agents] max_depth` 預設 1（只允直接子代）；專案 `.codex/` 僅在專案 trusted 時載入。
+- **`/review`** 內建 + `review_model`：唯讀審 diff、報 prioritized findings、不動 working tree；`review_model` 可釘高推理模型專供審查。
+- **Approval/Sandbox**（`config.toml`）：`approval_policy`=`untrusted`/`on-request`/`never`；`sandbox_mode`=`read-only`/`workspace-write`/`danger-full-access`；`--full-auto`=`on-request`+`workspace-write`（網路預設關）。→ **goal mode 自走 = `--full-auto`（或 `approval_policy="never"`）**，但保留 hooks 當閘門。
+- **AGENTS.md / skills / `~/.codex/prompts/` / MCP** 仍照用。
 
 ## 7. 自走（goal mode）補完剩餘 30%
 > 把「人工 review」寫進 repo，讓自走盡量安全。**`build 綠 ≠ 正確`**（本專案已多次綠但有 bug）。
 - **硬規則**：`backend/AGENTS.md` §6（自足鏡像、禁反射/委派/individual、checkpoint、UTF-8 No BOM、`-c0-` 命名、§6.6 煞車）。
 - **控制文件**：`docs/runbook-30pct.md`（剩餘 backlog 順序、每頁迴圈、閘門、停止點、並行注意）。
-- **硬閘門腳本**：`python scripts/verify-c0.py --git`（每頁做完跑，PASS 才算完成）—— 驗 strict-UTF-8 + No BOM、禁用樣式、`-c0-` 命名。**只攔形式錯；語意正確性仍需對 i0/人審**。
+- **硬閘門腳本**：`python scripts/verify-c0.py --git`（驗 strict-UTF-8 + No BOM、禁用樣式、`-c0-` 命名）。**接成 Codex hook 自動跑**（`docs/env/codex/hooks.json`，`Stop`/`PostToolUse`），不靠人記得。**只攔形式錯；語意正確性仍需對 i0/人審**。
 - **頁卡**：`docs/build-tasks/EPROC00118-*`、`EPROISU0920-*`、`EPROCSU0130-*`（含鏡像來源與煞車）。
-- **獨立審查 agent**：每頁 `verify-c0` PASS 後，**另起全新 Codex session**（review-only）跑 `docs/review-c0-prompt.md` 對照 i0 逐項審（PASS/FAIL/UNSURE + 引用 i0:line↔c0:line），全 PASS 才 build。用獨立 agent 避免實作者自審偏誤；仍非萬無一失（human + 整合測試留著）。
+- **獨立審查 agent**：用**原生唯讀 custom agent**（`docs/env/codex/reviewer-c0.toml` → 放專案 `.codex/agents/`，`sandbox_mode="read-only"`，內容即 `docs/review-c0-prompt.md` 的清單）。每頁 `verify-c0` PASS 後跑它對照 i0 逐項審（PASS/FAIL/UNSURE + 引用 i0:line↔c0:line），全 PASS 才 build。**為求獨立性，用 fresh session 或不同 `review_model`**（同一 session 的子 agent 仍帶實作偏誤）；仍非萬無一失（human + 整合測試留著）。
 - **必須有人審的頁**：`00118`（算法不准分叉）、`0920`（無 i0、先盤點+計畫）。其餘可自走但每頁過閘門。
 - ⚠️ 上述 `AGENTS.md` / `scripts/` / 頁卡，需**存在於 Codex 實際執行的資料夾**（你本機後端專案）；本 repo 為來源，請同步過去。
 - ⚠️ 並行 multi-agent：頁間有耦合（`00119↔00120`、`00116/00117`、scorecard）→ 預設**序列**；要並行只挑真正獨立的（如後端 `00117` 與前端 `CSU0130`）。
