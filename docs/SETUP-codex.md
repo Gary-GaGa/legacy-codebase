@@ -139,7 +139,7 @@
 - **控制文件**：`docs/runbook-30pct.md`（剩餘 backlog 順序、每頁迴圈、閘門、停止點、並行注意）。
 - **硬閘門腳本**：`python scripts/verify-c0.py --git`（驗 strict-UTF-8 + No BOM、禁用樣式、`-c0-` 命名）。**接成 Codex hook 自動跑**（`docs/env/codex/hooks.json`，`Stop`/`PostToolUse`），不靠人記得。**只攔形式錯；語意正確性仍需對 i0/人審**。
 - **頁卡**：`docs/build-tasks/EPROC00118-*`、`EPROISU0920-*`、`EPROCSU0130-*`（含鏡像來源與煞車）。
-- **獨立審查 agent**：用**原生唯讀 custom agent**（`docs/env/codex/reviewer-c0.toml` → 放專案 `.codex/agents/`，`sandbox_mode="read-only"`，內容即 `docs/review-c0-prompt.md` 的清單）。每頁 `verify-c0` PASS 後跑它對照 i0 逐項審（PASS/FAIL/UNSURE + 引用 i0:line↔c0:line），全 PASS 才 build。**為求獨立性，用 fresh session 或不同 `review_model`**（同一 session 的子 agent 仍帶實作偏誤）；仍非萬無一失（human + 整合測試留著）。
+- **獨立審查（語意閘門）**：用原生 **`codex review --uncommitted "<指示>"`**（非互動、唯讀、自動含未追蹤新檔、獨立 context）。指示＝對照本頁 i0 鏡像來源 + 依 `backend/AGENTS.md §6`、`docs/review-c0-prompt.md` 逐項 PASS/FAIL/UNSURE + 引用 i0:line↔c0:line、不准猜 PASS。更獨立加 `-c model="<別的模型>"`。全 PASS 才 build。備案＝唯讀 custom agent（`docs/env/codex/reviewer-c0.toml`）。仍非萬無一失（human + 整合測試留著）。
 - **必須有人審的頁**：`00118`（算法不准分叉）、`0920`（無 i0、先盤點+計畫）。其餘可自走但每頁過閘門。
 - ⚠️ 上述 `AGENTS.md` / `scripts/` / 頁卡，需**存在於 Codex 實際執行的資料夾**（你本機後端專案）；本 repo 為來源，請同步過去。
 - ⚠️ 並行 multi-agent：頁間有耦合（`00119↔00120`、`00116/00117`、scorecard）→ 預設**序列**；要並行只挑真正獨立的（如後端 `00117` 與前端 `CSU0130`）。

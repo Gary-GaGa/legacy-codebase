@@ -1,7 +1,7 @@
 # 審查 agent prompt — c0 頁鏡像語意審查（review-only）
 
-> 用法：實作完一頁、`verify-c0` PASS 後，**另起一個全新 Codex session**（乾淨上下文，與實作 agent 分離），把下面整段貼進去（填入頁碼與 i0 鏡像來源）。
-> 也可存成 `~/.codex/prompts/review-c0.md` 當 `/review-c0` 指令重用。
+> 用法（首選）：實作完一頁、`verify-c0` PASS 後，跑原生 **`codex review --uncommitted "<下面整段，填入頁碼與 i0 鏡像來源>"`**（非互動、唯讀、自動含未追蹤新檔、獨立 context）；或 `codex review --uncommitted - < docs/review-c0-prompt.md`。更獨立加 `-c model="<別的模型>"`。
+> 備案：另起全新 Codex session 貼下面整段；或存成 `.codex/agents/reviewer-c0.toml` 唯讀 custom agent。
 > 目的：抓 `verify-c0`（形式）與 build（編譯）都抓不到的**語意錯**——有沒有逐句照 i0 鏡像。
 
 ---
