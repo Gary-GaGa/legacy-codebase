@@ -55,5 +55,11 @@ Thumbs.db
 *.swp
 *~
 
-# ⚠️ 勿忽略（要進版控）：AGENTS.md、frontend/.yarnrc、frontend/yarn.lock、
-#   frontend/angular.json、各 package.json/pom.xml、frontend|backend/src/**、mvnw、.mvn/wrapper/
+# === ⚠️ 原始碼不外流：產品碼不上 GitHub ===
+# 本 repo 只放規劃/規格/工具。backend/ 與 frontend/ 底下「除 AGENTS.md 外」一律不進版控
+# （產品 src / 設定 / lock / pom / package.json 都留在開發機本機，不得 push 到本 repo）。
+backend/*
+!backend/AGENTS.md
+frontend/*
+!frontend/AGENTS.md
+# 進版控的只有：上述兩個 AGENTS.md、根 AGENTS.md、docs/、scripts/、本 .gitignore
