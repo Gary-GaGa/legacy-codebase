@@ -59,7 +59,7 @@
 - i0 `FinancialStaffServiceImpl` 用 URI 同時服務 `00117`(`-financial-staff`→`EPROI00117`) 與 `00120`(`-financial-evaluation-staff-fi`→`EPROI00120`）。c0 **每頁只取自己那條分支**，不得夾帶另一頁的分支或 checkpoint。
 
 ### 6.5 每頁完成判準（Definition of Done）
-1. `python scripts/verify-c0.py --git` **通過**（strict-UTF-8 + **No BOM**、無禁用樣式、`-c0-` 命名）。
+1. `python scripts/verify-c0.py --git` **通過**（strict-UTF-8 + **No BOM**、無禁用樣式、`-c0-` 命名、**未修改既有 i0/`Csu*` 檔**；`FunctionService` 共用計分引擎為核准例外）。
 2. `mvn clean package "-Dmaven.test.skip=true"` 綠（在獨立終端機；Codex 勿自跑長 build）。
 3. 回填 `docs/page-mapping.md` §2B 狀態 + 待整合驗證清單。
 

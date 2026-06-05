@@ -19,8 +19,8 @@
 ## 2. 每頁自走迴圈
 1. **plan**：先盤 i0 來源（端點集合 / entity / checkpoint / 跨頁副作用），列計畫。判斷題 → 停（§6.6）。
 2. **implement**：自足鏡像（§6.1–6.4），純新增、不動 i0/`Csu*`。
-3. **gate（硬閘門，全過才算完成；順序很重要）**：
-   - **a. 形式**：`python scripts/verify-c0.py --git` → **PASS**（建議接成 Codex `Stop`/`PostToolUse` hook 自動跑，見 `docs/env/codex/hooks.json`）
+3. **gate（硬閘門，全過才算完成）**：**a 必先**（便宜、deterministic）；**b/c 皆須通過，兩者順序可換**（語意審查讀原始碼、不需編譯；build 不需審查）。
+   - **a. 形式**：`python scripts/verify-c0.py --git` → **PASS**。現在同時擋：strict-UTF-8 / No BOM、禁用樣式、`-c0-` 命名、**且「修改到既有 i0/Csu* 檔」（§6.1 只新增）**；`FunctionService` 共用計分引擎為核准例外（allowlist）。⚠️ 可接 Codex `Stop`/`PostToolUse` hook（`docs/env/codex/hooks.json`），但 **hook 不保證真 block**（exit≠0 需 wrapper 轉 block JSON、schema 待官方確認）→ 當作**每頁必跑的手動/CI 閘門**，別只靠 hook。
    - **b. 語意（獨立審查）**：跑原生 **`codex review --uncommitted "<審查指示>"`**（非互動、唯讀、自動含未追蹤新檔、獨立 context）。指示＝對照本頁 i0 鏡像來源（page-mapping §2B / 頁卡）+ 依 `backend/AGENTS.md §6`、`docs/review-c0-prompt.md` 逐項 **PASS/FAIL/UNSURE + 引用 i0:line↔c0:line、不准猜 PASS**。求更獨立加 `-c model="<與實作不同的模型>"`。**全 PASS 才往下；任何 FAIL/UNSURE → 回實作修，重跑 a→b**。（備案：`docs/env/codex/reviewer-c0.toml` 唯讀 custom agent。）仍是 LLM、非萬無一失。
    - **c. 編譯**：`mvn clean package "-Dmaven.test.skip=true"` → **綠**（獨立終端機，勿自跑長 build 卡住）
 4. **backfill**：更新 `page-mapping.md` §2B 該列為「✅實作（待整合驗證）」+ 補待整合驗證清單（新 endpoint `TB_API_AUTH` 授權列、export 模板沿用 i0 路徑等）。

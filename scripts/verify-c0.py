@@ -35,6 +35,9 @@ FORBIDDEN = [
 ALLOW_SHARED_FUNC = re.compile(r"\bFunctionService\b|\.function\.")
 # mapping 標註：用來找 endpoint 路徑字串
 MAPPING = re.compile(r'@(?:Post|Get|Put|Delete|Request)Mapping\s*\(\s*(?:value\s*=\s*)?"([^"]+)"')
+# 受保護的既有檔：c0 頁「只新增、不得修改既有 i0 / Csu*」（§6.1）。
+# i0＝路徑含 /individual/；既有企金＝檔名 Csu*.java。新增檔為 A / 未追蹤，不會出現在 diff 的 M/D/R，故不誤判。
+PROTECTED = re.compile(r"/individual/|/Csu[A-Za-z0-9]+\.java$")
 
 
 def java_files(paths):
@@ -64,6 +67,27 @@ def git_changed(staged):
         except Exception:
             pass
     return [n for n in names if n.endswith(".java") and os.path.isfile(n)]
+
+
+def protected_mods(staged=False):
+    """回傳被修改/刪除/改名的既有受保護檔（i0 / Csu*）—— 違反 §6.1『只新增、不改既有』。
+    新增檔（status A / 未追蹤）不在 git diff 的 M/D/R 內，故不誤判新 c0 頁的新檔。"""
+    cmd = ["git", "diff", "--name-status"] + (["--cached"] if staged else [])
+    try:
+        out = subprocess.check_output(cmd, text=True).splitlines()
+    except Exception:
+        return []
+    hits = []
+    for ln in out:
+        parts = ln.split("\t")
+        if len(parts) < 2:
+            continue
+        status, path = parts[0], parts[-1]
+        if not path.endswith(".java"):
+            continue
+        if status[:1] in ("M", "D", "R", "C") and PROTECTED.search("/" + path.replace(os.sep, "/")):
+            hits.append((status[:1], path))
+    return hits
 
 
 def check(path):
@@ -108,6 +132,8 @@ def main(argv):
     if not args:
         print(__doc__)
         return 2
+    git_mode = args[0] in ("--git", "--staged")
+    staged = args[0] == "--staged"
     if args[0] == "--git":
         files = git_changed(staged=False)
     elif args[0] == "--staged":
@@ -115,11 +141,20 @@ def main(argv):
     else:
         files = java_files(args)
 
-    if not files:
+    total = 0
+    # D：既有受保護檔（i0 / Csu*）被修改/刪除/改名 → 違反 §6.1「只新增、不改既有」
+    if git_mode:
+        mods = protected_mods(staged=staged)
+        if mods:
+            print("\nX 既有檔被修改（§6.1：c0 頁只新增，不得修改既有 i0 / Csu*）")
+            for st, p in mods:
+                print(f"    - [{st}] {p}")
+            total += len(mods)
+
+    if not files and not total:
         print("verify-c0: 沒有要檢查的 .java（git 無 java 變更？）")
         return 0
 
-    total = 0
     for path in files:
         vs = check(path)
         if vs:

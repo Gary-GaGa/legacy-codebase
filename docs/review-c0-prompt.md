@@ -23,7 +23,7 @@
 4. 「info 端點也寫 DB」這類 side-effect 是否保留、沒被簡化成純讀（例：00117 info-financial-business 算 ratios 寫回 GI）？
 5. 共用 service 的 URI 分支：是否只取本頁那條、未夾帶他頁分支或他頁 checkpoint（例：staff 00117 vs staff-fi 00120）？
 6. DTO：@JsonProperty / 欄位名是否與 i0 完全相同（前端契約不可變）？是否只改了 class/package 名？巢狀 DTO 也比對。
-7. 禁用樣式：有無 reflection、注入/委派 i0 service、import *.individual.*、呼叫 i0 private method？
+7. 禁用樣式：有無 reflection、呼叫 i0 private method、注入/委派 i0 service、import *.individual.*？**唯一例外（§6.1 核准）**：c0 calc 可注入共用計分引擎 `FunctionService`（呼叫 `funcGetRate`/`funcGetCollateralTotalScore`，含其 function DTO）；**除這一支之外**任何 individual 耦合都算 FAIL。
 8. 越界：有沒有動到既有 i0 / Csu* / CsuCreditInvestigationServiceImpl 的 G/F 分流？（應 0 修改既有檔）
 9. 編碼：新檔 strict-UTF-8 + No BOM？
 
