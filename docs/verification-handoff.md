@@ -31,7 +31,7 @@
 | **D5** | checkpoint 走 `CASE_PROGRESS` + `TB_DISBUR_DATE.EPORIS_0921`、**非** `TB_CHECK_POINTS_IS/IU` | 盤點 | 確認此為撥貸流程**正常設計**（非缺漏）|
 | **D6** | cleanup：`/epl-case-submit-isu-summary` stub（FE 未用）| `SummaryController:43` | 確認移除或補實作（FE 用的是 `epl-case-isu-summary-submit`）|
 | **D7** | `TB_DISBUR_*` 三表未在 `db-schema-catalog` authority 首段 | 盤點 | 以既有 entity/repo 為準，或回補 catalog |
-| **D8** | **schema-map 風險**（DB2→Oracle/整併；Step A2 2026-06-05）| `legacy-extract/disbursement-schema-map.md`（本機）| 🔴 **T24 組檔欄位來源**：舊有欄新無（如 `BRANCH_PROFILE.T24_COMPANY`）→ 新 `funcIsuT24Authorize` 漏欄/改源/併欄？🟠 **金額精度**：舊 VO 無 DB2 length/precision（UNKNOWN）→ 需舊 DDL/DBA，非 VO 可定；查新碼有無 `round/truncate/setScale` 🟡 `NOTIFICATION_INFO` `NO`→`No`（同欄 vs quoted-id）🟡 `LON_SUMMARY_INFO` 新增 `PROJECT_CODE`（是否需填）|
+| **D8** | **schema-map 風險**（DB2→Oracle/整併；Step A2 2026-06-05）| `legacy-extract/disbursement-schema-map.md`（本機）| 🔴 **T24 組檔欄位來源**：`BRANCH_PROFILE.T24_COMPANY` 舊有新無，**A-0922-t24 確認用於 T24 `B8`/`C9`（collateral 段）** → 新 `funcIsuT24Authorize` B8/C9 填什麼（漏/hardcode/改源/併欄）？🟠 **金額精度**：舊 VO 無 DB2 length/precision（UNKNOWN）→ 需舊 DDL/DBA；T24 多為原字串 passthrough，唯一改值＝E 段非 USD `CHRG_AMOUNT=Math.round(CBC_FEE×中價)`（⚠️ `Math.round`/HALF_UP vs 0921 fee 的 `RoundingMode.DOWN`，查新碼是否搞混）🟡 `NOTIFICATION_INFO` `NO`→`No` 🟡 `LON_SUMMARY_INFO` 新增 `PROJECT_CODE` |
 
 ### 2.1 撥貸 `0921` Step B 比對結果（2026-06-05；舊 spec ↔ 新 `DataInputServiceImpl`）
 > 詳細逐項表（含舊業務規則、`file:line` 證據）存本機 `legacy-extract/EPROIS_0921-compare.md`（gitignore）；此處只記主題/嚴重度/裁決方向。皆為**待裁決分歧**（部分倚賴舊 spec 的 UNKNOWN），非已坐實 bug。
