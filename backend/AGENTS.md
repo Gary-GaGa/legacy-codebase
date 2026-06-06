@@ -69,3 +69,10 @@
 - 計分/算法邏輯需改動或無法 1:1 鏡像（尤其 `00118` Corporate Scorecard：邏輯散在 `CsuCreditEvalAndCreditDecisionServiceImpl`，**嚴禁另寫一套或分叉算法**）。
 - **無 i0 可鏡像**的頁（`EPROISU0920` 撥貸）→ 先出「舊鏈路盤點 + 計畫」等人審，**不得直接開做**。
 - 任何需要改既有 i0/`Csu*`、跨頁 checkpoint 副作用不確定、或 DTO 契約要變的情況。
+
+### 6.7 ⚠️ 撥貸機械修正（scoped 授權，2026-06-05）
+舊系統比對（`docs/disbursement-triage.md`）後，**經人核可**：Codex **得**編輯撥貸 service（`DataInputServiceImpl` / `SummaryServiceImpl` / `FunctionServiceImpl` T24 組檔）——**僅限 `disbursement-triage.md` §7「機械修正 allowlist」逐項**。鐵則：
+- **只做 allowlist 內項目**；P0-1 stub 實作、`T24_COMPANY`(B8/C9) 值來源、匯率源 ID、檢核嚴格度、架構/精度等**判斷題一律 §6.6 升級、不得在此順手改**。
+- **舊行為為準且須引述**：每項修正引 `legacy-extract` 舊 spec 的 `file:line` 證明「舊明確正確且非移除依賴」；**不臆測、不 gold-plate、不改回刻意演進（如 KHR）**。
+- **逐項閘門**：一項（或一組同類）一個 commit；`mvn package` 綠；**先回報 diff + 舊 spec 依據供人審，過了才推產品 repo**；不得 scope 外擴（只動該 method）。
+- 來源不可得 / 一有歧義 → 立即轉 §6.6 升級，不硬修。
