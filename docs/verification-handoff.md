@@ -37,6 +37,7 @@
 > 詳細逐項表（含舊業務規則、`file:line` 證據）存本機 `legacy-extract/EPROIS_0921-compare.md`（gitignore）；此處只記主題/嚴重度/裁決方向。皆為**待裁決分歧**（部分倚賴舊 spec 的 UNKNOWN），非已坐實 bug。
 >
 > **結論：`0921`「結構在、行為不對等」— 7 PASS / 15 FAIL / 5 UNSURE。** 撥貸後端雖存在，正確性須逐項裁決——**不可一律「改回舊版」**（部分分歧是刻意演進）。
+> **裁決（2026-06-05）：先跑完 `0922`（Summary + T24）再整體 triage，避免 piecemeal；本 `0921` 清單暫不動碼。**
 
 **🔴 資料完整性（疑似 regression，最高、較高信心）**
 - Collateral 完工日（`EST_COM_DATE`/`OTHER_EST_COM_DATE`）新固定寫 `null` → 疑資料遺失
