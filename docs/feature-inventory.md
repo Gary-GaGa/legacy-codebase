@@ -70,9 +70,9 @@
 | EPROCSU0171 | 0171 | Loan Committee Conclusion | ✅ | ✅ | 🟡 驗證 |
 | EPROCSU0172 | 0172 | Approved Loan Condition | ✅ | ✅ | 🟡；⏸ 列印 |
 | EPROCSU0173 | 0173 | Credit Evaluation Old | ✅ | ✅ | 🟡 驗證 |
-| （CS 0240）| CS 0240 | 公司核心資料（企金 0200 端）| 🔴 | 🔴 | ⚠️ **新前後端皆未見；但 docs 對「開發 vs 已無使用」衝突 → 需人裁** |
+| ~~CS 0240~~ | CS 0240 | 公司核心資料（舊 cs 0200 端）| — | — | **不開發**：2026-06-06 owner 確認新系統無使用（舊有、未遷移）|
 | CAD 報表 | CS/CU 0181 | TLOD(CAD)→ 共用 `EPROISU0181` | ⏸ | ⏸ | ⏸ R2 |
-> 不開發：`EPROCS_0240`（標已無使用，與上「公司核心資料」需釐清）；待確認 `EPROC0_0211/0213`（流程無對應頁籤）。
+> 不開發：`EPROCS_0240` 公司核心資料（✅ 2026-06-06 確認新系統無使用、舊有未遷移）、`EPROIS_0140` Property Info；待確認 `EPROC0_0211/0213`（流程無對應頁籤）。
 
 ### 2C. 個金評分 `EPROI00*`（M6 i0）— ✅ cross-check 確認**全做**（2026-06-06）
 > FE 全在 `case-edition/sub-pages/individual/credit-investigation/*`，BE 全在 `controller/individual/*Controller`。00110–00120 十一頁 **FE+BE 皆 ✅**。
@@ -180,7 +180,7 @@
 
 **⑦ 暫緩 track（需先拍板）**：R2 報表服務（→0181/i0·c0 PDF/z0 PDF）、檔案上傳 API（→collateral/審批上傳）。〔CBC 已釐清＝頁內、非獨立 track〕
 
-**⑧ 需人裁**：`CS 0240` 開發 or 已無使用（docs 衝突）。
+**⑧ 已裁**：`CS 0240` → **不開發**（2026-06-06 確認新系統無使用）。
 
 **⑨ Tech-debt / ops**
 - **FE/BE HTTP method 不一致 sweep**（系統性：00600/00800/00640…）。
@@ -193,7 +193,7 @@
 > 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策。
 
 **Phase 0 — 坐實缺口（c0 FE ✅ 已坐實）**
-0. ✅ c0 評分 FE 範圍已坐實（容器 + 8 子頁）。**剩 `CS 0240` 開發/丟棄待 owner 裁。**
+0. ✅ c0 評分 FE 範圍已坐實（容器 + 8 子頁）；✅ `CS 0240` 裁定**不開發**。**Phase 0 清空。**
 
 **Phase F — c0 評分前端（NEW；owner：前端；BE 已齊、可直接對接）— 範圍已坐實**
 1. 建 corporate `credit-investigation` 容器（鏡像 i0 動態 tab + businessType G/F 分頁）。
