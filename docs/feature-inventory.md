@@ -12,7 +12,7 @@
 - ⏸ **暫緩 track**（R2 報表服務 / 檔案 API / CBC R8——刻意延後、非遺漏）
 - ❓ **待 cross-check**（推定既有，未實證；開做前先唯讀盤點）
 
-**全局結論（cross-check 後更新 2026-06-06）**：碼大致到位，但確認**兩個真缺口**——① 🔴 **撥貸核心**（換匯 stub + T24 + domain 判斷）② 🔴 **c0 評分前端**（後端齊、但 corporate 缺評分容器/子頁，**本次翻案發現、先前漏估**）。其餘（主流程 is/iu/cs/cu、i0 全頁、契約頁、多數 z0、c0 後端）＝碼到位、剩整合驗證。
+**全局結論（cross-check 後更新 2026-06-06）**：碼大致到位，但確認**兩個真缺口**——① 🔴 **撥貸核心**（換匯 stub + T24 + domain 判斷）② 🔴 **c0 評分前端**（後端齊、但 corporate **整組評分 FE 未建＝容器+8 子頁**，已坐實；**本次翻案發現、先前漏估**）。其餘（主流程 is/iu/cs/cu、i0 全頁、契約頁、多數 z0、c0 後端）＝碼到位、剩整合驗證。
 
 **三層結構**（避免把「模組」當「單頁」）：① 模組流程（M1–M9）② 流程頁（外層 pageMap 頁籤）③ 頁內區塊（內層 tab）。遷移單位＝模組流程。
 
@@ -91,20 +91,21 @@
 | EPROI00120 | Financial Evaluation FI | ✅ | ✅ | staff FI 由 `FinancialStaffController` |
 > i0 全做 → c0 的 FE 缺口（§2D）＝「照 i0 鏡像補 c0 評分 FE」。
 
-### 2D. 企金評分 `EPROC00*`（M7 c0）— ⚠️ **FE 缺口（cross-check 翻案，2026-06-06）**
-> **重大更正**：c0 **後端齊**（`controller/corporate/*` 全在），但 **corporate 前端 route 只有 4 個 basic 頁**（main-borrower/co-borrower/guarantor/collateral-provider），**未見對應 i0 `credit-investigation` 的 c0 評分容器**。→ `00112`/`00114` FE **確認 🔴 未做**；`00115–00120` 先前標 FE ✅ 係**推定、與此證據衝突 → 降為 ⚠️ 待證**（極可能整組 c0 評分 FE 未建）。**這是本次盤點最大新缺口。**
-| 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
+### 2D. 企金評分 `EPROC00*`（M7 c0）— 🔴 **FE 整組缺口（已坐實，2026-06-06）**
+> **確認**：c0 後端齊（`controller/corporate/*`），但 corporate 前端**完全沒有評分容器**（route 只有 4 個 basic 頁）。→ **整組 c0 評分 FE 未建＝1 容器 + 8 子頁**（c0 無 00111/00113）。BE endpoint 已齊、可直接對接。**本次盤點最大缺口。**
+| 新頁 | 名稱 | FE | BE | 對接 c0 endpoint（BE 已齊）|
 |---|---|:--:|:--:|---|
-| EPROC00110 | 評分頁框（corporate credit-investigation 容器）| ⚠️🔴 | ✅❓ | 容器 FE 疑未建 → 待證 |
-| EPROC00112 | CBC | 🔴 | ✅ | BE `CbcBankingCorpRelationshipController`；**FE 未做** |
-| EPROC00114 | Collateral Assessment | 🔴 | ✅ | BE `CsuCollateralAssessmentController`；**FE 未做** |
-| EPROC00115 | Borrower Group Exposure | ⚠️待證 | ✅ | BE ✅；授權列；FE 疑未建 |
-| EPROC00116 | Financial Statement GI | ⚠️待證 | ✅ | BE ✅；授權列；export 沿用 i0？|
-| EPROC00117 | Financial Evaluation GI | ⚠️待證 | ✅ | BE ✅（既有模組 audit 滿足）|
-| EPROC00118 | Corporate Scorecard | ⚠️待證 | ✅ | BE ✅；授權列；🚩 2 條 escalation（§4）|
-| EPROC00119 | Financial Statement FI | ⚠️待證 | ✅ | BE ✅；授權列；export 沿用 i0？|
-| EPROC00120 | Financial Evaluation FI（table-fi + staff-fi）| ⚠️待證 | ✅ | BE ✅；授權列 |
-> c0 runtime-stub 盲點已關（BE 六支非 stub）。c0 **無 00111/00113**（與 i0 差異，勿硬補）。G/F 分流寫死在 `CsuCreditInvestigationServiceImpl`。**下一步：targeted 確認 c0 評分 FE 確切範圍（§4①）。**
+| EPROC00110 | 評分容器（corporate credit-investigation）| 🔴 | ✅ | `epl-info/save-c0-credit-investigation-tab`（`CsuCreditInvestigationController`）|
+| EPROC00112 | CBC Banking Relationship | 🔴 | ✅ | `epl-info/save-c0-cbc-banking-relationship` |
+| EPROC00114 | Collateral Assessment | 🔴 | ✅ | `epl-sele/info/save-c0-collateral-assessment` |
+| EPROC00115 | Borrower Group Exposure | 🔴 | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`；授權列 |
+| EPROC00116 | Financial Statement GI | 🔴 | ✅ | `epl-*-c0-financial-statement-comments`；授權列；export 沿用 i0？|
+| EPROC00117 | Financial Evaluation GI | 🔴 | ✅ | `epl-{info/save}-c0-financial-{staff/business}`、`epl-sele-c0-financial-list` |
+| EPROC00118 | Corporate Scorecard | 🔴 | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`；授權列；🚩 2 escalation |
+| EPROC00119 | Financial Statement FI | 🔴 | ✅ | `epl-*-c0-financial-statement-cmts-fi`；授權列；export 沿用 i0？|
+| EPROC00120 | Financial Evaluation FI（table-fi + staff-fi）| 🔴 | ✅ | `epl-{info/save}-c0-financial-evaluation-table-fi`、`epl-save-c0-financial-evaluation-staff-fi`；授權列 |
+> **範本＝i0 `individual/credit-investigation`**：容器 component 動態載 tab（`epl-*-i0-credit-investigation-tab`、`creditInvestigationNav()` config、`CreditInvestigationPageCode` enum）、各子頁 `components/<name>/{component,services}`。c0 照此鏡像、改 `-c0-` endpoint + corporate DTO。
+> ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。
 
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
@@ -157,9 +158,10 @@
 ## 4. 剩餘事項彙整（= 還有多少事要做）— cross-check 後更新（2026-06-06）
 > **翻案**：新增 **c0 評分前端真缺口**（原以為前端全完）。❓ 多已坐實（i0/契約/多數 z0 ✅）。
 
-**① 🔴 c0 評分前端（NEW，本次最大缺口；owner：前端）**
-- corporate 缺對應 i0 `credit-investigation` 的**評分容器 + 子頁**。確認 🔴：`00112` CBC、`00114` Collateral Assessment FE；**待證但極可能也缺**：`00115–00120` FE（容器都沒有）。
-- **先 targeted 確認確切範圍**（2 頁 or 整組 ~8 頁）→ 再按 i0 鏡像補（BE 已齊、可直接對接）。
+**① 🔴 c0 評分前端（NEW，本次最大缺口；owner：前端）— 範圍已坐實**
+- **整組未建＝1 容器 + 8 子頁**（00112/00114/00115/00116/00117/00118/00119/00120；c0 無 00111/00113）。
+- BE endpoint + corporate DTO 已齊；**照 i0 `credit-investigation` 鏡像**（容器動態 tab + 各子頁 component），改 `-c0-` endpoint；FE 容器吃 BE `businessType`/`pageMap`（G/F 分頁）。
+- 低風險（範本清楚、BE+DTO 就緒）但量 ≈ **一個 sprint（9 個 FE 單位）**。
 
 **② 整合驗證（owner：dev/uat 整合測試）— 量大、非補碼**
 - 主流程（is/iu/cs/cu 0110–0173）+ 契約頁（0910–0913）+ i0 全頁 FE↔BE `epl-*` DTO/授權各跑一次。
@@ -190,12 +192,13 @@
 ## 5. 建議排程（依依賴與風險）— cross-check 後更新
 > 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策。
 
-**Phase 0 — 坐實缺口（即刻、最便宜）**
-0. targeted 確認 **c0 評分 FE 確切範圍**（2 頁 or ~8 頁）；`CS 0240` 開發/丟棄請 owner 裁。
+**Phase 0 — 坐實缺口（c0 FE ✅ 已坐實）**
+0. ✅ c0 評分 FE 範圍已坐實（容器 + 8 子頁）。**剩 `CS 0240` 開發/丟棄待 owner 裁。**
 
-**Phase F — c0 評分前端（NEW；owner：前端；BE 已齊、可直接對接）**
-1. 建 corporate `credit-investigation` 容器，照 i0 鏡像補 c0 評分子頁（範圍依 Phase 0）。
-2. 補完即接 c0 BE、納入 Phase V 驗證。
+**Phase F — c0 評分前端（NEW；owner：前端；BE 已齊、可直接對接）— 範圍已坐實**
+1. 建 corporate `credit-investigation` 容器（鏡像 i0 動態 tab + businessType G/F 分頁）。
+2. 補 8 子頁 component/service（00112/114/115/116/117/118/119/120），各對接對應 `-c0-` endpoint + corporate DTO。
+3. 補完接 c0 BE、納入 Phase V 驗證 + 授權列。建議**先做容器 + 1 子頁打通動態 tab/businessType 再展開其餘**。
 
 **Phase V — 整合驗證（即刻，可與 Phase F 並行；owner：整合測試）**
 3. 契約對齊 sweep：主流程 + i0 全頁 + 契約頁 FE↔BE DTO（真資料/真授權）。
