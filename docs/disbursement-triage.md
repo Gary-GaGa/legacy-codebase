@@ -83,3 +83,14 @@
 >
 > ⚠️ **build 環境發現（非本次修正引入）**：後端 Logback 測試設定硬編碼 `D:\temp\saveFile\log`，非 Windows/無 `D:` 環境會擋 build；Codex 以 `-Dlogging.api.path`/`-Dlogging.batch.path` 覆寫繞過。屬可攜性 smell，建議外部化該路徑（獨立 ops 項，不阻擋本批）。
 > 處置記錄：本 triage 為撥貸驗證的綜合產出。修正/實作屬**獨立返工階段**，不在「程式補完」里程碑（該里程碑就撥貸部分已更正為未完成）。
+
+**Tier 2 派工（2026-06-06，🔄 進行中）**：落地＝**master-direct，但順序＝報 diff → 人審 → 才 push**（修正上批「先 push 才審」）。執行順序＝**易/孤立先、結構後**：
+| 序 | 項 | 狀態 | gate 重點 |
+|---|---|---|---|
+| 1 | **M5** C20 `INS_END_DATE`→`INS_EXPIRY_DATE`（單欄改名、entity 已有此欄） | 🔄 派出 | 確認 entity getter 名、schema-map 同名直映 |
+| 2 | **M9** A52 補輸出 `DISTRICT_NAME`（`TB_DISTRICT` 讀得到） | 🔄 派出 | 確認來源欄有值、輸出位置＝A52 |
+| 3 | **M6** 0921 collateral 完工日寫 `EST_COM_DATE`/`OTHER_EST_COM_DATE`（非 null；P1 資料遺失） | 🔄 派出 | request/entity 須有值可寫，否則升級 |
+| 4 | **M7** 0921 fee 公式 loan-amount alias 修正（facility fee 不為 null；P1、金錢相鄰） | 🔄 派出 | alias/讀 key 對齊後值正確；金錢相鄰、審細 |
+| 5 | **M8** E14–E23 位置對齊（`MR_RATE_IDX`/`RATE_MRG` 歸位） | 🔄 派出 | 逐位置對 `EPROIS_0922-t24.md`；非單純平移即升級 |
+| 6 | **M1** H 段三合一（append + H1–H8 順序 + 輸出條件「FEE 非 null 且非 0」） | 🔄 派出 | ⚠️ **三者必須同修**，只 append 不修順序/條件＝錯位 H row |
+> M10（Tier 3 金錢刪除）不在本批 → 留最後走 feature branch + PR。每筆仍守 §7 逐項閘門①–⑤。
