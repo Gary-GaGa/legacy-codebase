@@ -78,6 +78,15 @@
 
 **✅ PASS**：submit/returnMaker 狀態轉移、`funcConfCheckDate` 檢核、returnMaker mail、SFTP/record（若可達）、t24 成功/失敗→`27`/`C1`（批次）、`NOTIFICATION_INFO No`（**D8 釐清＝同欄 ✅**）、`PROJECT_CODE` 未涉（**D8 釐清 ✅**）、checkpoint 新舊皆無
 
+### 2.3 撥貸 `0922` Step B（T24 組檔）+ 整體 triage（2026-06-05）
+> B-0922-t24（舊 `createTransferA–H` ↔ 新 `funcIsuT24Authorize`，碼層）：**即使補完 stub，T24 仍 FAIL**。
+> **🔴 結構（高信心）**：`H` 段建了**未 append**（不輸出）、`E14–E23`/`E24-25` 位移、`H1–H8` 順序錯、`B9/C27/D8/G13` 各多尾端 `\n` 空欄 → 整檔欄位錯位。
+> **🔴 值來源**：`B8/C9` `T24_COMPANY` 死路（讀已移除欄→空）；`A52` 漏、`C12/C13/C20/G4/G10/H8` 來源欄錯、`A31/G7` `AGREEMENT_NO` 截斷、`E21` 非 USD 非 KHR 輸出 0。
+> **✅ 大段 PASS**：A1-14/17-30/32-51、B1-7、C 多段、D1-7、E1-13、G 多段；E21 KHR rounding 未誤用 DOWN。
+> **🟡 金額精度**：多為直接字串輸出、無 `setScale`；新 `NUMBER(17,2)` vs 舊 UNKNOWN → 需 DDL/DBA。
+>
+> **→ 全撥貸（0921+0922-main+0922-t24）綜合裁決見 [`disbursement-triage.md`](disbursement-triage.md)**（P0 blockers / P1 bug / P2 domain 裁示 / P3 UNSURE + 工作量 + 建議路徑）。
+
 ## 3. 🟡 授權列（owner：DB / ops）— 新 c0 endpoint 的 `TB_API_AUTH` / `TB_ROLE_TASK`
 > `00117` 為既有模組（授權列應已有）；其餘新建 c0 頁的新 `epl-*-c0-*` endpoint 需建授權列。
 
