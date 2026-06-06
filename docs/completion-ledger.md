@@ -30,7 +30,7 @@
 | **P1 真 bug** | 0921 4 項（完工日寫 null、fee 過刪、fee alias null、RECEIVED_DATE 時機）+ 0922-main 3 項（匯率源 ID、submit mail 空、history 碼）+ T24 值來源 ~8（A52 漏、C12/C13/C20/G4/G10/H8 源錯、AGREEMENT_NO 截斷、E21→0）| ~15 |
 | **P2 判斷** | 檢核對等（CheckMainBorr/CoBorr/CO_CHECK）、架構（批次 t24DealResult、scheduler mail）、KHR（**刻意、勿改回**）| 多 |
 | **P3 UNSURE** | 金額精度（NUMBER(17,2) vs 舊 UNKNOWN）、IS_CONTR 等，待 DDL/DBA | 數項 |
-> 進行中：Codex 先修 §7 機械項（Tier1 M2/M3/M4 → Tier2 → Tier3，逐項閘門）；stub 實作/T24_COMPANY/匯率源等判斷題升級 domain。
+> 進度（2026-06-06）：**Tier 1（M2/M3/M4）+ Tier 2（M5/M7/M8/M1/M9）已全上 master 並審過**（master `446bdfb`；落地＝master-direct 前向修，見 triage §7.1）。**M6 升級 domain**（DTO 無完工日來源）。**機械 allowlist 僅剩 `M10`**（Tier 3 金錢刪除，最嚴 pre-push 審）；stub 實作/`T24_COMPANY`/匯率源等判斷題仍升級 domain。整合測確認點：M7 facility fee 值、M9 district name join。
 
 ## 4. ✅ 盤點盲點 — 已關閉（2026-06-06 stub-sweep）
 **原盲點**：`build 綠 ≠ 無 runtime stub`。`funcGetExchangeRate` 是 IDE 自動產生的 `throw UnsupportedOperationException`、編譯通過只在執行時爆；先前 stub 掃只跑過撥貸 2 個檔，故「c0 6 支已實作」一度只是**推定**。

@@ -102,3 +102,10 @@
 > - **M6** ⛔ 升級 domain（request DTO 無日期值來源）。
 > - **M9** 🟢 **授權（界定擴充）**：inject `TBDistrictRepository`，用主借人 `RESIDENT_PROVINCE_CODE`+`RESIDENT_DISTRICT_CODE` 查 `DISTRICT_NAME` 輸出 A52。⚠️ repo 鍵含 **`UPD_DATE`**（時間維度）→ 須比照既有 TBDistrict 名稱查法選「對的那筆」；無既定選法則停手升級。
 > - **落地紀律最終定案**：**master-direct 全程（含 M10）+ 前向修模式**。⚠️ **M10 金錢刪除無平台 gate → pre-push 人審用最嚴標準 + 確認只刪 `CON_TYPE=FN`**（master-direct 下唯一防線）。
+
+**Tier 2 收工（2026-06-06，round 3）**：master `446bdfb`。
+> - **M7** ✅ `d5ca37f`：key 改 `LOANAMOUNT`，同 method 無其他同 map 欄位需動。
+> - **M9** ✅ `446bdfb`：注入 `TBDistrictRepository`、A52 補 `DISTRICT_NAME`；`UPD_DATE` **沿用既有地址查法** `findMaxUpdDateWithDISBURSING_DATEByApplicationNo`（未猜 latest）；A52 接手 A51 尾端 newline。
+> - **整合測確認點（繼承既有行為、非本批引入）**：M7 facility fee 實際有值；M9 該 UPD_DATE 慣例能 join 到非空 `DISTRICT_NAME`。
+> - **Tier 2 全 6 項結案**：M5/M7/M8/M1/M9 已上 master 並審過；**M6 升級 domain**（DTO 無日期值來源，待 owner）。
+> - **撥貸機械 allowlist 僅剩 `M10`**（Tier 3 金錢刪除）。其餘皆 §6.6 升級項（P0 stub、`T24_COMPANY`、匯率源 ID…）歸 domain。
