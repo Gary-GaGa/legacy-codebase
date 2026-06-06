@@ -109,3 +109,9 @@
 > - **整合測確認點（繼承既有行為、非本批引入）**：M7 facility fee 實際有值；M9 該 UPD_DATE 慣例能 join 到非空 `DISTRICT_NAME`。
 > - **Tier 2 全 6 項結案**：M5/M7/M8/M1/M9 已上 master 並審過；**M6 升級 domain**（DTO 無日期值來源，待 owner）。
 > - **撥貸機械 allowlist 僅剩 `M10`**（Tier 3 金錢刪除）。其餘皆 §6.6 升級項（P0 stub、`T24_COMPANY`、匯率源 ID…）歸 domain。
+
+**M10 結案（2026-06-06，最嚴閘門通過）→ 機械 allowlist 全清**：`06f39df`（待/已 ff push）。
+> - fee delete 由 unscoped `deleteByIdApplicationNo` 改為 `deleteByApplicationNo(applicationNo, "FN")`，沿用既有 `TBLoanConditionFeeRepository:29` 的 `@Modifying @Query` native delete（`APPLICATION_NO=:applicationNo AND CON_TYPE=:conType`，具名參數綁定確認、非 derived）。
+> - **detail delete 本就 FN-scoped**（`TBLoanConditionDetailRepository:200`，`CON_TYPE='FN'` 寫死）→ 無需改;fee/detail 皆對齊舊 spec `EPROIS_0921.md:197`。
+> - 刪後**無重插** → 無非-FN 重複風險。
+> - ✅ **撥貸 §7 機械 allowlist（M1–M10）全數結案**。剩下全是 §6.6 domain 判斷題 + M6（DTO 缺日期來源）→ 見 `disbursement-domain-escalations.md`。
