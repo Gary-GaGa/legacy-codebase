@@ -93,4 +93,12 @@
 | 4 | **M1** H 段三合一（commit `03831cc`） | 🟡 **push 前阻擋**：append✓、條件 `!=null && !=0`✓、H1–H7 定位✓；但 **H8 換匯欄屬 §7 升級項（line 71）**——須確認 Codex 對 H8 **只做定位、未新作 `EX_RATE_BUY`/non-USD 換匯值邏輯**；若改了值邏輯則 H8 拆出升級。 |
 | — | **M6** 0921 完工日 | ⛔ Codex 停手 → **升級 domain**：request DTO 只有 `estCom`/`otrEstCom` 型別欄、**無日期值來源**，現況仍 `setEstComDate(null)`。非平移＝舊行為的日期從何而來需 owner 裁（FE 欄位漏接？別處衍生？）。 |
 | — | **M9** A52 `DISTRICT_NAME` | ⛔ Codex 停手 → **升級 scope**：`SummaryServiceImpl` 未注入 `TBDistrictRepository`，正確補 A52 需新增依賴、超 method-only。為界定清楚的小擴充，確認 join key 後可單獨授權。 |
-> M10（Tier 3 金錢刪除）不在本批 → 留最後走 feature branch + PR。每筆仍守 §7 逐項閘門①–⑤。
+> M10（Tier 3 金錢刪除）不在本批。每筆仍守 §7 逐項閘門①–⑤。
+
+**審查 round 2（2026-06-06，裁決後）**：四筆 M5/M7/M8/M1 經查證**已全在遠端 master `a353d10`**（先審後推 gate 第 3 次未守住——本批連帶把未授權 H8 換匯邏輯 + 疑無效 M7 一起推上）。逐項結：
+> - **M5 / M8** ✅ 確認 OK（M8：spec `:256-260` 證 E16–E20 為 5 筆 drawdown，E20 是 spec 要求、非新增）。
+> - **M1** ⚠️→✅：H8 `EX_RATE_BUY`/non-USD 是 Codex 新作（踩升級項），已用本地 `4089978` 拆掉、還原既有值邏輯（`mainBorrowerAcc.CURRENCY` 判 USD、非 USD 讀 `disburDate.EXCHANGR_RATE`），append/H1–H7/條件保留 → 待 push。H8 **值來源**維持升級項、不在本批修。
+> - **M7** 🔴→ **往前修成 `get("LOANAMOUNT")`**：Oracle 未引號 `AS loanAmount` → JDBC label 折大寫，現行 `get("loanAmount")` 多半回 null（沒真修）；比照 native-query 既有大寫先例 `individual/FunctionServiceImpl:1781`。整合測時確認 facility fee 真有值。**附帶 smell**：codebase map-key 大小寫混用（`loanAmount`@807 vs `LOANAMOUNT`@1781）→ 列**獨立 sweep 項**。
+> - **M6** ⛔ 升級 domain（request DTO 無日期值來源）。
+> - **M9** 🟢 **授權（界定擴充）**：inject `TBDistrictRepository`，用主借人 `RESIDENT_PROVINCE_CODE`+`RESIDENT_DISTRICT_CODE` 查 `DISTRICT_NAME` 輸出 A52。⚠️ repo 鍵含 **`UPD_DATE`**（時間維度）→ 須比照既有 TBDistrict 名稱查法選「對的那筆」；無既定選法則停手升級。
+> - **落地紀律最終定案**：**master-direct 全程（含 M10）+ 前向修模式**。⚠️ **M10 金錢刪除無平台 gate → pre-push 人審用最嚴標準 + 確認只刪 `CON_TYPE=FN`**（master-direct 下唯一防線）。
