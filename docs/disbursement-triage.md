@@ -84,13 +84,13 @@
 > ⚠️ **build 環境發現（非本次修正引入）**：後端 Logback 測試設定硬編碼 `D:\temp\saveFile\log`，非 Windows/無 `D:` 環境會擋 build；Codex 以 `-Dlogging.api.path`/`-Dlogging.batch.path` 覆寫繞過。屬可攜性 smell，建議外部化該路徑（獨立 ops 項，不阻擋本批）。
 > 處置記錄：本 triage 為撥貸驗證的綜合產出。修正/實作屬**獨立返工階段**，不在「程式補完」里程碑（該里程碑就撥貸部分已更正為未完成）。
 
-**Tier 2 派工（2026-06-06，🔄 進行中）**：落地＝**master-direct，但順序＝報 diff → 人審 → 才 push**（修正上批「先 push 才審」）。執行順序＝**易/孤立先、結構後**：
-| 序 | 項 | 狀態 | gate 重點 |
+**Tier 2 派工（2026-06-06，🔄 進行中）**：落地＝**master-direct，但順序＝報 diff → 人審 → 才 push**（修正上批「先 push 才審」）。執行順序＝**易/孤立先、結構後**。**審查 round 1（2026-06-06，Codex 交 4 筆 commit、未 push；M6/M9 依停手規則未改）**：
+| 序 | 項 | 狀態 | 審查結論 |
 |---|---|---|---|
-| 1 | **M5** C20 `INS_END_DATE`→`INS_EXPIRY_DATE`（單欄改名、entity 已有此欄） | 🔄 派出 | 確認 entity getter 名、schema-map 同名直映 |
-| 2 | **M9** A52 補輸出 `DISTRICT_NAME`（`TB_DISTRICT` 讀得到） | 🔄 派出 | 確認來源欄有值、輸出位置＝A52 |
-| 3 | **M6** 0921 collateral 完工日寫 `EST_COM_DATE`/`OTHER_EST_COM_DATE`（非 null；P1 資料遺失） | 🔄 派出 | request/entity 須有值可寫，否則升級 |
-| 4 | **M7** 0921 fee 公式 loan-amount alias 修正（facility fee 不為 null；P1、金錢相鄰） | 🔄 派出 | alias/讀 key 對齊後值正確；金錢相鄰、審細 |
-| 5 | **M8** E14–E23 位置對齊（`MR_RATE_IDX`/`RATE_MRG` 歸位） | 🔄 派出 | 逐位置對 `EPROIS_0922-t24.md`；非單純平移即升級 |
-| 6 | **M1** H 段三合一（append + H1–H8 順序 + 輸出條件「FEE 非 null 且非 0」） | 🔄 派出 | ⚠️ **三者必須同修**，只 append 不修順序/條件＝錯位 H row |
+| 1 | **M5** C20 `INS_END_DATE`→`INS_EXPIRY_DATE`（commit `85783d5`） | ✅ 審過、待 push | key 為 raw 欄名（Oracle 原樣大寫）、entity 有 `insExpiryDate`、scope 乾淨。整合測時確認 C20 有值即可。 |
+| 2 | **M7** 0921 fee alias `getLoanAmount`→`loanAmount`（commit `7856e66`，金錢） | 🟡 **push 前阻擋**：方向對（舊 key 是亂填的 getter 名），但**新 key 大小寫存疑**——Oracle 把未加引號的 `AS loanAmount` 折成 **`LOANAMOUNT`**，`.get("loanAmount")` 恐仍 null＝沒真的修好。需以**同查詢的鄰欄 working read** 證實實際 runtime key。 |
+| 3 | **M8** E14–E23 位置對齊（commit `f31a19d`） | 🟡 **push 前確認**：layout 自洽（E16–E20=5×drawdown、E21=CHRG_AMOUNT、E22/E23=rates），但 Codex 另「補 E20 drawdown」超出「只搬 MR_RATE_IDX/RATE_MRG」——需確認 spec :254-263 確列 E16–E20 為 5 筆（非新增資料）。 |
+| 4 | **M1** H 段三合一（commit `03831cc`） | 🟡 **push 前阻擋**：append✓、條件 `!=null && !=0`✓、H1–H7 定位✓；但 **H8 換匯欄屬 §7 升級項（line 71）**——須確認 Codex 對 H8 **只做定位、未新作 `EX_RATE_BUY`/non-USD 換匯值邏輯**；若改了值邏輯則 H8 拆出升級。 |
+| — | **M6** 0921 完工日 | ⛔ Codex 停手 → **升級 domain**：request DTO 只有 `estCom`/`otrEstCom` 型別欄、**無日期值來源**，現況仍 `setEstComDate(null)`。非平移＝舊行為的日期從何而來需 owner 裁（FE 欄位漏接？別處衍生？）。 |
+| — | **M9** A52 `DISTRICT_NAME` | ⛔ Codex 停手 → **升級 scope**：`SummaryServiceImpl` 未注入 `TBDistrictRepository`，正確補 A52 需新增依賴、超 method-only。為界定清楚的小擴充，確認 join key 後可單獨授權。 |
 > M10（Tier 3 金錢刪除）不在本批 → 留最後走 feature branch + PR。每筆仍守 §7 逐項閘門①–⑤。
