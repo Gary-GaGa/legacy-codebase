@@ -58,6 +58,26 @@
 
 **✅ PASS（7）**：endpoint 對應、撥貸日（`CASE_PROGRESS=24`）寫入、`MB_CHECK`、save 重建表 + `EPORIS_0921` flag、CO placeholder、`dataReturn` summary 狀態、**`0921` 無 checkpoint（佐證 D5）**
 
+### 2.2 撥貸 `0922` Step B（main）比對結果（2026-06-05；舊 spec ↔ 新 `SummaryServiceImpl`）
+> 詳細表本機 gitignore；此處主題/嚴重度。T24 A–H 逐欄留 B-0922-t24。
+>
+> **🔴🔴 SHOWSTOPPER（待立即複驗）**：`authorize` 換匯 `funcGetExchangeRate` 寫完資料後**固定丟 `UnsupportedOperationException`**，`authorize` catch 成失敗 → **T24 組檔 / SFTP / record / 狀態更新（26）全部到不了**。若屬實＝**撥貸執行核心未實作（throw-stub），非僅行為分歧** → 「`0920` 認列既有＝結構到位」須更正為「**核心未完成**」。複驗點：確認該 throw 是否無條件、非 Codex 誤讀邊界（`FunctionServiceImpl:1221`）。
+
+**🔴 其他真 bug**
+- `EXCHANGE_RATE` 來源 ID `OVSLXLON01`→`OVSLXLON02`（換錯匯率源，money；即使被 stub 擋住仍 latent）
+- `submit` mail 建了 `MailList` 但未加入 → 送空清單，**checker 從未收到通知**
+- `submit` app history `APP_PROCESS_CODE` 舊 `25` → 新 `24`（process code 錯）
+
+**🟠 架構/實作（多疑刻意，需 domain 確認）**
+- `t24DealResult` 由 action 改**批次** `EPROZ0B006`（async 處理結果檔）→ 疑刻意；需確認等價
+- mail 改由 repository/scheduler 後送（只 insert `TB_NOTIFICATION_INFO`）→ 需確認 scheduler 存在且更新 S/F
+- `authorize` 狀態 `CURRENT_USER_ID` key 尾端多空白（`DynamicUpdateSqlUtils`）→ 潛在 key bug
+- 批次 T24 結果寫 `IS_AUTODIS=YC`（舊 `0922` 未見 flag 寫入）
+
+**🟡 UNSURE**：`t24DealResult` 非 `0000`/無 done flag 是否更新 summary 狀態；`CLO_REASON=C10` 寫法差異
+
+**✅ PASS**：submit/returnMaker 狀態轉移、`funcConfCheckDate` 檢核、returnMaker mail、SFTP/record（若可達）、t24 成功/失敗→`27`/`C1`（批次）、`NOTIFICATION_INFO No`（**D8 釐清＝同欄 ✅**）、`PROJECT_CODE` 未涉（**D8 釐清 ✅**）、checkpoint 新舊皆無
+
 ## 3. 🟡 授權列（owner：DB / ops）— 新 c0 endpoint 的 `TB_API_AUTH` / `TB_ROLE_TASK`
 > `00117` 為既有模組（授權列應已有）；其餘新建 c0 頁的新 `epl-*-c0-*` endpoint 需建授權列。
 
