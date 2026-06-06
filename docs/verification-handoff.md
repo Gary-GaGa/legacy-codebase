@@ -1,6 +1,6 @@
 # 30% 補完 — 驗證交付清單（Verification Handoff）
 
-> **程式/build 結構性全到位（2026-06-05）**：c0 評分 `00115–00120` ✅、前端 ✅（含 `CSU0130`）、撥貸後端 `0920/0921/0922` 既有 ✅。
+> **程式/build 結構性（2026-06-05）**：c0 評分 `00115–00120` ✅、前端 ✅（含 `CSU0130`）；⚠️ **撥貸後端 `0921/0922` 端點在但核心未完成**——舊系統比對發現 `0922 authorize` 換匯為 throw-stub（執行核心未跑過）+ `0921` 多項分歧，詳 §2.1/§2.2，triage 進行中。
 > 本檔彙整**所有殘留「驗證」項**，交 **dev/uat 整合測試 + 各 domain owner**。**非 build 阻擋項**——build 階段不擋，集中於有真資料/真授權時跑。
 > 來源：`page-mapping.md` §2B、`decisions.md`、`build-tasks/EPROC00118-*`、boundary bundle `EPROC00118/`。
 
@@ -61,7 +61,7 @@
 ### 2.2 撥貸 `0922` Step B（main）比對結果（2026-06-05；舊 spec ↔ 新 `SummaryServiceImpl`）
 > 詳細表本機 gitignore；此處主題/嚴重度。T24 A–H 逐欄留 B-0922-t24。
 >
-> **🔴🔴 SHOWSTOPPER（待立即複驗）**：`authorize` 換匯 `funcGetExchangeRate` 寫完資料後**固定丟 `UnsupportedOperationException`**，`authorize` catch 成失敗 → **T24 組檔 / SFTP / record / 狀態更新（26）全部到不了**。若屬實＝**撥貸執行核心未實作（throw-stub），非僅行為分歧** → 「`0920` 認列既有＝結構到位」須更正為「**核心未完成**」。複驗點：確認該 throw 是否無條件、非 Codex 誤讀邊界（`FunctionServiceImpl:1221`）。
+> **🔴🔴 SHOWSTOPPER（已複驗確認 2026-06-05）**：`authorize`（`caseIsuSummaryAuth`）換匯 `funcGetExchangeRate` 在 `0000` 成功分支**寫完 `TB_DISBUR_DATE`/`TB_EXCHANGE_RATE` 後無條件丟** IDE 自動產生的 `UnsupportedOperationException("Unimplemented method 'funcGetExchangeRate'")`（`FunctionServiceImpl:1221`）——**全方法無 return 路徑**、呼叫端無繞過 → **T24/SFTP/record/狀態（26）全部到不了**。**確認＝撥貸 authorize 核心未完成（半成品：DB 寫入已寫、缺 return、留 IDE stub throw）**，非僅行為分歧 → **「`0920` 認列既有＝結構到位」更正為「authorize 核心未完成」**。範圍：此為兩檔內**唯一** stub（`:614` 是 catch 包裝、非 stub）→ 修點侷限此方法尾段，但 **authorize 從未端到端跑過**，且同路徑另有下列真 bug；另有 **partial-write 風險**（寫後拋，依交易邊界可能留半更新）。
 
 **🔴 其他真 bug**
 - `EXCHANGE_RATE` 來源 ID `OVSLXLON01`→`OVSLXLON02`（換錯匯率源，money；即使被 stub 擋住仍 latent）
