@@ -36,7 +36,7 @@
 **`build 綠 ≠ 無 runtime stub`**：`funcGetExchangeRate` 是 IDE 自動產生的 `throw UnsupportedOperationException`，**編譯完全通過**、只在執行時爆。我們的 stub 掃**只跑過撥貸那 2 個檔**。
 - 🔴 **關鍵關聯**：該 stub 所在的 **`FunctionServiceImpl` 是共用檔，c0 `00118` calc 也注入它**（`funcGetRate`）。我們確認了 `funcGetExchangeRate` 是 stub，但**尚未確認 `funcGetRate` 及 c0 依賴的其他 `FunctionService`/common 方法不是 stub**。
 - 因此「c0 6 支已實作」目前是**推定**（build 綠 + 鏡像 + 00118 語意審），**非經 runtime-stub 掃證實**（00117 是既有模組、推定會跑；00115/116/119/120 未明確掃 stub）。
-- **關閉動作（建議下一步）**：對「c0 6 支新 ServiceImpl + 它們呼叫的 `FunctionServiceImpl`/common 方法」做一次 stub 掃——grep `UnsupportedOperationException` / `TODO` / `throw new .*NotImplemented` / 空 body / 佔位 `return null`，逐一確認有 return 路徑。掃完才能把 c0 從「推定實作」升為「確認實作」。
+- **關閉動作（🔄 2026-06-06 已平行派 Codex 唯讀盤點）**：對「c0 6 支新 ServiceImpl + 它們呼叫的 `FunctionServiceImpl`/common 方法」做一次 stub 掃——grep `UnsupportedOperationException` / `TODO` / `throw new .*NotImplemented` / 空 body / 佔位 `return null`，逐一確認有 return 路徑。掃完才能把 c0 從「推定實作」升為「確認實作」。**結果回填本節**。
 
 ## 5. 比對深度差異（誠實標註）
 - **撥貸**：對**舊系統**做了深度逐項比對（0921 Step B 7P/15F/5U、0922 Step B、T24 B-step）→ 分歧已坐實。

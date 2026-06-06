@@ -79,7 +79,7 @@
 | **M2** trim T24 尾欄（B/C/D/G） | ✅ diff 經審、對齊舊 spec（欄數 8/27/7/12）、行尾策略未動、scope 乾淨 → **待推產品 repo** | commit `2417cfe`；引 `EPROIS_0922-t24.md:143/152/168/196/215/223/295/308` |
 | **M3** submit mail enqueue | ✅ diff 經審、只補空清單 bug、async 架構未動 → **待推** | commit `49ebcb1`；引 `EPROIS_0922.md:139` |
 | **M4** RECEIVED_DATE Finished-guard | ✅ diff 經審、另案「dataReturn 多寫 history」未動 → **待推** | commit `1d39e1d`；引 `EPROIS_0921.md:122/:145` |
-> 三筆各自獨立 commit、`package` exit 0、**未 push**（待產品 repo 分支決策）。下一批 = Tier 2（M1 H 段整修、M8 E 段、M5/M6/M7/M9，逐位置對、審更細）。
+> 三筆各自獨立 commit、`package` exit 0。**決策（2026-06-06）：移到產品 repo feature branch + 開 PR**（金錢碼留產品 repo 審查/CI 軌、可單獨 revert），不直接推 master。下一批 = Tier 2（M1 H 段整修、M8 E 段、M5/M6/M7/M9，逐位置對、審更細）。
 >
 > ⚠️ **build 環境發現（非本次修正引入）**：後端 Logback 測試設定硬編碼 `D:\temp\saveFile\log`，非 Windows/無 `D:` 環境會擋 build；Codex 以 `-Dlogging.api.path`/`-Dlogging.batch.path` 覆寫繞過。屬可攜性 smell，建議外部化該路徑（獨立 ops 項，不阻擋本批）。
 > 處置記錄：本 triage 為撥貸驗證的綜合產出。修正/實作屬**獨立返工階段**，不在「程式補完」里程碑（該里程碑就撥貸部分已更正為未完成）。
