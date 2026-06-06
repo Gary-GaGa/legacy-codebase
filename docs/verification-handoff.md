@@ -33,6 +33,30 @@
 | **D7** | `TB_DISBUR_*` 三表未在 `db-schema-catalog` authority 首段 | 盤點 | 以既有 entity/repo 為準，或回補 catalog |
 | **D8** | **schema-map 風險**（DB2→Oracle/整併；Step A2 2026-06-05）| `legacy-extract/disbursement-schema-map.md`（本機）| 🔴 **T24 組檔欄位來源**：舊有欄新無（如 `BRANCH_PROFILE.T24_COMPANY`）→ 新 `funcIsuT24Authorize` 漏欄/改源/併欄？🟠 **金額精度**：舊 VO 無 DB2 length/precision（UNKNOWN）→ 需舊 DDL/DBA，非 VO 可定；查新碼有無 `round/truncate/setScale` 🟡 `NOTIFICATION_INFO` `NO`→`No`（同欄 vs quoted-id）🟡 `LON_SUMMARY_INFO` 新增 `PROJECT_CODE`（是否需填）|
 
+### 2.1 撥貸 `0921` Step B 比對結果（2026-06-05；舊 spec ↔ 新 `DataInputServiceImpl`）
+> 詳細逐項表（含舊業務規則、`file:line` 證據）存本機 `legacy-extract/EPROIS_0921-compare.md`（gitignore）；此處只記主題/嚴重度/裁決方向。皆為**待裁決分歧**（部分倚賴舊 spec 的 UNKNOWN），非已坐實 bug。
+>
+> **結論：`0921`「結構在、行為不對等」— 7 PASS / 15 FAIL / 5 UNSURE。** 撥貸後端雖存在，正確性須逐項裁決——**不可一律「改回舊版」**（部分分歧是刻意演進）。
+
+**🔴 資料完整性（疑似 regression，最高、較高信心）**
+- Collateral 完工日（`EST_COM_DATE`/`OTHER_EST_COM_DATE`）新固定寫 `null` → 疑資料遺失
+- `dataReturn` fee cleanup 用 derived `deleteByIdApplicationNo` → 疑按 application 過度刪 fee（舊僅刪 `CON_TYPE=FN`）
+- fee 公式 loan-amount alias 與讀取 key 不一致 → facility fee 可能 `null`
+- `RECEIVED_DATE` 新在 Save 即寫（舊僅 Finished）；`dataReturn` 多寫一筆 history（舊僅 `APP_PROCESS_CODE=98`）
+
+**🟠 檢核對等（需 domain 裁示 intended vs regression）**
+- `CheckMainBorr`：身分比對、sector/industry 矩陣、account 規則、records-empty 不刪舊
+- `CheckCoBorr`：`DATA_SEQ` 順序敏感、business-section 一律判 `N`
+- `info` `CO_CHECK`：新 `='Y'` vs 舊 `!='N'`；Finished gate 未驗 `mbCheck`；law firm `IS_SHOW` 版本條件；address `UPD_DATE` 來源
+
+**🟢 疑似刻意演進（勿改回舊）**
+- fee rounding 新增 `KHR` + `RoundingMode.DOWN`（舊僅 `USD`）→ 多半 Cambodia 在地化，非 bug
+
+**🟡 UNSURE（需 DDL/DBA/資料）**
+- 金額 precision（`NUMBER(17,2)` vs 舊 UNKNOWN）；`IS_CONTRACT`/`IS_CONTR` persist 目標；contract source 可能 NPE；空 `APPLICATION_NO`（新 controller `@NotBlank` 擋、舊是否 throw 未明）
+
+**✅ PASS（7）**：endpoint 對應、撥貸日（`CASE_PROGRESS=24`）寫入、`MB_CHECK`、save 重建表 + `EPORIS_0921` flag、CO placeholder、`dataReturn` summary 狀態、**`0921` 無 checkpoint（佐證 D5）**
+
 ## 3. 🟡 授權列（owner：DB / ops）— 新 c0 endpoint 的 `TB_API_AUTH` / `TB_ROLE_TASK`
 > `00117` 為既有模組（授權列應已有）；其餘新建 c0 頁的新 `epl-*-c0-*` endpoint 需建授權列。
 
