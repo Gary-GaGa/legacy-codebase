@@ -125,7 +125,7 @@
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅（CR 範本）|
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；嚴謹可做 deputy↔0700 gap-check |
-| EPROZ00800 | Revised Item | 🟡 | ✅ | ⚠️ **FE POST vs BE GET 介面不一致** |
+| EPROZ00800 | Revised Item | 🟡 | ⚠️ | **有 PRD `CDC-EPRO-0001 v1.1`**（oracle）。⚠️ execute 應 **POST**（PRD §6.1）→ BE GET 是 bug；🔍 待驗 RI-MAT 清除/還原副作用引擎是否實作（見 `build-tasks/verify-00800-revised-item-vs-prd.md`）|
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
 
 ### 2F. 撥貸 `EPROISU0920/0921/0922` + T24（🔴 唯一真未完成區塊）
