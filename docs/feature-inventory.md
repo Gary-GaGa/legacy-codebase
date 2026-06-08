@@ -97,7 +97,7 @@
 |---|---|:--:|:--:|---|
 | EPROC00110 | 評分容器（corporate credit-investigation）| 🔴 | ✅ | `epl-info/save-c0-credit-investigation-tab`（`CsuCreditInvestigationController`）|
 | EPROC00112 | CBC Banking Relationship | ✅ | ✅ | `epl-info/save-c0-cbc-banking-relationship`（`7e8aaf7`）|
-| EPROC00114 | Collateral Assessment | 🔴 | ✅ | `epl-sele/info/save-c0-collateral-assessment` |
+| EPROC00114 | Collateral Assessment | ✅ | ✅ | `epl-sele/info/save-c0-collateral-assessment`（`62ec62f`；無 c0 calc→隱 Calc 鈕、分數 BE save 算）|
 | EPROC00115 | Borrower Group Exposure | 🔴 | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`；授權列 |
 | EPROC00116 | Financial Statement GI | 🔴 | ✅ | `epl-*-c0-financial-statement-comments`；授權列；export 沿用 i0？|
 | EPROC00117 | Financial Evaluation GI | 🔴 | ✅ | `epl-{info/save}-c0-financial-{staff/business}`、`epl-sele-c0-financial-list` |
@@ -106,7 +106,7 @@
 | EPROC00120 | Financial Evaluation FI（table-fi + staff-fi）| 🔴 | ✅ | `epl-{info/save}-c0-financial-evaluation-table-fi`、`epl-save-c0-financial-evaluation-staff-fi`；授權列 |
 > **範本＝i0 `individual/credit-investigation`**：容器 component 動態載 tab（`epl-*-i0-credit-investigation-tab`、`creditInvestigationNav()` config、`CreditInvestigationPageCode` enum）、各子頁 `components/<name>/{component,services}`。c0 照此鏡像、改 `-c0-` endpoint + corporate DTO。
 > ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。
-> **進度（2026-06-06）**：✅ **Step 1**＝c0 容器（BE 驅動動態 tab、`epl-*-c0-credit-investigation-tab`）+ **00115 BGE** pilot，`ng build` 綠（容器 DTO 對齊 c0＝只 `businessType`/`pageMap`、無 i0 的 `assessmentType`/`isStaffLoan`，故容器只留 businessType radio）。🔵 **Step 2 進行中**：✅ `00112` CBC（`7e8aaf7`；c0 無 calc endpoint → totals 改**本地依幣別加總**，整合測確認語意一致、無 scoring 依賴 FE 算的 total）；其餘 6 子頁（00114/116/117/118/119/120）待。⚠️ **watch**：① c0 staff-vs-business 判定方式（容器無 `isStaffLoan`、BE 有 staff 概念）→ 00117/00120 staff 版動手前先查 ② 真元件進來後實跑 G/F 切換驗顯隱。
+> **進度（2026-06-06）**：✅ **Step 1**＝c0 容器（BE 驅動動態 tab、`epl-*-c0-credit-investigation-tab`）+ **00115 BGE** pilot，`ng build` 綠（容器 DTO 對齊 c0＝只 `businessType`/`pageMap`、無 i0 的 `assessmentType`/`isStaffLoan`，故容器只留 businessType radio）。🔵 **Step 2 進行中**：✅ `00112` CBC（`7e8aaf7`；無 calc→totals 本地加總）、✅ `00114` Collateral Assessment（`62ec62f`；c0 無 calc endpoint→隱 Calculate Rating 鈕、`calc()` no-op、分數由 BE save 算）；其餘 5（00116/117/118/119/120）待。⚠️ **watch**：① 🔑 **calc 逐頁不同**——00112/00114 無 calc（已隱），但 **00118 Corp Scorecard 有 `epl-calc-c0-corporateScorecard`、00116/00119 FinStmt 亦有 calc → 這幾頁 calc 鈕要保留接上**，勿誤套「隱 calc」。② c0 staff-vs-business 判定（00117/00120 動手前先查）③ 真元件就緒後實跑 G/F 切換 ④ 整合測確認：00112 totals、00114 rating 是否仍**唯讀顯示**(BE save 算後回傳)、語意與 BE 一致。
 
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
