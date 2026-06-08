@@ -41,3 +41,9 @@
 - 後端：[`backend/AGENTS.md`](backend/AGENTS.md)
 - 前端：[`frontend/AGENTS.md`](frontend/AGENTS.md)
 - 前端黃金樣板與「JSP 控件→元件」對照：`docs/golden-template/README.md`
+
+## docs 導覽（規格/狀態/任務）
+- **索引**：[`docs/README.md`](docs/README.md)（分類導覽，先看）。
+- **狀態 SSOT（權威）**：`docs/feature-inventory.md` — 舊→新逐頁對應 + 前後端狀態 + 剩餘事項 + 排程。任何「某頁做了沒/缺什麼」以此為準（其他文件若有出入，以本檔最新校正為主）。
+- **任務單**：`docs/build-tasks/`（進行中）；已完成歷史在 `docs/build-tasks/done/`、已消化文件在 `docs/archive/`。
+- ⚠️ 進度提醒（2026-06-06）：前端**非**全完成——**c0 評分前端（容器+8 子頁）整組缺、Phase F 鏡像 i0 補建中**；撥貸核心（換匯 stub + T24）未通。細節見 `docs/feature-inventory.md`。

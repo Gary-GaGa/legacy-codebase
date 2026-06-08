@@ -62,7 +62,7 @@
 輸出到 docs/legacy-extract/<page>.md，含：① 每個動作的步驟 ② 讀寫的表/欄位 ③ 關鍵 SQL（標 DB2 專用語法：FETCH FIRST/WITH UR/ROWNUM 等）
 ④ 狀態轉移（如 CASE_PROGRESS / checkpoint / flag）⑤ 外部整合（T24/SFTP/mail）。只描述舊行為，不評論新碼。
 ```
-Step B 比對範本見 `review-c0-prompt.md` 的結構（換成「小 spec ↔ 新 service」逐項 PASS/FAIL/UNSURE）。
+Step B 比對範本見 `archive/review-c0-prompt.md` 的結構（換成「小 spec ↔ 新 service」逐項 PASS/FAIL/UNSURE）。
 
 ## 6. 會不會「需要分階段重複執行」？— 會，而且是設計如此
 - handoff 約 20 項 × 五組 → **約 20 個 bounded session**，序列跑、逐項 commit。

@@ -68,7 +68,7 @@ EPROC00118/
 
 ## 8. 漸進落地（別一次到位）
 > 具體 plumbing 做法（含真正的前置摩擦：壞 baseline 測試 / Oracle native SQL / JWT / Nexus image）見
-> [`build-tasks/B-boundary-gate-plumbing.md`](build-tasks/B-boundary-gate-plumbing.md)。
+> [`build-tasks/done/B-boundary-gate-plumbing.md`](build-tasks/done/B-boundary-gate-plumbing.md)。
 1. **先接閘門 1**：springdoc 生 OpenAPI + snapshot test（配既有 controller）。
 2. **再補閘門 4/5**：挑一頁把 `待整合驗證清單` 改寫成可跑 QA case + ID 覆蓋對表。
 3. **一頁 end-to-end 跑通**（建議 `EPROC00118`，邊界包範本已備）→ 再放大到其它頁。

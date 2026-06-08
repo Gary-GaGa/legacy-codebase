@@ -32,7 +32,7 @@
 - **操作結論**：因 HOME 輸出會截斷，**一律用「指定表名」的 Prompt B 抽**（不依賴完整 HOME）。
 - 新表名 `TB_*`（無 `EPRO_`、Phase 1 三表 schema 為「-」即無 schema 限定）。
 
-## 2. Phase 1 三表細節（Prompt B）✅ 已回填、entity 定稿於 `phase1-eproz0_0700-spec.md` §2
+## 2. Phase 1 三表細節（Prompt B）✅ 已回填、entity 定稿於 `archive/phase1-eproz0_0700-spec.md` §2
 - `TB_EMP_PROXY` — PK **`EMP_ID` 單鍵**（⚠️ 與舊 DAO 複合鍵不一致 → 一人一筆代理，待業務確認）；`EMP_ID`/`PROXY_ID`/`UPDATE_EMP_ID` VARCHAR2(10)、`STR_TIME` TIMESTAMP(6) **NOT NULL**、`END_TIME`/`UPDATE_DATE` TIMESTAMP(6)、`RETURN_CASE_TO_CA` VARCHAR2(1) default `'N'`。
 - `TB_EMP_PROFILE` — PK (`ROLE_ID`,`EMP_ID`)；`EMP_ID` VARCHAR2(5)、`EMP_NAME`(50)、`BRANCH_CODE`(8)、`E_MAIL`(100)、`DEPT_CODE`(8)、`STATUS`(10)。
 - `TB_BRANCH_PROFILE` — PK (`BRANCH_CODE`,`DEPT_CODE`)；`BRANCH_CODE`(5)、`BRANCH_NAME`(100)、`DEPT_CODE`(3)、`DEPT_NAME`(100)、`DATA_SEQ` NUMBER(3)、`DISPLAY`(1)、`T24_BRANCH_CODE`(5)、`T24_DEPT_CODE`(5)；**無 `T24_COMPANY`**。

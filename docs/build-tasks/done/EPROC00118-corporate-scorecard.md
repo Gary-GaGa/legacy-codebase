@@ -31,10 +31,10 @@
 本 repo 是來源；Codex 跑 00118 前，確認下列**最新版**已在後端專案資料夾（否則跑到舊規則、核准的 `FunctionService` 注入會被舊 gate 擋）：
 - `scripts/verify-c0.py`（含 `FunctionService` allowlist + 「0 修改既有檔」檢查）
 - `backend/AGENTS.md`（§6.1 例外、§6.5 DoD）
--（若用語意閘門）`docs/review-c0-prompt.md`、`.codex/agents/reviewer-c0.toml`
+-（若用語意閘門）`docs/archive/review-c0-prompt.md`、`.codex/agents/reviewer-c0.toml`
 
 ## 📐 驗收邊界（boundary bundle）
-本頁可驗證邊界範本見 [`../golden-template/boundary-bundle/EPROC00118/`](../golden-template/boundary-bundle/EPROC00118/)：
+本頁可驗證邊界範本見 [`../golden-template/boundary-bundle/EPROC00118/`](../../golden-template/boundary-bundle/EPROC00118/)：
 - `spec.md`（規則 R1–R8）/ `openapi.yaml`（契約·閘門1·TODO 對 i0 DTO 填實）/ `schema.sql`（閘門2）/ `qa-cases.md`（QA1–QA10，含 R8 `@PENDING` = CU-return）。
 - 落地方式見該資料夾 `README.md` + `docs/vision-pipeline.md`。
 

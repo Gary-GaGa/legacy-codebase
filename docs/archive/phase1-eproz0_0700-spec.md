@@ -5,7 +5,7 @@
 > **Angular 14（config-driven，照 `deputy` 樣板，`cub-*`/Material）+ Spring Boot 3.3 / Java 17 + Oracle**。
 > 來源：D1/D2 盤點（舊頁 `EPROZ0_0700`，自製 `HttpDispatcher`/`@CallMethod`、DB2）。
 >
-> ⚠️ **部分已超越（2026-06，前後端 cross-check 後）**：本頁**後端已存在 = `DeputyController`**（`epl-case-deputy-options/-query-deputy/-insert-deputy/-delete-deputy`），**只缺前端**。§3/§4 的 `/api/emp-proxy` REST 為**理想化設計、非實際**（真實 API 慣例 = RPC 式 `epl-*`）。**實作請依 `build-tasks/EPROZ00700-assign-substitute.md`**；本檔 §2（entity/schema，A1 驗證）仍有效。
+> ⚠️ **部分已超越（2026-06，前後端 cross-check 後）**：本頁**後端已存在 = `DeputyController`**（`epl-case-deputy-options/-query-deputy/-insert-deputy/-delete-deputy`），**只缺前端**。§3/§4 的 `/api/emp-proxy` REST 為**理想化設計、非實際**（真實 API 慣例 = RPC 式 `epl-*`）。**實作請依 `../build-tasks/done/EPROZ00700-assign-substitute.md`**；本檔 §2（entity/schema，A1 驗證）仍有效。
 
 ## 0. 範圍
 - **要做**：查詢代理設定、新增一筆、刪除一筆，走 JWT + 進頁授權，落 Oracle 實表。
@@ -162,7 +162,7 @@ src/app/emp-proxy/
 ## 9. 附錄：A1 / A2 取得方式（拿回來我補 entity / 權限）
 
 ### A1 — `TB_EMP_PROXY` DDL（舊系統 DB2）
-> ✅ **已關閉**：改由**新 DB schema Excel** 取得精確型別/長度/nullable/PK/default（見 §2 與 `db-schema-catalog.md`）。以下 DB2 查詢保留備查。
+> ✅ **已關閉**：改由**新 DB schema Excel** 取得精確型別/長度/nullable/PK/default（見 §2 與 `../db-schema-catalog.md`）。以下 DB2 查詢保留備查。
 
 先在 repo 找（Copilot）：
 ```

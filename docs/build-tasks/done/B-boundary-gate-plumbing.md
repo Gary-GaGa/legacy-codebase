@@ -1,7 +1,7 @@
 # Build Task — 把驗收邊界「閘門 1 / 4 / 5」接進產品後端（gate plumbing）
 
-> 載具：Codex（後端專案）。把 [`../vision-pipeline.md`](../vision-pipeline.md) §8 漸進落地的第 1–2 步變**可執行**；
-> 第一個對象 = `EPROC00118` 的 boundary bundle（[`../golden-template/boundary-bundle/EPROC00118/`](../golden-template/boundary-bundle/EPROC00118/)）。
+> 載具：Codex（後端專案）。把 [`../vision-pipeline.md`](../../vision-pipeline.md) §8 漸進落地的第 1–2 步變**可執行**；
+> 第一個對象 = `EPROC00118` 的 boundary bundle（[`../golden-template/boundary-bundle/EPROC00118/`](../../golden-template/boundary-bundle/EPROC00118/)）。
 > 這是「示範接一次 → 之後每頁照接」的 plumbing 頁卡，**不是再補一個業務頁**。
 
 ## 0. 前置事實（直接決定做法，先讀）

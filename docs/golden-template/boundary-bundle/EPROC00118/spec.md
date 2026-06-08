@@ -1,7 +1,7 @@
 # SRS — EPROC00118 c0 Corporate Scorecard（SA 規格層）
 
 > 鏡像來源 i0 `CorporateScorecardController` + `CorporateScoreCardServiceImpl`。完整任務見
-> [`../../../build-tasks/EPROC00118-corporate-scorecard.md`](../../../build-tasks/EPROC00118-corporate-scorecard.md)、硬規則 `backend/AGENTS.md` §6。
+> [`../../../build-tasks/done/EPROC00118-corporate-scorecard.md`](../../../build-tasks/done/EPROC00118-corporate-scorecard.md)、硬規則 `backend/AGENTS.md` §6。
 > **每條規則一個 `Rn`**；QA case 用 `covers: Rn` 對表（覆蓋率＝DoD 閘門 5）。
 > ⚠️ `file:line` 為 Codex recon 結果（產品碼在開發機，不在本 repo）→ 實作時對既有 i0 再核對。
 

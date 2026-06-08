@@ -5,7 +5,7 @@
 
 > 載具：**Codex CLI**（在前端專案內執行；自動讀 `AGENTS.md`）。
 > ⚠️ **後端已完成** = `DeputyController`（endpoints `epl-case-deputy-options`/`epl-case-query-deputy`/`epl-case-insert-deputy`/`epl-case-delete-deputy`）→ **不要重做後端、也不要用 spec 裡的 `/api/emp-proxy` REST**。本頁只缺**前端**。
-> 規格參考 `phase1-eproz0_0700-spec.md`（DTO/欄位/狀態/級聯/驗證；但 **API 改打上述 `epl-*`**）。
+> 規格參考 `../../archive/phase1-eproz0_0700-spec.md`（DTO/欄位/狀態/級聯/驗證；但 **API 改打上述 `epl-*`**）。
 
 ## 前置（後端契約）
 後端已是 `DeputyController`。在**母資料夾**啟動 Codex（同時看得到後端），於前端任務裡直接叫它讀（免手動抓）：
