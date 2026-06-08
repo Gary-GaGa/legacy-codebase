@@ -1,6 +1,6 @@
 # 30% 補完 — 驗證交付清單（Verification Handoff）
 
-> **程式/build 結構性（2026-06-05）**：c0 評分 `00115–00120` ✅、前端 ✅（含 `CSU0130`）；⚠️ **撥貸後端 `0921/0922` 端點在但核心未完成**——舊系統比對發現 `0922 authorize` 換匯為 throw-stub（執行核心未跑過）+ `0921` 多項分歧，詳 §2.1/§2.2，triage 進行中。
+> **程式/build 結構性（2026-06-05；2026-06-06 修）**：c0 評分 `00115–00120` **後端** ✅（**前端原缺、Phase F 補建中**，見 `feature-inventory.md` §2D）、其餘前端（主流程/i0/契約/z0/`CSU0130`）✅；⚠️ **撥貸後端 `0921/0922` 端點在但核心未完成**——舊系統比對發現 `0922 authorize` 換匯為 throw-stub（執行核心未跑過）+ `0921` 多項分歧，詳 §2.1/§2.2，triage 進行中。
 > 本檔彙整**所有殘留「驗證」項**，交 **dev/uat 整合測試 + 各 domain owner**。**非 build 阻擋項**——build 階段不擋，集中於有真資料/真授權時跑。
 > 來源：`page-mapping.md` §2B、`decisions.md`、`build-tasks/EPROC00118-*`、boundary bundle `EPROC00118/`。
 

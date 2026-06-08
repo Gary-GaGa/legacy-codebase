@@ -115,6 +115,7 @@
 
 ### 觀察
 - 30% 缺口（**2026-06-05 校正**）：① **企金評分後端 controller 全數結清**——`EPROC00115`/`00116`/`00117`/`00118`/`00119`/`00120` ✅（`00117` 為既有模組、audit 確認已滿足；`00118` 本期新建+語意審查）② **撥貸 `0920`**：2026-06-05 盤點發現**後端已存在**（`0921`/`0922` controllers 服務 FE 全部 9 端點），**非 build 缺口**；惟撥貸正確性 unverified（無舊源/無 oracle）→ 撥貸 domain + 整合驗證 ③ 前端 **全數完成**（`EPROCSU0130` 2026-06-05 收尾、ng build 綠）。→ **30% 的 CODE 結構性全到位；殘留＝驗證階段**（整合測試 + 2 條 escalation + 撥貸 domain 正確性）。
+  > ⚠️ **2026-06-06 翻案（以 `feature-inventory.md` 為準）**：此「前端全數完成 / 30% CODE 全到位」**有誤**——**c0 評分前端（容器 + 8 子頁）整組缺**、現 Phase F 鏡像 i0 補建中。故殘留＝**c0 評分 FE（建置中）+ 撥貸核心 + 整合驗證**。
 - ⚠️ **2026-06-05 教訓（後端版）**：`00117` 經 Codex Step-1 唯讀盤點發現 c0 模組**早已存在**（cross-check 誤判為「缺」）→ 證實**「未做其實已完成」在後端也會發生**，先前「後端 cross-check 較可靠」需修正。**任一頁開做前一律先 Codex 唯讀盤點實際完成度**（不分前後端），避免重造。
 - 🚩 **escalation 1（待 `CsuCreditEval*` owner 人審，2026-06-05）**：`EPROC00118` 之 CU-return checkpoint 缺陷——既有 `CsuCreditEvalAndCreditDecisionServiceImpl` Return(98) 硬編碼只清 `TB_CHECK_POINTS_CS`、無 CU 分流（`:2985`）；§6.1 禁改既有 `Csu*`，故不在 00118 修。**待辦**：先 Codex 唯讀確認 CU（無擔企金）案件是否真會走到 `00118` checkpoint；若會→排既有 service 加 CU 分流之獨立修正（需授權破 §6.1「禁改 Csu*」），若不會→此非 bug、結案。
 - 🚩 **escalation 2（gate-b 2026-06-05 發現，待同一 owner 人審）**：`crScoreCardCompleted` 兩碼契約（00114=第1碼 / 00118=第2碼）被既有 `CsuCreditEvalAndCreditDecisionServiceImpl:2890` **整欄覆寫成 `"NN"`**。00118 自身鏡像 i0 已驗正確（只動第2碼）；此覆寫屬企金信用決策生命週期之既有行為、§6.1 不改。**待辦**：確認整欄 "NN" 是 intended（決策重置）還是 latent bug + 與 00118 save 時序（含 Y/N 語意）→ 整合驗證涵蓋。
@@ -123,6 +124,7 @@
 - ⚠️ **以 build manifest 校正（2026-06-03 `ng build`）**：前端已存在 lazy module —— `credit-reviewer-onhand-status`、`cad-onhand-status`、`deviation-case-report`、`scorecard-report`、`application-delete-report`、`application-cancel-report`、`deputy`（size 多很小=骨架）。→ 不少「未做」其實是**骨架待補、非從零**；**選頁前先看既有 module 完成度**（build chunk 大小可當粗略指標）。cross-check(Copilot 搜尋)會漏，**build manifest 為準**。
 - ⚠️ **2026-06-04 再校正（Codex 逐頁盤點）**：`00620–00650` 報表頁**全部頁面結構已接好**（非骨架）；其中 `delete`/`cancel` 共用 `base-application-report`，**功能在共用 base 裡 → build chunk 小但完成度高** → build-size 啟發法會**低估「共用 base 的頁」**。教訓：**選頁/開做前一律先讓 Codex 唯讀盤點該頁實際完成度**，避免重做。
 - ⚠️ **2026-06-04 三度校正**：`00700` Assign Substitute 也早已實作（= `pages/deputy`，**非新建**）。三次「未做其實已完成」（CAD→CR、4 報表、deputy）顯示**前端 cross-check（Copilot 關鍵字搜尋）系統性低估完成度**，主因：① build-size 啟發法低估共用 base 頁 ② 頁以 **domain 命名**（`deputy`）非 funcId（`assign-substitute`）→ 關鍵字搜尋漏掉。**結論：前端基本完成，剩餘 30% 真正落在後端**（6 個 c0 評分 controller + 撥貸 0920）。後端任一頁開做前仍照「先唯讀盤點實際完成度」紀律（半成品也可能比想像完整）。
+  > ⚠️ **2026-06-06 補充**：偏誤其實**雙向**——多數頁被**低估**（做了當沒做），但 **c0 評分前端被高估**（當做了、其實整組沒做）。→ 結論修正：前端 **非** 全完成，**c0 評分 FE 為真缺口**（Phase F 補建中）。唯讀盤點紀律**前後端都要**。
 
 ## 3. 下一步：對照兩專案找出未完成（cross-check）
 在**前端專案**與**後端專案**各跑一次（prompt 見對話），用 §1 新頁代碼逐一確認「已實作/半成品/未做 + 對應 component/route 或 controller/endpoint」→ 回填本檔狀態欄、彙整 §2 backlog。

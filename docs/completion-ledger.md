@@ -1,18 +1,18 @@
 # 30% 補完 — 總盤點（Completion Ledger）
 
 > 一頁 SSOT：舊系統比對後，**已重構(70%) + 後續補完(30%)** 還有多少「功能/細節未實作」。
-> 彙整 `page-mapping.md` §2、`verification-handoff.md`、`disbursement-triage.md`。
+> 彙整 `page-mapping.md` §2、`verification-handoff.md`、`disbursement-triage.md`。**逐頁狀態/排程明細以 `feature-inventory.md` 為準**（最新校正版；本檔只到桶別）。
 > **分類關鍵**：「未實作(碼缺/會錯)」≠「已實作待驗(碼在、待整合驗證)」≠「判斷題(待 owner)」。三者別混。
 
 ## 0. 一句話結論
-- **前端**：✅ 完成（無從零頁；`EPROCSU0130` 2026-06-05 收尾，ng build 綠）。
+- **前端**：🟡 **大致完成，但 c0 評分前端整組缺**（2026-06-06 cross-check 翻案：corporate 缺評分容器+8 子頁、現 Phase F 鏡像 i0 補建中，見 `feature-inventory.md` §2D）。其餘前端頁（主流程/i0/契約/z0/deputy/CSU0130）✅。
 - **企金評分後端 c0（00115–00120，6 支）**：🟡 **碼已實作、待整合驗證**（鏡像 i0、build 綠）——**非缺碼**。runtime-stub 盲點**已關（2026-06-06）**：六支 calc/save/info/sele/download 與其呼叫的 `funcGetRate`/common 方法皆有 return 路徑、無會被踩到的 stub（§4）→「已實作」從**推定**升為**確認**；剩正確性/授權/呈現待整合驗證（Bucket B）。
 - **撥貸（0920/0921/0922）**：🔴 **唯一真正「功能未實作/會錯」的區塊**——authorize 換匯核心是 throw-stub（從未端到端跑過）+ T24 組檔錯位 + ~18 項行為分歧。
 
 ## 1. Bucket A — ✅ 已完成（不需再動碼）
 | 範圍 | 狀態 |
 |---|---|
-| 前端全部頁（含報表 00610/00620–00650/00660、deputy=00700、CSU0130）| 結構/功能完成，待整合驗證呈現 |
+| 前端頁（主流程、i0 評分、契約頁、報表 00610/00620–00650/00660、deputy=00700、CSU0130）| 結構/功能完成，待整合驗證呈現。⚠️ **c0 評分前端不在此列**（整組缺、Phase F 補建中，見 `feature-inventory.md` §2D）|
 | c0 評分**結構**（controller/DTO/checkpoint/entity 重用）| 6 支齊、build 綠、runtime 非 stub（§4 已確認） |
 
 ## 2. Bucket B — 🟡 已實作、待整合驗證（碼在，**非未實作**；owner：整合測試/DB）

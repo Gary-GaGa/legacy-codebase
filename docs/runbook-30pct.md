@@ -4,7 +4,7 @@
 > 原則：**build 綠 ≠ 正確**（本專案已多次「綠但有 bug」：reflection / 亂碼 / BOM / checkpoint）→ 閘門 = **驗證腳本 + build 綠 + 對 i0 語意自檢**，且判斷題一律**停下回報**。
 
 ## 0. 已完成（**勿重做**）
-- 前端：**全數完成**（`00610`✅ 本期；`00620–00650`/`00660`/`00700`=`deputy` 早已實作；`EPROCSU0130` ✅ 2026-06-05 收尾、ng build 綠）。
+- 前端：🟡 **大致完成，惟 c0 評分前端整組缺**（⚠️ 2026-06-06 翻案：corporate 缺評分容器+8 子頁、Phase F 鏡像 i0 補建中，見 `feature-inventory.md` §2D；**勿因本行誤以為 c0 評分 FE 已做**）。其餘（`00610`/`00620–00650`/`00660`/`00700`=`deputy`/`EPROCSU0130`）✅。
 - 後端 c0 評分：`00115`✅ `00116`✅ `00117`✅ `00118`✅ `00119`✅ `00120`✅（**全數結清**；`00117` 既有模組 audit 確認已滿足、`00118` 本期新建+語意審查 9 PASS 帶 2 條既有-service escalation）。
 - 後端撥貸：`0920`(頁框)/`0921 DataInput`/`0922 Summary` 的 controller+service **已存在**（2026-06-05 盤點；服務 FE 9 端點）→ **非 build 缺口、勿重做**。
 - 詳見 `page-mapping.md` §2A/§2B 狀態欄。
@@ -39,6 +39,6 @@
 - 安全做法：**預設序列**；要並行只挑**真正獨立**的（如後端 `00117` 與前端 `CSU0130` 可平行，因不同專案/不同檔）。
 
 ## 5. 完成定義（整個 30%）
-- **30% 進度（2026-06-05 更正）**：c0 評分 `00115–00120` ✅、前端 ✅（含 `CSU0130`）。⚠️ **撥貸 `0921/0922` 端點在、但核心未完成**——舊系統比對（Step A/A2/B）發現 `0922 authorize` 換匯 `funcGetExchangeRate` 是 throw-stub（執行核心未跑過）+ `0921` 7P/15F/5U + `0922-main` 真 bug。**先前「撥貸結構到位」更正為「需實作 + 修正」**，詳 [`verification-handoff.md`](verification-handoff.md) §2.1/§2.2，撥貸整體 triage 進行中。其餘殘留＝整合測試（真資料/授權列）+ 2 條 CreditEval escalation。
+- **30% 進度（2026-06-05 更正；2026-06-06 再修）**：c0 評分 `00115–00120` **後端** ✅；前端（主流程/i0/契約/z0/`CSU0130`）✅，**但 c0 評分前端整組缺、Phase F 補建中**（見 `feature-inventory.md` §2D）。⚠️ **撥貸 `0921/0922` 端點在、但核心未完成**——舊系統比對（Step A/A2/B）發現 `0922 authorize` 換匯 `funcGetExchangeRate` 是 throw-stub（執行核心未跑過）+ `0921` 7P/15F/5U + `0922-main` 真 bug。**先前「撥貸結構到位」更正為「需實作 + 修正」**，詳 [`verification-handoff.md`](verification-handoff.md) §2.1/§2.2，撥貸整體 triage 進行中。其餘殘留＝整合測試（真資料/授權列）+ 2 條 CreditEval escalation。
 - `page-mapping.md` §2 backlog 全部 ✅；待整合驗證清單交付給 dev/uat 整合測試（含 `TB_API_AUTH` 授權列、export 模板、CR/報表呈現）。
 - **整合驗證**（真資料、授權列、模板）為**獨立後續階段**，非 build 階段；本 runbook 只負責「程式補完 + build 綠 + 形式驗證」。
