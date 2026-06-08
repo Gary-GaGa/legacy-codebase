@@ -96,7 +96,7 @@
 | 新頁 | 名稱 | FE | BE | 對接 c0 endpoint（BE 已齊）|
 |---|---|:--:|:--:|---|
 | EPROC00110 | 評分容器（corporate credit-investigation）| 🔴 | ✅ | `epl-info/save-c0-credit-investigation-tab`（`CsuCreditInvestigationController`）|
-| EPROC00112 | CBC Banking Relationship | 🔴 | ✅ | `epl-info/save-c0-cbc-banking-relationship` |
+| EPROC00112 | CBC Banking Relationship | ✅ | ✅ | `epl-info/save-c0-cbc-banking-relationship`（`7e8aaf7`）|
 | EPROC00114 | Collateral Assessment | 🔴 | ✅ | `epl-sele/info/save-c0-collateral-assessment` |
 | EPROC00115 | Borrower Group Exposure | 🔴 | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`；授權列 |
 | EPROC00116 | Financial Statement GI | 🔴 | ✅ | `epl-*-c0-financial-statement-comments`；授權列；export 沿用 i0？|
@@ -106,7 +106,7 @@
 | EPROC00120 | Financial Evaluation FI（table-fi + staff-fi）| 🔴 | ✅ | `epl-{info/save}-c0-financial-evaluation-table-fi`、`epl-save-c0-financial-evaluation-staff-fi`；授權列 |
 > **範本＝i0 `individual/credit-investigation`**：容器 component 動態載 tab（`epl-*-i0-credit-investigation-tab`、`creditInvestigationNav()` config、`CreditInvestigationPageCode` enum）、各子頁 `components/<name>/{component,services}`。c0 照此鏡像、改 `-c0-` endpoint + corporate DTO。
 > ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。
-> **進度（2026-06-06）**：✅ **Step 1**＝c0 容器（BE 驅動動態 tab、`epl-*-c0-credit-investigation-tab`）+ **00115 BGE** pilot，`ng build` 綠（容器 DTO 對齊 c0＝只 `businessType`/`pageMap`、無 i0 的 `assessmentType`/`isStaffLoan`，故容器只留 businessType radio）。🔵 **Step 2 進行中**＝其餘 7 子頁（00112/114/116/117/118/119/120，現為 EmptyComponent 佔位）。⚠️ **watch**：① c0 staff-vs-business 判定方式（容器無 `isStaffLoan`、BE 有 staff 概念）→ 00117/00120 staff 版動手前先查 ② 真元件進來後實跑 G/F 切換驗顯隱。
+> **進度（2026-06-06）**：✅ **Step 1**＝c0 容器（BE 驅動動態 tab、`epl-*-c0-credit-investigation-tab`）+ **00115 BGE** pilot，`ng build` 綠（容器 DTO 對齊 c0＝只 `businessType`/`pageMap`、無 i0 的 `assessmentType`/`isStaffLoan`，故容器只留 businessType radio）。🔵 **Step 2 進行中**：✅ `00112` CBC（`7e8aaf7`；c0 無 calc endpoint → totals 改**本地依幣別加總**，整合測確認語意一致、無 scoring 依賴 FE 算的 total）；其餘 6 子頁（00114/116/117/118/119/120）待。⚠️ **watch**：① c0 staff-vs-business 判定方式（容器無 `isStaffLoan`、BE 有 staff 概念）→ 00117/00120 staff 版動手前先查 ② 真元件進來後實跑 G/F 切換驗顯隱。
 
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
