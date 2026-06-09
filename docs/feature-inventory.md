@@ -186,10 +186,10 @@
 
 **⑧ 已裁**：`CS 0240` → **不開發**（2026-06-06 確認新系統無使用）。
 
-**⑨ Tech-debt / ops**
-- **FE/BE HTTP method 不一致 sweep**（系統性：00600/00800/00640…）。
-- map-key 大小寫 sweep（Oracle native query 靜默 null）。
-- Logback 硬編碼 `D:\temp\...` 外部化。
+**⑨ Tech-debt / ops**（靜態 sweep 三批 prompt 已備，DB-無關，建議依序）
+- **FE/BE HTTP method 不一致 sweep**（系統性：00600/00800/00640…）→ `build-tasks/tech-debt-sweep-1-http-method-mismatch.md`。
+- map-key 大小寫 sweep（Oracle native query 靜默 null）→ `build-tasks/tech-debt-sweep-2-oracle-mapkey-case.md`。
+- Logback 硬編碼 `D:\temp\...` 外部化 → `build-tasks/tech-debt-sweep-3-logback-path-externalize.md`。
 - ✅ **c0 staff 端點 cleanup 已完成**（`dcd9602`，2026-06-09；prompt 已歸檔 `done/c0-staff-endpoints-cleanup.md`）：刪 `epl-info/save-c0-financial-staff` + `CsuFinancialEvaluationStaffFiController` 整檔（+ staff DTO/serviceImpl、staff option/funcIsStaffLoan 依賴）；**保留** `CsuFinancialStaffController` 的 sele(list)/business method（00117 在用）、table-fi（00120）；i0 未碰；mvn + npm build 綠。
 
 ---

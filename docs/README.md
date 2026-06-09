@@ -48,6 +48,7 @@
 
 ## 🛠 任務單 `build-tasks/`
 - **進行中（live）**：
+  - `tech-debt-sweep-1-http-method-mismatch.md` / `-2-oracle-mapkey-case.md` / `-3-logback-path-externalize.md`（⑨ 靜態 sweep 三批，DB-無關，建議依序）
   - `a1-funcGetExchangeRate-spec.md`（A-1 換匯 stub 規格，A-1 未實作）+ `phase-d-a1-exchange-stub-investigation.md`（A-1 背景調查）
   - `00800-verification-findings.md`（as-is 證據／SRS as-is 來源；D1–D5 已修注記在內）
   - ＊**Phase F c0 FE 已收工**（容器 + 8 子頁齊）→ 逐頁 prompt 全進 `done/`。
