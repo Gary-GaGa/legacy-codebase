@@ -17,9 +17,9 @@
 |---|---|---|---|---|
 | **Legacy → Bible**（反推·知識萃取） | EPRO Expert 反推舊系統 | （ad-hoc 分析） | 分析散在：`module-is-iu-shell.md`、`module-cs-cu-shell.md`、`module-i0-c0-scoring.md`、`page-mapping.md`、`migration-backlog.md`、`db-schema-catalog.md`、`decisions.md §D1`、`archive/phase1-eproz0_0700-spec.md`（Bible 正式檔尚未建） | — |
 | **PRD**（what/why） | PM/PO 寫需求 | `/product-brainstorming`、`/write-spec`（官方 plugin，雙軌同） | **PRD 在 repo 外**（如 `CDC-EPRO-0001`）；流程見 `CLAUDE.md §3` | — |
-| **SRS**（how） | SA 轉系統規格 | **`.claude/skills/prd-to-srs/SKILL.md`** ∥ `docs/env/codex/prompts/prd-to-srs.md` | `golden-template/boundary-bundle/<funcId>/`：`spec.md`(Rn)・`openapi.yaml`・`schema.sql`；方法論 `spec-architecture.md`；重大取捨 `adr/ADR-*.md` | ①②③ |
+| **SRS**（how） | SA 轉系統規格 | **`.claude/skills/prd-to-srs/SKILL.md`** ∥ `docs/env/codex/prompts/prd-to-srs.md` | **`specs/srs/<funcId>/`**：`spec.md`(Rn)・`openapi.yaml`・`schema.sql`；方法論 `spec-architecture.md`；重大取捨 `adr/ADR-*.md` | ①②③ |
 | **as-is 驗證**（brownfield loop） | 驗 migrated 碼 vs 舊系統/PRD | 唯讀 audit 任務單 | `build-tasks/<funcId>-verification-findings.md`（如 `00800-verification-findings.md`）、`build-tasks/*-investigation.md` | — |
-| **QA cases** | QA 轉可跑驗收 | （隨 SRS） | `boundary-bundle/<funcId>/qa-cases.md`（每條 `covers: Rn`） | ④⑤ |
+| **QA cases** | QA 轉可跑驗收 | （隨 SRS） | `specs/srs/<funcId>/qa-cases.md`（每條 `covers: Rn`） | ④⑤ |
 | **RD-Agent**（開發+測試） | Codex 照任務單實作 | Codex（母資料夾） | **產品碼在 repo 外**；in-repo＝**任務單** `build-tasks/*.md`（live）、`build-tasks/done/`（歷史 22 份） | ⑥ |
 | **DoD 閘門牆** | RD 過 SA/QA 邊界 | — | **①②⑤** `scripts/check-srs-bundle.py`；**③** `scripts/verify-c0.py`；**⑦語意** `.claude/agents/spec-reviewer.md` ∥ `docs/env/codex/spec-reviewer.toml`+`reviewer-c0.toml`；**自動觸發** `.claude/settings.json`(Stop hook) ∥ `docs/env/codex/hooks.json` | ①–⑦ |
 | **裁定 / escalation** | 判斷題交人 | — | SRS 的 `@PENDING`；`decisions.md`；`disbursement-domain-escalations.md` | — |
@@ -61,7 +61,8 @@
 - **撥貸（disbursement）track**：`disbursement-triage.md`（0921/0922/T24 triage）、`disbursement-domain-escalations.md`（待 domain/T24/DBA 裁決）、`build-tasks/a1-funcGetExchangeRate-spec.md` + `phase-d-a1-exchange-stub-investigation.md`（A-1 換匯 stub）。
 - **整合驗證（Phase V）**：`verification-handoff.md`（殘留驗證項清單）、`verification-execution.md`（怎麼分階段跑）。
 - **環境 / 設定**：`docs/env/`（`backend.gitignore`/`frontend.gitignore`/`frontend.yarnrc`/`maven-settings.xml` + `codex/`）、`SETUP-codex.md`（dev-box 設定 + 疑難排解）、`runbook-30pct.md`（Codex 自走順序/煞車）。
-- **樣板**：`golden-template/README.md`（FE 黃金樣板 + JSP→元件對照）、`boundary-bundle/README.md`（SRS bundle 範本說明）。
+- **樣板**：`golden-template/README.md`（FE 黃金樣板 + JSP→元件對照）；SRS bundle 範本說明＝`specs/srs/README.md`（原 boundary-bundle，2026-06-09 移）。
+- **規格 pipeline 家**：`specs/`（`bible/` → `prd/` → `srs/`，分層即 flow；見 `specs/README.md`）。
 - **ADR**：`adr/ADR-0001-spec-workflow-dual-stack.md` + `README.md` + `_TEMPLATE.md`。
 
 ## 6. `build-tasks/` 生命週期（任務單怎麼流動）

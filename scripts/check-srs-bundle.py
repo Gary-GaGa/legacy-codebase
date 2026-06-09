@@ -10,11 +10,11 @@ Rn 沒有任何 QA covers、Traceability Matrix 引用了不存在的 QA）。
   - **語意正確性**（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、NFR 量化）
     仍由 `.claude/agents/spec-reviewer.md`（人/LLM 判斷）審。兩層互補、不重疊。
 
-對象＝`docs/golden-template/boundary-bundle/<funcId>/`：spec.md + openapi.yaml + schema.sql + qa-cases.md。
+對象＝`docs/specs/srs/<funcId>/`：spec.md + openapi.yaml + schema.sql + qa-cases.md。
 
 用法：
   python scripts/check-srs-bundle.py <bundle-dir> [<bundle-dir> ...]
-  python scripts/check-srs-bundle.py --all          # boundary-bundle/ 下所有 bundle
+  python scripts/check-srs-bundle.py --all          # specs/srs/ 下所有 bundle
 
 退出碼：0 = 全過；1 = 至少一項硬違反（🔴，定稿前必修）；2 = 用法錯/找不到檔。
 標記：X=硬違反(FAIL) ／ !=建議(warn) ／ i=資訊(@PENDING 等，不擋)。
@@ -28,7 +28,7 @@ import os
 import re
 import sys
 
-BUNDLE_ROOT = "docs/golden-template/boundary-bundle"
+BUNDLE_ROOT = "docs/specs/srs"
 RULE_RE = re.compile(r"R\d+(?:\.\d+)?")
 PLACEHOLDER_RE = re.compile(r"未撰寫|待補|RD\s*補|TODO|TBD|尚未")
 

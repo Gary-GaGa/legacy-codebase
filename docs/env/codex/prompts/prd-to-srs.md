@@ -3,12 +3,12 @@
 # ⚠️ 確切 prompt 變數語法（$ARGUMENTS / $1）以官方為準：developers.openai.com/codex/prompts
 
 把 PRD（what）轉成 **SRS bundle（how）**，產物餵 QA + DoD 閘門 ①②③④⑤。對象＝ `$ARGUMENTS`（PRD 路徑或 funcId）。
-位置見 `docs/assets/ai-workflow.mmd`；worked example＝ `docs/golden-template/boundary-bundle/EPROZ00800/`。
+位置見 `docs/assets/ai-workflow.mmd`；worked example＝ `docs/specs/srs/EPROZ00800/`（分層見 `docs/specs/README.md`）。
 
 ## 輸入
 PRD（主來源）＋ Bible（若有）＋ 既有碼/verification findings（頁已存在→ as-is/to-be）＋ 慣例 `backend/AGENTS.md` §6、真實 API＝RPC `epl-{verb}-{scope}-{feature}`。
 
-## 輸出（bundle → `docs/golden-template/boundary-bundle/<funcId>/`）
+## 輸出（bundle → `docs/specs/srs/<funcId>/`）
 - `spec.md`（SRS 主檔）→ 閘門③｜`openapi.yaml`（真實 epl-* 契約）→ ①｜`schema.sql`（表/欄/約束）→ ②｜`qa-cases.md`（`covers: Rn`）→ ④⑤
 
 ## `spec.md` 必含

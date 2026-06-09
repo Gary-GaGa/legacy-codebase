@@ -3,6 +3,7 @@
 > 來源：C4 對既有前端代表性 CRUD 功能（feature = `deputy`）的結構盤點。
 > **注意：因 source code 不可外流，本檔只描述「結構 / 命名 / 慣例 / 設計模式」，不含實際程式碼。**
 > 正式開發時，在實際重構 repo 內把 `deputy` 當「活樣板」複製改名，並依本檔 checklist 套用。
+> ℹ️ **SRS boundary-bundle 已移至 [`../specs/srs/`](../specs/srs/)**（2026-06-09，規格 pipeline 分層 bible→prd→srs 見 `../specs/README.md`）；本檔現在只管 FE 樣板。
 >
 > 標記：✅=C4 已確認（檔名/角色分層）；🔶=本檔建議（實體資料夾佈局/行為推測，待 C2 或實際 source 核對）。
 

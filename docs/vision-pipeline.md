@@ -2,7 +2,7 @@
 
 > 把白板雛形正式化。**這是「補完 30%」之上的下一步**：從現在的「RD agent 自走補完」往上長成
 > `Bible → PRD → SRS → QA → RD-Agent` 一條**往上可追溯、往下可驗證**的鏈。
-> 本檔定**模型與原則**；第一個 worked example = [`golden-template/boundary-bundle/EPROZ00800/`](golden-template/boundary-bundle/EPROZ00800/)。
+> 本檔定**模型與原則**；第一個 worked example = [`specs/srs/EPROZ00800/`](specs/srs/EPROZ00800/)（規格分層 bible→prd→srs 見 [`specs/README.md`](specs/README.md)）。
 >
 > 🖼 **一圖總覽（來源）**：[`assets/ai-workflow.mmd`](assets/ai-workflow.mmd)（GitHub / Mermaid 直接 render；**＝AI Flow 權威來源**）。[`assets/ai-workflow.svg`](assets/ai-workflow.svg) 為快取 render，**2026-06-09 .mmd 加 brownfield 機制後未重出 → 以 .mmd 為準、需要時重 render**。
 

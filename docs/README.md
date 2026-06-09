@@ -1,16 +1,36 @@
-# docs 索引（分類導覽）
+# docs 索引（分層 × 流程導覽）
 
-> 本 repo＝**規劃/規格/backlog**（無原始碼）。下表把文件按用途分類；**逐頁狀態與排程以 `status/feature-inventory.md` 為權威**。
-> 實體資料夾：活躍規劃文件平鋪於 `docs/`（彼此交叉引用密集，刻意不拆資料夾以免斷連結）；**已消化的歷史**收進 `build-tasks/done/`、`archive/`。
+> 本 repo＝**規劃/規格/backlog**（無原始碼）。**逐頁狀態與排程以 `feature-inventory.md` 為權威**。
+> 完整「檔案 × flow」地圖見 [`repo-structure.md`](repo-structure.md)；規格方法論見 [`spec-architecture.md`](spec-architecture.md)。
+
+## 🔁 分層 × 流程（由上往下讀＝AI flow；圖＝`assets/ai-workflow.mmd`）
+
+```
+Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) ──▶ ④ RD 任務單 ──▶ ⑤ 驗證/閘門 ──▶ 回填狀態
+（repo 外）      specs/bible/  specs/prd/  specs/srs/     build-tasks/    scripts/ +        feature-
+                 ＋module-*.md （外部權威， <funcId>/      （live↔done/）  spec-reviewer     inventory.md
+                  原料         此處快照）   bundle×4檔                     ＋verification-*  （SSOT）
+```
+
+| flow 層 | 資料夾 / 檔 | 說明 |
+|---|---|---|
+| **① Bible** 業務聖經 | [`specs/bible/`](specs/bible/)（正式檔待建；原料＝`module-*.md`、`page-mapping.md`、`db-schema-catalog.md`） | Legacy 反推：北極星·黃金旅程·user story，證據接地 |
+| **② PRD** what/why | [`specs/prd/`](specs/prd/)（外部權威、此處放快照） | PM + AI；REQ-nnn、TBD |
+| **③ SRS（含 QA）** how | [`specs/srs/<funcId>/`](specs/srs/)（spec/openapi/schema/qa-cases） | SA + AI（`/prd-to-srs`）；`Rn`+契約+covers |
+| **④ RD 任務單** | [`build-tasks/`](build-tasks/)（live；完成 → `done/`） | 交 Codex 實作的 prompt；產品碼在 repo 外 |
+| **⑤ 驗證 / 閘門** | `../scripts/check-srs-bundle.py`（①②⑤）、`../scripts/verify-c0.py`（③）、spec-reviewer（語意）；`verification-handoff.md` / `verification-execution.md`（Phase V） | 機械先、語意後 |
+| **狀態回填** | **`feature-inventory.md`** ⭐ | 每事收尾必回填（SSOT） |
+
+> **治理/憲法**（always-on，不屬單一層）：根 `CLAUDE.md`（Claude）/ `AGENTS.md`（Codex）/ `.github/`（Copilot）+ `backend/`·`frontend/AGENTS.md`；雙軌範本 `env/codex/`。
 
 ## 🟢 狀態 / SSOT（先看這裡）
 | 檔 | 用途 |
 |---|---|
 | **`feature-inventory.md`** | ⭐ **權威**：舊→新逐頁對應 + 前後端狀態 + 剩餘事項 + R1–R8 track + 建議排程 |
 | `completion-ledger.md` | 桶別總盤點（A 完成 / B 待驗 / C 未實作）；明細以 feature-inventory 為準 |
-| `decisions.md` | 決策與事實紀錄（逐輪更新） |
+| `decisions.md` | 決策與事實紀錄（逐輪更新；教訓收斂表＝`spec-architecture.md §9`） |
 
-## 🗺 舊→新 對應 / 規劃
+## 🗺 舊→新 對應 / 規劃（＝Bible 原料）
 | 檔 | 用途 |
 |---|---|
 | `page-mapping.md` | 舊 funcId → 新頁對應 + 30% backlog |
@@ -34,20 +54,22 @@
 | 檔 | 用途 |
 |---|---|
 | `runbook-30pct.md` | Codex 自走補完的順序/閘門/煞車 |
-| `SETUP-codex.md` | Codex CLI 設定/用法 |
+| `SETUP-codex.md` | Codex CLI 設定/用法 + dev-box 疑難排解 |
 | `vision-pipeline.md` | 願景與漸進落地 |
-| `env/` | gitignore / yarnrc / maven-settings / codex 設定 |
+| `env/` | gitignore / yarnrc / maven-settings / **codex 雙軌範本**（prompts/agents/hooks/權限） |
 
 ## 📚 參考 / 樣板
 | 檔 | 用途 |
 |---|---|
-| **`repo-structure.md`** | ⭐ Repo 結構 × AI flow 對照（哪個檔在哪段 flow 用）；想搞懂「檔案地圖」先看這份 |
-| **`spec-architecture.md`** | ⭐ 規格架構（精煉層級×規格類型×層界契約 + 追溯/驗證）；先讀這份理解「規格怎麼組織、PRD/SRS/設計規格怎麼分」 |
+| **`repo-structure.md`** | ⭐ Repo 結構 × AI flow 對照（哪個檔在哪段 flow 用） |
+| **`spec-architecture.md`** | ⭐ 規格架構（精煉層級×規格類型×層界契約 + 教訓→控制點 §9） |
+| `specs/` | **規格 pipeline 家**（bible/prd/srs 分層，見 `specs/README.md`） |
 | `db-schema-catalog.md` | DB schema 目錄（JIT 抽） |
-| `golden-template/` | 前端黃金樣板 + boundary-bundle |
-| `assets/` | ai-workflow 圖 |
+| `golden-template/` | 前端黃金樣板（JSP→元件對照）；SRS bundle 已移 `specs/srs/` |
+| `assets/` | ai-workflow 圖（`.mmd`＝權威來源） |
+| `adr/` | 架構決策紀錄（ADR-0001 雙軌 spec workflow…） |
 
-## 🛠 任務單 `build-tasks/`
+## 🛠 任務單 `build-tasks/`（flow 第 ④ 層）
 - **進行中（live）**：
   - `a1-funcGetExchangeRate-spec.md`（A-1 換匯 stub 規格，A-1 未實作）+ `phase-d-a1-exchange-stub-investigation.md`（A-1 背景調查）
   - `00800-verification-findings.md`（as-is 證據／SRS as-is 來源；D1–D5 已修注記在內）
@@ -63,4 +85,4 @@
 - `review-c0-prompt.md`（c0 後端審查 prompt）、`phase1-eproz0_0700-spec.md`（Phase 1 切片，已完成）。
 
 ---
-> 維護：新文件歸到對應分類；文件完成/消化後移 `build-tasks/done/` 或 `archive/` 並修連結；狀態變動回填 `feature-inventory.md`。
+> 維護：新文件歸到對應分類（規格三層放 `specs/`）；文件完成/消化後移 `build-tasks/done/` 或 `archive/` 並修連結；狀態變動回填 `feature-inventory.md`。
