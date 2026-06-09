@@ -7,6 +7,7 @@
 ## 1. AI workflow（見 `docs/assets/ai-workflow.mmd`）
 `Legacy →(EPRO Expert)→ Bible →(PM+AI)→ PRD →(SA+AI)→ SRS →(QA+AI)→ QA cases →(RD-Agent)→ code → DoD 閘門牆`。
 funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→code/test（↑可追溯、↓可驗證）。
+> **規格怎麼組織**（精煉層級×規格類型×層界契約；PRD/SRS/設計規格之分、行為 vs 長相、強制點 FE/BE）見 **`docs/spec-architecture.md`**。
 
 ## 2. 雙軌工具對照（Claude ↔ Codex，內容等價、各自原生格式）
 | 角色 | Claude Code | Codex CLI |

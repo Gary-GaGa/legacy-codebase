@@ -41,6 +41,7 @@
 ## 📚 參考 / 樣板
 | 檔 | 用途 |
 |---|---|
+| **`spec-architecture.md`** | ⭐ 規格架構（精煉層級×規格類型×層界契約 + 追溯/驗證）；先讀這份理解「規格怎麼組織、PRD/SRS/設計規格怎麼分」 |
 | `db-schema-catalog.md` | DB schema 目錄（JIT 抽） |
 | `golden-template/` | 前端黃金樣板 + boundary-bundle |
 | `assets/` | ai-workflow 圖 |
