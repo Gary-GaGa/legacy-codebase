@@ -1,0 +1,343 @@
+#!/usr/bin/env python3
+"""check-srs-bundle — machine-checkable gates for an SRS boundary bundle (DoD 閘門 ①②⑤).
+
+把 SRS bundle 的「形式/機械」檢查自動化，補 spec-reviewer 抓不到的 deterministic 漏洞
+（如 openapi $ref 解不開、required 列了不存在的 key、schema 長度與 openapi/spec 對不上、
+Rn 沒有任何 QA covers、Traceability Matrix 引用了不存在的 QA）。
+
+**分工**（重要）：
+  - 本腳本＝**機械閘門**：只攔「可程式判定」的形式錯（gate ①openapi ②schema ⑤covers）。
+  - **語意正確性**（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、NFR 量化）
+    仍由 `.claude/agents/spec-reviewer.md`（人/LLM 判斷）審。兩層互補、不重疊。
+
+對象＝`docs/golden-template/boundary-bundle/<funcId>/`：spec.md + openapi.yaml + schema.sql + qa-cases.md。
+
+用法：
+  python scripts/check-srs-bundle.py <bundle-dir> [<bundle-dir> ...]
+  python scripts/check-srs-bundle.py --all          # boundary-bundle/ 下所有 bundle
+
+退出碼：0 = 全過；1 = 至少一項硬違反（🔴，定稿前必修）；2 = 用法錯/找不到檔。
+標記：X=硬違反(FAIL) ／ !=建議(warn) ／ i=資訊(@PENDING 等，不擋)。
+
+啟發式限制（誠實標示，同 verify-c0 的煞車條款）：
+  - gate⑤ 規則集 = spec.md 的 `### Rn` 標題 + `**R13.x**` 子規則；不展開 `R13.1–13.5` 範圍寫法。
+  - 「@PENDING 豁免」靠規則(或其父規則)定義行含 `@PENDING`/`RPn` 判定；僅影響「未覆蓋規則」要 FAIL 還是 INFO。
+  - schema 長度交叉比對僅比 snake_case 欄名 ↔ camelCase openapi property 名重疊者。
+"""
+import os
+import re
+import sys
+
+BUNDLE_ROOT = "docs/golden-template/boundary-bundle"
+RULE_RE = re.compile(r"R\d+(?:\.\d+)?")
+PLACEHOLDER_RE = re.compile(r"未撰寫|待補|RD\s*補|TODO|TBD|尚未")
+
+
+def read(path):
+    with open(path, "rb") as f:
+        raw = f.read()
+    if raw[:3] == b"\xef\xbb\xbf":
+        raw = raw[3:]
+    return raw.decode("utf-8")
+
+
+# ---------- gate ① openapi.yaml ----------------------------------------------
+def _walk(node, path, fn):
+    """深走 dict/list，對每個 dict 節點呼叫 fn(node, path)。"""
+    if isinstance(node, dict):
+        fn(node, path)
+        for k, v in node.items():
+            _walk(v, path + [str(k)], fn)
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            _walk(v, path + [str(i)], fn)
+
+
+def _resolve_ref(doc, ref):
+    if not ref.startswith("#/"):
+        return False  # 只驗本檔內部 ref
+    cur = doc
+    for part in ref[2:].split("/"):
+        part = part.replace("~1", "/").replace("~0", "~")
+        if isinstance(cur, dict) and part in cur:
+            cur = cur[part]
+        else:
+            return False
+    return True
+
+
+def gate1_openapi(bundle):
+    fails, warns = [], []
+    p = os.path.join(bundle, "openapi.yaml")
+    if not os.path.isfile(p):
+        return ["缺 openapi.yaml（gate① 無法驗）"], []
+    try:
+        import yaml
+    except ImportError:
+        return [], ["無 pyyaml，gate① 只能略過（pip install pyyaml 後可驗 $ref/required）"]
+    try:
+        doc = yaml.safe_load(read(p))
+    except yaml.YAMLError as e:
+        return [f"openapi.yaml 不是合法 YAML：{e}"], []
+    if not isinstance(doc, dict):
+        return ["openapi.yaml 解析後非 mapping"], []
+    for key in ("openapi", "info", "paths"):
+        if key not in doc:
+            fails.append(f"openapi.yaml 缺頂層 `{key}`")
+
+    # $ref 解析
+    def check_ref(node, path):
+        if "$ref" in node and isinstance(node["$ref"], str):
+            if not _resolve_ref(doc, node["$ref"]):
+                fails.append(f"$ref 解不開：`{node['$ref']}`（at {'/'.join(path)}）")
+    _walk(doc, [], check_ref)
+
+    # required 的每個名稱要存在於 properties（抓 checkPointMap.required:[applicationNo] 這類錯）
+    def check_required(node, path):
+        req = node.get("required")
+        if not isinstance(req, list):
+            return
+        if not (node.get("type") == "object" or "properties" in node or "additionalProperties" in node):
+            return
+        props = node.get("properties") or {}
+        for name in req:
+            if name in props:
+                continue
+            where = "/".join(path) or "(root)"
+            if "additionalProperties" in node and not props:
+                fails.append(
+                    f"required `{name}` 不在 properties，且此 schema 是開放 map(additionalProperties) "
+                    f"→ 把非 map-key 當必填(at {where})；map 的 required 應列真正的 key 或移除")
+            else:
+                fails.append(f"required `{name}` 在 properties 中不存在(at {where})")
+    _walk(doc, [], check_required)
+
+    # 進階：若裝了 openapi-spec-validator，順手做完整 3.0.x 驗證
+    try:
+        from openapi_spec_validator import validate as _validate  # type: ignore
+        try:
+            _validate(doc)
+        except Exception as e:  # noqa: BLE001
+            fails.append(f"openapi-spec-validator：{str(e).splitlines()[0]}")
+    except ImportError:
+        warns.append("未裝 openapi-spec-validator → 只做結構檢查；pip install 後可做完整 3.0.x 驗證")
+    return fails, warns
+
+
+# ---------- gate ② schema.sql -------------------------------------------------
+COL_RE = re.compile(
+    r"^\s*([A-Z][A-Z0-9_]*)\s+(VARCHAR2|CHAR|NUMBER|DATE|TIMESTAMP|CLOB|BLOB)"
+    r"(?:\s*\(\s*(\d+)\s*\))?", re.I)
+CREATE_RE = re.compile(r"CREATE\s+TABLE\s+([A-Z0-9_]+)\s*\(", re.I)
+
+
+def _snake_to_camel(s):
+    parts = s.lower().split("_")
+    return parts[0] + "".join(w.capitalize() for w in parts[1:])
+
+
+def gate2_schema(bundle):
+    fails, warns = [], []
+    p = os.path.join(bundle, "schema.sql")
+    if not os.path.isfile(p):
+        return ["缺 schema.sql（gate② 無法驗）"], []
+    text = read(p)
+    # 去註解行只為解析欄位（保留原文供長度比對）
+    code = "\n".join(ln for ln in text.splitlines() if not ln.lstrip().startswith("--"))
+
+    # 括號平衡
+    if code.count("(") != code.count(")"):
+        fails.append("schema.sql 括號不平衡（CREATE TABLE 區塊可能未閉合）")
+
+    # 解析每張 CREATE TABLE 的欄位（名,型,長度）
+    cols = {}  # COLNAME -> (type, length)
+    for m in CREATE_RE.finditer(code):
+        start = m.end()
+        depth = 1
+        i = start
+        while i < len(code) and depth:
+            if code[i] == "(":
+                depth += 1
+            elif code[i] == ")":
+                depth -= 1
+            i += 1
+        body = code[start:i - 1]
+        seen = set()
+        for ln in body.splitlines():
+            cm = COL_RE.match(ln)
+            if not cm:
+                continue
+            name = cm.group(1).upper()
+            if name in ("CONSTRAINT", "PRIMARY", "FOREIGN", "CHECK", "UNIQUE"):
+                continue
+            if name in seen:
+                fails.append(f"{m.group(1)}：欄位 `{name}` 重複定義")
+            seen.add(name)
+            length = int(cm.group(3)) if cm.group(3) else None
+            cols[name] = (cm.group(2).upper(), length)
+
+    if not cols:
+        warns.append("schema.sql 未解析到任何欄位（可能全為註解 placeholder；RD 補 DDL 後再驗）")
+        return fails, warns
+
+    # 交叉比對：schema 欄長 vs openapi property maxLength（snake↔camel 重疊名）
+    try:
+        import yaml
+        odoc = yaml.safe_load(read(os.path.join(bundle, "openapi.yaml")))
+        omax = {}  # propName -> maxLength
+
+        def grab(node, path):
+            for k, v in node.items():
+                if isinstance(v, dict) and "maxLength" in v and isinstance(v["maxLength"], int):
+                    omax[k] = v["maxLength"]
+        _walk(odoc, [], grab)
+        for col, (typ, length) in cols.items():
+            if length is None:
+                continue
+            cam = _snake_to_camel(col)
+            if cam in omax and omax[cam] != length:
+                fails.append(
+                    f"長度不一致：schema `{col}` {typ}({length}) ↔ openapi `{cam}` maxLength {omax[cam]}")
+    except Exception:  # noqa: BLE001
+        pass  # openapi 不可解析時 gate① 已會報
+    return fails, warns
+
+
+# ---------- gate ⑤ Rn ↔ QA covers --------------------------------------------
+def gate5_traceability(bundle):
+    fails, warns, infos = [], [], []
+    sp = os.path.join(bundle, "spec.md")
+    qp = os.path.join(bundle, "qa-cases.md")
+    if not (os.path.isfile(sp) and os.path.isfile(qp)):
+        return ["缺 spec.md 或 qa-cases.md（gate⑤ 無法驗）"], [], []
+    spec = read(sp).splitlines()
+    qa = read(qp).splitlines()
+
+    # 1) 規則集：### Rn 標題 + **R13.x** 子規則；記每條定義行(判 @PENDING)
+    rule_line = {}  # rule_id -> def line text
+    for ln in spec:
+        m = re.match(r"^###\s+(R\d+)\b", ln)
+        if m:
+            rule_line[m.group(1)] = ln
+        for sm in re.finditer(r"\*\*(R\d+\.\d+)", ln):
+            rule_line.setdefault(sm.group(1), ln)
+    rules = set(rule_line)
+    containers = {r for r in rules if any(o != r and o.startswith(r + ".") for o in rules)}
+
+    def is_pending(rid):
+        line = rule_line.get(rid, "")
+        if "@PENDING" in line or re.search(r"\bRP\d", line):
+            return True
+        if "." in rid:  # 子規則：看父規則標題
+            parent = rid.split(".")[0]
+            pl = rule_line.get(parent, "")
+            return "@PENDING" in pl or bool(re.search(r"\bRP\d", pl))
+        return False
+
+    # 2) qa-cases 表格列：QA id（可能含 @PENDING）+ covers 欄
+    qa_defined = set()
+    covers = {}  # rule_id -> set(QA id)（僅計非 @PENDING 的 case）
+    for ln in qa:
+        if not ln.lstrip().startswith("| QA-"):
+            continue
+        cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+        if len(cells) < 2:
+            continue
+        qid_m = re.search(r"QA-\d+", cells[0])
+        if not qid_m:
+            continue
+        qid = qid_m.group(0)
+        qa_defined.add(qid)
+        case_pending = "@PENDING" in cells[0]
+        for rm in RULE_RE.finditer(cells[1]):
+            rid = rm.group(0)
+            if not case_pending:
+                covers.setdefault(rid, set()).add(qid)
+
+    # 3a) dangling covers：QA covers 指向不存在的規則
+    for rid in sorted(set(covers) - rules):
+        fails.append(f"QA covers 指向不存在的規則 `{rid}`（qa-cases.md；改規則 id 或補 spec.md 定義）")
+
+    # 3b) 未覆蓋規則：非 container、非 pending、無任何非-pending covers → FAIL；pending → INFO
+    for rid in sorted(rules, key=lambda r: (int(r[1:].split(".")[0]), r)):
+        if rid in containers:
+            continue
+        if covers.get(rid):
+            continue
+        if is_pending(rid):
+            infos.append(f"`{rid}` 無 QA covers，但屬 @PENDING（TBD 關前不計 gate⑤）")
+        else:
+            fails.append(f"`{rid}` 無任何 QA covers（gate⑤：每個非-@PENDING 規則至少 1 條）")
+
+    # 4) Traceability Matrix / 內文引用的 QA-id 未定義 → FAIL（除非任一引用處標 placeholder）
+    referenced = {}  # qid -> [lines]
+    for ln in spec:
+        for qm in re.finditer(r"QA-\d+", ln):
+            referenced.setdefault(qm.group(0), []).append(ln)
+    for qid, lines in sorted(referenced.items()):
+        if qid in qa_defined:
+            continue
+        if any(PLACEHOLDER_RE.search(l) for l in lines):
+            infos.append(f"{qid} 在 spec.md 被引用但 qa-cases.md 未定義（已標 placeholder，視為待補）")
+        else:
+            fails.append(f"{qid} 在 spec.md 被引用，但 qa-cases.md 無此 case（懸空引用；補 case 或標 placeholder）")
+    return fails, warns, infos
+
+
+# ---------- runner -----------------------------------------------------------
+def check_bundle(bundle):
+    funcid = os.path.basename(bundle.rstrip("/"))
+    print(f"\n=== {funcid} ===")
+    total_fail = 0
+    g1f, g1w = gate1_openapi(bundle)
+    g2f, g2w = gate2_schema(bundle)
+    g5f, g5w, g5i = gate5_traceability(bundle)
+    sections = [
+        ("gate①openapi", g1f, g1w, []),
+        ("gate②schema ", g2f, g2w, []),
+        ("gate⑤covers ", g5f, g5w, g5i),
+    ]
+    for name, fails, warns, infos in sections:
+        status = "FAIL" if fails else "PASS"
+        print(f"[{name}] {status}")
+        for m in fails:
+            print(f"    X {m}")
+        for m in warns:
+            print(f"    ! {m}")
+        for m in infos:
+            print(f"    i {m}")
+        total_fail += len(fails)
+    return total_fail
+
+
+def discover_all():
+    if not os.path.isdir(BUNDLE_ROOT):
+        return []
+    return sorted(
+        os.path.join(BUNDLE_ROOT, d)
+        for d in os.listdir(BUNDLE_ROOT)
+        if os.path.isdir(os.path.join(BUNDLE_ROOT, d))
+        and os.path.isfile(os.path.join(BUNDLE_ROOT, d, "spec.md"))
+    )
+
+
+def main(argv):
+    args = argv[1:]
+    if not args:
+        print(__doc__)
+        return 2
+    bundles = discover_all() if args[0] == "--all" else [a for a in args if os.path.isdir(a)]
+    if not bundles:
+        print("找不到 bundle（給 bundle 資料夾路徑，或 --all）")
+        return 2
+    total = sum(check_bundle(b) for b in bundles)
+    print()
+    if total:
+        print(f"check-srs-bundle: FAIL — {total} 項硬違反（gate①②⑤）。語意審查另跑 spec-reviewer。")
+        return 1
+    print(f"check-srs-bundle: PASS — {len(bundles)} bundle，無機械違反。（語意正確性仍需 spec-reviewer）")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

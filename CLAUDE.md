@@ -15,7 +15,8 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 | PRD→SRS | skill `.claude/skills/prd-to-srs/` | custom prompt `.codex/prompts/prd-to-srs.md`（範本 `docs/env/codex/prompts/`）|
 | spec 審查（唯讀）| agent `.claude/agents/spec-reviewer.md` | subagent `.codex/agents/spec-reviewer.toml`（範本 `docs/env/codex/`）|
 | 權限/安全 | `.claude/settings.json` | `.codex/config.toml`（sandbox/approval；範本 `docs/env/codex/config-permissions.md`）|
-| 形式硬閘門 | settings hooks | `.codex/hooks.json`（`verify-c0`）|
+| 形式硬閘門 | settings hooks | `.codex/hooks.json`（`verify-c0` + `check-srs-bundle`）|
+| **SRS 機械閘門**（①②⑤）| `scripts/check-srs-bundle.py`（雙軌共用，非 LLM）| 同（hooks 掛同腳本）|
 | c0 鏡像審查 | —（用 review/語意審）| `.codex/agents/reviewer-c0.toml` |
 
 > Codex 版皆為 `docs/env/codex/` 範本，部署到本機/專案 `.codex/`。改動雙軌任一版，**另一版要同步**。
@@ -32,6 +33,7 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 
 ## 4. 品質門檻（`Status: Approved` 前必過）— DoD
 見 `prd-to-srs` skill §DoD。核心：Non-Goals 有；每個 PRD `REQ`≥1 `Rn`；每 `Rn` 有 acceptance + ≥1 QA `covers`；happy/error/edge；每個 `TBD` 一條 `@PENDING`+owner+blocking；Traceability Matrix 完整；endpoints 真實 `epl-*`；頁已存在則 as-is/to-be 清楚；模糊詞量化；**`spec-reviewer` 過、無 Blocker**。
+> **兩層驗證**：①機械層 `python scripts/check-srs-bundle.py <bundle>`（gate ①openapi parse/$ref/required、②schema 型別長度交叉比對、⑤Rn↔QA covers/懸空引用）必須 exit 0；②語意層 `spec-reviewer` 無 Blocker。先跑機械、再跑語意——機械綠了 reviewer 才不會浪費在形式錯上。
 
 ## 5. 語言 / 格式
 繁中（台灣）+ 英文技術術語；識別字/表名/endpoint/config key 一律英文。模糊詞量化（`p95<200ms`、`maxlength 3000`）。
