@@ -125,7 +125,7 @@
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅（CR 範本）|
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；嚴謹可做 deputy↔0700 gap-check |
-| EPROZ00800 | Revised Item | 🟠 | 🔴 | **驗證完(vs PRD)：結構在、行為不對等**——execute GET 應 POST、**execute 無 `@Transactional`(多表刪/還原可半更新＝資料風險)**、Y/N 未驗、pageMenuCondition 未回、RI-MAT 側效部分+多 bug、checkpoint 標錯頁。詳 `build-tasks/00800-verification-findings.md`；**SRS bundle**＝`golden-template/boundary-bundle/EPROZ00800/`（PRD→SRS）。⚠️ 側效修正待 PRD TBD-006/SA |
+| EPROZ00800 | Revised Item | 🟠 | 🟠 | **D1–D5 已修（`88328f9`，2026-06-09）**：execute→POST、execute 單一 `@Transactional`（資料風險已除）、Y/N 驗證、回 pageMenuCondition、maxlength 3000+trim（QA-013/014/016/017 過、QA-012 rollback 待 DB）。**剩 S1–S8 RI-MAT 側效/checkpoint key→待 PRD TBD-006/§5.6/SA**。詳 `build-tasks/00800-verification-findings.md`；**SRS bundle**＝`golden-template/boundary-bundle/EPROZ00800/` |
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
 
 ### 2F. 撥貸 `EPROISU0920/0921/0922` + T24（🔴 唯一真未完成區塊）
@@ -174,9 +174,9 @@
 - `00300` Document Checklist：return action 空回 → 補實作。
 - `00600` Search：FE/BE HTTP method 不一致。
 
-**④b 🔴 `00800` Revised Item（驗證後升級，非小修；owner：前後端 + PM/SA/RD）**
-- 結構在、行為不對等。**TBD-無關可先修**（D1–D5，prompt＝`build-tasks/00800-fix-step1-tbd-independent.md`）：execute→POST、**execute 加 `@Transactional`（資料風險最高）**、item Y/N 驗證、回傳 pageMenuCondition、reason maxlength 3000。
-- **側效/checkpoint 正確性（RI-MAT-001~005、0260 頁目標、isNotSame gate）→ 待 PRD `TBD-006`（保留 legacy 側效?）+ `TBD-003/004/005`（ITEM 規則）裁定再修**。詳 `build-tasks/00800-verification-findings.md`。
+**④b 🟠 `00800` Revised Item（D1–D5 已修；側效引擎待裁定；owner：PM/SA/RD）**
+- ✅ **TBD-無關硬缺陷 D1–D5 已修**（`88328f9`，2026-06-09；prompt 已歸檔 `done/00800-fix-step1-tbd-independent.md`）：execute→POST、**execute 單一 `@Transactional`（資料遺失風險已除）**、item Y/N 驗證、回傳 pageMenuCondition、reason maxlength 3000+trim。QA-013/014/016/017 過；**QA-012 rollback 整合測 deferred-to-DB**。
+- **剩：側效/checkpoint 正確性（RI-MAT-001~005、`_0260` 頁目標、isNotSame gate）→ 待 PRD `TBD-006`（保留 legacy 側效?）+ `TBD-003/004/005`（ITEM 規則）裁定再修**。詳 `build-tasks/00800-verification-findings.md`。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 

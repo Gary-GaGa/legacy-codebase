@@ -3,6 +3,8 @@
 > 2026-06-08 Codex 唯讀稽核（基準 `C:\project\legacy-codebase`）對 PRD 比對結論。
 > **總評：結構在、行為不對等**（與撥貸同模式）——RI-MAT 副作用引擎**部分實作**、含資料風險與多處 bug。**先前 cross-check 只說「method 不符」嚴重低估。**
 > ⚠️ **PRD 是 Draft、TBD-006「是否保留 legacy 側效」未決** → **側效類修正先別動，等 PM/SA 裁**；只先修「與 TBD 無關的硬缺陷」。
+>
+> ✅ **更新（2026-06-09，commit `88328f9`）**：下表 **D1–D5 已全數修復**（execute→POST、單一 `@Transactional`、Y/N 驗證、回 pageMenuCondition、maxlength 3000+trim；QA-013/014/016/017 過，QA-012 rollback 待 DB）。**D4 只補 `pageMenuCondition` 回傳、未動 checkpoint key 值**；**S1–S8 側效/`_0260` key 仍未動**（待 TBD-006/§5.6/SA）。以下 D1–D5「as-is」描述為**修復前**狀態，留存供追溯。
 
 ## 三句結論
 1. **execute method 錯**：`RevisedItemController:52` execute=GET、FE 送 POST、PRD 要 POST → **改 BE 為 POST**（query 亦 FE-POST/BE-GET 不符，PRD 說 init-query=GET → 一併對齊）。
