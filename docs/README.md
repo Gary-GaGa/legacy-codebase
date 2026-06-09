@@ -46,8 +46,14 @@
 | `assets/` | ai-workflow 圖 |
 
 ## 🛠 任務單 `build-tasks/`
-- **進行中**：`phase-f-step2-*.md`（c0 評分前端逐頁）、`a1-funcGetExchangeRate-spec.md`、`phase-d-a1-exchange-stub-investigation.md`。
-- **`build-tasks/done/`**：已完成任務 spec（B-boundary / B-z0-reports / EPROC00118 / EPROCSU0130 / EPROZ00700 / EPROISU0920）——歷史記錄。
+- **進行中（live）**：
+  - `phase-f-step3-00117-financial-evaluation-gi.md` / `phase-f-step3-00120-financial-evaluation-fi.md`（c0 FE 收尾 2 頁，business-only，決策 B）
+  - `a1-funcGetExchangeRate-spec.md`（A-1 換匯 stub 規格，A-1 未實作）+ `phase-d-a1-exchange-stub-investigation.md`（A-1 背景調查）
+  - `00800-verification-findings.md`（live 參考＝`EPROZ00800` SRS 的 as-is 來源）
+- **`build-tasks/done/`**（已消化的任務 spec / 一次性調查——歷史記錄）：
+  - c0 FE 逐頁 prompt：`phase-f-step2-00114/00116/00118/00119`、`phase-f-step2-c0-scoring-fe`
+  - staff 調查鏈（決策 B 取代）：`00117-00120-old-system-staff-investigation`、`phase-f-step2-00117-00120-staff-investigation`、`phase-f-step3-00117-00120-precheck`
+  - 其它：`verify-00800-revised-item-vs-prd`、早期 `B-boundary` / `B-z0-reports` / `EPROC00118`(BE) / `EPROCSU0130` / `EPROZ00700` / `EPROISU0920`
 
 ## 🗄 `archive/`（已消化、留存備查）
 - `review-c0-prompt.md`（c0 後端審查 prompt）、`phase1-eproz0_0700-spec.md`（Phase 1 切片，已完成）。
