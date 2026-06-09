@@ -2,7 +2,7 @@
 
 > 本 repo＝**規劃/規格/backlog**（無原始碼）。本檔是 spec 工作流（Bible→PRD→SRS→QA→RD）的輕量 constitution。
 > **底層開發規則**（registry/版本鎖定/策略）見 [`AGENTS.md`](AGENTS.md)、[`backend/AGENTS.md`](backend/AGENTS.md)。
-> **文件導覽**見 [`docs/README.md`](docs/README.md)；**狀態 SSOT**＝`docs/feature-inventory.md`。
+> **文件導覽**見 [`docs/README.md`](docs/README.md)；**檔案×flow 地圖**見 [`docs/repo-structure.md`](docs/repo-structure.md)；**狀態 SSOT**＝`docs/feature-inventory.md`。
 
 ## 1. AI workflow（見 `docs/assets/ai-workflow.mmd`）
 `Legacy →(EPRO Expert)→ Bible →(PM+AI)→ PRD →(SA+AI)→ SRS →(QA+AI)→ QA cases →(RD-Agent)→ code → DoD 閘門牆`。
