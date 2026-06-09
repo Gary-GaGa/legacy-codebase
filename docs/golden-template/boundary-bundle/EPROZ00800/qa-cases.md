@@ -34,5 +34,5 @@
 | QA-021 | R12 | 案件已有 REVISED_ITEM / execute / 舊筆被刪、新 ITEM1~14+REASON+UPD_DATE 正確 insert | `TB_REVISED_ITEM` 僅 1 筆且值正確 |
 
 ## 覆蓋率（gate ⑤）
-- R1：QA-018｜R2：QA-001/002｜R3：QA-003｜R4：QA-004/017｜R5：QA-005｜R6：QA-006｜R7：QA-019｜R8：QA-020｜R9：QA-002/014｜R10：QA-012/013｜R11：QA-015｜R12：QA-021｜R13.1–5：QA-007/008/009（@PENDING RP1）｜R13.6：QA-010｜R14：QA-011/016｜R15：QA-012（+QA-022 成功/not-found，RD 補）｜R16：QA-012（transaction）+ perf/log/audit（RD 補）。
-- 每個 `Rn` 至少 1 case ✅（R15/R16 另有 RD 待補的 perf/log/成功路徑）；@PENDING（QA-007/008/009）＝待 TBD-006 關，不計入 gate⑤。
+- R1：QA-018｜R2：QA-001/002｜R3：QA-003｜R4：QA-004/017｜R5：QA-005｜R6：QA-006｜R7：QA-019｜R8：QA-020｜R9：QA-002/014｜R10：QA-012/013｜R11：QA-015｜R12：QA-021｜R13.1–5：QA-007/008/009（@PENDING RP1）｜R13.6：QA-010｜R14：QA-011/016｜R15：QA-012（**僅 rollback 分支**；成功/not-found path 尚無實 case → QA-022 RD 補，未撰寫）｜R16：QA-012（transaction）+ perf/log/audit（RD 補）。
+- 每個 `Rn` 至少 1 case ✅；但 R15 目前僅覆蓋 rollback 分支、R16 僅覆蓋 transaction，成功/not-found/perf/log/audit 之 happy/error path 待 RD 補實 case（QA-022 等尚未撰寫，不可當已覆蓋）。@PENDING（QA-007/008/009）＝待 TBD-006 關，不計入 gate⑤。

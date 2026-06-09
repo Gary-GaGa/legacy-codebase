@@ -4,8 +4,8 @@
 openapi: 3.0.3
 info:
   title: EPROZ00800 Revised Item
-  version: 0.1.0-draft
-  description: PRD CDC-EPRO-0001 v1.1（Draft，TBD-001~007 未關）。method/欄位以 spec.md Rn 為準。
+  version: 0.3.0-draft
+  description: PRD CDC-EPRO-0001 v1.1（Draft，TBD-001~007 未關）。method/欄位以 spec.md Rn 為準。與 spec.md v0.3 同步。
 paths:
   /epl-case-query-reviseditem:          # R2 init-query
     # ⚠️ @PENDING(method)：PRD §6.1=GET、站上 RPC 慣例=POST、as-is FE POST/BE GET 不一致 → RD/架構定版前不裁定。下方 post 僅佔位。
@@ -62,7 +62,8 @@ components:
           type: object
           # R14 to-be：key = EPRO{IS/IU/CS/CU}_0260（依 attribute；確切清單見 PRD §5.6，RD 定）。
           # ⚠️ 勿沿用 as-is legacy key（EPROZ00800 / EPROISU0160…，findings 標 🔴）。
-          required: [applicationNo]
+          # @PENDING(checkpoint-keys)：確切 _0260 key 清單待 RD 依 §5.6 定版 → 屆時補 required。
+          #   不用 applicationNo 佔位（它是頂層欄位、非本 map 的 key）。
           additionalProperties: { $ref: '#/components/schemas/ItemFlag' }
         isNotSame: { type: boolean, nullable: true, description: 'R11：僅前端提示輔助；後端不得以此為側效判斷依據' }
     InsertRevisedItemResponse:

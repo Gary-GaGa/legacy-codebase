@@ -5,7 +5,7 @@
 | Status | **Draft（blocked on RP1 / TBD-006）** |
 | Owner | SA（待指派）|
 | Slug | `EPROZ00800`（＝funcId）|
-| 版本 | v0.2（spec-reviewer round 1：修 B1–B3 + 補 QA 覆蓋）|
+| 版本 | v0.3（round 2 複審：確認 B1–B3 已清 + 修 checkPointMap.required 語意 + QA-022 懸空標註）|
 | 最後更新 | 2026-06-09 |
 | 上游 PRD | `CDC-EPRO-0001 v1.1` |
 | as-is 來源 | `docs/build-tasks/00800-verification-findings.md` |
@@ -120,7 +120,7 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 | REQ-005 | R13.6 fee（as-is ✅；業務原因 RP3）| QA-010 |
 | REQ-005 | R13.7 ITEM13/14 | @PENDING RP5 |
 | REQ-006 | R14 | QA-011,016 |
-| REQ-007 | R15 | QA-012（rollback）；QA-022 成功/not-found（RD 補）|
+| REQ-007 | R15 | QA-012（rollback）；成功/not-found path 尚無實 case → QA-022（RD 補，未撰寫）|
 | §9 NFR | R16 | QA-012（transaction）；perf/log/audit（RD 補）|
 
 ## 硬界線
