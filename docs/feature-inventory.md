@@ -117,7 +117,7 @@
 | EPROZ00400 | Case Distribution | ✅ | ✅ | cross-check ✅ |
 | EPROZ00410 | Related Party Info | ✅ | ✅ | cross-check ✅ |
 | EPROZ00500 | Comparison table…CUBC | ✅ | ✅ | cross-check ✅ |
-| EPROZ00600 | Search | 🟡 | ✅ | ⚠️ **options FE POST vs BE GET 介面不一致** |
+| EPROZ00600 | Search | ✅ | ✅ | options FE→GET 對齊 BE（`48e687f`，sweep①） |
 | EPROZ00610 | Credit Reviewer On Hand | ✅ | ✅ | 🟡 呈現/資料驗證 |
 | EPROZ00620 | Application Delete Report | ✅ | ✅ | 🟡（繼承 `base-application-report`）|
 | EPROZ00630 | Deviation Case Report | ✅ | ✅ | 🟡（含 Excel export）|
@@ -152,7 +152,7 @@
 | R7 | **權限三表遷移**（`TB_FUNCTION_AUTH`/`TB_API_AUTH`/`TB_ROLE_TASK`）| 🟡 進行 | **新 c0 endpoint 授權列待建**（見 §4）|
 | R8 | CBC 聯徵資料接入 | 🟢 **釐清：非獨立 adapter** | CBC = 頁內 banking relationship（i0 已做；c0 FE 缺）；**無外部 adapter track** |
 | — | **檔案上傳/下載 API** | ⏸ **待設計** | collateral 0150、審批 0170/0171/0173 上傳 |
-| — | **FE/BE HTTP method 不一致** | 🔴 **系統性** | 已知 `00600`/`00800`/`00640` options/export 的 POST↔GET 不符 → 整批 sweep |
+| — | **FE/BE HTTP method 不一致** | ✅ sweep 收齊 | `48e687f`：00600/00640 對齊；00800 init-query 列 @PENDING 待裁定 |
 
 ---
 
@@ -172,7 +172,7 @@
 
 **④ z0 半成品收尾（小修；owner：前後端）**
 - `00300` Document Checklist：return action 空回 → 補實作。
-- `00600` Search：FE/BE HTTP method 不一致。
+- ✅ `00600` Search method 已修（sweep① `48e687f`）。
 
 **④b 🟠 `00800` Revised Item（D1–D5 已修；側效引擎待裁定；owner：PM/SA/RD）**
 - ✅ **TBD-無關硬缺陷 D1–D5 已修**（`88328f9`，2026-06-09；prompt 已歸檔 `done/00800-fix-step1-tbd-independent.md`）：execute→POST、**execute 單一 `@Transactional`（資料遺失風險已除）**、item Y/N 驗證、回傳 pageMenuCondition、reason maxlength 3000+trim。QA-013/014/016/017 過；**QA-012 rollback 整合測 deferred-to-DB**。
@@ -186,10 +186,10 @@
 
 **⑧ 已裁**：`CS 0240` → **不開發**（2026-06-06 確認新系統無使用）。
 
-**⑨ Tech-debt / ops**（靜態 sweep 三批 prompt 已備，DB-無關，建議依序）
-- **FE/BE HTTP method 不一致 sweep**（系統性：00600/00800/00640…）→ `build-tasks/tech-debt-sweep-1-http-method-mismatch.md`。
-- map-key 大小寫 sweep（Oracle native query 靜默 null）→ `build-tasks/tech-debt-sweep-2-oracle-mapkey-case.md`。
-- Logback 硬編碼 `D:\temp\...` 外部化 → `build-tasks/tech-debt-sweep-3-logback-path-externalize.md`。
+**⑨ Tech-debt / ops**（✅ 靜態 sweep 三批已收齊，2026-06-09；prompt 全歸檔 `done/`）
+- ✅ **FE/BE HTTP method 不一致 sweep**（`48e687f`）：00600 search-options、00640 export PDF/Excel FE→GET 對齊 BE；00800 init-query 列 B 待裁定（按 SRS @PENDING 不動）。
+- ✅ **map-key 大小寫 sweep**（`709f65c`）：A＝quote alias / 讀端對齊大寫（loan summary/collateral/guarantor/T24/loan-condition 等）；B/UNSURE＝SELECT * Map、無法靜態綁定者不猜。⚠️ **A 修正屬 runtime-silent 類 → Phase V 必複測**（compile 抓不到）。
+- ✅ **Logback `D:\temp` 外部化**（`bbc4492`）：改 `${LOG_API_PATH:${LOG_PATH:logs}}` 等跨平台預設，appender/pattern/level 未動；連帶解掉 full `mvn clean package` 卡 D:\temp。
 - ✅ **c0 staff 端點 cleanup 已完成**（`dcd9602`，2026-06-09；prompt 已歸檔 `done/c0-staff-endpoints-cleanup.md`）：刪 `epl-info/save-c0-financial-staff` + `CsuFinancialEvaluationStaffFiController` 整檔（+ staff DTO/serviceImpl、staff option/funcIsStaffLoan 依賴）；**保留** `CsuFinancialStaffController` 的 sele(list)/business method（00117 在用）、table-fi（00120）；i0 未碰；mvn + npm build 綠。
 
 ---
@@ -208,7 +208,7 @@
 
 **Phase V — 整合驗證（即刻，可與 Phase F 並行；owner：整合測試）**
 3. 契約對齊 sweep：主流程 + i0 全頁 + 契約頁 FE↔BE DTO（真資料/真授權）。
-4. z0 報表呈現；z0 半成品收尾（00300 return、00600/00800 method）。
+4. z0 報表呈現；z0 半成品收尾（00300 return；✅ 00600 method 已修；00800 init-query method＝@PENDING 待 RD）。
 
 **Phase D — 撥貸解鎖（關鍵路徑，owner：撥貸 domain）**
 5. 🔴 **A-1 換匯 stub**（先「實作前調查」：匯率來源 API/表、舊取法、回傳結構）→ 端到端 → 驗 D1–D8 → B-1/T24 來源 → 精度（舊 DDL/DBA）。
