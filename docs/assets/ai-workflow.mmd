@@ -1,10 +1,16 @@
-%% 未來 AI 工作流 — AI-native SDLC pipeline
-%% 在 GitHub / Mermaid Live (mermaid.live) 直接 render；可編輯。
+%% 未來 AI 工作流 — AI-native SDLC pipeline（brownfield 版）
+%% 在 GitHub / Mermaid Live (mermaid.live) 直接 render；可編輯。本檔＝AI Flow 來源（.svg 為快取render、改 .mmd 後需重出）。
 flowchart LR
   Legacy[("Legacy 系統<br/>既有碼 · DB · JSP")] -->|EPRO Expert AI<br/>反推 · 證據接地| Bible
   Bible["<b>Bible 業務聖經</b><br/>user story · 北極星 · 黃金旅程"] -->|PM/PO + AI| PRD
-  PRD["<b>PRD</b><br/>what"] -->|SA + AI| SRS
-  SRS["<b>SRS</b><br/>OpenAPI · spec · DB schema"] -->|QA + AI| QA
+  PRD["<b>PRD</b><br/>what / why · REQ-nnn"] -->|SA + AI| SRS
+
+  %% ★brownfield：頁已存在 → 先驗 migrated 碼，findings 當 as-is 餵 SRS（這條是 70% 既有碼的必經路）
+  Legacy -.->|"頁已存在：as-is 驗證<br/>migrated 碼 vs 舊系統/PRD"| Findings
+  Findings["<b>as-is findings</b><br/>結構在 ≠ 行為對等<br/>★regression vs 刻意演進<br/>file:line 證據"] -.->|as-is 輸入| SRS
+
+  SRS["<b>SRS</b><br/>spec(Rn·強制點FE/BE) · OpenAPI · schema<br/>as-is/to-be · @PENDING"] --> SRSCHK
+  SRSCHK["<b>SRS 自驗</b>（定稿前）<br/>機械 check-srs-bundle ①②⑤<br/>+ spec-reviewer 語意（唯讀·不改）"] -->|無 Blocker → Approved| QA
   QA["<b>QA cases 1~∞</b><br/>可跑驗收 · covers Rn"] --> RD
   RD["<b>RD-Agent</b><br/>開發 + 測試<br/>Code → CICD"] --> GATE
 
@@ -12,7 +18,7 @@ flowchart LR
     direction TB
     G1["① Contract · OpenAPI snapshot"]
     G2["② Schema · entity ↔ DB"]
-    G3["③ verify-c0 · 結構 / 只新增"]
+    G3["③ verify-c0 · 結構 / 只新增 / UTF-8·BOM"]
     G4["④ QA 驗收 · 跑 QA cases"]
     G5["⑤ 覆蓋率 · ID 對表"]
     G6["⑥ Build 綠"]
@@ -25,11 +31,19 @@ flowchart LR
   Done --> Issue["Issue<br/>bug → 回歸 case"]
   Issue -.->|新 QA case · 回歸 1~∞| QA
 
+  %% ★判斷題不自行裁定：TBD / 模糊 / 既有碼行為 → human 裁定 → 關閉後回流
+  SRS -.->|"TBD / 模糊 / 判斷題"| Decide
+  RD  -.->|"escalation（既有碼/領域，如 E1/E2）"| Decide
+  Decide{{"human 裁定<br/>PM/SA/RD/domain/DBA<br/>關 @PENDING / TBD"}} -.->|關閉後續做| SRS
+
   SRS -. 定義 ①②③ .-> GATE
   QA  -. 定義 ④⑤ .-> GATE
 
   %% 追溯 ID 骨幹：funcId(例 EPROC00118) 串 Bible→PRD→SRS→QA→code/test
-  %% 原則：↑往上可追溯 ↓往下可驗證(①–⑥ deterministic 可信 / ⑦ LLM 只輔助) ★Bible 證據接地
+  %% 原則：↑可追溯 ↓可驗證（①–⑥ deterministic 可信 / ⑦ LLM 只輔助）★Bible 證據接地
+  %% brownfield 鐵律：migrated 碼「結構在≠行為對等」→ 必經 as-is 驗證；舊系統≠絕對正確 → 分 regression vs 刻意演進
+  %% 判斷題鐵律：PRD TBD / legacy 行為一律 @PENDING + owner，不自行裁定、不把 legacy 當已核准需求（含 PRD 內帶的 as-is 細節）
+  %% 動手前鐵律：頁開做前先唯讀盤點實際完成度 + 確認 mirror/算法來源（防「未做其實已完成」「假設錯來源」）
 
   classDef biz fill:#FFF3E0,stroke:#FB8C00,color:#5D4037;
   classDef prod fill:#E3F2FD,stroke:#1E88E5,color:#0D47A1;
@@ -40,6 +54,10 @@ flowchart LR
   classDef issue fill:#FFF8E1,stroke:#F9A825,color:#E65100;
   classDef legacy fill:#ECEFF1,stroke:#607D8B,color:#37474F;
   classDef gate fill:#FFEBEE,stroke:#E53935,color:#B71C1C;
+  classDef findings fill:#FFF3E0,stroke:#EF6C00,color:#E65100;
+  classDef chk fill:#E0F7FA,stroke:#00ACC1,color:#006064;
+  classDef decide fill:#FCE4EC,stroke:#D81B60,color:#880E4F;
   class Legacy legacy; class Bible biz; class PRD prod; class SRS spec;
   class QA qa; class RD rd; class Done done; class Issue issue;
+  class Findings findings; class SRSCHK chk; class Decide decide;
   class G1,G2,G3,G4,G5,G6,G7 gate;

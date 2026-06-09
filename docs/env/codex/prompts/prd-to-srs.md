@@ -22,6 +22,12 @@ Metadata（Status/Owner/Slug=funcId/版本/最後更新/上游PRD/as-is來源）
 5 頁已存在 → 標 as-is（引現碼/findings `file:line`）vs to-be。
 6 不臆造；未證標「待 RD 核對」。
 
+## Brownfield 鐵則（70% 既有碼專屬 — 教訓回填，見 `docs/spec-architecture.md §9`）
+- 動手前先唯讀盤點：① 該頁實際完成度（防「未做其實已完成」）② mirror/算法正確來源（防假設錯，如換匯 stub≠`funcGetRate`）。
+- as-is 驗證 ≠ 看有沒有 controller/service：**結構在≠行為對等**；對舊系統/PRD 行為比，分 **regression vs 刻意演進**（舊系統≠絕對正確），引 `file:line`。
+- **PRD 內帶的 legacy 也要 reconcile**：PRD 可能寫進現行 key 名/method/欄寬 → 不可原樣搬進 `openapi`/`schema`，標 to-be 或 `@PENDING`（B1 教訓）。
+- Oracle native query：未加引號 alias → JDBC label 大寫（M7 `LOANAMOUNT` 靜默 null），schema/DTO/Rn 對映注意大小寫。
+
 ## DoD（Status:Approved 前）
 Non-Goals 有 / 每 REQ≥1 Rn / 每 Rn 有 acceptance+≥1 QA covers / happy+error+edge / 每 TBD 一條 @PENDING+owner+blocking / Traceability 完整 / endpoints 真實 epl-* / 頁已存在則 as-is/to-be 清楚 / 模糊詞量化 / **已過 spec-reviewer.toml 無 Blocker**。
 

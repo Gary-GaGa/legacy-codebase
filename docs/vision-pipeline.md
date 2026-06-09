@@ -4,7 +4,7 @@
 > `Bible → PRD → SRS → QA → RD-Agent` 一條**往上可追溯、往下可驗證**的鏈。
 > 本檔定**模型與原則**；第一個 worked example = [`golden-template/boundary-bundle/EPROZ00800/`](golden-template/boundary-bundle/EPROZ00800/)。
 >
-> 🖼 **一圖總覽**：[`assets/ai-workflow.svg`](assets/ai-workflow.svg)（可編輯原始碼 [`assets/ai-workflow.mmd`](assets/ai-workflow.mmd)，GitHub / Mermaid 可直接 render）。
+> 🖼 **一圖總覽（來源）**：[`assets/ai-workflow.mmd`](assets/ai-workflow.mmd)（GitHub / Mermaid 直接 render；**＝AI Flow 權威來源**）。[`assets/ai-workflow.svg`](assets/ai-workflow.svg) 為快取 render，**2026-06-09 .mmd 加 brownfield 機制後未重出 → 以 .mmd 為準、需要時重 render**。
 
 ## 1. 終極目標
 - 從 legacy 系統**反推出 Bible**：真實世界的 user story、業務**北極星**、**黃金旅程** → 讓團隊**不分角色一致理解業務**（這是「前傳」，講清楚原系統為何長這樣）。
