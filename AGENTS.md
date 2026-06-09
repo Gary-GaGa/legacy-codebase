@@ -47,3 +47,10 @@
 - **狀態 SSOT（權威）**：`docs/feature-inventory.md` — 舊→新逐頁對應 + 前後端狀態 + 剩餘事項 + 排程。任何「某頁做了沒/缺什麼」以此為準（其他文件若有出入，以本檔最新校正為主）。
 - **任務單**：`docs/build-tasks/`（進行中）；已完成歷史在 `docs/build-tasks/done/`、已消化文件在 `docs/archive/`。
 - ⚠️ 進度提醒（2026-06-06）：前端**非**全完成——**c0 評分前端（容器+8 子頁）整組缺、Phase F 鏡像 i0 補建中**；撥貸核心（換匯 stub + T24）未通。細節見 `docs/feature-inventory.md`。
+
+## Spec workflow（PRD→SRS，雙軌 Claude/Codex）
+AI workflow＝`Bible→PRD→SRS→QA→RD`（見 `docs/assets/ai-workflow.mmd`）；funcId＝追溯 slug。**Codex 側工具**（部署 `docs/env/codex/` 範本到本機/專案 `.codex/`）：
+- **PRD→SRS**：custom prompt `.codex/prompts/prd-to-srs.md`（範本 `docs/env/codex/prompts/prd-to-srs.md`）→ 互動介面 `/prd-to-srs <PRD|funcId>`。產 SRS bundle 到 `docs/golden-template/boundary-bundle/<funcId>/`（worked example＝`EPROZ00800/`）。
+- **spec 審查（唯讀）**：subagent `.codex/agents/spec-reviewer.toml`（範本 `docs/env/codex/spec-reviewer.toml`）；定稿（`Status: Approved`）前必跑。
+- **權限/安全**：`.codex/config.toml`（sandbox/approval；範本 `docs/env/codex/config-permissions.md`）+ `.codex/hooks.json`（`verify-c0` 形式閘門）。
+- **完整對照表 + 品質門檻 DoD**：見 `CLAUDE.md`（Claude 側等價）。**改雙軌任一版，另一版同步。**

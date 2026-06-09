@@ -1,0 +1,18 @@
+{
+  "_comment": "spec-workspace 安全護欄（吸收自 path-a-scaffold）。只加 deny 危險指令 + secrets，不改既有 doc/commit/push 流程。Codex 等價＝.codex/config.toml，見 docs/env/codex/config-permissions.md。",
+  "permissions": {
+    "deny": [
+      "Bash(sudo *)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git reset --hard *)",
+      "Bash(curl * | sh)",
+      "Bash(curl * | bash)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/secrets/**)"
+    ]
+  }
+}

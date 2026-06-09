@@ -1,9 +1,28 @@
 # SRS — EPROZ00800 Revised Item（SA 規格層）
 
+| 欄位 | 內容 |
+|---|---|
+| Status | **Draft（blocked on RP1 / TBD-006）** |
+| Owner | SA（待指派）|
+| Slug | `EPROZ00800`（＝funcId）|
+| 版本 | v0.1 |
+| 最後更新 | 2026-06-09 |
+| 上游 PRD | `CDC-EPRO-0001 v1.1` |
+| as-is 來源 | `docs/build-tasks/00800-verification-findings.md` |
+
 > **上游 PRD**：`CDC-EPRO-0001 v1.1`（PM Review Draft，TBD-001~007 未關）。本 SRS 由 `prd-to-srs` skill 產出。
 > **as-is 來源**：現有新系統碼之驗證結果 `docs/build-tasks/00800-verification-findings.md`（產品碼在開發機）。
 > **每條規則一個 `Rn`，標 `covers-prd:` 上游追溯**；QA 用 `covers: Rn`（見 `qa-cases.md`）。
 > ⚠️ **TBD 一律寫 `@PENDING` + owner，不自行裁定**；**不把 legacy 行為當已核准需求**（PRD §13）。`file:line` 待 RD 對產品碼核對。
+
+## Scope / Non-Goals
+- **本期**：Revised Item 初始查詢、選項顯示、必填檢核、儲存、關聯資料清除/還原、checkpoint/page-menu 更新。
+- **非本期**：ITEM1~14 code table 維護、非本頁的其他頁籤重構、報表內容重製。
+
+## Assumptions / Dependencies / Constraints
+- **Assumptions**：`TB_LON_SUMMARY_INFO` 有 `LON_TYPE_CODE`/`REF_APPLICATION_NO`/`LON_ATTRIBUTE`/`SECURE_ATTRIBUTE`；`REVISED_ITEM` code table 已建。
+- **Dependencies**：guarantor/collateral/loan-condition/fee 各模組的資料表與 reference-copy 邏輯；checkpoint DAO（IS/IU/CS/CU）。
+- **Constraints**：Oracle；RPC `epl-*` 慣例；既有 `RevisedItemController`/`RevisedItemServiceImpl`（brownfield，見 as-is）。
 
 ## Endpoints（真實 `epl-*`；PRD §6 的 `/api/...` REST 為理想化）
 | 動作 | endpoint（to-be） | method（to-be） | as-is | DTO |
@@ -80,6 +99,23 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 | RP5-PENDING | TBD-007：ITEM13/14 是否有下游資料影響 | R13.7 | SA/RD |
 | RP6-PENDING | TBD-001：ITEM1~14 正式業務名稱（DB code table）| 畫面顯示 | SA |
 | RP7-PENDING | TBD-002：`Finshed` → `Finished` | UI 文字 | PM/UX/RD |
+
+## Trade-offs（架構取捨）
+- **RI-MAT 側效保留 legacy vs 改使用者確認流程**：核心取捨，**待 TBD-006**；若改使用者確認流程，R13/R11 大改 → 寫成 ADR 後再定版。
+- **side-effect 判定來源**：以「DB 二次比對」（R11）為準 vs 信前端 `isNotSame`——SRS 選前者（正確性 > 省一次查詢）。
+> 重大取捨關閉後補 `docs/adr/ADR-NNNN-EPROZ00800-*.md`。
+
+## Traceability Matrix（PRD REQ → Rn → QA）
+| PRD REQ | Rn | QA covers |
+|---|---|---|
+| REQ-001 | R1 | （RD 補 prompt case）|
+| REQ-002 | R2 | QA-001, QA-002 |
+| REQ-003 | R3,R4,R5,R6,R7,R8,R9 | QA-003,004,005,006,014,017（R7/R8 待 RD 補）|
+| REQ-004 | R10,R11,R12 | QA-012,013,015 |
+| REQ-005 | R13（@PENDING RP1）| QA-007~010 |
+| REQ-006 | R14 | QA-011,016 |
+| REQ-007 | R15 | QA-012 |
+| §9 NFR | R16 | QA-012 + perf/log（RD 補）|
 
 ## 硬界線
 - **不得自行裁定 ITEM 業務名稱**（RP6）、**不得把 legacy 側效當已核准需求**（RP1 未關前 R13 不定版）。
