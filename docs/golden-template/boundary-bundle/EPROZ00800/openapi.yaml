@@ -7,7 +7,8 @@ info:
   version: 0.1.0-draft
   description: PRD CDC-EPRO-0001 v1.1（Draft，TBD-001~007 未關）。method/欄位以 spec.md Rn 為準。
 paths:
-  /epl-case-query-reviseditem:          # R2 init-query（method 待 RD 與全站一致；PRD §6.1=GET）
+  /epl-case-query-reviseditem:          # R2 init-query
+    # ⚠️ @PENDING(method)：PRD §6.1=GET、站上 RPC 慣例=POST、as-is FE POST/BE GET 不一致 → RD/架構定版前不裁定。下方 post 僅佔位。
     post:
       summary: 查詢 Revised Item 選項與既有資料
       requestBody:
@@ -59,7 +60,9 @@ components:
             reasonMemo: { type: string, maxLength: 3000 }      # R4：3000、trim、必填
         checkPointMap:
           type: object
-          required: [applicationNo, EPROZ0_0800]
+          # R14 to-be：key = EPRO{IS/IU/CS/CU}_0260（依 attribute；確切清單見 PRD §5.6，RD 定）。
+          # ⚠️ 勿沿用 as-is legacy key（EPROZ00800 / EPROISU0160…，findings 標 🔴）。
+          required: [applicationNo]
           additionalProperties: { $ref: '#/components/schemas/ItemFlag' }
         isNotSame: { type: boolean, nullable: true, description: 'R11：僅前端提示輔助；後端不得以此為側效判斷依據' }
     InsertRevisedItemResponse:

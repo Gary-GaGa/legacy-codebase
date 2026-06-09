@@ -28,7 +28,11 @@
 | QA-015 | R11 | request `isNotSame=false` 但 DB 既有與新值不同 / execute / **後端仍依 DB 比對觸發側效**（不被 isNotSame 擋）| 側效依 DB 差異發生 |
 | QA-016 | R14 | execute 成功 / response / 含 `pageMenuCondition`（重處理頁 key=Y）| response DTO 有 pageMenuCondition |
 | QA-017 | R4 | REASON 輸入 3001 字 / 送出 / 阻擋（上限 3000）；前後空白 trim | DB REASON ≤3000、已 trim |
+| QA-018 | R1 | 模擬 attrMap 取得失敗 / 開頁 prompt / 回 `MSG_INITIAL_FAIL`、停止載入 | — |
+| QA-019 | R7 | `attrMap.isEdit=false` / 進頁 / 所有欄位唯讀 + 隱藏完成鈕 | — |
+| QA-020 | R8 | checkbox 與既有不同 / 按儲存 / 送出前顯示「移除會清除相關修改」提示，確認後才送 | — |
+| QA-021 | R12 | 案件已有 REVISED_ITEM / execute / 舊筆被刪、新 ITEM1~14+REASON+UPD_DATE 正確 insert | `TB_REVISED_ITEM` 僅 1 筆且值正確 |
 
 ## 覆蓋率（gate ⑤）
-- R1：⏳（prompt 路由，RD 補 case）｜R2：QA-001/002｜R3：QA-003｜R4：QA-004/017｜R5：QA-005｜R6：QA-006｜R7：⏳（RD 補 isEdit case）｜R8：⏳（RD 補變更提示 case）｜R9：QA-002/014｜R10：QA-012/013｜R11：QA-015｜R12：QA-001/010（隱含）｜R13：QA-007~010（@PENDING）｜R14：QA-011/016｜R15：QA-012｜R16：QA-012（transaction）+ 另測 perf/log。
-- ⏳ = 待 RD 補；@PENDING = 待 TBD-006 關。
+- R1：QA-018｜R2：QA-001/002｜R3：QA-003｜R4：QA-004/017｜R5：QA-005｜R6：QA-006｜R7：QA-019｜R8：QA-020｜R9：QA-002/014｜R10：QA-012/013｜R11：QA-015｜R12：QA-021｜R13.1–5：QA-007/008/009（@PENDING RP1）｜R13.6：QA-010｜R14：QA-011/016｜R15：QA-012（+QA-022 成功/not-found，RD 補）｜R16：QA-012（transaction）+ perf/log/audit（RD 補）。
+- 每個 `Rn` 至少 1 case ✅（R15/R16 另有 RD 待補的 perf/log/成功路徑）；@PENDING（QA-007/008/009）＝待 TBD-006 關，不計入 gate⑤。

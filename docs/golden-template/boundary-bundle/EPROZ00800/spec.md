@@ -5,7 +5,7 @@
 | Status | **Draft（blocked on RP1 / TBD-006）** |
 | Owner | SA（待指派）|
 | Slug | `EPROZ00800`（＝funcId）|
-| 版本 | v0.1 |
+| 版本 | v0.2（spec-reviewer round 1：修 B1–B3 + 補 QA 覆蓋）|
 | 最後更新 | 2026-06-09 |
 | 上游 PRD | `CDC-EPRO-0001 v1.1` |
 | as-is 來源 | `docs/build-tasks/00800-verification-findings.md` |
@@ -30,6 +30,9 @@
 | prompt（開頁/屬性）| 由 routing/attr 取得（RD 定）| — | — | attrMap、lonTypeCode |
 | init-query | `epl-case-query-reviseditem` | GET（PRD §6.1）或全站一致 RPC（RD 定）| **FE POST / BE GET 不一致** | `QueryRevisedItemRequest/Response` |
 | execute（儲存）| `epl-case-insert-reviseditem` | **POST**（會刪改資料）| 🔴 **BE GET（bug）**、FE POST | `InsertRevisedItemRequest/Response` |
+
+> ⚠️ **init-query method（B3）**：PRD §6.1=GET vs 站上 RPC=POST vs as-is 兩端不符 → **RD/架構待定**（openapi 標 @PENDING）。
+> ⚠️ **request body 結構（B2）**：to-be 用 `itemMap.item1..14`（見 `openapi.yaml`）；as-is `InsertRevisedItemRequest` 為平鋪欄位 → **RD 確認 DTO 形狀**（改 DTO 或 openapi 對齊）。
 
 ## 業務規則（Rn）
 > 狀態：✅ as-is 符合 ／ ⚠️ as-is 出入 ／ 🔴 as-is 缺/風險 ／ 標 to-be＝PRD 要求。
@@ -108,14 +111,17 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 ## Traceability Matrix（PRD REQ → Rn → QA）
 | PRD REQ | Rn | QA covers |
 |---|---|---|
-| REQ-001 | R1 | （RD 補 prompt case）|
+| REQ-001 | R1 | QA-018 |
 | REQ-002 | R2 | QA-001, QA-002 |
-| REQ-003 | R3,R4,R5,R6,R7,R8,R9 | QA-003,004,005,006,014,017（R7/R8 待 RD 補）|
-| REQ-004 | R10,R11,R12 | QA-012,013,015 |
-| REQ-005 | R13（@PENDING RP1）| QA-007~010 |
+| REQ-003 | R3,R4,R5,R6,R9 | QA-003,004,005,006,014,017 |
+| REQ-003 | R7,R8 | QA-019, QA-020 |
+| REQ-004 | R10,R11,R12 | QA-012,013,015,021 |
+| REQ-005 | R13.1–13.5（@PENDING RP1）| QA-007,008,009 |
+| REQ-005 | R13.6 fee（as-is ✅；業務原因 RP3）| QA-010 |
+| REQ-005 | R13.7 ITEM13/14 | @PENDING RP5 |
 | REQ-006 | R14 | QA-011,016 |
-| REQ-007 | R15 | QA-012 |
-| §9 NFR | R16 | QA-012 + perf/log（RD 補）|
+| REQ-007 | R15 | QA-012（rollback）；QA-022 成功/not-found（RD 補）|
+| §9 NFR | R16 | QA-012（transaction）；perf/log/audit（RD 補）|
 
 ## 硬界線
 - **不得自行裁定 ITEM 業務名稱**（RP6）、**不得把 legacy 側效當已核准需求**（RP1 未關前 R13 不定版）。
