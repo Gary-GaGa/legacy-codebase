@@ -105,6 +105,7 @@
 | 沒套慣例（沒用 config-driven 等）| `AGENTS.md` 沒在專案根、或你不是在專案根啟動 Codex → 確認位置後重啟 |
 | 離線 build 裝不到套件 | 沒走 Nexus → 檢查 `.yarnrc` / `~/.m2/settings.xml`（樣板見 `docs/env/`）|
 | 切 Node 後 `yarn`/`ng` 不認得 | 全域工具綁 Node 版本 → 為 16.20.2 重裝 yarn（走 Nexus：`npm i -g yarn --registry=http://88.8.70.216:8081/repository/npm-all/`）；`ng` **不裝全域**，`yarn install` 後用 `yarn ng` / `npx ng`（專案內建 CLI 14.2.13）|
+| **Windows**：`nvm use 16.20.2` 後 `node`/`npm.cmd`/`ng` 仍不認得（**nvm4w junction 沒刷新**）| nvm for Windows 的 `C:\nvm4w\nodejs` symlink 沒重指到新版資料夾 → build 前刷新 junction：`cmd /c rmdir "C:\nvm4w\nodejs"`；`cmd /c mklink /J "C:\nvm4w\nodejs" "%LOCALAPPDATA%\nvm\v16.20.2"`；`node -v` 確認。**換版（須經核准）只改 `mklink` 目標的版本資料夾，並在回報註明 override**（版本鎖定見 `AGENTS.md` §0 / 本檔 §環境）|
 | PowerShell 擋 `yarn.ps1`（執行原則 Restricted、UnauthorizedAccess）| `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`（免 admin）；若公司用 Group Policy 鎖住改不了 → 改用 `yarn.cmd`，或在 **CMD / Git Bash** 跑（不受 PS 執行原則限制）|
 | 後端 build 連到 `repo.maven.apache.org`、找不到 `ojdbc8`/`cub.util:db-encrypt` | 沒裝 Nexus settings.xml → 複製 `docs/env/maven-settings.xml`→`%USERPROFILE%\.m2\settings.xml`，`mvn -U clean package`（`-U` 強制清掉「找不到」失敗快取；必要時刪 `~/.m2/repository/com/oracle`、`~/.m2/repository/cub`）|
 | 後端 testCompile `cannot find symbol`（FileService/JwtUtil/LoginEmployee…）| **既有測試與 main 不同步、非你造成** → baseline 用 `mvn clean package "-Dmaven.test.skip=true"`（連測試編譯都跳；勿用 `-DskipTests`，那仍會編譯測試）。測試修復另列工作 |
