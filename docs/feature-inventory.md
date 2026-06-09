@@ -175,7 +175,7 @@
 - `00600` Search：FE/BE HTTP method 不一致。
 
 **④b 🔴 `00800` Revised Item（驗證後升級，非小修；owner：前後端 + PM/SA/RD）**
-- 結構在、行為不對等。**TBD-無關可先修**：execute→POST、**execute 加 `@Transactional`（資料風險最高）**、item Y/N 驗證、回傳 pageMenuCondition、reason maxlength 3000。
+- 結構在、行為不對等。**TBD-無關可先修**（D1–D5，prompt＝`build-tasks/00800-fix-step1-tbd-independent.md`）：execute→POST、**execute 加 `@Transactional`（資料風險最高）**、item Y/N 驗證、回傳 pageMenuCondition、reason maxlength 3000。
 - **側效/checkpoint 正確性（RI-MAT-001~005、0260 頁目標、isNotSame gate）→ 待 PRD `TBD-006`（保留 legacy 側效?）+ `TBD-003/004/005`（ITEM 規則）裁定再修**。詳 `build-tasks/00800-verification-findings.md`。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
@@ -190,7 +190,7 @@
 - **FE/BE HTTP method 不一致 sweep**（系統性：00600/00800/00640…）。
 - map-key 大小寫 sweep（Oracle native query 靜默 null）。
 - Logback 硬編碼 `D:\temp\...` 外部化。
-- **c0 staff 端點 cleanup**（決策 B 後確認為鏡像 i0 多餘物、FE 不接）：`epl-info/save-c0-financial-staff`、`epl-save-c0-financial-evaluation-staff-fi`（+ `CsuFinancialStaffController` staff method / `CsuFinancialEvaluationStaffFiController`）→ 評估移除；BE 動作、刪除另案。
+- **c0 staff 端點 cleanup**（決策 B 後確認為鏡像 i0 多餘物、FE 不接；prompt＝`build-tasks/c0-staff-endpoints-cleanup.md`）：移 `epl-info/save-c0-financial-staff`、`epl-save-c0-financial-evaluation-staff-fi`（+對應 DTO/serviceImpl、`CsuFinancialEvaluationStaffFiController` 整檔）；**保留** `CsuFinancialStaffController` 的 business/list method（00117 在用）。
 
 ---
 

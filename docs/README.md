@@ -47,8 +47,9 @@
 
 ## 🛠 任務單 `build-tasks/`
 - **進行中（live）**：
+  - `00800-fix-step1-tbd-independent.md`（00800 TBD-無關硬缺陷 D1–D5：@Transactional/POST/Y-N/pageMenuCondition/maxlength）+ `00800-verification-findings.md`（as-is 證據，亦＝SRS as-is 來源）
+  - `c0-staff-endpoints-cleanup.md`（c0 FinEval staff 端點 cleanup，決策 B 後）
   - `a1-funcGetExchangeRate-spec.md`（A-1 換匯 stub 規格，A-1 未實作）+ `phase-d-a1-exchange-stub-investigation.md`（A-1 背景調查）
-  - `00800-verification-findings.md`（live 參考＝`EPROZ00800` SRS 的 as-is 來源）
   - ＊**Phase F c0 FE 已收工**（容器 + 8 子頁齊）→ 逐頁 prompt 全進 `done/`。
 - **`build-tasks/done/`**（已消化的任務 spec / 一次性調查——歷史記錄）：
   - c0 FE 逐頁 prompt（Phase F）：`phase-f-step2-00114/00116/00118/00119`、`phase-f-step2-c0-scoring-fe`、`phase-f-step3-00117/00120`
