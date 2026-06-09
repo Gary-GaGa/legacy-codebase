@@ -190,7 +190,7 @@
 - **FE/BE HTTP method 不一致 sweep**（系統性：00600/00800/00640…）。
 - map-key 大小寫 sweep（Oracle native query 靜默 null）。
 - Logback 硬編碼 `D:\temp\...` 外部化。
-- **c0 staff 端點 cleanup**（決策 B 後確認為鏡像 i0 多餘物、FE 不接；prompt＝`build-tasks/c0-staff-endpoints-cleanup.md`）：移 `epl-info/save-c0-financial-staff`、`epl-save-c0-financial-evaluation-staff-fi`（+對應 DTO/serviceImpl、`CsuFinancialEvaluationStaffFiController` 整檔）；**保留** `CsuFinancialStaffController` 的 business/list method（00117 在用）。
+- ✅ **c0 staff 端點 cleanup 已完成**（`dcd9602`，2026-06-09；prompt 已歸檔 `done/c0-staff-endpoints-cleanup.md`）：刪 `epl-info/save-c0-financial-staff` + `CsuFinancialEvaluationStaffFiController` 整檔（+ staff DTO/serviceImpl、staff option/funcIsStaffLoan 依賴）；**保留** `CsuFinancialStaffController` 的 sele(list)/business method（00117 在用）、table-fi（00120）；i0 未碰；mvn + npm build 綠。
 
 ---
 
