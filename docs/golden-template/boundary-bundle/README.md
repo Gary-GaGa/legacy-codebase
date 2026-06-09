@@ -2,7 +2,10 @@
 
 > 配 [`../../vision-pipeline.md`](../../vision-pipeline.md) §4–5。**一個 story/page = 一束 artifacts**，全靠同一個
 > ID（funcId，如 `EPROC00118`）串起來，讓 RD agent 能**機器證明**自己通過 SA/QA 邊界。
-> 第一個 worked example：[`EPROC00118/`](EPROC00118/)（c0 Corporate Scorecard，我們最熟的一頁）。
+> 第一個 worked example：[`EPROC00118/`](EPROC00118/)（c0 Corporate Scorecard，**鏡像 i0 來源**）。
+> 第二個：[`EPROZ00800/`](EPROZ00800/)（Revised Item，**PRD 來源**，由 `prd-to-srs` skill 從 `CDC-EPRO-0001` 產出）。
+>
+> **兩種來源**：① **鏡像 i0**（既有新碼為 oracle，引 i0 `file:line`）② **PRD**（PM 的 PRD 為 what，用 `.claude/skills/prd-to-srs` 轉 → 規則追溯 PRD REQ-id、TBD 寫 `@PENDING`、頁已存在則標 as-is/to-be）。
 
 ## 結構
 ```

@@ -125,7 +125,7 @@
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅（CR 範本）|
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；嚴謹可做 deputy↔0700 gap-check |
-| EPROZ00800 | Revised Item | 🟠 | 🔴 | **驗證完(vs PRD)：結構在、行為不對等**——execute GET 應 POST、**execute 無 `@Transactional`(多表刪/還原可半更新＝資料風險)**、Y/N 未驗、pageMenuCondition 未回、RI-MAT 側效部分+多 bug、checkpoint 標錯頁。詳 `build-tasks/00800-verification-findings.md`。⚠️ 側效修正待 PRD TBD-006/SA |
+| EPROZ00800 | Revised Item | 🟠 | 🔴 | **驗證完(vs PRD)：結構在、行為不對等**——execute GET 應 POST、**execute 無 `@Transactional`(多表刪/還原可半更新＝資料風險)**、Y/N 未驗、pageMenuCondition 未回、RI-MAT 側效部分+多 bug、checkpoint 標錯頁。詳 `build-tasks/00800-verification-findings.md`；**SRS bundle**＝`golden-template/boundary-bundle/EPROZ00800/`（PRD→SRS）。⚠️ 側效修正待 PRD TBD-006/SA |
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
 
 ### 2F. 撥貸 `EPROISU0920/0921/0922` + T24（🔴 唯一真未完成區塊）
