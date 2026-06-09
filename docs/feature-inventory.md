@@ -196,7 +196,7 @@
 
 ## 5. 建議排程（依依賴與風險）— cross-check 後更新
 > 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策。
-> **🔓 DB 連線已可用（2026-06-06）**：原卡「待 dev/uat/DBA」的 **Phase V 整合驗證、c0 授權列、DB-相關 OQ（精度/schema/DDL）、M7/M9 確認點、z0 半成品(method/return)** 全部**即刻可跑** → 建議與 Phase F coding **並行先攻**。⚠️ **先建 c0 新 endpoint 授權列**（`TB_API_AUTH`/`TB_ROLE_TASK`），否則 c0 FE 做完仍 403 打不通、白測。
+> **🔒 DB 連線尚未打通（2026-06-09 更正；先前誤記「已可用」）**：以下仍 **gated on DB** → **Phase V 整合驗證、c0 授權列「套用/驗證」、DB-相關 OQ（精度/schema/DDL）、M7/M9 確認點、z0 半成品(method/return) 實測**。DB 打通前 **先做 DB-無關工作**：00800 可先修子集（code+build）、c0 staff cleanup、靜態 tech-debt sweep（HTTP method 不一致、map-key 大小寫、Logback 外部化）、c0 授權列 **SQL 產出（先寫好、待 DB 套用）**。⚠️ 提醒：c0 FE 已做完，但 **授權列未套用前打 c0 endpoint 會 403** → DB 一通先套授權列。
 
 **Phase 0 — 坐實缺口（c0 FE ✅ 已坐實）**
 0. ✅ c0 評分 FE 範圍已坐實（容器 + 8 子頁）；✅ `CS 0240` 裁定**不開發**。**Phase 0 清空。**
