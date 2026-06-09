@@ -92,21 +92,21 @@
 > i0 全做 → c0 的 FE 缺口（§2D）＝「照 i0 鏡像補 c0 評分 FE」。
 
 ### 2D. 企金評分 `EPROC00*`（M7 c0）— 🔴 **FE 整組缺口（已坐實，2026-06-06）**
-> **確認**：c0 後端齊（`controller/corporate/*`），但 corporate 前端**完全沒有評分容器**（route 只有 4 個 basic 頁）。→ **整組 c0 評分 FE 未建＝1 容器 + 8 子頁**（c0 無 00111/00113）。BE endpoint 已齊、可直接對接。**本次盤點最大缺口。**
+> **確認**：c0 後端齊（`controller/corporate/*`）；corporate 前端評分容器原本**完全未建**。→ ✅ **整組 c0 評分 FE 已建齊＝1 容器 + 8 子頁**（**Phase F 收工 2026-06-09**；c0 無 00111/00113）。原本次盤點**最大缺口、現已補齊**。
 | 新頁 | 名稱 | FE | BE | 對接 c0 endpoint（BE 已齊）|
 |---|---|:--:|:--:|---|
-| EPROC00110 | 評分容器（corporate credit-investigation）| 🔴 | ✅ | `epl-info/save-c0-credit-investigation-tab`（`CsuCreditInvestigationController`）|
+| EPROC00110 | 評分容器（corporate credit-investigation）| ✅ | ✅ | `epl-info/save-c0-credit-investigation-tab`（`CsuCreditInvestigationController`；Step 1 容器，BE 驅動動態 tab）|
 | EPROC00112 | CBC Banking Relationship | ✅ | ✅ | `epl-info/save-c0-cbc-banking-relationship`（`7e8aaf7`）|
 | EPROC00114 | Collateral Assessment | ✅ | ✅ | `epl-sele/info/save-c0-collateral-assessment`（`62ec62f`；無 c0 calc→隱 Calc 鈕、分數 BE save 算）|
-| EPROC00115 | Borrower Group Exposure | 🔴 | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`；授權列 |
+| EPROC00115 | Borrower Group Exposure | ✅ | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`（Step 1 BGE pilot）；授權列 |
 | EPROC00116 | Financial Statement GI | ✅ | ✅ | `epl-*-c0-financial-statement-comments`（`524d8dc`；calc 保留、export POST-blob 兩邊一致、無 00640 式不符）；授權列；export 模板沿用 i0？|
 | EPROC00117 | Financial Evaluation GI | ✅ | ✅ | **business-only ✅**（`b14ae05`，決策 B）：接 `epl-sele-c0-financial-list`、`epl-info/save-c0-financial-business`（info 保留 BE 要的 isQuery、save 不帶）；**未接 `-financial-staff`/funcIsStaffLoan**（cleanup）；guard scan/BOM 過。授權列 |
 | EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`（`39e95dd`；**calc 保留接上**）；授權列；🚩 2 escalation |
 | EPROC00119 | Financial Statement FI | ✅ | ✅ | `epl-*-c0-financial-statement-cmts-fi`（`02d50e7`；無 sele、calc 保留、export POST-blob 一致、保留 c0 FI 需要的 isQuery）；授權列；export 模板沿用 i0？|
-| EPROC00120 | Financial Evaluation FI | 🔴 | ✅ | **business-only**（決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`（+條件 `-financial-list`）；**不接 `-staff-fi`**（cleanup）。prompt＝`build-tasks/phase-f-step3-00120-financial-evaluation-fi.md`；授權列 |
+| EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`（info 留 isQuery、save 送 applicationNo/isFinish/financialList + cetOne/totalCapitalRatio）；i0 FI 有 list 但頁不消費 options → `getMenu()`回`of({})`不接；**未接 `-staff-fi`/funcIsStaffLoan**（cleanup）；BOM/build 過。授權列 |
 > **範本＝i0 `individual/credit-investigation`**：容器 component 動態載 tab（`epl-*-i0-credit-investigation-tab`、`creditInvestigationNav()` config、`CreditInvestigationPageCode` enum）、各子頁 `components/<name>/{component,services}`。c0 照此鏡像、改 `-c0-` endpoint + corporate DTO。
 > ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。
-> **進度（2026-06-06）**：✅ **Step 1**＝c0 容器（BE 驅動動態 tab、`epl-*-c0-credit-investigation-tab`）+ **00115 BGE** pilot，`ng build` 綠（容器 DTO 對齊 c0＝只 `businessType`/`pageMap`、無 i0 的 `assessmentType`/`isStaffLoan`，故容器只留 businessType radio）。🔵 **Step 2 進行中**：✅ `00112` CBC（`7e8aaf7`；無 calc→totals 本地加總）、✅ `00114` Collateral Assessment（`62ec62f`；無 calc→隱鈕、分數 BE save 算）、✅ `00118` Corp Scorecard（`39e95dd`；calc 保留、回填 riskLevel/scoreDatetime）、✅ `00116` FinStmt GI（`524d8dc`；calc 保留、export POST-blob 一致）、✅ `00119` FinStmt FI（`02d50e7`；無 sele、保留 c0 需要的 isQuery、`report.service.ts` 確認加法無 i0 回歸）；**staff 批 `00117`/`00120`**（business-only，決策 B；✅ `00117`=`b14ae05`，**剩最後 `00120`**，prompt＝`build-tasks/phase-f-step3-00120-financial-evaluation-fi.md`）。✅ **2026-06-09 對舊 source 驗畢 → 決策 B**：舊 corporate c0 00117/00120 是 BusinessOwner-only（舊 c0 trx/module 無 staff 分版/staff save、staff token grep 全空），新 `funcIsStaffLoan` 對 CS/CU 恆 false 是**忠實沿用舊 i0**（staff 僅 IS+03 / IU+01，`legacy-epro/.../EPRO_I00111.java:267`）、**非 regression**。→ **只建 business 版**；c0 staff 端點（`epl-info/save-c0-financial-staff`、`epl-save-c0-financial-evaluation-staff-fi`）＝鏡像 i0 多餘物 → **cleanup backlog（不接 FE、刪除另案）**。判定來源＝容器 `businessType`/`pageMap`（**FE 不打 funcIsStaffLoan**；00117 在 G、00120 在 F 分支）。⚠️ **watch**：① 🔑 **calc 逐頁不同**——00112/00114 無 calc（已隱），但 **00118 Corp Scorecard 有 `epl-calc-c0-corporateScorecard`、00116/00119 FinStmt 亦有 calc → 這幾頁 calc 鈕要保留接上**，勿誤套「隱 calc」。② ✅ c0 staff-vs-business 判定已決（B：business-only，讀容器 businessType/pageMap、不打 funcIsStaffLoan）③ 真元件就緒後實跑 G/F 切換 ④ 整合測確認：00112 totals、00114 rating 是否仍**唯讀顯示**(BE save 算後回傳)、語意與 BE 一致。
+> **進度（2026-06-06）**：✅ **Step 1**＝c0 容器（BE 驅動動態 tab、`epl-*-c0-credit-investigation-tab`）+ **00115 BGE** pilot，`ng build` 綠（容器 DTO 對齊 c0＝只 `businessType`/`pageMap`、無 i0 的 `assessmentType`/`isStaffLoan`，故容器只留 businessType radio）。✅ **Step 2 完成（Phase F 收工 2026-06-09，8 子頁齊）**：✅ `00112` CBC（`7e8aaf7`；無 calc→totals 本地加總）、✅ `00114` Collateral Assessment（`62ec62f`；無 calc→隱鈕、分數 BE save 算）、✅ `00118` Corp Scorecard（`39e95dd`；calc 保留、回填 riskLevel/scoreDatetime）、✅ `00116` FinStmt GI（`524d8dc`；calc 保留、export POST-blob 一致）、✅ `00119` FinStmt FI（`02d50e7`；無 sele、保留 c0 需要的 isQuery、`report.service.ts` 確認加法無 i0 回歸）；**staff 批 `00117`/`00120`**（business-only，決策 B；✅ `00117`=`b14ae05`、✅ `00120`=`6b084fb`）。✅ **2026-06-09 對舊 source 驗畢 → 決策 B**：舊 corporate c0 00117/00120 是 BusinessOwner-only（舊 c0 trx/module 無 staff 分版/staff save、staff token grep 全空），新 `funcIsStaffLoan` 對 CS/CU 恆 false 是**忠實沿用舊 i0**（staff 僅 IS+03 / IU+01，`legacy-epro/.../EPRO_I00111.java:267`）、**非 regression**。→ **只建 business 版**；c0 staff 端點（`epl-info/save-c0-financial-staff`、`epl-save-c0-financial-evaluation-staff-fi`）＝鏡像 i0 多餘物 → **cleanup backlog（不接 FE、刪除另案）**。判定來源＝容器 `businessType`/`pageMap`（**FE 不打 funcIsStaffLoan**；00117 在 G、00120 在 F 分支）。⚠️ **watch**：① 🔑 **calc 逐頁不同**——00112/00114 無 calc（已隱），但 **00118 Corp Scorecard 有 `epl-calc-c0-corporateScorecard`、00116/00119 FinStmt 亦有 calc → 這幾頁 calc 鈕要保留接上**，勿誤套「隱 calc」。② ✅ c0 staff-vs-business 判定已決（B：business-only，讀容器 businessType/pageMap、不打 funcIsStaffLoan）③ 真元件就緒後實跑 G/F 切換 ④ 整合測確認：00112 totals、00114 rating 是否仍**唯讀顯示**(BE save 算後回傳)、語意與 BE 一致。
 
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
@@ -159,10 +159,9 @@
 ## 4. 剩餘事項彙整（= 還有多少事要做）— cross-check 後更新（2026-06-06）
 > **翻案**：新增 **c0 評分前端真缺口**（原以為前端全完）。❓ 多已坐實（i0/契約/多數 z0 ✅）。
 
-**① 🔴 c0 評分前端（NEW，本次最大缺口；owner：前端）— 範圍已坐實**
-- **整組未建＝1 容器 + 8 子頁**（00112/00114/00115/00116/00117/00118/00119/00120；c0 無 00111/00113）。
-- BE endpoint + corporate DTO 已齊；**照 i0 `credit-investigation` 鏡像**（容器動態 tab + 各子頁 component），改 `-c0-` endpoint；FE 容器吃 BE `businessType`/`pageMap`（G/F 分頁）。
-- 低風險（範本清楚、BE+DTO 就緒）但量 ≈ **一個 sprint（9 個 FE 單位）**。
+**① ✅ c0 評分前端（Phase F 收工 2026-06-09；owner：前端）— 原本次最大缺口、已補齊**
+- ✅ **整組已建齊＝1 容器 + 8 子頁**（00112/00114/00115/00116/00117/00118/00119/00120；c0 無 00111/00113）。00117/00120 為 **business-only**（決策 B）。
+- **剩（非 coding）**：納入 Phase V 整合驗證 + c0 新 endpoint 授權列（見 ⑥）；staff 端點 cleanup（見 ⑨）。
 
 **② 整合驗證（owner：dev/uat 整合測試）— 量大、非補碼**
 - 主流程（is/iu/cs/cu 0110–0173）+ 契約頁（0910–0913）+ i0 全頁 FE↔BE `epl-*` DTO/授權各跑一次。
@@ -191,6 +190,7 @@
 - **FE/BE HTTP method 不一致 sweep**（系統性：00600/00800/00640…）。
 - map-key 大小寫 sweep（Oracle native query 靜默 null）。
 - Logback 硬編碼 `D:\temp\...` 外部化。
+- **c0 staff 端點 cleanup**（決策 B 後確認為鏡像 i0 多餘物、FE 不接）：`epl-info/save-c0-financial-staff`、`epl-save-c0-financial-evaluation-staff-fi`（+ `CsuFinancialStaffController` staff method / `CsuFinancialEvaluationStaffFiController`）→ 評估移除；BE 動作、刪除另案。
 
 ---
 
@@ -201,10 +201,10 @@
 **Phase 0 — 坐實缺口（c0 FE ✅ 已坐實）**
 0. ✅ c0 評分 FE 範圍已坐實（容器 + 8 子頁）；✅ `CS 0240` 裁定**不開發**。**Phase 0 清空。**
 
-**Phase F — c0 評分前端（NEW；owner：前端；BE 已齊、可直接對接）— 範圍已坐實**
-1. 建 corporate `credit-investigation` 容器（鏡像 i0 動態 tab + businessType G/F 分頁）。
-2. 補 8 子頁 component/service（00112/114/115/116/117/118/119/120），各對接對應 `-c0-` endpoint + corporate DTO。
-3. 補完接 c0 BE、納入 Phase V 驗證 + 授權列。建議**先做容器 + 1 子頁打通動態 tab/businessType 再展開其餘**。
+**Phase F — c0 評分前端 ✅ 收工（2026-06-09；owner：前端）**
+1. ✅ corporate `credit-investigation` 容器（BE 驅動動態 tab + businessType G/F 分頁）。
+2. ✅ 8 子頁 component/service（00112/114/115/116/117/118/119/120）各對接 `-c0-` endpoint + corporate DTO；00117/00120 business-only（決策 B）。
+3. **剩**：納入 Phase V 驗證 + c0 新 endpoint 授權列（⑥）；staff 端點 cleanup（⑨）。
 
 **Phase V — 整合驗證（即刻，可與 Phase F 並行；owner：整合測試）**
 3. 契約對齊 sweep：主流程 + i0 全頁 + 契約頁 FE↔BE DTO（真資料/真授權）。
