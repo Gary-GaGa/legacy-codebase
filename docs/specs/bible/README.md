@@ -3,6 +3,9 @@
 > flow 第 ① 層：從 Legacy **反推**業務知識（EPRO Expert + AI），讓團隊不分角色一致理解業務。
 > 內容＝**北極星、黃金旅程、user story**；鐵律＝**證據接地**（每個主張引 legacy `file:line` / 表名，AI 反推最易 confabulate 的一層）。
 
+## 工具：`/legacy-to-bible <domain>`（已備）
+反推 Bible 用 skill `.claude/skills/legacy-to-bible/`（Codex：`docs/env/codex/prompts/legacy-to-bible.md`）——證據接地、敘事非契約。
+
 ## 現況：正式 Bible 尚未建檔
 既有的「舊系統理解」散在下列分析（= Bible 的原料，先讀這些）：
 

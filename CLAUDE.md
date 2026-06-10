@@ -13,6 +13,7 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 | 角色 | Claude Code | Codex CLI |
 |---|---|---|
 | constitution | **本檔 `CLAUDE.md`** | `AGENTS.md` §「Spec workflow」 |
+| Legacy→Bible | skill `.claude/skills/legacy-to-bible/` | custom prompt `.codex/prompts/legacy-to-bible.md`（範本 `docs/env/codex/prompts/`）|
 | PRD→SRS | skill `.claude/skills/prd-to-srs/` | custom prompt `.codex/prompts/prd-to-srs.md`（範本 `docs/env/codex/prompts/`）|
 | spec 審查（唯讀）| agent `.claude/agents/spec-reviewer.md` | subagent `.codex/agents/spec-reviewer.toml`（範本 `docs/env/codex/`）|
 | 權限/安全 | `.claude/settings.json` | `.codex/config.toml`（sandbox/approval；範本 `docs/env/codex/config-permissions.md`）|
@@ -26,6 +27,7 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 | 階段 | 動作 | Claude | Codex |
 |---|---|---|---|
 | 構思 | 釐清問題 | `/product-brainstorming`(官方 plugin) | 同 |
+| **Bible** | 反推業務（Legacy→Bible）| **`/legacy-to-bible`** | **`/legacy-to-bible`** |
 | PRD | PM 寫 what | `/write-spec`(官方 plugin) | 同 |
 | **SRS** | SA 轉 how | **`/prd-to-srs`** | **`/prd-to-srs`** |
 | 架構決策 | 重大取捨 | 寫 `docs/adr/ADR-NNNN-<funcId>.md` | 同 |

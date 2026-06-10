@@ -50,6 +50,7 @@
 
 ## Spec workflow（PRD→SRS，雙軌 Claude/Codex）
 AI workflow＝`Bible→PRD→SRS→QA→RD`（見 `docs/assets/ai-workflow.mmd`）；funcId＝追溯 slug。**Codex 側工具**（部署 `docs/env/codex/` 範本到本機/專案 `.codex/`）：
+- **Legacy→Bible**：custom prompt `.codex/prompts/legacy-to-bible.md`（範本 `docs/env/codex/prompts/legacy-to-bible.md`）→ `/legacy-to-bible <domain>`。反推業務 Bible（敘事、證據接地）到 `docs/specs/bible/bible-<domain>.md`。
 - **PRD→SRS**：custom prompt `.codex/prompts/prd-to-srs.md`（範本 `docs/env/codex/prompts/prd-to-srs.md`）→ 互動介面 `/prd-to-srs <PRD|funcId>`。產 SRS bundle 到 `docs/specs/srs/<funcId>/`（worked example＝`EPROZ00800/`；規格分層 bible→prd→srs 見 `docs/specs/README.md`）。
 - **spec 審查（唯讀）**：subagent `.codex/agents/spec-reviewer.toml`（範本 `docs/env/codex/spec-reviewer.toml`）；定稿（`Status: Approved`）前必跑。
 - **權限/安全**：`.codex/config.toml`（sandbox/approval；範本 `docs/env/codex/config-permissions.md`）+ `.codex/hooks.json`（`verify-c0` 形式閘門）。
