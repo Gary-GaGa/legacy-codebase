@@ -27,6 +27,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 | 檔 | 用途 |
 |---|---|
 | **`feature-inventory.md`** | ⭐ **權威**：舊→新逐頁對應 + 前後端狀態 + 剩餘事項 + R1–R8 track + 建議排程 |
+| **`pending-register.md`** | ⭐ **待決總表**：所有 open `@PENDING`/escalation/OQ（誰欠裁定、卡什麼、多久）；🔴 三項擋主線 |
 | `completion-ledger.md` | 桶別總盤點（A 完成 / B 待驗 / C 未實作）；明細以 feature-inventory 為準 |
 | `decisions.md` | 決策與事實紀錄（逐輪更新；教訓收斂表＝`spec-architecture.md §9`） |
 

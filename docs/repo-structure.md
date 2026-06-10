@@ -49,6 +49,7 @@
 | 檔 | 角色 |
 |---|---|
 | **`feature-inventory.md`** | ⭐ **逐頁狀態權威**（舊→新對應、FE/BE、剩餘事項①–⑨、排程 Phase 0/F/V/D/E/R） |
+| **`pending-register.md`** | ⭐ **待決總表**（所有 open @PENDING/escalation/OQ + owner + 卡什麼；🔴 擋主線者標出） |
 | `page-mapping.md` | 舊 funcId → 新頁對應 + 30% backlog |
 | `migration-backlog.md` | 模組地圖 M1–M9 + 橫向風險 R1–R8 |
 | `completion-ledger.md` | 桶別總盤點（明細以 feature-inventory 為準） |
