@@ -22,7 +22,7 @@ flowchart LR
     G4["④ QA 驗收 · 跑 QA cases"]
     G5["⑤ 覆蓋率 · ID 對表"]
     G6["⑥ Build 綠"]
-    G7["⑦ LLM 語意審查 · advisory"]
+    G7["⑦ LLM 語意審查 · advisory（code 階段）<br/>※SRS 階段的 spec-reviewer＝blocking（見 SRSCHK）"]
     G1 ~~~ G2 ~~~ G3 ~~~ G4 ~~~ G5 ~~~ G6 ~~~ G7
   end
 
@@ -44,6 +44,10 @@ flowchart LR
   %% brownfield 鐵律：migrated 碼「結構在≠行為對等」→ 必經 as-is 驗證；舊系統≠絕對正確 → 分 regression vs 刻意演進
   %% 判斷題鐵律：PRD TBD / legacy 行為一律 @PENDING + owner，不自行裁定、不把 legacy 當已核准需求（含 PRD 內帶的 as-is 細節）
   %% 動手前鐵律：頁開做前先唯讀盤點實際完成度 + 確認 mirror/算法來源（防「未做其實已完成」「假設錯來源」）
+  %% as-is 驗證最低深度：每個 DB 寫入有 return/commit？每個 stub/TODO/throw？每條 error 分支？跨頁副作用？（防 throw-stub 漏網）
+  %% regression vs 演進：異於舊版預設當 regression；歸「演進」須有依據（法規/PRD/已知需求），無依據不自判
+  %% fix 可能引入新錯：採納 review 修正後要再審一輪（B1 修法曾引入 checkPointMap 副作用，複審才抓）；advisory⑦ vs SRS-blocking 別混
+  %% 待決追蹤：@PENDING 有 owner + 是否 blocking，聚合到 feature-inventory（誰欠決策、卡多久），別散落
 
   classDef biz fill:#FFF3E0,stroke:#FB8C00,color:#5D4037;
   classDef prod fill:#E3F2FD,stroke:#1E88E5,color:#0D47A1;

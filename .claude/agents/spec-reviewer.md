@@ -49,3 +49,4 @@ model: opus
 
 最後一行總評：**是否達 `Status: Approved` 門檻**（或仍 blocked on 哪個 `@PENDING`）。
 **不修改任何檔，只回報**；修改由人類決定後交主 session/實作流程執行。
+> ⚠️ **修正後必複審**：主流程採納修正後**再跑你一輪**——修正可能引入新錯（B1 修法曾引入 `checkPointMap.required:[applicationNo]` 副作用、複審才抓）。一輪 PASS 不等於收工。
