@@ -61,5 +61,9 @@
   1. 此為 http（非 https）。Maven 3.8.1+ 內建會封鎖「外部」http repository，
      但本檔以明確 mirror 指向內網，屬允許範圍；如遇 "blocked mirror" 錯誤，
      確認沒有其他 pom 內嵌的外部 http repository 即可。
-  2. 與「已重構後端」實際 settings.xml 比對後再定稿（見 docs/decisions.md 待確認項）。
+  2. A1 已確認：後端機器目前無 Nexus settings.xml，預設走 Maven Central（不合規）。
+     安裝本檔到 %USERPROFILE%\.m2\settings.xml 即導向 Nexus；maven-public 為 group，
+     會代理 Central + 託管 releases/snapshots，故安裝後公開與私有套件皆走內網。
+  3. 環境為 Maven 3.9.16；全域 settings 僅含預設 maven-default-http-blocker，
+     本檔的明確 mirror 不受其影響（blocker 只擋 external:http:*，不擋已指定的內網 mirror）。
 -->

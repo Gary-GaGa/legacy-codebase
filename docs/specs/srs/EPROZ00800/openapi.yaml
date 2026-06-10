@@ -1,0 +1,76 @@
+# OpenAPI（合約草案，gate ①）— EPROZ00800 Revised Item
+# 由 PRD CDC-EPRO-0001 §6 轉；endpoint 用真實 epl-* RPC（PRD 的 /api/... REST 為理想化）。
+# ⚠️ RD 於系統開發規格書定版 DTO 型別/enum/validation/錯誤 mapping/範例。
+openapi: 3.0.3
+info:
+  title: EPROZ00800 Revised Item
+  version: 0.3.0-draft
+  description: PRD CDC-EPRO-0001 v1.1（Draft，TBD-001~007 未關）。method/欄位以 spec.md Rn 為準。與 spec.md v0.3 同步。
+paths:
+  /epl-case-query-reviseditem:          # R2 init-query
+    # ⚠️ @PENDING(method)：PRD §6.1=GET、站上 RPC 慣例=POST、as-is FE POST/BE GET 不一致 → RD/架構定版前不裁定。下方 post 僅佔位。
+    post:
+      summary: 查詢 Revised Item 選項與既有資料
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/QueryRevisedItemRequest' } } }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/QueryRevisedItemResponse' } } } }
+        '400': { description: COMMON_MSG_ERROR_LON（applicationNo 空/不合法）}
+        '404': { description: MSG_DATA_NOT_FOUND }
+  /epl-case-insert-reviseditem:         # R10 execute（會刪改資料 → 必須 POST）
+    post:
+      summary: 儲存 Revised Item（含 RI-MAT 側效 + checkpoint，單一 transaction）
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/InsertRevisedItemRequest' } } }
+      responses:
+        '200': { description: COMMON_MSG_SAVE_SUCCESS, content: { application/json: { schema: { $ref: '#/components/schemas/InsertRevisedItemResponse' } } } }
+        '400': { description: COMMON_MSG_ERROR_LON }
+        '500': { description: COMMON_MSG_SAVE_FAIL（rollback）}
+components:
+  schemas:
+    ItemFlag: { type: string, enum: [Y, N] }     # R9：DB/execute 只允許 Y/N（init-query 另允許 blank）
+    QueryRevisedItemRequest:
+      type: object
+      required: [applicationNo]
+      properties: { applicationNo: { type: string, maxLength: 30 } }
+    QueryRevisedItemResponse:
+      type: object
+      properties:
+        revisedType: { type: object, additionalProperties: { type: string }, description: 'MSG_OPTION → LANG_NAME' }
+        revisedTypeSize: { type: integer }
+        rtnMap:
+          type: object
+          properties:
+            lonTypeCode: { type: string }
+            item1: { type: string, description: 'Y/N/blank（init-query 允許 blank）' }
+            # … item2~item14 同（略）
+            reasonMemo: { type: string }
+    InsertRevisedItemRequest:
+      type: object
+      required: [applicationNo, itemMap, checkPointMap]
+      properties:
+        applicationNo: { type: string, maxLength: 30 }
+        itemMap:
+          type: object
+          required: [item1, reasonMemo]            # item1~14 + reasonMemo
+          properties:
+            item1: { $ref: '#/components/schemas/ItemFlag' }   # R9：FE 送出前 blank→N；item2~14 同
+            reasonMemo: { type: string, maxLength: 3000 }      # R4：3000、trim、必填
+        checkPointMap:
+          type: object
+          # R14 to-be：key = EPRO{IS/IU/CS/CU}_0260（依 attribute；確切清單見 PRD §5.6，RD 定）。
+          # ⚠️ 勿沿用 as-is legacy key（EPROZ00800 / EPROISU0160…，findings 標 🔴）。
+          # @PENDING(checkpoint-keys)：確切 _0260 key 清單待 RD 依 §5.6 定版 → 屆時補 required。
+          #   不用 applicationNo 佔位（它是頂層欄位、非本 map 的 key）。
+          additionalProperties: { $ref: '#/components/schemas/ItemFlag' }
+        isNotSame: { type: boolean, nullable: true, description: 'R11：僅前端提示輔助；後端不得以此為側效判斷依據' }
+    InsertRevisedItemResponse:
+      type: object
+      properties:
+        revisedItem: { type: object, description: 'ITEM + IS_ANY_GUARANTOR / IS_ANY_COLLATERAL_PROVIDER' }
+        pageMenuCondition:                          # R14：as-is 缺，須補回傳
+          type: object
+          additionalProperties: { $ref: '#/components/schemas/ItemFlag' }
+          description: '重處理頁籤 funcId → Y（§5.6 清單）'

@@ -1,0 +1,76 @@
+---
+name: prd-to-srs
+description: Convert a PRD (產品需求, "what") into an SRS bundle (系統開發規格, "how") for this eProposal refactor. Use when the user has a PRD (e.g. CDC-EPRO-*, or a page's PRD) and wants the SA-level SRS — endpoints, rule-ids, OpenAPI, DB schema, QA cases — i.e. the "SA + AI → SRS" step of the AI workflow (docs/assets/ai-workflow.mmd). Triggers: "PRD 轉 SRS", "產 SRS", "把 PRD 變規格", "SRS bundle for <funcId>".
+---
+
+# PRD → SRS（SA + AI 步驟）
+
+把 PRD（what）轉成 **SRS bundle（how）**，產物餵 QA + DoD 閘門 ①②③④⑤。位置見 `docs/assets/ai-workflow.mmd`。
+範本＝worked example `docs/specs/srs/EPROZ00800/`（PRD 來源）；分層說明見 `docs/specs/README.md`。
+
+## 輸入
+1. **PRD**（主來源；如 `CDC-EPRO-0001` 00800）。
+2. **Bible**（若有，取北極星/黃金旅程當上游追溯）。
+3. **既有碼**（若該頁已實作 → 做 as-is vs to-be；用該頁的 verification findings）。
+4. **慣例**：`backend/AGENTS.md` §6、`page-mapping.md`（真實 API 慣例＝RPC `epl-{verb}-{scope}-{feature}`）。
+
+## 輸出（bundle，放 `docs/specs/srs/<funcId>/`）
+| 檔 | 內容 | 餵閘門 |
+|---|---|---|
+| `spec.md` | SRS 主檔：endpoints + 業務規則 `Rn` + @PENDING + 硬界線 + as-is/to-be | ③ |
+| `openapi.yaml` | 真實 `epl-*` endpoint 的 request/response schema | ① |
+| `schema.sql` | 涉及 DB 表/欄位 DDL（型別/長度/PK/nullable） | ② |
+| `qa-cases.md` | 可跑驗收，每條 `covers: Rn`（含 @PENDING） | ④⑤ |
+
+## `spec.md` 結構（必含 — 吸收自通用 SRS 範本）
+1. **Metadata header**（表格）：`Status`（`Draft` / `In Review` / **`Approved (subset)`** / **`Approved`**）、`Owner`、`Slug`（＝funcId）、`版本`、`最後更新`、`上游 PRD`、`as-is 來源`。
+   - **`Approved (subset)`＝部分核准**（避免 binary 卡死）：**TBD-無關子集已定稿、可交 RD 動工**；含 `@PENDING` 的部分未定稿。**必附**：① 就緒子集（哪些 `Rn`／對應 as-is→to-be「可先修」）② blocked 子集（哪些 `Rn` + 待哪個 `@PENDING`/TBD）。`@PENDING` 全關 → 整份升 `Approved`。
+2. **概述 / Scope + Non-Goals**：本 SRS 規格化哪個 PRD 的哪些 REQ；**本期 / 非本期**（防 scope creep）。
+3. **Assumptions / Dependencies / Constraints**：成立前提、依賴服務/團隊、tech stack/法規限制。
+4. **Endpoints**：真實 `epl-*`（method / as-is / DTO）。
+5. **業務規則 `Rn`**：每條 `covers-prd:` + **強制點（FE / BE / FE+BE）** + 狀態（as-is ✅/⚠️/🔴 + to-be）。**完整性/安全的驗證 BE 必須有且為權威**（FE 同款＝UX，永不信前端）。
+6. **NFR**：量化（perf/可用性/安全/觀測/交易一致性）。
+7. **Trade-offs**（重大取捨）→ 連 `docs/adr/ADR-NNNN-<funcId>.md`。
+8. **@PENDING**（每個 TBD 一條 + owner）。
+9. **Traceability Matrix**：`PRD REQ → Rn → QA`（一張表，gate⑤ 顯性化）。
+10. **硬界線** + **as-is→to-be 摘要**（給 RD：可先修 vs 待 TBD）。
+
+## SRS 撰寫鐵則
+1. **rule-id 粒度**：一條業務規則 = 一個 `Rn`；複雜規則拆細。
+2. **雙向追溯**：每個 `Rn` 標 **`covers-prd:`**（上游對到 PRD 的 REQ-id / 章節）；QA case 標 `covers: Rn`（下游）。funcId 串 Bible→PRD→SRS→QA→code。
+3. **TBD → `@PENDING`**：PRD 未關的 TBD **不可自行裁定**；寫成 `R?-PENDING` 規則 + **owner** + 「待關 TBD-xxx」。**不把 legacy 行為當已核准需求**（守 PRD §13）。
+4. **理想化 REST → 真實 RPC**：PRD §6 的 `/api/...` 多為理想化（同 phase1 `/api/emp-proxy`）→ SRS endpoints 寫**實際 `epl-*`**；method 以 PRD 語意定（mutate=POST）。
+5. **as-is vs to-be**（頁已存在時）：SRS 標 to-be（PRD 要的），並列 as-is（現碼實況，引 verification findings + `file:line`），差異即 RD 待補。
+6. **不臆造**：`file:line`/欄位若未證 → 標「待 RD 核對」。
+7. **NFR/錯誤碼/DB 矩陣**：PRD 的非功能/錯誤碼/DB mapping → 落進 `Rn` + openapi/schema。
+8. **部分核准可先出貨**：TBD-無關子集可標 `Approved (subset)` 先交 RD（如 00800 D1–D5）；`@PENDING` 部分待裁定關閉後補做，**別讓整份卡在 Draft**。就緒/blocked 分界＝as-is→to-be 摘要的「可先修 vs 待 TBD」。
+
+## Brownfield 鐵則（70% 既有碼專屬 — 失敗教訓回填，見 `docs/spec-architecture.md §9`）
+- **動手前先唯讀盤點**：開做前先確認 ① 該頁**實際完成度**（防「未做其實已完成」/「已做誤判未做」）② mirror/算法的**正確來源**（防假設錯，如把換匯 stub 當 `funcGetRate` 計分）。
+- **as-is 驗證 ≠ 看有沒有 controller/service**：**結構在 ≠ 行為對等**；migrated 碼要對舊系統/PRD 行為比，引 `file:line`。**最低驗證深度**（防 throw-stub 漏網，如 `funcGetExchangeRate` 無條件 throw 整個 authorize 跑不到）：逐一追 ① 每個 DB 寫入有無 return/commit（半更新？）② 每個 stub/TODO/`throw …Unsupported` ③ 每條 error/分支 path ④ 跨頁副作用。
+- **regression vs 刻意演進的判準**：異於舊版 → **預設當 regression 上報**；要歸「刻意演進」**必須有依據**（在地化法規 / PRD 明載 / 已知需求，如 KHR fee rounding）；**無依據不准自判演進**（舊系統≠絕對正確、但新碼也≠忠實）。
+- **PRD 內帶的 legacy 也要 reconcile**：PRD 可能寫進現行 as-is 細節（具體 checkpoint key 名 / 現行 method / 欄寬）→ **不可原樣搬進 `openapi`/`schema` 契約**，要辨識並標 to-be 或 `@PENDING`（B1 教訓）。
+- **Oracle native query map-key**：未加引號 alias → JDBC 回傳 label **大寫**；schema/DTO 對映與 `Rn` 描述注意大小寫（M7 `LOANAMOUNT` 靜默 null）。
+
+## 步驟
+1. 讀 PRD，抽：endpoints、REQ 清單、規則、DB 表、錯誤碼、NFR、TBD、測試案例。
+2. （頁已存在）讀現碼/findings → 標 as-is。
+3. 產 `spec.md`：endpoints 表（epl-*）→ `Rn`（每條 `covers-prd:` + 證據/狀態）→ `@PENDING`（每 TBD）→ 硬界線 → as-is/to-be。
+4. 產 `qa-cases.md`：把 PRD 測試案例（Given/When/Then）轉成 case，每條 `covers: Rn`；TBD 相關標 `@PENDING`。**寫成 test-ready**（gate④ 橋接見 `docs/specs/qa-to-test.md`）：Given 明確到可 seed（表/列/欄值）、When 對得到 `epl-*`+method、Then 有機器可斷言的 **DB 驗證點**（表/欄/期望值，別只寫「正確」）。
+5. 產 `openapi.yaml` + `schema.sql`（從 PRD §6/§7；未定處標 RD-TBD）。
+6. 回填：bundle 連到 `feature-inventory.md` 該頁 + 列出仍未關的 TBD（給 PM/SA）。
+
+## DoD（`Status: Approved` 前必過）
+- [ ] 有明確 **Non-Goals / Scope**（防 scope creep）。
+- [ ] 每個 PRD `REQ` 都有 ≥1 個 `Rn` 對上（或明確標非本期）。
+- [ ] 每條 `Rn` 有可獨立驗證的 **acceptance**（Given/When/Then 或 checklist），且 ≥1 個 QA case `covers`。
+- [ ] 涵蓋 **happy / error / edge**。
+- [ ] 每條 `Rn` 標**強制點 FE / BE / FE+BE**；完整性/安全的驗證 **BE 有且權威**。
+- [ ] 每個 PRD `TBD` 都有一條 `@PENDING` + **owner + 是否 blocking**。
+- [ ] **Traceability Matrix** 完整（PRD REQ → Rn → QA），funcId 串到底。
+- [ ] endpoints 是真實 `epl-*`、method 符 PRD 語意（mutate=POST）；`openapi.yaml`/`schema.sql` 與 `Rn` 一致。
+- [ ] 頁已存在 → **as-is/to-be** 差異清楚。
+- [ ] 模糊詞已量化（NFR 可量測）。
+- [ ] **已用 `spec-reviewer`（Claude subagent / Codex `spec-reviewer.toml`）審過、無未解 Blocker**（＝**SRS 定稿 blocking gate**；圖上 ⑦ 是 code 階段的 advisory LLM review，兩者不同）。**採納 reviewer 修正後要再審一輪**——修正可能引入新錯（B1 修法曾引入 checkPointMap 副作用，靠複審才抓）。
+
+> 上游 Bible→PRD 可用官方 knowledge-work plugins（`/product-brainstorming`、`/write-spec`）；SRS 這步用本 skill（領域專屬）。

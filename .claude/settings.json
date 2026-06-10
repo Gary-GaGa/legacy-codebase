@@ -1,0 +1,33 @@
+{
+  "_comment": "spec-workspace 安全護欄（吸收自 path-a-scaffold）。只加 deny 危險指令 + secrets，不改既有 doc/commit/push 流程。Codex 等價＝.codex/config.toml，見 docs/env/codex/config-permissions.md。",
+  "permissions": {
+    "deny": [
+      "Bash(sudo *)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git reset --hard *)",
+      "Bash(curl * | sh)",
+      "Bash(curl * | bash)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/secrets/**)"
+    ]
+  },
+  "_comment_hooks": "Stop hook：session 結束自動跑 SRS 機械閘門 ①②⑤（scripts/check-srs-bundle.py），對等 Codex docs/env/codex/hooks.json。非阻斷（wrapper 恆 exit 0）：PASS 印一行、FAIL 用 systemMessage 顯示完整違反清單。",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import subprocess,json; r=subprocess.run(['python3','scripts/check-srs-bundle.py','--all'],capture_output=True,text=True); ok=r.returncode==0; print(json.dumps({'systemMessage': ('SRS 機械閘門 ①②⑤：PASS ✓（語意層另跑 spec-reviewer）' if ok else r.stdout+r.stderr)}))\"",
+            "timeout": 30,
+            "statusMessage": "SRS 機械閘門 ①②⑤"
+          }
+        ]
+      }
+    ]
+  }
+}
