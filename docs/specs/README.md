@@ -18,5 +18,6 @@ docs/specs/
 | ③ SRS（含 QA） | `srs/<funcId>/` | `/prd-to-srs`（Claude skill ∥ Codex prompt） | **機械 `check-srs-bundle.py` ①②⑤ + `spec-reviewer` 語意** | RD 任務單 `../build-tasks/` |
 
 - **追溯骨幹**：funcId 串 ①→②→③→QA→code；`Rn` 標 `covers-prd:`、QA 標 `covers: Rn`。
+- **QA → 可跑測試**（gate④ 橋接）：[`qa-to-test.md`](qa-to-test.md)——case 散文→測試的對映 + Testcontainers harness + test-ready 寫法。
 - **RD 階段不在此**：任務單在 [`../build-tasks/`](../build-tasks/)（live ↔ `done/`），產品碼在 repo 外。
 - **設計規格（UI/UX）不在此**：Adobe XD（repo 外），慣例見 `frontend/AGENTS.md §5` —— 行為進 SRS、長相留 XD。

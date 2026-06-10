@@ -133,4 +133,5 @@ funcId 串追溯、機械+語意雙層閘門驗證
 
 > 回填（2026-06-09）：#1/#2/#10/#11 進 `ai-workflow.mmd`；#3/#6/#10/#11 進 `prd-to-srs` skill「brownfield 鐵則」。
 > 二輪 flow 自審補強：#2 加 **regression 判準**、#8 強制點升 **spec.md 必填欄 + DoD**、#13 **「修正後必複審」**（spec-reviewer/CLAUDE/skill）、#14 **as-is 最低驗證深度清單**、#1 釐清 **SRS-blocking vs ⑦-advisory**。
-> 進行中（依序）：✅ #8 跨檔完整性 + 強制點欄檢查（`c470264`）；✅ #5 **partial-Approved**（`Approved (subset)`）；✅ #6 **`pending-register.md`**；✅ #10 **`legacy-to-bible` skill**（雙軌）；待做 #4 **QA→可跑測試自動化**。openapi 兩源 reconcile + #12 git 紀律 → 維持人控/待議。
+> 全數完成（依序）：✅ #8 跨檔完整性 + 強制點欄檢查（`c470264`）；✅ #5 **partial-Approved**（`Approved (subset)`）；✅ #6 **`pending-register.md`**；✅ #10 **`legacy-to-bible` skill**（雙軌）；✅ #4 **`specs/qa-to-test.md`**（QA→測試橋接約定 + skill test-ready 寫法 + gate④ 釐清）。
+> 仍待議（非本批、需更大決策）：openapi 兩源（SRS 草約 vs code snapshot）reconcile 何時收斂 contract-first；#12 落地紀律屬 git 層 → 維持人控。

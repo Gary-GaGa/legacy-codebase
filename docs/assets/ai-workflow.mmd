@@ -19,7 +19,7 @@ flowchart LR
     G1["① Contract · OpenAPI snapshot"]
     G2["② Schema · entity ↔ DB"]
     G3["③ verify-c0 · 結構 / 只新增 / UTF-8·BOM"]
-    G4["④ QA 驗收 · 跑 QA cases"]
+    G4["④ QA 驗收 · 跑 QA cases<br/>（Testcontainers oracle-xe；橋接 specs/qa-to-test.md）"]
     G5["⑤ 覆蓋率 · ID 對表"]
     G6["⑥ Build 綠"]
     G7["⑦ LLM 語意審查 · advisory（code 階段）<br/>※SRS 階段的 spec-reviewer＝blocking（見 SRSCHK）"]
