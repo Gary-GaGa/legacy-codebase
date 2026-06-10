@@ -12,7 +12,7 @@
 ## 已知 PRD（快照狀態）
 | docId | 版本 | funcId | 快照 | 備註 |
 |---|---|---|---|---|
-| `CDC-EPRO-0001` | v1.1（PM Review Draft） | `EPROZ00800` | ⬜ 待補 | TBD-001~007 未關；SRS 已產（`../srs/EPROZ00800/`，由對話中貼入的 PRD 轉出） |
+| `CDC-EPRO-0001` | v1.1（PM Review Draft） | `EPROZ00800` | ✅ [快照](PRD-CDC-EPRO-0001-v1.1-EPROZ00800.md) | TBD-001~007 未關；SRS 已產（`../srs/EPROZ00800/`）。⚠️ 由 code 反推，未承載 Bible 的案件類型 gating/0173 映射等業務邊界（見 `../../pending-register.md` §Bible→PRD seam）|
 
 ## 下游
 PRD → `/prd-to-srs`（Claude skill ∥ Codex prompt）→ `../srs/<funcId>/` boundary bundle。

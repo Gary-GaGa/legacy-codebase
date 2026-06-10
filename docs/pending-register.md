@@ -33,6 +33,20 @@
 | DB schema 凍結 | 初期是否凍結 | 架構 | `decisions.md §三` |
 | npm 預設 registry | 預設指 `npm-all` 是否採用 | 架構/ops | `decisions.md §三` |
 
+## 🧩 Bible→PRD seam（跨層邊界落差；`EPROZ00800` 定版前 reconcile）
+> **成因**：`CDC-EPRO-0001` 由 legacy code 反推（PRD §1.1），非由 Bible 下推 → 邊界是 code 形狀（ITEM/RI-MAT/checkpoint），Bible 的**旅程形狀**業務邊界（何時顯示/案件類型/下游頁）漏在 Bible→PRD 之間，未進 PRD REQ/TBD，故也未進 SRS。來源：`specs/bible/bible-eproposal.md`、`specs/prd/PRD-CDC-EPRO-0001-v1.1-EPROZ00800.md`、`specs/srs/EPROZ00800/spec.md`。
+>
+> 嚴重度：🟡 擋 `00800` 完整定版（機械閘門已綠、屬語意/上游缺口）。
+
+| ID | 待決（Bible 有、PRD/SRS 落空） | 卡住什麼 | owner | 開立 |
+|---|---|---|---|---|
+| **BP-1** | 案件類型 gating：EPROZ00800 **僅展期/展變顯示**（Bible BR-014、決策準則、**災難情境「不該顯示卻顯示」**、SC-002）→ PRD 無 REQ、SRS R1 無顯示條件 Rn/@PENDING | `00800` 顯示條件無 Rn/QA 承載（Bible 點名要測） | PM/SA | 06-10 |
+| **BP-2** | 兩 type 軸未對清：Bible「案件類型(新/展期/展變)」(SC-001) vs PRD/SRS「`LON_TYPE_CODE`(03/04)」——關係未定義、未標 @PENDING | `00800` 案件類型欄位來源；R5 語意基礎 | SA | 06-10 |
+| **BP-3** | 展期 vs 展變「不同案件類型、目前共用驗證」(BR-015/016、SC-005) → PRD/SRS 全未提、無 @PENDING | 是否該分流驗證；回歸測試範圍 | SA | 06-10 |
+| **BP-4** | 下游頁映射：Bible「影響 `EPROISU0150`、顯示於 `EPROISU0173`」(BR-017、SC-003/004) → SRS re-process 清單(0210~0290)不含 0150/0173；0173 既未覆蓋也未在 Non-Goals disclaim | `00800` 下游影響的命名級追溯 | SA/RD | 06-10 |
+| **BP-5** | 用詞消歧：PRD「共用頁籤」(跨 IS/IU/CS/CU 屬性) vs Bible「條件式頁籤」(跨案件類型)——PRD 未消歧、易誤讀為所有案件必走 | 文件一致性（🟢 nit） | PM | 06-10 |
+| **BP-7** | 結構：PRD REQ 無 `covers-bible:`、`check-srs-bundle.py` 不查 Bible↔PRD → **Bible→PRD 漂移無 gate**（BP-1~4 靜默發生的機制） | 上游追溯鏈無機械保護 | 流程/SA | 06-10 |
+
 ---
 > 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。
 > 用途：站會/交接看這張就知道「等誰、等什麼」；🔴 三項是目前**唯一擋住主線**的決策。
