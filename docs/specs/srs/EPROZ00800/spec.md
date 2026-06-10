@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 |---|---|
-| Status | **Approved (subset)** — TBD-無關子集 D1–D5 已定稿+實作（`88328f9`）；**blocked**：R13 側效（R13.1–13.7）+ checkpoint `_0260` 待 `@PENDING RP1`(TBD-006)/§5.6；正式 SA 簽核待 owner 指派。就緒/blocked 分界見文末 as-is→to-be 摘要 |
+| Status | **Approved (subset)** — TBD-無關子集 D1–D5 已定稿+實作（`88328f9`）；**blocked**：R13 側效（R13.1–13.7）+ checkpoint `_0260` 待 `@PENDING RP1`(TBD-006)/§5.6；正式 SA 簽核待 owner 指派；另有 **Bible→PRD seam（BP1–4）** 上游業務邊界待補（見文末 @PENDING / `pending-register.md`）。就緒/blocked 分界見文末 as-is→to-be 摘要 |
 | Owner | SA（待指派）|
 | Slug | `EPROZ00800`（＝funcId）|
 | 版本 | v0.3（round 2 複審：確認 B1–B3 已清 + 修 checkPointMap.required 語意 + QA-022 懸空標註）|
@@ -17,7 +17,8 @@
 
 ## Scope / Non-Goals
 - **本期**：Revised Item 初始查詢、選項顯示、必填檢核、儲存、關聯資料清除/還原、checkpoint/page-menu 更新。
-- **非本期**：ITEM1~14 code table 維護、非本頁的其他頁籤重構、報表內容重製。
+- **非本期**：ITEM1~14 code table 維護、非本頁的其他頁籤重構、報表內容重製；**`EPROISU0173` 顯示**（下游 consumer 頁、唯讀彙整 AO 主流程資料，非本頁職責，見 `BP4-PENDING`）。
+- **未承載（上游缺口）**：**顯示 gating**——Bible BR-014「EPROZ00800 僅適用展期/展變案件」未進 PRD，本 SRS 無顯示條件規則（見 `BP1-PENDING`）。
 
 ## Assumptions / Dependencies / Constraints
 - **Assumptions**：`TB_LON_SUMMARY_INFO` 有 `LON_TYPE_CODE`/`REF_APPLICATION_NO`/`LON_ATTRIBUTE`/`SECURE_ATTRIBUTE`；`REVISED_ITEM` code table 已建。
@@ -102,6 +103,15 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 | RP5-PENDING | TBD-007：ITEM13/14 是否有下游資料影響 | R13.7 | SA/RD |
 | RP6-PENDING | TBD-001：ITEM1~14 正式業務名稱（DB code table）| 畫面顯示 | SA |
 | RP7-PENDING | TBD-002：`Finshed` → `Finished` | UI 文字 | PM/UX/RD |
+
+### @PENDING（Bible→PRD seam；PRD 未承載的上游業務邊界）
+> 來源 Bible `../../bible/bible-eproposal.md`；PRD `CDC-EPRO-0001` 由 legacy code 反推、未帶下列**旅程級**邊界，故未進 PRD REQ/TBD、亦未進本 SRS。**本 SRS 標 pending、不自行裁定**。單一視圖見 [`pending-register.md`](../../../pending-register.md) §Bible→PRD seam。
+| id | 待決（Bible 有、PRD/SRS 落空）| 影響 | owner |
+|---|---|---|---|
+| **BP1-PENDING** | 案件類型 gating：EPROZ00800 **僅展期/展變顯示**（Bible BR-014 / 決策準則 / 災難情境「不該顯示卻顯示」/ SC-002）；本 SRS 無顯示條件規則 | 顯示條件（R1 開頁）| PM/SA |
+| **BP2-PENDING** | 案件類型(新/展期/展變) vs `LON_TYPE_CODE`(03/04) 兩 type 軸關係未定義（Bible SC-001）| R5 語意基礎 | SA |
+| **BP3-PENDING** | 展期 vs 展變「不同案件類型、目前共用驗證」（BR-015/16、SC-005）是否該分流 | 驗證/回歸範圍 | SA |
+| **BP4-PENDING** | 下游頁映射：影響 `EPROISU0150`、顯示於 `EPROISU0173`（BR-017、SC-003/004）；§5.6 re-process 清單(0210~0290)未含、0173 未 disclaim（已補 Non-Goals）| 下游命名級追溯 | SA/RD |
 
 ## Trade-offs（架構取捨）
 - **RI-MAT 側效保留 legacy vs 改使用者確認流程**：核心取捨，**待 TBD-006**；若改使用者確認流程，R13/R11 大改 → 寫成 ADR 後再定版。
