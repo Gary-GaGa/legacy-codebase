@@ -12,7 +12,7 @@ PRD（主來源）＋ Bible（若有）＋ 既有碼/verification findings（頁
 - `spec.md`（SRS 主檔）→ 閘門③｜`openapi.yaml`（真實 epl-* 契約）→ ①｜`schema.sql`（表/欄/約束）→ ②｜`qa-cases.md`（`covers: Rn`）→ ④⑤
 
 ## `spec.md` 必含
-Metadata（Status/Owner/Slug=funcId/版本/最後更新/上游PRD/as-is來源）→ Scope+Non-Goals → Assumptions/Dependencies/Constraints → Endpoints(epl-*) → 業務規則 `Rn`(每條 `covers-prd:` + **強制點 FE/BE/both** + as-is/to-be；完整性驗證 BE 權威) → NFR(量化) → Trade-offs(連 ADR) → `@PENDING`(每 TBD + owner) → Traceability Matrix(PRD REQ→Rn→QA) → 硬界線 + as-is→to-be 摘要。
+Metadata（Status[Draft/In Review/**Approved (subset)**/Approved；subset＝TBD-無關子集可先交 RD、附就緒+blocked Rn]/Owner/Slug=funcId/版本/最後更新/上游PRD/as-is來源）→ Scope+Non-Goals → Assumptions/Dependencies/Constraints → Endpoints(epl-*) → 業務規則 `Rn`(每條 `covers-prd:` + **強制點 FE/BE/both** + as-is/to-be；完整性驗證 BE 權威) → NFR(量化) → Trade-offs(連 ADR) → `@PENDING`(每 TBD + owner) → Traceability Matrix(PRD REQ→Rn→QA) → 硬界線 + as-is→to-be 摘要。
 
 ## 鐵則
 1 rule-id 粒度：一規則一 `Rn`。

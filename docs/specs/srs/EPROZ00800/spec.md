@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 |---|---|
-| Status | **Draft（blocked on RP1 / TBD-006）** |
+| Status | **Approved (subset)** — TBD-無關子集 D1–D5 已定稿+實作（`88328f9`）；**blocked**：R13 側效（R13.1–13.7）+ checkpoint `_0260` 待 `@PENDING RP1`(TBD-006)/§5.6；正式 SA 簽核待 owner 指派。就緒/blocked 分界見文末 as-is→to-be 摘要 |
 | Owner | SA（待指派）|
 | Slug | `EPROZ00800`（＝funcId）|
 | 版本 | v0.3（round 2 複審：確認 B1–B3 已清 + 修 checkPointMap.required 語意 + QA-022 懸空標註）|
