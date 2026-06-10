@@ -21,6 +21,7 @@
 | **TBD-007 / RP5** | ITEM13/14 是否有下游資料影響 | `00800` R13.7 | SA/RD | 06-08 | 同 |
 | **TBD-001 / RP6** | ITEM1~14 正式業務名稱（DB code table） | `00800` 畫面顯示 | SA | 06-08 | 同 |
 | **TBD-002 / RP7** | `Finshed`→`Finished` | `00800` UI 文字 | PM/UX/RD | 06-08 | 同 |
+| **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤` |
 | **c0 escalation E2** | `crScoreCardCompleted` 整欄覆寫 `"NN"`（`:2890`） | 同上 | 信用決策 domain | 06-05 | 同 |
 
