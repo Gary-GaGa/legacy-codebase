@@ -1,6 +1,6 @@
 # Boundary Bundle — 每頁「可驗證邊界」範本
 
-> 配 [`../../vision-pipeline.md`](../../vision-pipeline.md) §4–5。**一個 story/page = 一束 artifacts**，全靠同一個
+> 配 [`../../vision-pipeline.md`](../../process/vision-pipeline.md) §4–5。**一個 story/page = 一束 artifacts**，全靠同一個
 > ID（funcId，如 `EPROZ00800`）串起來，讓 RD agent 能**機器證明**自己通過 SA/QA 邊界。
 > Worked example：[`EPROZ00800/`](EPROZ00800/)（Revised Item，**PRD 來源**，由 `prd-to-srs` skill 從 `CDC-EPRO-0001` 產出）。
 >

@@ -69,7 +69,7 @@
 ## 4. Phase 1 垂直切片（✅ 已選：`EPROZ0_0700` 員工代理設定）
 目標：用**一條最單純的「查詢 → API → DB → Auth」**打通整套（不碰多頁籤/報表/上傳），驗證架構與離線環境。
 - 選定頁：**`EPROZ0_0700` / Assign Substitute**——單一主寫入表 `OVSLXLON01.TB_EMP_PROXY`，僅查 `TB_EMP_PROFILE`/`TB_BRANCH_PROFILE`，無 Jasper/上傳/主流程連動（D2 比較 0200/0500/0700/0800 後選定）。
-- **D2 完成** → 詳細施工單見 **[`phase1-eproz0_0700-spec.md`](archive/phase1-eproz0_0700-spec.md)**（API 合約 / DTO / Oracle entity+SQL / Angular feature 骨架 / 驗證 / 開放項）。
+- **D2 完成** → 詳細施工單見 **[`phase1-eproz0_0700-spec.md`](../archive/phase1-eproz0_0700-spec.md)**（API 合約 / DTO / Oracle entity+SQL / Angular feature 骨架 / 驗證 / 開放項）。
 
 ## 5. 下一步
 - [x] **R1（DB 目標）= DB2→Oracle 遷移**、**R2（報表）= 換新報表服務（獨立 track）**

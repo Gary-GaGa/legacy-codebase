@@ -34,7 +34,7 @@
 -（若用語意閘門）`docs/archive/review-c0-prompt.md`、`.codex/agents/reviewer-c0.toml`
 
 ## 📐 驗收邊界（boundary bundle）
-本頁可驗證邊界範本見 [`../golden-template/boundary-bundle/EPROC00118/`](../../golden-template/boundary-bundle/README.md)：
+本頁可驗證邊界範本見 [`../golden-template/boundary-bundle/EPROC00118/`](../../specs/srs/README.md)：
 - `spec.md`（規則 R1–R8）/ `openapi.yaml`（契約·閘門1·TODO 對 i0 DTO 填實）/ `schema.sql`（閘門2）/ `qa-cases.md`（QA1–QA10，含 R8 `@PENDING` = CU-return）。
 - 落地方式見該資料夾 `README.md` + `docs/vision-pipeline.md`。
 

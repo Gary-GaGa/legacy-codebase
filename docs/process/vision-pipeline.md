@@ -2,9 +2,9 @@
 
 > 把白板雛形正式化。**這是「補完 30%」之上的下一步**：從現在的「RD agent 自走補完」往上長成
 > `Bible → PRD → SRS → QA → RD-Agent` 一條**往上可追溯、往下可驗證**的鏈。
-> 本檔定**模型與原則**；第一個 worked example = [`specs/srs/EPROZ00800/`](specs/srs/EPROZ00800/)（規格分層 bible→prd→srs 見 [`specs/README.md`](specs/README.md)）。
+> 本檔定**模型與原則**；第一個 worked example = [`specs/srs/EPROZ00800/`](../specs/srs/EPROZ00800/)（規格分層 bible→prd→srs 見 [`specs/README.md`](../specs/README.md)）。
 >
-> 🖼 **一圖總覽（來源）**：[`assets/ai-workflow.mmd`](assets/ai-workflow.mmd)（GitHub / Mermaid 直接 render；**＝AI Flow 權威來源**）。[`assets/ai-workflow.svg`](assets/ai-workflow.svg) 為快取 render，**2026-06-09 .mmd 加 brownfield 機制後未重出 → 以 .mmd 為準、需要時重 render**。
+> 🖼 **一圖總覽（來源）**：[`assets/ai-workflow.mmd`](../assets/ai-workflow.mmd)（GitHub / Mermaid 直接 render；**＝AI Flow 權威來源**）。[`assets/ai-workflow.svg`](../assets/ai-workflow.svg) 為快取 render，**2026-06-09 .mmd 加 brownfield 機制後未重出 → 以 .mmd 為準、需要時重 render**。
 
 ## 1. 終極目標
 - 從 legacy 系統**反推出 Bible**：真實世界的 user story、業務**北極星**、**黃金旅程** → 讓團隊**不分角色一致理解業務**（這是「前傳」，講清楚原系統為何長這樣）。
@@ -68,7 +68,7 @@ EPROC00118/
 
 ## 8. 漸進落地（別一次到位）
 > 具體 plumbing 做法（含真正的前置摩擦：壞 baseline 測試 / Oracle native SQL / JWT / Nexus image）見
-> [`build-tasks/done/B-boundary-gate-plumbing.md`](build-tasks/done/B-boundary-gate-plumbing.md)。
+> [`build-tasks/done/B-boundary-gate-plumbing.md`](../build-tasks/done/B-boundary-gate-plumbing.md)。
 1. **先接閘門 1**：springdoc 生 OpenAPI + snapshot test（配既有 controller）。
 2. **再補閘門 4/5**：挑一頁把 `待整合驗證清單` 改寫成可跑 QA case + ID 覆蓋對表。
 3. **一頁 end-to-end 跑通**（建議 `EPROC00118`，邊界包範本已備）→ 再放大到其它頁。

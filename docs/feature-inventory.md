@@ -1,7 +1,7 @@
 # 舊→新 功能總盤點（Feature Inventory）— 70% + 30% 全量
 
 > **用途**：把舊 EPRO 系統（~250 JSP / 9 模組）轉新系統（前端 Angular + 後端 Spring Boot）的**每一項功能**、前後端狀態、剩餘事項、橫向 track、建議排程，收斂成一張可排程追蹤的主表。
-> **來源**：`page-mapping.md`（舊→新對應）、`completion-ledger.md`（總盤點 SSOT）、`verification-handoff.md`（驗證待辦）、`disbursement-triage.md` + `disbursement-domain-escalations.md`（撥貸）、`migration-backlog.md`（模組地圖/橫向 R1–R8）、`module-{is-iu,cs-cu,i0-c0}-*.md`（頁內結構）。
+> **來源**（2026-06-10 已分資料夾）：`legacy/page-mapping.md`（舊→新對應）、`process/completion-ledger.md`（總盤點）、`verification/verification-handoff.md`（驗證待辦）、`disbursement/`（撥貸 triage+escalations）、`legacy/migration-backlog.md`（模組地圖/R1–R8）、`legacy/module-*.md`（頁內結構）。
 > ⚠️ 原始碼不外流；本 repo 只放對應/規格。前後端實作在各自專案。
 
 ## 0. 怎麼讀
@@ -136,7 +136,7 @@
 | 🔴 B-1 `T24_COMPANY` 值來源 | 未決 | B8/C9 讀已移除欄、無替代 |
 | 🔴 其餘 domain | 未決 | 換匯源 ID、檢核嚴格度、KHR、欄寬、async 架構、精度… |
 | 整合測確認點 | 待驗 | M7 facility fee 值、M9 district name join |
-> **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement-domain-escalations.md)。** ⚠️ 機械修正全 inert——A-1 未通,撥貸跑不起來。
+> **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ⚠️ 機械修正全 inert——A-1 未通,撥貸跑不起來。
 
 ---
 

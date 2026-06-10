@@ -39,6 +39,6 @@
 - 安全做法：**預設序列**；要並行只挑**真正獨立**的（如後端 `00117` 與前端 `CSU0130` 可平行，因不同專案/不同檔）。
 
 ## 5. 完成定義（整個 30%）
-- **30% 進度（2026-06-05 更正；2026-06-06 再修）**：c0 評分 `00115–00120` **後端** ✅；前端（主流程/i0/契約/z0/`CSU0130`）✅，**但 c0 評分前端整組缺、Phase F 補建中**（見 `feature-inventory.md` §2D）。⚠️ **撥貸 `0921/0922` 端點在、但核心未完成**——舊系統比對（Step A/A2/B）發現 `0922 authorize` 換匯 `funcGetExchangeRate` 是 throw-stub（執行核心未跑過）+ `0921` 7P/15F/5U + `0922-main` 真 bug。**先前「撥貸結構到位」更正為「需實作 + 修正」**，詳 [`verification-handoff.md`](verification-handoff.md) §2.1/§2.2，撥貸整體 triage 進行中。其餘殘留＝整合測試（真資料/授權列）+ 2 條 CreditEval escalation。
+- **30% 進度（2026-06-05 更正；2026-06-06 再修）**：c0 評分 `00115–00120` **後端** ✅；前端（主流程/i0/契約/z0/`CSU0130`）✅，**但 c0 評分前端整組缺、Phase F 補建中**（見 `feature-inventory.md` §2D）。⚠️ **撥貸 `0921/0922` 端點在、但核心未完成**——舊系統比對（Step A/A2/B）發現 `0922 authorize` 換匯 `funcGetExchangeRate` 是 throw-stub（執行核心未跑過）+ `0921` 7P/15F/5U + `0922-main` 真 bug。**先前「撥貸結構到位」更正為「需實作 + 修正」**，詳 [`verification-handoff.md`](../verification/verification-handoff.md) §2.1/§2.2，撥貸整體 triage 進行中。其餘殘留＝整合測試（真資料/授權列）+ 2 條 CreditEval escalation。
 - `page-mapping.md` §2 backlog 全部 ✅；待整合驗證清單交付給 dev/uat 整合測試（含 `TB_API_AUTH` 授權列、export 模板、CR/報表呈現）。
 - **整合驗證**（真資料、授權列、模板）為**獨立後續階段**，非 build 階段；本 runbook 只負責「程式補完 + build 綠 + 形式驗證」。

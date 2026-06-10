@@ -85,7 +85,7 @@
 > **✅ 大段 PASS**：A1-14/17-30/32-51、B1-7、C 多段、D1-7、E1-13、G 多段；E21 KHR rounding 未誤用 DOWN。
 > **🟡 金額精度**：多為直接字串輸出、無 `setScale`；新 `NUMBER(17,2)` vs 舊 UNKNOWN → 需 DDL/DBA。
 >
-> **→ 全撥貸（0921+0922-main+0922-t24）綜合裁決見 [`disbursement-triage.md`](disbursement-triage.md)**（P0 blockers / P1 bug / P2 domain 裁示 / P3 UNSURE + 工作量 + 建議路徑）。
+> **→ 全撥貸（0921+0922-main+0922-t24）綜合裁決見 [`disbursement-triage.md`](../disbursement/disbursement-triage.md)**（P0 blockers / P1 bug / P2 domain 裁示 / P3 UNSURE + 工作量 + 建議路徑）。
 
 ## 3. 🟡 授權列（owner：DB / ops）— 新 c0 endpoint 的 `TB_API_AUTH` / `TB_ROLE_TASK`
 > `00117` 為既有模組（授權列應已有）；其餘新建 c0 頁的新 `epl-*-c0-*` endpoint 需建授權列。
