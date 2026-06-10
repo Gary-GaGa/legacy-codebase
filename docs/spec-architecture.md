@@ -81,7 +81,7 @@ flowchart LR
 
 - **追溯鏈（縱）**：`funcId` → PRD `REQ-nnn` →（`covers-prd`）→ SRS `Rn` →（`covers`）→ QA case → code/test。↑可追溯、↓可驗證。
 - **驗證鏈（DoD）**：
-  - **機械層**（deterministic，`scripts/check-srs-bundle.py`）：①openapi parse/$ref/required、②schema 型別長度交叉、⑤Rn↔QA covers/懸空引用。
+  - **機械層**（deterministic，`scripts/check-srs-bundle.py`）：①openapi parse/$ref/required、②schema 型別長度交叉、⑤Rn↔QA covers/懸空引用、**跨檔完整性**（endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi、強制點欄）。
   - **語意層**：`spec-reviewer`（唯讀、不改檔）審完整性/一致性/可測性/把 legacy 當需求等。
   - **鏡像層**（c0）：`verify-c0` 形式硬閘門。
   - **設計層**：人審 / 視覺回歸（非機械）。
@@ -123,7 +123,7 @@ funcId 串追溯、機械+語意雙層閘門驗證
 | 5 | **CJK UTF-8/BOM 壞**（00116 400+ 字串） | build-tasks | verify-c0 BOM/strict-UTF-8 | — |
 | 6 | **Oracle map-key 大寫靜默 null**（M7 `LOANAMOUNT`） | decisions | sweep② prompt；本次 skill 列入 brownfield 抽查 | ⚠️ 非 gate，新碼仍可能再犯 |
 | 7 | **review 放行把「既有碼行為」當新契約**（00118 gate-b FAIL5） | decisions | spec-reviewer 維度3；CLAUDE §6 審者不改 | — |
-| 8 | **FE/BE split-brain**（D5 maxlength 4000/未驗、init-query POST/GET） | spec-architecture | **強制點 FE/BE**（本次升為 spec.md 必填欄 + DoD）、契約單一真相、sweep① | gate 尚未檢查強制點欄（候選 #8 擴 gate） |
+| 8 | **FE/BE split-brain**（D5 maxlength 4000/未驗、init-query POST/GET） | spec-architecture | **強制點 FE/BE**（spec.md 必填欄 + DoD + **gate 已檢查**，#8 完成）、契約單一真相、sweep① | — |
 | 13 | **修正可能引入新錯**（B1 修法引入 checkPointMap 副作用、複審才抓） | commit log | spec-reviewer/CLAUDE/skill **「採納修正後必複審」**（本次補） | — |
 | 14 | **throw-stub 行為驗證漏網**（funcGetExchangeRate 無條件 throw、首驗沒抓） | decisions | skill **as-is 最低驗證深度清單**（DB寫入/stub/error分支/副作用，本次補） | — |
 | 9 | **矩陣 prose 騙過 LLM、機械才抓到**（R15/R16 covers 漂移） | commit log | **gate⑤ check-srs-bundle**、CLAUDE §4 兩層驗證 | — |

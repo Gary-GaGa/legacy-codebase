@@ -6,7 +6,8 @@
 Rn 沒有任何 QA covers、Traceability Matrix 引用了不存在的 QA）。
 
 **分工**（重要）：
-  - 本腳本＝**機械閘門**：只攔「可程式判定」的形式錯（gate ①openapi ②schema ⑤covers）。
+  - 本腳本＝**機械閘門**：只攔「可程式判定」的形式錯（gate ①openapi ②schema ⑤covers
+    + 跨檔完整性：endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi、強制點欄）。
   - **語意正確性**（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、NFR 量化）
     仍由 `.claude/agents/spec-reviewer.md`（人/LLM 判斷）審。兩層互補、不重疊。
 
@@ -284,6 +285,56 @@ def gate5_traceability(bundle):
     return fails, warns, infos
 
 
+# ---------- 跨檔完整性（endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi）----------
+CODE_RE = re.compile(r"\b(?:COMMON_MSG|MSG)_[A-Z0-9_]+")
+TABLE_RE = re.compile(r"\bTB_[A-Z0-9_]+")
+
+
+def gatex_crossfile(bundle):
+    """跨檔完整性——抓「一檔有、另一檔漏」的對齊缺口（機械層）。"""
+    fails, warns = [], []
+    sp = os.path.join(bundle, "spec.md")
+    op = os.path.join(bundle, "openapi.yaml")
+    sq = os.path.join(bundle, "schema.sql")
+    if not os.path.isfile(sp):
+        return ["缺 spec.md（跨檔檢查無法做）"], []
+    spec = read(sp)
+    op_text = read(op) if os.path.isfile(op) else ""
+
+    # 1) endpoint ↔ openapi paths：openapi 的 epl-* 路徑都要在 spec.md 提到（契約要有規則對應）
+    opaths = set()
+    try:
+        import yaml
+        odoc = yaml.safe_load(op_text) if op_text else {}
+        if isinstance(odoc, dict):
+            opaths = {str(p).lstrip("/") for p in (odoc.get("paths") or {})}
+    except Exception:  # noqa: BLE001
+        opaths = set()
+    spec_epl = set(re.findall(r"epl-[a-z0-9-]+", spec))
+    for p in sorted(opaths):
+        if p.startswith("epl-") and p not in spec_epl:
+            fails.append(f"openapi 有 endpoint `{p}`，但 spec.md 全文未提（契約無對應規則？）")
+    for e in sorted(spec_epl - opaths):
+        warns.append(f"spec.md 提到 `{e}`，但 openapi 無此 path（as-is/prose？確認是否該入契約）")
+
+    # 2) spec 的 TB_ 表 ↔ schema.sql（CREATE 或註解都算「列了」）
+    if os.path.isfile(sq):
+        sql_tables = set(TABLE_RE.findall(read(sq)))
+        for t in sorted(set(TABLE_RE.findall(spec)) - sql_tables):
+            fails.append(f"spec.md 提到表 `{t}`，但 schema.sql 未列（CREATE 或註解皆無 → 補 DDL/註解）")
+
+    # 3) 錯誤碼 ↔ openapi responses（advisory：prompt-stage 或待 RD response mapping 可接受）
+    for c in sorted(set(CODE_RE.findall(spec)) - set(CODE_RE.findall(op_text))):
+        warns.append(f"錯誤碼 `{c}` 在 spec.md 但 openapi 未現（prompt-stage？或待 RD 補 response mapping）")
+
+    # 4) 強制點欄：每條 `### Rn` 頂規則應標 強制點（FE/BE/both）。warn 級（DoD/reviewer 另把關）
+    for ln in spec.splitlines():
+        m = re.match(r"^###\s+(R\d+)\b", ln)
+        if m and "強制點" not in ln:
+            warns.append(f"規則 `{m.group(1)}` 未標**強制點**（FE/BE/both）——#7：完整性驗證 BE 權威")
+    return fails, warns
+
+
 # ---------- runner -----------------------------------------------------------
 def check_bundle(bundle):
     funcid = os.path.basename(bundle.rstrip("/"))
@@ -292,10 +343,12 @@ def check_bundle(bundle):
     g1f, g1w = gate1_openapi(bundle)
     g2f, g2w = gate2_schema(bundle)
     g5f, g5w, g5i = gate5_traceability(bundle)
+    gxf, gxw = gatex_crossfile(bundle)
     sections = [
         ("gate①openapi", g1f, g1w, []),
         ("gate②schema ", g2f, g2w, []),
         ("gate⑤covers ", g5f, g5w, g5i),
+        ("xfile 完整性 ", gxf, gxw, []),
     ]
     for name, fails, warns, infos in sections:
         status = "FAIL" if fails else "PASS"
@@ -333,7 +386,7 @@ def main(argv):
     total = sum(check_bundle(b) for b in bundles)
     print()
     if total:
-        print(f"check-srs-bundle: FAIL — {total} 項硬違反（gate①②⑤）。語意審查另跑 spec-reviewer。")
+        print(f"check-srs-bundle: FAIL — {total} 項硬違反（gate①②⑤ + 跨檔）。語意審查另跑 spec-reviewer。")
         return 1
     print(f"check-srs-bundle: PASS — {len(bundles)} bundle，無機械違反。（語意正確性仍需 spec-reviewer）")
     return 0

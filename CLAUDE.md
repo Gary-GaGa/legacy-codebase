@@ -35,7 +35,7 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 ## 4. 品質門檻（`Status: Approved` 前必過）— DoD
 見 `prd-to-srs` skill §DoD。核心：Non-Goals 有；每個 PRD `REQ`≥1 `Rn`；每 `Rn` 有 acceptance + ≥1 QA `covers` + **強制點 FE/BE/both**；happy/error/edge；每個 `TBD` 一條 `@PENDING`+owner+blocking；Traceability Matrix 完整；endpoints 真實 `epl-*`；頁已存在則 as-is/to-be 清楚；模糊詞量化；**`spec-reviewer` 過、無 Blocker**。
 > **blocking vs advisory**：SRS 定稿的 `spec-reviewer`＝**blocking**（無 Blocker 才 Approved）；ai-workflow 圖上 ⑦ LLM review＝code 階段 **advisory**。兩者別混。**採納 reviewer 修正後要再審一輪**（修正可能引入新錯）。
-> **兩層驗證**：①機械層 `python scripts/check-srs-bundle.py <bundle>`（gate ①openapi parse/$ref/required、②schema 型別長度交叉比對、⑤Rn↔QA covers/懸空引用）必須 exit 0；②語意層 `spec-reviewer` 無 Blocker。先跑機械、再跑語意——機械綠了 reviewer 才不會浪費在形式錯上。
+> **兩層驗證**：①機械層 `python scripts/check-srs-bundle.py <bundle>`（gate ①openapi parse/$ref/required、②schema 型別長度交叉、⑤Rn↔QA covers/懸空引用、**跨檔完整性** endpoint↔openapi/spec表↔schema/錯誤碼↔openapi/強制點欄）必須 exit 0；②語意層 `spec-reviewer` 無 Blocker。先跑機械、再跑語意——機械綠了 reviewer 才不會浪費在形式錯上。
 
 ## 5. 語言 / 格式
 繁中（台灣）+ 英文技術術語；識別字/表名/endpoint/config key 一律英文。模糊詞量化（`p95<200ms`、`maxlength 3000`）。

@@ -37,43 +37,43 @@
 ## 業務規則（Rn）
 > 狀態：✅ as-is 符合 ／ ⚠️ as-is 出入 ／ 🔴 as-is 缺/風險 ／ 標 to-be＝PRD 要求。
 
-### R1 — 開頁取屬性　`covers-prd: REQ-001`
+### R1 — 開頁取屬性　`covers-prd: REQ-001`　**強制點：FE+BE**
 prompt 取 `attrMap`（`applicationNo`、`isEdit`、CU 判定）+ `lonTypeCode`；初始化失敗回 `MSG_INITIAL_FAIL`。
 
-### R2 — init-query 選項與既有資料　`covers-prd: REQ-002`
+### R2 — init-query 選項與既有資料　`covers-prd: REQ-002`　**強制點：FE+BE**
 查 `REVISED_ITEM` code table（`getCommonFieldOptions("EPRO",locale,"REVISED_ITEM")` ← `TB_COMMON_FIELD_OPTIONS`）→ `revisedType`+`revisedTypeSize`；查 `TB_LON_SUMMARY_INFO` → `LON_TYPE_CODE`；查 `TB_REVISED_ITEM` → `ITEM1~14`+`REASON_MEMO`（無則 blank）。**as-is ✅**（left join、null→""）。
 
-### R3 — 至少勾 1 項　`covers-prd: REQ-003`
+### R3 — 至少勾 1 項　`covers-prd: REQ-003`　**強制點：FE**
 未勾任一 → 前端阻擋送出。**as-is ✅**。
 
-### R4 — REASON_MEMO 必填 / maxlength **3000** / trim　`covers-prd: REQ-003`
+### R4 — REASON_MEMO 必填 / maxlength **3000** / trim　`covers-prd: REQ-003`　**強制點：FE+BE**
 必填、上限 **3000**、需 trim；BE 亦應驗。**as-is ⚠️**：maxlength=**4000**、未 trim、BE DTO 未驗 → RD 修。
 
-### R5 — ITEM1 受 `LON_TYPE_CODE=03` 強制　`covers-prd: REQ-003`（業務原因 → `@PENDING RP2`）
+### R5 — ITEM1 受 `LON_TYPE_CODE=03` 強制　`covers-prd: REQ-003`（業務原因 → `@PENDING RP2`）　**強制點：FE**
 `=03` → ITEM1 強制勾且**不可編輯**；`≠03` → 強制不勾且不可編輯。**as-is ⚠️**：會強制勾回但欄位未 disabled；非 03 且 DB ITEM1=Y 仍可編輯 → RD 修。
 
-### R6 — ITEM3 受 `isCU` 強制　`covers-prd: REQ-003`
+### R6 — ITEM3 受 `isCU` 強制　`covers-prd: REQ-003`　**強制點：FE**
 `isCU=true` → ITEM3 強制不勾且不可編輯。**as-is ⚠️**：用 `secureAttribute==='U'` 而非 `attrMap.isCU` → 確認等價。
 
-### R7 — `isEdit=false` 全唯讀 + 隱藏完成鈕　`covers-prd: REQ-003`
+### R7 — `isEdit=false` 全唯讀 + 隱藏完成鈕　`covers-prd: REQ-003`　**強制點：FE**
 **as-is ⚠️**：靠 auth `canEditList`/`isShowList` 達成、非直接綁 `isEdit` → 確認等效。
 
-### R8 — 變更提示　`covers-prd: §2.3 / §3.1-6`
+### R8 — 變更提示　`covers-prd: §2.3 / §3.1-6`　**強制點：FE**
 checkbox 與既有不同 → 送出前提示「移除 Revised Item 會清除相關修改」。**as-is ✅**。
 
-### R9 — blank/N/Y 正規化　`covers-prd: §5.3.2`
+### R9 — blank/N/Y 正規化　`covers-prd: §5.3.2`　**強制點：FE+BE**
 init-query 允許 blank；execute request / DB **只允許 Y/N**；FE 送出前 blank→N；BE 不得存 blank。**as-is**：FE ✅；**BE 🔴**（`InsertRevisedItemRequest` 無 `@Pattern`，可存非 Y/N）→ RD 修。
 
-### R10 — execute = POST + **單一 transaction**　`covers-prd: REQ-004 / §9`
+### R10 — execute = POST + **單一 transaction**　`covers-prd: REQ-004 / §9`　**強制點：BE**
 execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一 `@Transactional`**，任一失敗整批 rollback。**as-is 🔴🔴**：BE GET；**無外層 `@Transactional`** → 多表刪/還原可**半更新＝資料遺失風險**（最高優先）。
 
-### R11 — execute 後端二次比對為準　`covers-prd: §5.4.1`
+### R11 — execute 後端二次比對為準　`covers-prd: §5.4.1`　**強制點：BE**
 重查 DB 既有 `ITEM1~14`、與 request 正規化結果比對，作為觸發側效之**唯一依據**；`isNotSame` 僅前端提示輔助、**不得作判斷依據**；查無既有 → 全部視為 N。**as-is ⚠️**：有重查，但側效仍被 `request.getIsNotSame()` gate；僅 ITEM2 特判 null → RD 修。
 
-### R12 — 刪+insert TB_REVISED_ITEM　`covers-prd: §5.4-6/7`
+### R12 — 刪+insert TB_REVISED_ITEM　`covers-prd: §5.4-6/7`　**強制點：BE**
 刪目前 `APPLICATION_NO` 的 `TB_REVISED_ITEM` → insert `ITEM1~14`+`REASON_MEMO`+`UPD_DATE`。**as-is ✅**。
 
-### R13 — 關聯資料清除/還原矩陣 RI-MAT　`covers-prd: REQ-005 / §5.5`　**⚠️ 受 `@PENDING RP1`（TBD-006）控制**
+### R13 — 關聯資料清除/還原矩陣 RI-MAT　`covers-prd: REQ-005 / §5.5`　**⚠️ 受 `@PENDING RP1`（TBD-006）控制**　**強制點：BE**
 > 下列為 source-confirmed 行為；**「是否保留」待 TBD-006**。各條附 as-is。
 - **R13.1 RI-MAT-001**（ITEM2 Y→N）：刪 `GUARANTOR_INFO`/`_CORP`，由 `REF_APPLICATION_NO` 複製還原 + 還原 `IS_ANY_GUARANTOR`。as-is ⚠️：取 `baseInfo.refApplicationNo/lonTypeCode` 傳**空值**（還原失效）。
 - **R13.2 RI-MAT-002**（ITEM2 N→Y，reference 無 guarantor）：borrower `IS_ANY_GUARANTOR=Y`。as-is ⚠️：缺「reference 無 guarantor」判斷。
@@ -83,13 +83,13 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 - **R13.6 RI-MAT-006**（`LON_TYPE=04` 且 ITEM12 N→Y）：刪 `LOAN_CONDITION_FEE`（業務原因 → `@PENDING RP3`）。**as-is ✅**。
 - **R13.7 RI-MAT-007**（ITEM13/14）：→ `@PENDING RP5`（TBD-007）。as-is：只持久化、未做側效（保守、可接受）。
 
-### R14 — Checkpoint / Page Menu 更新　`covers-prd: REQ-006 / §5.6`
+### R14 — Checkpoint / Page Menu 更新　`covers-prd: REQ-006 / §5.6`　**強制點：FE+BE**
 依 `IS/IU/CS/CU` 寫對 checkpoint 表（`TB_CHECK_POINT_RC` / `_IU` / `_CORP` / `_CU`）、標 `EPRO{IS/IU/CS/CU}_0260`；execute 回傳 `pageMenuCondition`（§5.6 重處理頁清單，如 IS：0210/0220/0230/0250/0290）。**as-is 🔴**：標 `EPROZ00800`/`0160`/`0110~0150`（非 `_0260`）；`pageMenuCondition` **未回傳** → RD 修。
 
-### R15 — 錯誤處理　`covers-prd: REQ-007 / §6.4 / §8`
+### R15 — 錯誤處理　`covers-prd: REQ-007 / §6.4 / §8`　**強制點：FE+BE**
 `MSG_INITIAL_FAIL`(prompt)、`COMMON_MSG_ERROR_LON`/`MSG_DATA_NOT_FOUND`(init/execute)、`COMMON_MSG_SAVE_FAIL`(execute rollback)、`COMMON_MSG_SAVE_SUCCESS`。**as-is ⚠️**：無 RevisedItem 專屬 mapping。
 
-### R16 — 非功能　`covers-prd: §9`
+### R16 — 非功能　`covers-prd: §9`　**強制點：BE**
 單一 transaction（→R10）；init-query≤3s / execute≤5s（大量複製另測）；log 含 requestId/applicationNo/userId/action/result/耗時、敏感遮罩；execute 留 audit；維持 IS/IU/CS/CU 四態 checkpoint。
 
 ## 🚩 @PENDING（PRD TBD → 規則，須 owner 關閉才實作）
