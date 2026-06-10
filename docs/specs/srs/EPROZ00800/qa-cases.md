@@ -24,15 +24,16 @@
 | ID | covers | Given / When / Then | 驗證點 |
 |---|---|---|---|
 | QA-013 | R10 | execute endpoint / 呼叫 / **為 POST**（非 GET）| `epl-case-insert-reviseditem` method=POST |
-| QA-014 | R9 | execute body item 帶非 Y/N（如空字串/"X")/ 送出 / BE 拒絕或正規化、DB 不存非 Y/N | `TB_REVISED_ITEM.ITEMn ∈ {Y,N}` |
+| QA-014 | R9 | execute body item 帶**非法 enum 值**（如 `"X"`）/ 送出 / **BE 拒絕**（400/`COMMON_MSG_ERROR_LON`，與 openapi `ItemFlag` enum=[Y,N] 一致）、DB 不寫入 | `TB_REVISED_ITEM.ITEMn ∈ {Y,N}`、無新 insert。註：blank→N 正規化責任在 **FE**（PRD §5.3.2）；**blank 殘留至 BE 之處置（拒 400 vs 視同 N）PRD 未明定 → RD 定**，不在本 case 範圍、不裁定 |
 | QA-015 | R11 | request `isNotSame=false` 但 DB 既有與新值不同 / execute / **後端仍依 DB 比對觸發側效**（不被 isNotSame 擋）| 側效依 DB 差異發生 |
 | QA-016 | R14 | execute 成功 / response / 含 `pageMenuCondition`（重處理頁 key=Y）| response DTO 有 pageMenuCondition |
 | QA-017 | R4 | REASON 輸入 3001 字 / 送出 / 阻擋（上限 3000）；前後空白 trim | DB REASON ≤3000、已 trim |
-| QA-018 | R1 | 模擬 attrMap 取得失敗 / 開頁 prompt / 回 `MSG_INITIAL_FAIL`、停止載入 | — |
-| QA-019 | R7 | `attrMap.isEdit=false` / 進頁 / 所有欄位唯讀 + 隱藏完成鈕 | — |
+| QA-018 | R1 | 模擬 attrMap 取得失敗 / 開頁 prompt / 停止載入 + 顯示初始化失敗訊息 | FE 可觀察行為（prompt 非 `epl-*` RPC、無 openapi 契約點；`MSG_INITIAL_FAIL` 落點待 RD 於 routing 層定，見 spec Endpoints 註）|
+| QA-019 | R7 | `attrMap.isEdit=false` / 進頁 / 所有欄位唯讀 + 隱藏完成鈕 | —（僅 to-be 表象；as-is 判據等效性見 QA-023/RP8）|
 | QA-020 | R8 | checkbox 與既有不同 / 按儲存 / 送出前顯示「移除會清除相關修改」提示，確認後才送 | — |
 | QA-021 | R12 | 案件已有 REVISED_ITEM / execute / 舊筆被刪、新 ITEM1~14+REASON+UPD_DATE 正確 insert | `TB_REVISED_ITEM` 僅 1 筆且值正確 |
+| QA-023 `@PENDING RP8` | R6,R7 | （placeholder，RD 確認等價性後撰寫）構造 `secureAttribute≠'U'` 但 `isCU=true`（或反之）、`isEdit` 與 `canEditList/isShowList` 分歧之屬性組合 / 進頁 / 行為依 **RP8 關閉後裁定之判據**（to-be/as-is 何者為準待 RD，本 case 不預判）| 兩判據分歧情境下 ITEM3/唯讀行為符合 RP8 裁定結果 |
 
 ## 覆蓋率（gate ⑤）
-- R1：QA-018｜R2：QA-001/002｜R3：QA-003｜R4：QA-004/017｜R5：QA-005｜R6：QA-006｜R7：QA-019｜R8：QA-020｜R9：QA-002/014｜R10：QA-012/013｜R11：QA-015｜R12：QA-021｜R13.1–5：QA-007/008/009（@PENDING RP1）｜R13.6：QA-010｜R14：QA-011/016｜R15：QA-012（**僅 rollback 分支**；成功/not-found path 尚無實 case → QA-022 RD 補，未撰寫）｜R16：QA-012（transaction）+ perf/log/audit（RD 補）。
+- R1：QA-018｜R2：QA-001/002｜R3：QA-003｜R4：QA-004/017｜R5：QA-005｜R6：QA-006（+QA-023 @PENDING RP8）｜R7：QA-019（+QA-023 @PENDING RP8）｜R8：QA-020｜R9：QA-002/014｜R10：QA-012/013｜R11：QA-015｜R12：QA-021｜R13.1–5：QA-007/008/009（@PENDING RP1）｜R13.6：QA-010｜R14：QA-011/016｜R15：QA-012（**僅 rollback 分支**；成功/not-found path 尚無實 case → QA-022 RD 補，未撰寫）｜R16：QA-012（transaction）+ perf/log/audit（RD 補）。
 - 每個 `Rn` 至少 1 case ✅；但 R15 目前僅覆蓋 rollback 分支、R16 僅覆蓋 transaction，成功/not-found/perf/log/audit 之 happy/error path 待 RD 補實 case（QA-022 等尚未撰寫，不可當已覆蓋）。@PENDING（QA-007/008/009）＝待 TBD-006 關，不計入 gate⑤。
