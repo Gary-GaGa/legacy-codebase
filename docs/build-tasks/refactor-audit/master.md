@@ -43,7 +43,7 @@ These are only S0 hints from `docs/legacy/page-mapping.md`, not final audit tota
 | S6 | M6b `i0` `00116-00120` + remaining i0 JSPs | `M6-i0.md#b-s6-m6b-i0-00116-00120-and-remaining-i0-jsps` | 完成 |  | Total 10; source old-source; no breakpoint. Old `0116-0120` and `0216-0220` variants counted separately; no remaining non-partial `i0` JSP rows after section B. |
 | S7 | M7a `c0` `00110-00115` segment | `M7a-c0-00110-00115.md` | 完成 |  | Total 10; source old-source; no breakpoint. Old `0211` and `0213` legacy rows counted because old JSP/action exist, but new FE/BE remains UNFOUND after four-anchor search. |
 | S8 | M7b `c0` `00116-00120` + remaining c0 JSPs | `M7b-c0-00116-00120-rest.md` | 完成 |  | Total 10; source old-source; no breakpoint. Old `0116-0120` and `0216-0220` variants counted separately; all remaining non-partial `c0` JSP rows are exhausted after S8. S8 FE/BE recheck downgraded `00119/0219` to 🟡 for empty FI select-options. |
-| S9 | M8 `z0` `00100-00800` all pages | `M8-z0.md` | 未開 |  | Task card says 18 pages; S9 must verify from old source. |
+| S9 | M8 `z0` `00100-00800` all pages | `M8-z0.md` | 完成 |  | Total 18; source old-source; no breakpoint. All non-partial `z0` JSP rows exhausted. Row-level 🟡: ToDo proposal action, delete/close reason popup hardcoded list, scorecard PDF export, CAD on-hand endpoint mismatch, revised-item query method mismatch. |
 | S-final | Total + diff vs inventory + Bible spot-check | `diff-vs-inventory.md` | 未開 |  | Only this session reads `feature-inventory.md` and Bible. |
 
 ## Module Totals
@@ -60,9 +60,9 @@ All totals are empty until the owning session fills evidence-backed rows.
 | `M6-i0.md` | M6 `i0` all `00110-00120` (old `01xx`/`02xx` variants) | 22 | 22 | 0 | 0 | 0 | 0 |
 | `M7a-c0-00110-00115.md` | M7a `c0` `00110-00115` | 10 | 6 | 2 | 0 | 0 | 2 |
 | `M7b-c0-00116-00120-rest.md` | M7b `c0` rest | 10 | 8 | 2 | 0 | 0 | 0 |
-| `M8-z0.md` | M8 `z0` all | 0 | 0 | 0 | 0 | 0 | 0 |
+| `M8-z0.md` | M8 `z0` all | 18 | 12 | 6 | 0 | 0 | 0 |
 | `M9-common.md` | M9 common/demo/error/layout | 11 | 1 | 0 | 0 | 0 | 10 |
 
 ## Next Session
 
-Recommended next session: S9. Read only the task card sections 0, 2, and S9; this `master.md`; the existing M8 audit target file; and the relevant `page-mapping.md` hints. Then recount M8 `z0` from old source and dispatcher/web.xml before checking new FE/BE code.
+Recommended next session: S-final. Read the 9 module small-total lines first; only S-final may read `docs/feature-inventory.md` and the Bible for diff and spot-check.
