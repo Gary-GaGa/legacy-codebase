@@ -62,6 +62,13 @@
 >
 > ✅ **回填已執行（2026-06-11,使用者裁示「都做」）**:inventory 已套用 DIFF 回填;開卡=`phase-g-csu-mainflow-fe.md`+修復×4（00660/00100/00119/00640）+`bible-gap-recon.md`;AUD-1~5 入 `pending-register.md`;F-7 入 Phase V。**`refactor-audit/` 歸檔（進 done/）待 AUD-1~5 與 BIBLE-GAP 收口後執行**。
 
+## 修復審查紀錄（人審=Claude QC,2026-06-11）
+| 卡 | product commit | 審查 | 備註 |
+|---|---|---|---|
+| `00660-endpoint-fix` | `5a47038` | ✅ PASS | 一行修、TLOD 殘留 grep 清零、報表家族未誤動 |
+| `00100-todo-fix` | `2599752` | ✅ PASS | F-10 只刪覆蓋、無發明行為;F-9 兩處 @PENDING 標註(R2/檔案 API);發現 E_CREDIT_PROPOSAL 實導 `directToCaseEdition`→R2 track 素材 |
+| `00119-options-fix` | `6919da5` | ✅ PASS | 查證正確(info 不供 options→GI sele 同型);**Phase V 必驗**:下拉有值+save 帶值+GI-sele 對 businessType F 無分支影響(推前快檢未回報,以 Phase V 涵蓋) |
+
 ## S-final 派工 prompt（定稿;S1–S9 在 master 全標完成後才跑）
 > 讀 `docs/build-tasks/full-refactor-audit.md` §5、`refactor-audit/master.md`、**`docs/build-tasks/refactor-audit-qc.md`（口徑備忘+累計發現必讀）**,以及各模組檔的小計列（不重讀明細,證據需要時才回查單列）。此時才允許讀 `docs/feature-inventory.md` 與 Bible 的 BR/SC 清單。產出 `refactor-audit/diff-vs-inventory.md`,含四節:
 > ① **總量表**:全系統 總列數×（碼在/🟡/🔴/🚫/UNFOUND）,按模組分組;統計時 `✅ 碼在`≡`碼在`、`❓`≡`UNFOUND`;M1/M9 為 action 級粒度,另列「頁級換算」欄並註記。
