@@ -1,6 +1,6 @@
 {
   "_comment_1": "Codex hooks 範本：放本機 ~/.codex/hooks.json 或專案 .codex/hooks.json。",
-  "_comment_2": "目的：完成時自動跑形式硬閘門——verify-c0（c0 鏡像 .java）+ check-srs-bundle（SRS bundle gate ①②⑤），不靠人記得。",
+  "_comment_2": "目的：完成時自動跑形式硬閘門——verify-c0（c0 鏡像 .java）+ check-srs-bundle（SRS 機械閘門；涵蓋範圍見腳本檔頭），不靠人記得。",
   "_comment_3": "⚠️ 確切 JSON 契約（事件名、stdin/stdout schema、如何 block/warn）以官方為準：developers.openai.com/codex/hooks。",
   "_comment_4": "trust 以腳本 hash 綁定；scripts/*.py 改了要在 Codex 重新信任。",
   "_comment_5": "兩腳本皆印人類可讀文字 + 退出碼；若 Codex 需 stdout JSON 來 block，包一層 wrapper 把 exit!=0 轉成 hook 的 block JSON。",

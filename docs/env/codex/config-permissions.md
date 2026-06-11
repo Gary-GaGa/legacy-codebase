@@ -25,6 +25,6 @@ network_access = false
 | 讀 `.env` / secrets | `Read(...)` deny | **secrets 永不進 repo**（守則）+ sandbox 限工作區；敏感檔加 `.gitignore` |
 
 ## 4. 形式硬閘門
-- `.codex/hooks.json`（範本同目錄）：`Stop`/`PostToolUse` 跑 `python scripts/verify-c0.py --git`。
+- `.codex/hooks.json`（範本同目錄）：`Stop` 跑 `python scripts/verify-c0.py --git` + `python scripts/check-srs-bundle.py --all`（SRS 機械閘門；涵蓋範圍見腳本檔頭）。
 
 > 改本檔請同步 `.claude/settings.json` + `CLAUDE.md` 的對照表。

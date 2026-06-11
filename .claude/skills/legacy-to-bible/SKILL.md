@@ -47,4 +47,4 @@ description: Reverse-engineer a business Bible (北極星 / 黃金旅程 / user 
 - [ ] 敘事層（無 endpoint/欄位型別——那是 SRS）。
 - [ ] 下游 PRD `REQ` 可追溯到本檔 story/節點。
 
-> 雙軌：Codex 版＝`docs/env/codex/prompts/legacy-to-bible.md`（改一版同步另一版）。上游 Bible→PRD 之 PRD 撰寫用官方 `/write-spec`；本 skill 專責「反推 Bible」這一步。
+> 雙軌：Codex 版＝`docs/env/codex/prompts/legacy-to-bible.md`＝**薄殼指標**（內容權威＝本檔；改內容只改本檔，Codex 範本僅差異清單變動才動）。上游 Bible→PRD 之 PRD 撰寫用官方 `/write-spec`；本 skill 專責「反推 Bible」這一步。

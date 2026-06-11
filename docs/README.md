@@ -13,14 +13,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
                   原料         此處快照）   bundle×4檔                     ＋verification/*   （SSOT）
 ```
 
-| flow 層 | 資料夾 / 檔 | 說明 |
-|---|---|---|
-| **① Bible** 業務聖經 | [`specs/bible/`](specs/bible/)（正式檔待建；原料＝[`legacy/`](legacy/)） | Legacy 反推：北極星·黃金旅程·user story，證據接地 |
-| **② PRD** what/why | [`specs/prd/`](specs/prd/)（外部權威、此處放快照） | PM + AI；REQ-nnn、TBD |
-| **③ SRS（含 QA）** how | [`specs/srs/<funcId>/`](specs/srs/)（spec/openapi/schema/qa-cases） | SA + AI（`/prd-to-srs`）；`Rn`+契約+covers |
-| **④ RD 任務單** | [`build-tasks/`](build-tasks/)（live；完成 → `done/`） | 交 Codex 實作的 prompt；產品碼在 repo 外 |
-| **⑤ 驗證 / 閘門** | `../scripts/check-srs-bundle.py`（①②⑤+跨檔）、`../scripts/verify-c0.py`（③）、spec-reviewer（語意）；[`verification/`](verification/)（Phase V） | 機械先、語意後 |
-| **狀態回填** | **`feature-inventory.md`** ⭐ | 每事收尾必回填（SSOT） |
+> 逐層「資料夾 × 工具 × 閘門」對照表＝[`repo-structure.md`](repo-structure.md) §1（**單一出處，本檔不再複寫**）；機械閘門涵蓋範圍＝`../scripts/check-srs-bundle.py` 檔頭。狀態回填→`feature-inventory.md` ⭐（SSOT）。
 
 > **治理/憲法**（always-on，不屬單一層）：根 `CLAUDE.md`（Claude）/ `AGENTS.md`（Codex）/ `.github/`（Copilot）+ `backend/`·`frontend/AGENTS.md`；雙軌範本 `env/codex/`。
 

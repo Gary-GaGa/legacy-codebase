@@ -21,7 +21,7 @@
 | **as-is 驗證**（brownfield loop） | 驗 migrated 碼 vs 舊系統/PRD | 唯讀 audit 任務單 | `build-tasks/<funcId>-verification-findings.md`（如 `00800-verification-findings.md`）、`build-tasks/*-investigation.md` | — |
 | **QA cases** | QA 轉可跑驗收 | （隨 SRS） | `specs/srs/<funcId>/qa-cases.md`（每條 `covers: Rn`） | ④⑤ |
 | **RD-Agent**（開發+測試） | Codex 照任務單實作 | Codex（母資料夾） | **產品碼在 repo 外**；in-repo＝**任務單** `build-tasks/*.md`（live）、`build-tasks/done/`（歷史 22 份） | ⑥ |
-| **DoD 閘門牆** | RD 過 SA/QA 邊界 | — | **①②⑤** `scripts/check-srs-bundle.py`；**③** `scripts/verify-c0.py`；**⑦語意** `.claude/agents/spec-reviewer.md` ∥ `docs/env/codex/spec-reviewer.toml`+`reviewer-c0.toml`；**自動觸發** `.claude/settings.json`(Stop hook) ∥ `docs/env/codex/hooks.json` | ①–⑦ |
+| **DoD 閘門牆** | RD 過 SA/QA 邊界 | — | SRS 機械 pre-gate `scripts/check-srs-bundle.py`（涵蓋見腳本檔頭；與 DoD ①–⑦ 編號對照見 `specs/srs/README.md`）；**③** `scripts/verify-c0.py`；**⑦語意** `.claude/agents/spec-reviewer.md` ∥ `docs/env/codex/spec-reviewer.toml`+`reviewer-c0.toml`；**自動觸發** `.claude/settings.json`(Stop hook) ∥ `docs/env/codex/hooks.json` | ①–⑦ |
 | **裁定 / escalation** | 判斷題交人 | — | SRS 的 `@PENDING`；`decisions.md`；`pending-register.md`；`disbursement/disbursement-domain-escalations.md` | — |
 | **Done → 回歸** | 回填狀態 + bug→回歸 case | — | `feature-inventory.md` 回填；bug → 新 `qa-cases.md` case | — |
 
@@ -36,7 +36,7 @@
 | 形式硬閘門 hook | `.claude/settings.json`(hooks) | `docs/env/codex/hooks.json` | — |
 | 機械閘門腳本（共用） | `scripts/check-srs-bundle.py`、`scripts/verify-c0.py` | 同（hooks 掛同腳本） | 同 |
 | 分層開發規則 | — | `backend/AGENTS.md`、`frontend/AGENTS.md` | `.github/instructions/{backend,frontend}.instructions.md` |
-> **改雙軌任一版，另一版要同步**（`CLAUDE.md §2`）。
+> **鏡像＝薄殼指標**（2026-06-11）：Codex 範本只含指標＋差異清單，**內容權威＝Claude 版**；詳 `CLAUDE.md §2`。
 
 ## 3. 治理 / 憲法層（always-on）
 - `CLAUDE.md` — Claude 側 spec-workflow constitution（§1 flow、§2 雙軌、§3 生命週期、§4 DoD）。

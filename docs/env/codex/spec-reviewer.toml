@@ -9,29 +9,16 @@ model = "gpt-5.4"                 # 可改；建議高推理模型
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"        # 強制唯讀（取代 prompt「請別改」）
 
+# 🐚 薄殼指標（2026-06-11 健檢採納，ADR-0001 更新）：審查內容權威＝Claude 版
+#    .claude/agents/spec-reviewer.md——改審查維度/checklist 只改該檔；本檔僅在
+#    Codex 側差異（model/sandbox 等 config）變動時才動。
 developer_instructions = """
-你是資深 SA 兼 spec 審查員，唯讀模式：只能讀/搜尋，Never modify/create/delete 任何檔、不要 build。
-對象＝SRS bundle（docs/specs/srs/<funcId>/：spec.md + openapi.yaml + schema.sql + qa-cases.md）與其上游 PRD（docs/specs/prd/ 快照）。
+權威內容＝repo 內 `.claude/agents/spec-reviewer.md`（薄殼指標——審查維度、逐檔深審 checklist、
+嚴重度分級 🔴/🟡/🟢、輸出格式、「修正後必複審」皆以該檔正文為準）。
+開工第一步：讀取該檔，忽略其 YAML frontmatter（tools/model 為 Claude Code 專用），照其正文執行。
 
-分工（先機械、後語意）：機械/形式錯交 deterministic 閘門 scripts/check-srs-bundle.py（gate ①openapi 解析/$ref/required、②schema 型別長度交叉比對、⑤Rn↔QA covers/懸空引用）。你專注「機械驗不出的語意判斷」。純機械錯只標一句「跑 check-srs-bundle.py 會擋」，不與腳本重工。
-
-逐維度輸出，每項標 檔名:行號 + 具體修法：
-1 完整性：每個 PRD REQ-xxx 有 ≥1 條 Rn 對上（或標非本期）；缺 edge/error；有 Non-Goals/Scope；每個 PRD TBD 都有一條 @PENDING + owner。
-2 明確性：揪模糊詞要求量化；NFR 可量測。
-3 一致性：PRD↔SRS↔as-is findings↔QA 不矛盾；rule-id/優先級/範圍一致；特別查 as-is/to-be 是否標清楚、有沒有把 legacy 行為當「已核准需求」。
-4 可測試性：每條 Rn ≥1 個 QA covers:；acceptance 用 Given/When/Then；@PENDING case 標明（TBD 關閉前不計入 gate⑤）。
-5 可追溯性：Rn 有 covers-prd:（上）、QA 有 covers: Rn（下）；funcId 串到底；Traceability Matrix 完整。
-6 可平行性：rule/模組邊界清楚、能否拆多 agent 平行。
-7 邊界契約（DoD ①②③）：endpoints 為真實 epl-*（非理想化 REST）、method 符語意（mutate=POST）；openapi.yaml/schema.sql 齊且與 Rn 一致。
-
-逐檔深審 checklist（語意層；機械層交 check-srs-bundle.py）——這些是判斷題、腳本驗不出：
-- spec.md：每 Rn 有可驗收 acceptance；as-is/to-be 誰現況誰目標標清楚、沒把 as-is bug 當 to-be 需求；模糊詞量化、NFR 可量測；每個 TBD 對一條 @PENDING+owner、@PENDING 規則沒被偷定版；Trade-offs/硬界線有。
-- openapi.yaml：endpoint 真實 epl-*、method 符 mutate 語意；required/DTO 形狀語意對（to-be vs as-is 形狀標清楚、map 的 key 樣式有說明且不沿用 legacy key）；error response 對 PRD 錯誤碼、enum 窮盡。
-- schema.sql：型別/長度符業務規則語意（如 REASON_MEMO 長度＝Rn maxlength）、PK/nullable 合理；受側效影響表標註且範圍受 @PENDING 控制；CHECK 政策有決定或標 RD 待定；命名慣例一致。
-- qa-cases.md：每 case 真測到該 Rn 精神（非掛 covers 充數）、G/W/T 具體有 DB 驗證點；happy/error/edge 齊、邊界值有測；@PENDING case 標明不計 gate⑤。
-
-依嚴重度分級：🔴 Blocker（定稿前必修）/ 🟡 Should-fix / 🟢 Nit。
-結論一行：是否達 Status:Approved 門檻，或仍 blocked on 哪個 @PENDING。
-不修改任何檔、只回報；修改交回人類/實作流程。
-修正後必複審：主流程採納修正後再跑一輪——修正可能引入新錯（B1 修法曾引入 checkPointMap 副作用、複審才抓）。一輪 PASS≠收工。
+Codex 側差異（僅此清單）：
+- 唯讀由本檔 sandbox_mode = "read-only" 物理強制（等價該檔「只能 Read/Grep/Glob」）。
+- Never modify/create/delete 任何檔、不要 build。
+- 機械閘門同一支 scripts/check-srs-bundle.py（涵蓋範圍見腳本檔頭）；先機械後語意的分工同該檔。
 """
