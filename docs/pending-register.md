@@ -21,6 +21,11 @@
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤` |
 | **c0 escalation E2** | `crScoreCardCompleted` 整欄覆寫 `"NN"`（`:2890`） | 同上 | 信用決策 domain | 06-05 | 同 |
+| **AUD-1**（audit F-4）| Property Info 家族：`EPROIS_0240`/`EPROIU_0140`/`EPROIU_0240` 是否隨 `EPROIS_0140` 一併不遷 | M2/M3 三列定版 | PM/domain | 06-11 | `build-tasks/refactor-audit/diff-vs-inventory.md`（DIFF-002/003）|
+| **AUD-2**（F-6）| `EPROC0_0211/0213`（展期限定 FinEvalTable/Scorecard）遷/不遷——是否由 00116-00120 涵蓋 | M7 兩列定版 | 信用評分 domain | 06-11 | 同（DIFF-007）|
+| **AUD-3**（F-2）| `SysNews` 公告/`BatchManager`/`cacheMonitor` 遷/不遷 | M9 admin 列定版 | PM/ops | 06-11 | 同（DIFF-016）|
+| **AUD-4**（F-3）| demo 頁（`DEMOA0_*`）正式不遷裁決 | M9 demo 列定版 | PM | 06-11 | 同（DIFF-016）|
+| **AUD-5** | BIBLE-GAP-1~5（`EPROZ00670`/`EPROISU0180/0182/0183/0184`）舊源存在性驗證→補列或收斂 Bible 錨點 | audit 窮盡聲明完備性 | recon 卡 `build-tasks/bible-gap-recon.md`（待派工）| 06-11 | 同（§3）|
 
 ## ⚪ 非阻擋 / 暫緩 / 待業務（可獨立排）
 | ID | 待決 | owner | 來源 |
