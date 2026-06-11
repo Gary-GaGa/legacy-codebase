@@ -1,16 +1,26 @@
 #!/usr/bin/env python3
-"""check-srs-bundle — machine-checkable gates for an SRS boundary bundle (DoD 閘門 ①②⑤).
+"""check-srs-bundle — machine-checkable gates for an SRS boundary bundle.
 
-把 SRS bundle 的「形式/機械」檢查自動化，補 spec-reviewer 抓不到的 deterministic 漏洞
-（如 openapi $ref 解不開、required 列了不存在的 key、schema 長度與 openapi/spec 對不上、
-Rn 沒有任何 QA covers、Traceability Matrix 引用了不存在的 QA）。
+把 SRS bundle 的「形式/機械」檢查自動化，補 spec-reviewer 抓不到的 deterministic 漏洞。
 
-**分工**（重要）：
-  - 本腳本＝**機械閘門**：只攔「可程式判定」的形式錯（gate ①openapi ②schema ⑤covers
-    + 跨檔完整性：endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi、強制點欄
-    + gate⑥ Bible↔PRD 對照：covers-prd 懸空=FAIL；trace 缺漏=advisory warn）。
-  - **語意正確性**（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、NFR 量化）
-    仍由 `.claude/agents/spec-reviewer.md`（人/LLM 判斷）審。兩層互補、不重疊。
+**⚠️ 本檔頭＝機械閘門涵蓋範圍的 canonical 清單**（2026-06-11 總體檢裁定：
+其他文件一律「見腳本檔頭」，**勿在他處複寫此清單**——多份副本必漂移）：
+  gate①  openapi：YAML 解析 / $ref 解得開 / required ⊆ properties
+  gate②  schema：DDL 解析、欄位重複、括號平衡、欄長 ↔ openapi maxLength 交叉
+  gate⑤  covers：每個非-@PENDING `Rn` ≥1 QA covers；懸空 QA 引用
+  xfile  跨檔完整性：endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi、強制點欄
+  gate⑥ Bible↔PRD：covers-prd↔PRD 快照懸空=FAIL；trace 缺列 / Bible BR 點名
+         本 funcId 未入 trace=advisory warn
+  gate⑦ @PENDING↔pending-register 同步：spec 開著的待決未登錄 register=FAIL、
+         已關的仍掛 register open 區=FAIL（spec 為來源、register 為 derived 視圖）
+  [--all 附帶] doc-paths：全 repo markdown 內 backtick 引用的 root-anchored 路徑
+         存在性（advisory；歷史檔 build-tasks/done/、archive/ 不掃）
+
+編號對照：本腳本 gate 編號＝DoD 閘門牆（`docs/assets/ai-workflow.mmd` ①–⑦）對應項
+在 SRS 定稿階段的 pre-check；完整對照表見 `docs/specs/srs/README.md`。
+
+**分工**：語意正確性（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、
+NFR 量化）仍由 `.claude/agents/spec-reviewer.md`（人/LLM）審。兩層互補、不重疊。
 
 對象＝`docs/specs/srs/<funcId>/`：spec.md + openapi.yaml + schema.sql + qa-cases.md。
 
@@ -23,10 +33,17 @@ Rn 沒有任何 QA covers、Traceability Matrix 引用了不存在的 QA）。
 
 啟發式限制（誠實標示，同 verify-c0 的煞車條款）：
   - gate⑤ 規則集 = spec.md 的 `### Rn` 標題 + `**R13.x**` 子規則；不展開 `R13.1–13.5` 範圍寫法。
-  - 「@PENDING 豁免」靠規則(或其父規則)定義行含 `@PENDING`/`RPn` 判定；僅影響「未覆蓋規則」要 FAIL 還是 INFO。
+  - 「@PENDING 豁免」**只認**規則(或其父規則)定義行的 `@PENDING` token——裸 `RPn` 或
+    「已裁/已關」字樣**不豁免**（裁定關閉後規則立即恢復覆蓋保護；2026-06-11 修正，
+    原 `RPn` 比對會把已裁規則誤判為 pending、靜默放掉 covers 缺口）。
   - schema 長度交叉比對僅比 snake_case 欄名 ↔ camelCase openapi property 名重疊者。
   - gate⑥ 為 funcId 檔名 glob + `REQ-\\d{3}` token 比對；快照/trace 不存在時整段 advisory
     略過（不擋無 PRD 的鏡像 i0 bundle）。trace 行格式約定見 docs/specs/prd/trace-*.md 頭部。
+  - gate⑦ 單向（spec→register）：register 的非 SRS 來源列（A-1 OQ、撥貸 group、E1/E2…）
+    無機械來源可對，不在範圍；register open 區的自由文字若誤含已關 id 會 FAIL——刻意，
+    逼 register 保持乾淨。
+  - doc-paths 只掃 root-anchored backtick 路徑（docs/、scripts/、.claude/、.github/）；
+    相對路徑（`../x.md`）由 markdown link 檢查工具涵蓋、不在此掃。
 """
 import glob
 import os
@@ -218,25 +235,26 @@ def gate5_traceability(bundle):
     spec = read(sp).splitlines()
     qa = read(qp).splitlines()
 
-    # 1) 規則集：### Rn 標題 + **R13.x** 子規則；記每條定義行(判 @PENDING)
+    # 1) 規則集：### Rn 標題 + **R13.x** 子規則（僅認列表項定義行，
+    #    避免上方 `>` 註記/表格列提及 R13.x 被誤當定義行而吃到其 @PENDING token）
     rule_line = {}  # rule_id -> def line text
     for ln in spec:
         m = re.match(r"^###\s+(R\d+)\b", ln)
         if m:
             rule_line[m.group(1)] = ln
-        for sm in re.finditer(r"\*\*(R\d+\.\d+)", ln):
-            rule_line.setdefault(sm.group(1), ln)
+        if ln.lstrip().startswith("-"):
+            for sm in re.finditer(r"\*\*(R\d+\.\d+)", ln):
+                rule_line.setdefault(sm.group(1), ln)
     rules = set(rule_line)
     containers = {r for r in rules if any(o != r and o.startswith(r + ".") for o in rules)}
 
     def is_pending(rid):
+        # 只認 `@PENDING` token；裸 RPn／「已裁」字樣不豁免（見檔頭啟發式限制）
         line = rule_line.get(rid, "")
-        if "@PENDING" in line or re.search(r"\bRP\d", line):
+        if "@PENDING" in line:
             return True
         if "." in rid:  # 子規則：看父規則標題
-            parent = rid.split(".")[0]
-            pl = rule_line.get(parent, "")
-            return "@PENDING" in pl or bool(re.search(r"\bRP\d", pl))
+            return "@PENDING" in rule_line.get(rid.split(".")[0], "")
         return False
 
     # 2) qa-cases 表格列：QA id（可能含 @PENDING）+ covers 欄
@@ -390,8 +408,93 @@ def gate6_bible_prd(bundle):
             trace_reqs.update(REQ_RE.findall(cells[0]))
     for r in sorted(prd_reqs - trace_reqs):
         warns.append(f"PRD `{r}` 未入 Bible↔PRD 對照表（上行追溯缺列）")
+
+    # Bible BR 點名本 funcId、但 trace 表 A 未列 → warn（漏列候選；治「人工通讀挑 BR」漏網）
+    trace_brs = set(re.findall(r"BR-\d{3}", read(traces[-1])))
+    for bf in sorted(glob.glob("docs/specs/bible/bible-*.md")):
+        for ln in read(bf).splitlines():
+            bm = re.match(r"^\|\s*(BR-\d{3})\b", ln.strip())
+            if bm and funcid in ln and bm.group(1) not in trace_brs:
+                warns.append(
+                    f"Bible `{bm.group(1)}` 點名 {funcid}，但 trace 表 A 未列"
+                    f"（漏列候選；{os.path.basename(bf)}）")
     infos.append(f"對照：{os.path.basename(snaps[-1])} ＋ {os.path.basename(traces[-1])}")
     return fails, warns, infos
+
+
+# ---------- gate ⑦ @PENDING ↔ pending-register 同步 ---------------------------
+REGISTER_PATH = "docs/pending-register.md"
+RP_CELL_RE = re.compile(r"^\*{0,2}(RP\d+)\b")
+BP_CELL_RE = re.compile(r"^\*{0,2}BP(\d+)-PENDING\b")
+
+
+def gate7_pending_register(bundle):
+    """spec.md @PENDING 表 ↔ pending-register 單向同步（spec＝來源、register＝derived 視圖）。
+
+    - spec @PENDING 表開著（非 ✅）的 RPn / BPn-PENDING → 必須出現在 register 的 open 區，
+      否則 FAIL（漏登記＝有人不知道自己欠裁定）。
+    - spec 已關（✅）的 id 仍出現在 register open 區 → FAIL（register 失步）。
+    - register 的非 SRS 來源列不在本 gate 範圍（無機械來源可對，見檔頭）。
+    """
+    fails, warns, infos = [], [], []
+    sp = os.path.join(bundle, "spec.md")
+    if not os.path.isfile(sp):
+        return [], [], []
+    open_ids, closed_ids = set(), set()
+    for ln in read(sp).splitlines():
+        s = ln.strip()
+        if not s.startswith("|"):
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        if not cells:
+            continue
+        m = RP_CELL_RE.match(cells[0])
+        if m and len(cells) >= 2:
+            (closed_ids if "✅" in cells[1] else open_ids).add(m.group(1))
+            continue
+        b = BP_CELL_RE.match(cells[0])
+        if b:
+            open_ids.add(f"BP-{b.group(1)}")
+    if not (open_ids or closed_ids):
+        return fails, warns, infos  # 無 @PENDING 表（鏡像 i0 bundle）→ 跳過
+    if not os.path.isfile(REGISTER_PATH):
+        warns.append(f"無 {REGISTER_PATH} → @PENDING 同步無法驗（advisory 略過）")
+        return fails, warns, infos
+    reg_open = re.split(r"^##[^\n]*已關[^\n]*$", read(REGISTER_PATH),
+                        maxsplit=1, flags=re.M)[0]
+    for rid in sorted(open_ids):
+        if not re.search(rf"\b{re.escape(rid)}\b", reg_open):
+            fails.append(f"spec @PENDING `{rid}`（開）未登錄 pending-register open 區（漏登記）")
+    for rid in sorted(closed_ids):
+        if re.search(rf"\b{re.escape(rid)}\b", reg_open):
+            fails.append(f"spec 已關 `{rid}` 仍出現在 pending-register open 區（register 失步）")
+    infos.append(f"同步：open {len(open_ids)} / closed {len(closed_ids)} ↔ {REGISTER_PATH}")
+    return fails, warns, infos
+
+
+# ---------- doc-paths（--all 附帶；advisory）-----------------------------------
+DOC_PATH_RE = re.compile(
+    r"`((?:docs|scripts|\.claude|\.github)/[A-Za-z0-9_.\-/]+"
+    r"\.(?:md|py|json|toml|ya?ml|sql|mmd|svg))`")
+DOC_PATH_SKIP = ("docs/build-tasks/done/", "docs/archive/")
+
+
+def scan_doc_paths():
+    """掃全 repo markdown 內 backtick 引用的 root-anchored 路徑是否存在。
+    抓 reorg 後的舊路徑殘留（markdown link checker 只看 []() 連結、看不到 inline code）。
+    歷史檔（build-tasks/done/、archive/）是當時的紀錄、不掃。advisory only。"""
+    warns = []
+    targets = (glob.glob("*.md") + glob.glob("docs/**/*.md", recursive=True)
+               + glob.glob(".claude/**/*.md", recursive=True)
+               + glob.glob(".github/**/*.md", recursive=True)
+               + ["backend/AGENTS.md", "frontend/AGENTS.md"])
+    for path in targets:
+        if any(s in path for s in DOC_PATH_SKIP) or not os.path.isfile(path):
+            continue
+        for m in DOC_PATH_RE.finditer(read(path)):
+            if not os.path.exists(m.group(1)):
+                warns.append(f"{path}：`{m.group(1)}` 不存在（舊路徑殘留？）")
+    return warns
 
 
 # ---------- runner -----------------------------------------------------------
@@ -404,12 +507,14 @@ def check_bundle(bundle):
     g5f, g5w, g5i = gate5_traceability(bundle)
     gxf, gxw = gatex_crossfile(bundle)
     g6f, g6w, g6i = gate6_bible_prd(bundle)
+    g7f, g7w, g7i = gate7_pending_register(bundle)
     sections = [
         ("gate①openapi", g1f, g1w, []),
         ("gate②schema ", g2f, g2w, []),
         ("gate⑤covers ", g5f, g5w, g5i),
         ("xfile 完整性 ", gxf, gxw, []),
         ("gate⑥bible↔prd", g6f, g6w, g6i),
+        ("gate⑦pending同步", g7f, g7w, g7i),
     ]
     for name, fails, warns, infos in sections:
         status = "FAIL" if fails else "PASS"
@@ -445,9 +550,14 @@ def main(argv):
         print("找不到 bundle（給 bundle 資料夾路徑，或 --all）")
         return 2
     total = sum(check_bundle(b) for b in bundles)
+    if args[0] == "--all":
+        pw = scan_doc_paths()
+        print("\n[doc-paths（advisory）] " + ("PASS" if not pw else f"{len(pw)} 筆殘留"))
+        for m in pw:
+            print(f"    ! {m}")
     print()
     if total:
-        print(f"check-srs-bundle: FAIL — {total} 項硬違反（gate①②⑤ + 跨檔）。語意審查另跑 spec-reviewer。")
+        print(f"check-srs-bundle: FAIL — {total} 項硬違反（涵蓋範圍見檔頭）。語意審查另跑 spec-reviewer。")
         return 1
     print(f"check-srs-bundle: PASS — {len(bundles)} bundle，無機械違反。（語意正確性仍需 spec-reviewer）")
     return 0

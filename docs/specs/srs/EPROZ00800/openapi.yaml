@@ -5,10 +5,10 @@ openapi: 3.0.3
 info:
   title: EPROZ00800 Revised Item
   version: 0.5.0-draft
-  description: PRD CDC-EPRO-0001 v1.1。TBD-001~007 已於 2026-06-11 裁定（RP1=A 保留側效；仍開：RP4/RP6/RP8、checkpoint-keys §5.6、init-query method）。method/欄位以 spec.md Rn 為準。與 spec.md v0.5 同步。
+  description: PRD CDC-EPRO-0001 v1.1。TBD 裁定狀態詳 spec.md §@PENDING（單一出處；仍開：RP4/RP6/RP8/RP9/RP10/RP11）。method/欄位以 spec.md Rn 為準。與 spec.md v0.5 同步。
 paths:
   /epl-case-query-reviseditem:          # R2 init-query
-    # ⚠️ @PENDING(method)：PRD §6.1=GET、站上 RPC 慣例=POST、as-is FE POST/BE GET 不一致 → RD/架構定版前不裁定。下方 post 僅佔位。
+    # ⚠️ @PENDING RP9（init-query method，詳 spec.md §@PENDING）：RD/架構定版前不裁定，下方 post 僅佔位。
     post:
       summary: 查詢 Revised Item 選項與既有資料
       requestBody:
@@ -44,25 +44,53 @@ components:
           type: object
           properties:
             lonTypeCode: { type: string }
-            item1: { type: string, description: 'Y/N/blank（init-query 允許 blank）' }
-            # … item2~item14 同（略）
+            # R9：init-query 允許 blank（item1~14 皆 Y/N/blank）
+            item1:  { type: string, description: 'Y/N/blank（init-query 允許 blank）' }
+            item2:  { type: string }
+            item3:  { type: string }
+            item4:  { type: string }
+            item5:  { type: string }
+            item6:  { type: string }
+            item7:  { type: string }
+            item8:  { type: string }
+            item9:  { type: string }
+            item10: { type: string }
+            item11: { type: string }
+            item12: { type: string }
+            item13: { type: string }
+            item14: { type: string }
             reasonMemo: { type: string }
     InsertRevisedItemRequest:
+      # ⚠️ @PENDING RP11（execute body 形狀 to-be itemMap vs as-is 平鋪，詳 spec.md §@PENDING）
       type: object
       required: [applicationNo, itemMap, checkPointMap]
       properties:
         applicationNo: { type: string, maxLength: 30 }
         itemMap:
           type: object
-          required: [item1, reasonMemo]            # item1~14 + reasonMemo
+          required: [item1, item2, item3, item4, item5, item6, item7,
+                     item8, item9, item10, item11, item12, item13, item14, reasonMemo]
           properties:
-            item1: { $ref: '#/components/schemas/ItemFlag' }   # R9：FE 送出前 blank→N；item2~14 同
+            item1:  { $ref: '#/components/schemas/ItemFlag' }  # R9：FE 送出前 blank→N（item1~14 同）
+            item2:  { $ref: '#/components/schemas/ItemFlag' }
+            item3:  { $ref: '#/components/schemas/ItemFlag' }
+            item4:  { $ref: '#/components/schemas/ItemFlag' }
+            item5:  { $ref: '#/components/schemas/ItemFlag' }
+            item6:  { $ref: '#/components/schemas/ItemFlag' }
+            item7:  { $ref: '#/components/schemas/ItemFlag' }
+            item8:  { $ref: '#/components/schemas/ItemFlag' }
+            item9:  { $ref: '#/components/schemas/ItemFlag' }
+            item10: { $ref: '#/components/schemas/ItemFlag' }
+            item11: { $ref: '#/components/schemas/ItemFlag' }
+            item12: { $ref: '#/components/schemas/ItemFlag' }
+            item13: { $ref: '#/components/schemas/ItemFlag' }
+            item14: { $ref: '#/components/schemas/ItemFlag' }
             reasonMemo: { type: string, maxLength: 3000 }      # R4：3000、trim、必填
         checkPointMap:
           type: object
           # R14 to-be：key = EPRO{IS/IU/CS/CU}_0260（依 attribute；確切清單見 PRD §5.6，RD 定）。
           # ⚠️ 勿沿用 as-is legacy key（EPROZ00800 / EPROISU0160…，findings 標 🔴）。
-          # @PENDING(checkpoint-keys)：確切 _0260 key 清單待 RD 依 §5.6 定版 → 屆時補 required。
+          # @PENDING RP10（checkpoint _0260 key 清單，詳 spec.md §@PENDING）→ 定版後補 required。
           #   不用 applicationNo 佔位（它是頂層欄位、非本 map 的 key）。
           additionalProperties: { $ref: '#/components/schemas/ItemFlag' }
         isNotSame: { type: boolean, nullable: true, description: 'R11：僅前端提示輔助；後端不得以此為側效判斷依據' }

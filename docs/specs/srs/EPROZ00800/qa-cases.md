@@ -1,7 +1,7 @@
 # QA Cases — EPROZ00800 Revised Item
 
 > 每條 `covers: Rn`（對 `spec.md`）；上游＝PRD `CDC-EPRO-0001 v1.1` §10。
-> `@PENDING` = 受未關 TBD 控制，**TBD 關閉前不列入驗收門檻 ⑤**，但先寫好。**裁定輪 2026-06-11**：`RP1`(TBD-006)=A 已關 → QA-007/008 解 pending、計入 gate⑤；QA-009 改掛 `RP4`；新增 QA-024（R13.2）/QA-025（R13.7）。
+> `@PENDING` = 受未關 TBD 控制，**TBD 關閉前不列入驗收門檻 ⑤**，但先寫好。**裁定輪 06-11**（裁定內容單一出處＝`spec.md` §@PENDING）：QA-007/008 解 pending、計入 gate⑤；QA-009 改掛 `RP4`；新增 QA-024（R13.2）/QA-025（R13.7）。
 > Gate ④＝可跑綠、⑤＝每個 `Rn` 至少被一條 case `covers`。
 
 ## 由 PRD §10 轉入

@@ -39,5 +39,5 @@ CREATE TABLE TB_REVISED_ITEM (
 -- TB_LOAN_CONDITION_FEE          : R13.6 刪（LON_TYPE=04 ITEM12 N→Y）
 -- TB_CHECK_POINT_RC / _IU / _CORP / _CU : R14 checkpoint（標 EPRO{IS/IU/CS/CU}_0260）
 
--- ✅ RP1(TBD-006) 已裁（2026-06-11）＝A 保留側效：R13.1–13.3/13.6/13.7 之刪除/複製範圍已定版、可實作。
+-- ✅ RP1 已關（詳 spec.md §@PENDING＝單一出處）：R13.1–13.3/13.6/13.7 之刪除/複製範圍定版、可實作。
 -- ⚠️ 僅 R13.4/13.5（TB_LOAN_CONDITION_DETAIL / TB_REVISED_ITEM_DETAIL）仍受 RP4 控制 → 未關前勿定版其刪除/還原範圍。
