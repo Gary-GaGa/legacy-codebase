@@ -107,4 +107,4 @@
 - 各 `c0`/`csu` 頁 **FE 送/收欄位 ↔ BE `epl-*` DTO**：以真資料 / 真授權跑一次（`00115` CS/CU 判斷已 code review 確認正確）。
 
 ---
-> 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`runbook-30pct.md` §5），不影響「程式補完」里程碑。
+> 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`；原 `archive/runbook-30pct.md` §5），不影響「程式補完」里程碑。

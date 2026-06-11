@@ -54,14 +54,15 @@
 | `legacy/migration-backlog.md` | 模組地圖 M1–M9 + 橫向風險 R1–R8 |
 | `legacy/module-{is-iu,cs-cu}-shell.md`、`legacy/module-i0-c0-scoring.md` | 舊系統 shell / 評分結構分析 |
 | `legacy/db-schema-catalog.md` | DB schema 目錄（JIT 抽） |
-| `process/completion-ledger.md` | 🗄 已凍結（2026-06-11；內容併入 feature-inventory） |
+| `archive/completion-ledger.md` | 🗄 已凍結（2026-06-11；內容併入 feature-inventory） |
 | `decisions.md` | 決策與事實流水帳（失敗教訓的原始紀錄；收斂表見 `spec-architecture.md §9`） |
 | `process/vision-pipeline.md` | flow 願景與原則 |
 
 ## 5. 子域 / 階段專屬（已分資料夾，2026-06-10）
 - **[`disbursement/`](disbursement/)**：`disbursement-triage.md`（0921/0922/T24 triage）、`disbursement-domain-escalations.md`（待 domain/T24/DBA 裁決）；A-1＝`build-tasks/a1-funcGetExchangeRate-spec.md` + `phase-d-a1-exchange-stub-investigation.md`。
 - **[`verification/`](verification/)**（Phase V）：`verification-handoff.md`（殘留驗證項清單）、`verification-execution.md`（怎麼分階段跑）。
-- **[`process/`](process/)**：`SETUP-codex.md`（dev-box 設定+疑難排解）、`runbook-30pct.md`（Codex 自走順序/煞車）、`vision-pipeline.md`、`completion-ledger.md`。
+- **[`process/`](process/)**：`SETUP-codex.md`（dev-box 設定+疑難排解）、`vision-pipeline.md`。
+- **[`archive/`](archive/)**（已消化、留存備查）：`review-c0-prompt.md`、`phase1-eproz0_0700-spec.md`、`completion-ledger.md`、`runbook-30pct.md`（後兩者 2026-06-11 凍結）。
 - **環境 / 設定**：`docs/env/`（`backend.gitignore`/`frontend.gitignore`/`frontend.yarnrc`/`maven-settings.xml` + `codex/`）。
 - **樣板**：`golden-template/README.md`（FE 黃金樣板 + JSP→元件對照）；SRS bundle 範本說明＝`specs/srs/README.md`（原 boundary-bundle，2026-06-09 移）。
 - **規格 pipeline 家**：`specs/`（`bible/` → `prd/` → `srs/`，分層即 flow；見 `specs/README.md`）。

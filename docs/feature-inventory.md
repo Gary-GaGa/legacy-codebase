@@ -1,7 +1,7 @@
 # 舊→新 功能總盤點（Feature Inventory）— 70% + 30% 全量
 
 > **用途**：把舊 EPRO 系統（~250 JSP / 9 模組）轉新系統（前端 Angular + 後端 Spring Boot）的**每一項功能**、前後端狀態、剩餘事項、橫向 track、建議排程，收斂成一張可排程追蹤的主表。
-> **來源**（2026-06-10 已分資料夾）：`legacy/page-mapping.md`（舊→新對應）、`process/completion-ledger.md`（總盤點）、`verification/verification-handoff.md`（驗證待辦）、`disbursement/`（撥貸 triage+escalations）、`legacy/migration-backlog.md`（模組地圖/R1–R8）、`legacy/module-*.md`（頁內結構）。
+> **來源**（2026-06-10 已分資料夾）：`legacy/page-mapping.md`（舊→新對應）、`archive/completion-ledger.md`（總盤點，已凍結）、`verification/verification-handoff.md`（驗證待辦）、`disbursement/`（撥貸 triage+escalations）、`legacy/migration-backlog.md`（模組地圖/R1–R8）、`legacy/module-*.md`（頁內結構）。
 > ⚠️ 原始碼不外流；本 repo 只放對應/規格。前後端實作在各自專案。
 
 ## 0. 怎麼讀

@@ -55,9 +55,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 | 檔 | 用途 |
 |---|---|
 | `process/vision-pipeline.md` | 願景與漸進落地 |
-| `process/runbook-30pct.md` | Codex 自走補完的順序/閘門/煞車 |
 | `process/SETUP-codex.md` | Codex CLI 設定/用法 + dev-box 疑難排解 |
-| `process/completion-ledger.md` | 🗄 已凍結（2026-06-11；內容併入 feature-inventory） |
 | `env/` | gitignore / yarnrc / maven-settings / **codex 雙軌範本**（prompts/agents/hooks/權限） |
 
 ## 🧩 樣板 / 規格家 / 圖
@@ -79,6 +77,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 
 ## 🗄 [`archive/`](archive/)（已消化、留存備查）
 - `review-c0-prompt.md`（c0 後端審查 prompt）、`phase1-eproz0_0700-spec.md`（Phase 1 切片，已完成）。
+- `completion-ledger.md`（30% 總盤點；內容併入 feature-inventory，2026-06-11 凍結）、`runbook-30pct.md`（30% 自走控制文件；c0 結清、撥貸改走 triage/A-1 專屬文件，2026-06-11 凍結）。
 
 ---
 > 維護：規格三層放 `specs/`；舊系統分析→`legacy/`、撥貸→`disbursement/`、驗證→`verification/`、流程→`process/`；任務完成→ `build-tasks/done/`；狀態變動回填 `feature-inventory.md`。
