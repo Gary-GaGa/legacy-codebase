@@ -19,7 +19,7 @@ CREATE TABLE TB_REVISED_ITEM (
   ITEM12          CHAR(1),
   ITEM13          CHAR(1),
   ITEM14          CHAR(1),
-  REASON_MEMO     VARCHAR2(3000),                   -- R4：上限 3000（as-is entity 為 4000，RD 對齊）
+  REASON_MEMO     VARCHAR2(3000),                   -- R4：上限 3000（as-is entity 為 4000，RD 對齊）；⚠️ BYTE/CHAR 語意待 RD 對 DB Excel——多位元組文字 3000「字元」需 VARCHAR2(3000 CHAR)，Oracle 預設 BYTE 會少於 3000 字
   UPD_DATE        DATE,
   CONSTRAINT PK_TB_REVISED_ITEM PRIMARY KEY (APPLICATION_NO)
   -- CHECK ITEMn IN ('Y','N') ← R9，RD 評估是否加 DB constraint 或僅 app 層
@@ -39,4 +39,5 @@ CREATE TABLE TB_REVISED_ITEM (
 -- TB_LOAN_CONDITION_FEE          : R13.6 刪（LON_TYPE=04 ITEM12 N→Y）
 -- TB_CHECK_POINT_RC / _IU / _CORP / _CU : R14 checkpoint（標 EPRO{IS/IU/CS/CU}_0260）
 
--- ⚠️ R13 各表的「刪除/複製範圍」是否定版，受 PRD TBD-006（RP1-PENDING）控制 → 未關前勿據此實作側效。
+-- ✅ RP1(TBD-006) 已裁（2026-06-11）＝A 保留側效：R13.1–13.3/13.6/13.7 之刪除/複製範圍已定版、可實作。
+-- ⚠️ 僅 R13.4/13.5（TB_LOAN_CONDITION_DETAIL / TB_REVISED_ITEM_DETAIL）仍受 RP4 控制 → 未關前勿定版其刪除/還原範圍。

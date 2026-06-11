@@ -7,7 +7,8 @@ Rn 沒有任何 QA covers、Traceability Matrix 引用了不存在的 QA）。
 
 **分工**（重要）：
   - 本腳本＝**機械閘門**：只攔「可程式判定」的形式錯（gate ①openapi ②schema ⑤covers
-    + 跨檔完整性：endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi、強制點欄）。
+    + 跨檔完整性：endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi、強制點欄
+    + gate⑥ Bible↔PRD 對照：covers-prd 懸空=FAIL；trace 缺漏=advisory warn）。
   - **語意正確性**（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、NFR 量化）
     仍由 `.claude/agents/spec-reviewer.md`（人/LLM 判斷）審。兩層互補、不重疊。
 
@@ -24,7 +25,10 @@ Rn 沒有任何 QA covers、Traceability Matrix 引用了不存在的 QA）。
   - gate⑤ 規則集 = spec.md 的 `### Rn` 標題 + `**R13.x**` 子規則；不展開 `R13.1–13.5` 範圍寫法。
   - 「@PENDING 豁免」靠規則(或其父規則)定義行含 `@PENDING`/`RPn` 判定；僅影響「未覆蓋規則」要 FAIL 還是 INFO。
   - schema 長度交叉比對僅比 snake_case 欄名 ↔ camelCase openapi property 名重疊者。
+  - gate⑥ 為 funcId 檔名 glob + `REQ-\\d{3}` token 比對；快照/trace 不存在時整段 advisory
+    略過（不擋無 PRD 的鏡像 i0 bundle）。trace 行格式約定見 docs/specs/prd/trace-*.md 頭部。
 """
+import glob
 import os
 import re
 import sys
@@ -335,6 +339,61 @@ def gatex_crossfile(bundle):
     return fails, warns
 
 
+# ---------- gate ⑥ Bible↔PRD 對照（治 BP-7：上游漂移要有 gate）-----------------
+PRD_ROOT = "docs/specs/prd"
+REQ_RE = re.compile(r"REQ-\d{3}")
+BR_ROW_RE = re.compile(r"^\*{0,2}BR-\d+")
+
+
+def gate6_bible_prd(bundle):
+    """covers-prd ↔ PRD 快照 ↔ Bible↔PRD trace sidecar 三方對照。
+
+    - spec.md 引用的 REQ 不在 PRD 快照 → FAIL（懸空上游追溯，同 gate⑤ 懸空類）。
+    - 快照/trace 不存在 → warn 後略過（advisory；鏡像 i0 bundle 無 PRD 屬正常）。
+    - trace 表 A 的 BR 列無 REQ 對應、也無 BP-n/@PENDING 登記 → warn（漂移未登記）。
+    - PRD 快照的 REQ 未入 trace → warn（上行追溯缺列）。
+    """
+    fails, warns, infos = [], [], []
+    funcid = os.path.basename(bundle.rstrip("/"))
+    sp = os.path.join(bundle, "spec.md")
+    if not os.path.isfile(sp):
+        return [], [], []
+    spec_reqs = set(REQ_RE.findall(read(sp)))
+
+    snaps = sorted(glob.glob(os.path.join(PRD_ROOT, f"PRD-*{funcid}*.md")))
+    if not snaps:
+        if spec_reqs:
+            warns.append(f"無 PRD 快照（{PRD_ROOT}/PRD-*{funcid}*.md）→ covers-prd 無法對快照驗（advisory 略過）")
+        return fails, warns, infos
+    prd_reqs = set(REQ_RE.findall(read(snaps[-1])))
+    for r in sorted(spec_reqs - prd_reqs):
+        fails.append(f"spec.md 引用 `{r}`，但 PRD 快照無此 REQ（懸空上游追溯；對 covers-prd 或重新快照）")
+
+    traces = sorted(glob.glob(os.path.join(PRD_ROOT, f"trace-*{funcid}*.md")))
+    if not traces:
+        warns.append(f"無 Bible↔PRD 對照表（{PRD_ROOT}/trace-*{funcid}*.md）→ Bible→PRD 漂移無登記點（BP-7 類）")
+        return fails, warns, infos
+    trace_reqs = set()
+    for ln in read(traces[-1]).splitlines():
+        s = ln.strip()
+        if not s.startswith("|"):
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        if not cells:
+            continue
+        if BR_ROW_RE.match(cells[0]):
+            row_reqs = REQ_RE.findall(ln)
+            trace_reqs.update(row_reqs)
+            if not row_reqs and not re.search(r"BP-\d|@PENDING", ln):
+                warns.append(f"trace `{cells[0].strip('*')}` 無 PRD REQ 對應、也無 BP-n/@PENDING 登記（漂移未登記）")
+        elif REQ_RE.match(cells[0].strip("*")):
+            trace_reqs.update(REQ_RE.findall(cells[0]))
+    for r in sorted(prd_reqs - trace_reqs):
+        warns.append(f"PRD `{r}` 未入 Bible↔PRD 對照表（上行追溯缺列）")
+    infos.append(f"對照：{os.path.basename(snaps[-1])} ＋ {os.path.basename(traces[-1])}")
+    return fails, warns, infos
+
+
 # ---------- runner -----------------------------------------------------------
 def check_bundle(bundle):
     funcid = os.path.basename(bundle.rstrip("/"))
@@ -344,11 +403,13 @@ def check_bundle(bundle):
     g2f, g2w = gate2_schema(bundle)
     g5f, g5w, g5i = gate5_traceability(bundle)
     gxf, gxw = gatex_crossfile(bundle)
+    g6f, g6w, g6i = gate6_bible_prd(bundle)
     sections = [
         ("gate①openapi", g1f, g1w, []),
         ("gate②schema ", g2f, g2w, []),
         ("gate⑤covers ", g5f, g5w, g5i),
         ("xfile 完整性 ", gxf, gxw, []),
+        ("gate⑥bible↔prd", g6f, g6w, g6i),
     ]
     for name, fails, warns, infos in sections:
         status = "FAIL" if fails else "PASS"
