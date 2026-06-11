@@ -16,6 +16,7 @@
 | S6 | `bc3f2ca` | 🟢 | M6 §B 10 列全綠 → **M6 合計 22/22,i0 模組收口、inventory §2C 獲 zero-based 驗證**;空殼已清;窮盡聲明（無剩餘非 partial i0 JSP）已記。 |
 | S7 | `8c7ea52` | 🟢 | M7a 10 列:6 綠+2🟡(0114/0214→F-7)+2 UNFOUND(0211/0213→F-6);四錨點完整;「page-mapping 待確認≠不遷裁決」判斷正確。 |
 | S8 | `859044a` | 🟢 | M7b 10 列:8 綠+2🟡(0119/0219→F-8) → **M7 c0 收口（20 列=14綠/4🟡/2UNFOUND）**;00117/00120 staff 不接判讀正確（合決策 B）;00118 oldCase pageMap 對等性獲驗;窮盡聲明已記。 |
+| S9 | `9c9aa81` | 🟢 | M8 z0 18 列:12 綠+6🟡 → **模組場全收（S1–S9 完成）**;新增 F-9~F-12;00800 init-query 🟡=已知 RP9（審計獨立重發現=方法交叉驗證通過）;窮盡聲明已記。 |
 
 ## 累計發現（S-final diff 報告的預載;裁定全部留給人審）
 | # | 發現 | 證據位置 | 影響/建議動作 |
@@ -28,6 +29,11 @@
 | F-6 | `EPROC0_0211/0213`（展期限定 FinEvalTable/Scorecard）舊源有完整碼,新 FE/BE 全無;舊系統本身不對稱（0100 系列無 0111/0113） | `M7a-c0-00110-00115.md` | page-mapping「待確認」≠裁決——需正式裁定遷/不遷（c0 展期案的這兩功能是否由 00116-00120 涵蓋） |
 | F-7 | `EPROC0_0114/0214` FE calc handler 空 return、無 calc 路由（舊有 getRate） | `M7a-c0-00110-00115.md` | 疑為 inventory §2D 已知設計（無 c0 calc→隱鈕、BE save 算,`62ec62f`）;驗 template 鈕是否真隱——隱=降綠,未隱=真 UI bug |
 | F-8 🟡真缺陷候選 | `EPROC0_0119/0219`（FinStmt FI）FE `getMenu()` 回空 `currencyList`/`currencyUnitList`/`typeOfYearList`,但必填 select 欄位有消費——疑誤套 00120 的「不接 options」模式（00120 頁不消費,00119 有消費） | `M7b-c0-00116-00120-rest.md` | runtime-silent 類;查 options 是否由 info 回應另路供給;否則開修復卡（一行接回 menu 端點級別） |
+| F-9 | `EPROZ00100` ToDo:呈報書下載走 `goPath()` 非報表服務、upload handler 留 console stub（inventory 標 ✅） | `M8-z0.md` | 部分屬 R2 報表軌;upload stub 需修復卡 |
+| F-10 🟡真缺陷候選 | `EPROZ00101/00102` 刪/結案 popup:測試用 `setReasonList()` 硬編碼 D01–D99 覆蓋 API 回的 reason list——測試碼殘留正式路徑 | `M8-z0.md` | 小修復卡（刪覆蓋呼叫即可）;Phase V 驗 reason 正確性 |
+| F-11 | `EPROZ00640` BE PDF export:writer/document 輸出被註解、回 `ResponseEntity<String>`,FE 期待 blob（Excel 正常） | `M8-z0.md` | 比 sweep① method 對齊更深;PDF 呈現屬 R2 軌,但「註解掉的殘碼」需裁:接 R2 或先修 |
+| F-12 🟡真缺陷候選・頭等 | `EPROZ00660` FE 打 `epl-case-TLOD-onhandstatus-query-list`,BE 只有 `epl-case-CAD-...`——endpoint 名不符,查詢必 404;inventory 卻標「✅ CR 範本」 | `M8-z0.md` | 一行修復（FE 端點名改 CAD 或 BE 加 alias）;翻案素材（✅→實際跑不動） |
+| —（已知） | `EPROZ00800` FE POST vs BE GET（init-query）＝RP9,SRS §@PENDING 在案 | `M8-z0.md` | 不開新 id;審計獨立重發現=方法交叉驗證通過 |
 
 ## 口徑備忘（S-final 統計時遵守）
 - 狀態字彙同義:`✅ 碼在`≡`碼在`、`❓`≡`UNFOUND`（各場用字略飄,master 彙總表已正規化）。
