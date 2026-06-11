@@ -71,6 +71,8 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
   - `a1-funcGetExchangeRate-spec.md`（A-1 換匯 stub 規格，A-1 未實作）+ `phase-d-a1-exchange-stub-investigation.md`（A-1 背景調查）
   - `00800-verification-findings.md`（as-is 證據／SRS as-is 來源；D1–D5 已修注記在內）
   - `00800-rimat-fix.md`（step 2 修復包：RP1=A 解鎖項 F1–F7，待派工）
+  - `00800-pending-recon.md`（RP6/RP4/RP10 舊系統取證，待派工）、`00300-return-recon.md`（00300 return 坐實，待派工）、`c0-authz-sql.md`（c0 授權列 SQL 預產，待派工）
+  - `full-refactor-audit.md`（**全量 zero-based 盤點**：Bible+舊源+畫面清單重推總量→diff 新碼與 inventory；多 session，產出寫 `refactor-audit/`，待派工）
   - ＊**Phase F c0 FE 已收工**、**⑨ 靜態 sweep 三批已收齊** → prompt 全進 `done/`。
 - **`build-tasks/done/`**（已消化——歷史記錄）：c0 FE 逐頁（Phase F）、00800 修正、c0 cleanup、⑨ sweep×3、staff 調查鏈、早期 B-*/EPROC/EPROISU…
 - **live 任務單命名（2026-06-11 起）**：`<funcId>-<type>.md`（如 `00800-verification-findings.md`）；`done/` 歷史檔名不回溯改。
