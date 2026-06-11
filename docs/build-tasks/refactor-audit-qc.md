@@ -30,3 +30,11 @@
 - FE 判定標配=四錨點（S4b 起):目錄樹/page-code 註冊/service 動態拼接/共用元件分支;只做精確字串搜尋不得標 UNFOUND。
 
 > 維護:每場 QC 後加一列;S-final 出 `diff-vs-inventory.md` 後,本檔發現區與其對齊,人審逐條裁定 → 回填 `feature-inventory.md`。
+
+## S-final 派工 prompt（定稿;S1–S9 在 master 全標完成後才跑）
+> 讀 `docs/build-tasks/full-refactor-audit.md` §5、`refactor-audit/master.md`、**`docs/build-tasks/refactor-audit-qc.md`（口徑備忘+累計發現必讀）**,以及各模組檔的小計列（不重讀明細,證據需要時才回查單列）。此時才允許讀 `docs/feature-inventory.md` 與 Bible 的 BR/SC 清單。產出 `refactor-audit/diff-vs-inventory.md`,含四節:
+> ① **總量表**:全系統 總列數×（碼在/🟡/🔴/🚫/UNFOUND）,按模組分組;統計時 `✅ 碼在`≡`碼在`、`❓`≡`UNFOUND`;M1/M9 為 action 級粒度,另列「頁級換算」欄並註記。
+> ② **差異清單**:對 feature-inventory 逐模組,只列差異四類（inventory ✅ 但 audit 非綠／inventory 漏列／audit 🚫 但 inventory 仍列／狀態矛盾）,每條附模組檔行號;**QC 日誌 F-1~F-5 必須逐條對上**（F-1 企金 FE 缺口=頭條）。
+> ③ **Bible 完備性抽查**:Bible 黃金旅程/BR 點名的頁在 audit 表有無承載列;缺=列 `BIBLE-GAP-n`,只標不裁。
+> ④ **建議回填項**:逐條「inventory 哪一列改成什麼+依據」,供人審打勾;**不改 feature-inventory 本體**。
+> 鐵則:唯讀產品 repo;結論全部要能回指模組檔行號;寫完 commit+push,master 標 S-final 完成。
