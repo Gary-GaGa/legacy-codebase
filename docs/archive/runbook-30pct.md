@@ -1,5 +1,6 @@
 # Runbook — 自走補完剩餘 30%（goal mode）
 
+> 🗄 **已凍結（2026-06-11 健檢後清理）**：本檔管的三件事全數結案——c0 後端 00115–00120 結清、c0 前端 Phase F 收工（2026-06-09）、撥貸改走專屬控制文件（`disbursement/disbursement-triage.md` §7 allowlist + `build-tasks/a1-funcGetExchangeRate-spec.md`）。**狀態以 `feature-inventory.md` 為準；Phase V 整合驗證見 `verification/`**。本檔停止維護、僅供歷史參考（內文進度敘述已 stale，勿引用）。
 > 給 Codex 自走（goal mode）完成剩餘 backlog 的控制文件。**硬規則見 `backend/AGENTS.md` §6**；本檔定**順序、閘門、煞車、停止點**。
 > 原則：**build 綠 ≠ 正確**（本專案已多次「綠但有 bug」：reflection / 亂碼 / BOM / checkpoint）→ 閘門 = **驗證腳本 + build 綠 + 對 i0 語意自檢**，且判斷題一律**停下回報**。
 

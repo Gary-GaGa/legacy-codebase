@@ -2,10 +2,10 @@
 
 | 欄位 | 內容 |
 |---|---|
-| Status | **Approved (subset)** — TBD-無關子集 D1–D5 已定稿+實作（`88328f9`）；**TBD 裁定輪（2026-06-11）**：RP1=A 保留側效、RP2/RP3/RP5/RP7 已關 → **R5、R13.1–13.3、R13.6、R13.7 定版**；**仍 blocked**：R13.4/13.5 待 `RP4`（連動 `RP6` 取數）、checkpoint `_0260` key 清單待 §5.6、init-query method、`RP8`、**Bible→PRD seam（BP1–4）**；正式 SA 簽核待 owner 指派。就緒/blocked 分界見文末 as-is→to-be 摘要 |
+| Status | **Approved (subset)** — D1–D5 已定稿+實作（`88328f9`）；06-11 裁定輪：RP1/RP2/RP3/RP5/RP7 已關（**詳 §@PENDING＝單一出處**）→ R5、R13.1–13.3、R13.6、R13.7 定版；**仍 blocked**：RP4（R13.4/13.5，連動 RP6）、RP8、RP9、RP10、RP11、BP1–4；正式 SA 簽核待 owner 指派。就緒/blocked 分界見文末 as-is→to-be 摘要 |
 | Owner | SA（待指派）|
 | Slug | `EPROZ00800`（＝funcId）|
-| 版本 | v0.5（**TBD 裁定輪**：RP1=A 保留側效+修bug+audit、RP2/RP3 保留原因後補、RP4 連動 RP6 取數、RP5 維持現狀定版、RP6 動作項化、RP7 修 Finished；QA-007/008 un-pend、QA-009 改掛 RP4、新增 QA-024/025）|
+| 版本 | v0.5（TBD 裁定輪——各 RP 裁定內容單一出處＝§@PENDING 表；QA 異動：QA-007/008 un-pend、QA-009 改掛 RP4、新增 QA-024/025。06-11 健檢後補：B2/B3/§5.6 契約待決正規化為 RP9–RP11）|
 | 最後更新 | 2026-06-11 |
 | 上游 PRD | `CDC-EPRO-0001 v1.1` |
 | as-is 來源 | `docs/build-tasks/00800-verification-findings.md` |
@@ -32,8 +32,8 @@
 | init-query | `epl-case-query-reviseditem` | GET（PRD §6.1）或全站一致 RPC（RD 定）| **FE POST / BE GET 不一致** | `QueryRevisedItemRequest/Response` |
 | execute（儲存）| `epl-case-insert-reviseditem` | **POST**（會刪改資料）| 🔴 **BE GET（bug）**、FE POST | `InsertRevisedItemRequest/Response` |
 
-> ⚠️ **init-query method（B3）**：PRD §6.1=GET vs 站上 RPC=POST vs as-is 兩端不符 → **RD/架構待定**（openapi 標 @PENDING）。
-> ⚠️ **request body 結構（B2）**：to-be 用 `itemMap.item1..14`（見 `openapi.yaml`）；as-is `InsertRevisedItemRequest` 為平鋪欄位 → **RD 確認 DTO 形狀**（改 DTO 或 openapi 對齊）。
+> ⚠️ **init-query method**＝`@PENDING RP9`（詳 §@PENDING）。
+> ⚠️ **request body 結構**＝`@PENDING RP11`（詳 §@PENDING）。
 > ⚠️ **prompt 不在 openapi 範圍**：prompt 走 routing/attr 機制、**非 `epl-*` RPC**，故 `openapi.yaml` 不列；其錯誤碼 `MSG_INITIAL_FAIL`（R1/R15）由該機制承載，**落點待 RD 在 routing 層定**——QA-018 僅驗 FE 可觀察行為（停止載入+錯誤訊息）。
 
 ## 業務規則（Rn）
@@ -76,17 +76,17 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 刪目前 `APPLICATION_NO` 的 `TB_REVISED_ITEM` → insert `ITEM1~14`+`REASON_MEMO`+`UPD_DATE`。**as-is ✅**。
 
 ### R13 — 關聯資料清除/還原矩陣 RI-MAT　`covers-prd: REQ-005 / §5.5`　**✅ RP1 已裁（06-11）：A＝保留側效＋修 bug＋audit**　**強制點：BE**
-> **RP1 裁定 A**：legacy「取消勾選自動清除/還原關聯資料」之側效設計**保留為已核准 to-be**（不改使用者確認流程；R8 既有變更提示維持）；下列 as-is bug 為**修復項**而非設計取捨；execute 須留**側效異動摘要 audit**（→R16）。**R13.1–13.3、13.6、13.7 定版**；R13.4/13.5 仍待 `RP4`（連動 `RP6` 取數）。
+> **RP1=A 已裁（06-11，理由/配套詳 §@PENDING＝單一出處）**：legacy 側效保留為已核准 to-be（使用者確認流程不改；R8 變更提示維持）；下列 as-is bug＝修復項而非設計取捨；execute 須留側效異動摘要 audit（→R16）。**R13.1–13.3、13.6、13.7 定版**；R13.4/13.5 仍待 RP4（連動 RP6 取數）。
 - **R13.1 RI-MAT-001 ✅定版**（ITEM2 Y→N）：刪 `GUARANTOR_INFO`/`_CORP`，由 `REF_APPLICATION_NO` 複製還原 + 還原 `IS_ANY_GUARANTOR`。as-is ⚠️：取 `baseInfo.refApplicationNo/lonTypeCode` 傳**空值**（還原失效）→ RD 修。
 - **R13.2 RI-MAT-002 ✅定版**（ITEM2 N→Y，reference 無 guarantor）：borrower `IS_ANY_GUARANTOR=Y`。as-is ⚠️：缺「reference 無 guarantor」判斷 → RD 修。
 - **R13.3 RI-MAT-003 ✅定版**（ITEM3 Y→N）：刪 collateral/valuation/site-visit/title/provider/owner，由 reference 複製 + 更新 `IS_ANY_COLLATERAL_PROVIDER`。as-is ⚠️：未更新 `IS_ANY_COLLATERAL_PROVIDER` → RD 修。
-- **R13.4 RI-MAT-004 ⏸待RP4**（ITEM1/4~11 特定組合）：刪 `LOAN_CONDITION_DETAIL`+`REVISED_ITEM_DETAIL`，相關 page menu 標重處理。as-is ⚠️：page menu 標 0110~0160（非 §5.6 清單，見 R14）。
-- **R13.5 RI-MAT-005 ⏸待RP4**（ITEM1/4~11 Y→N）：從原始 detail 還原欄位（§5.5.2 矩陣）+ 更新 `REVISED_ITEM_DETAIL`。as-is ⚠️：ITEM10/11 else ITEM1 疑錯欄（＝RP4 命題、判據待 RP6 取數）、受 isNotSame gate（gate 移除已隨 RP1=A 定版，見 R11）。
+- **R13.4 RI-MAT-004 ⏸ @PENDING RP4**（ITEM1/4~11 特定組合）：刪 `LOAN_CONDITION_DETAIL`+`REVISED_ITEM_DETAIL`，相關 page menu 標重處理。as-is ⚠️：page menu 標 0110~0160（非 §5.6 清單，見 R14）。
+- **R13.5 RI-MAT-005 ⏸ @PENDING RP4**（ITEM1/4~11 Y→N）：從原始 detail 還原欄位（§5.5.2 矩陣）+ 更新 `REVISED_ITEM_DETAIL`。as-is ⚠️：ITEM10/11 else ITEM1 疑錯欄（＝RP4 命題、判據待 RP6 取數）、受 isNotSame gate（gate 移除已隨 RP1=A 定版，見 R11）。
 - **R13.6 RI-MAT-006 ✅定版**（`LON_TYPE=04` 且 ITEM12 N→Y）：刪 `LOAN_CONDITION_FEE`（**RP3 已裁 06-11：保留、業務原因後補**——降為動作項）。**as-is ✅**。
-- **R13.7 RI-MAT-007 ✅定版**（ITEM13/14）：**僅持久化勾選狀態、無下游側效**（**RP5 已裁 06-11：維持現狀＝定版**；若 RP6 取數後發現 13/14 有下游語意，另開新 @PENDING）。**as-is ✅**（行為即現狀）。
+- **R13.7 RI-MAT-007 ✅定版**（ITEM13/14）：**僅持久化勾選狀態、無下游側效**（**RP5 已裁 06-11：維持現狀＝定版**；若 RP6 取數後發現 13/14 有下游語意，另開新待決 RPn）。**as-is ✅**（行為即現狀）。
 
 ### R14 — Checkpoint / Page Menu 更新　`covers-prd: REQ-006 / §5.6`　**強制點：FE+BE**
-依 `IS/IU/CS/CU` 寫對 checkpoint 表（`TB_CHECK_POINT_RC` / `_IU` / `_CORP` / `_CU`）、標 `EPRO{IS/IU/CS/CU}_0260`；execute 回傳 `pageMenuCondition`（§5.6 重處理頁清單，如 IS：0210/0220/0230/0250/0290）。**as-is 🔴**：標 `EPROZ00800`/`0160`/`0110~0150`（非 `_0260`）；`pageMenuCondition` **未回傳** → RD 修。
+依 `IS/IU/CS/CU` 寫對 checkpoint 表（`TB_CHECK_POINT_RC` / `_IU` / `_CORP` / `_CU`）、標 `EPRO{IS/IU/CS/CU}_0260`（確切 key 清單＝`@PENDING RP10`，詳 §@PENDING）；execute 回傳 `pageMenuCondition`（§5.6 重處理頁清單，如 IS：0210/0220/0230/0250/0290）。**as-is 🔴**：標 `EPROZ00800`/`0160`/`0110~0150`（非 `_0260`）；`pageMenuCondition` **未回傳** → RD 修。
 
 ### R15 — 錯誤處理　`covers-prd: REQ-007 / §6.4 / §8`　**強制點：FE+BE**
 `MSG_INITIAL_FAIL`(prompt)、`COMMON_MSG_ERROR_LON`/`MSG_DATA_NOT_FOUND`(init/execute)、`COMMON_MSG_SAVE_FAIL`(execute rollback)、`COMMON_MSG_SAVE_SUCCESS`。**as-is ⚠️**：無 RevisedItem 專屬 mapping。
@@ -95,9 +95,12 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 單一 transaction（→R10）；init-query≤3s / execute≤5s（大量複製另測）；log 含 requestId/applicationNo/userId/action/result/耗時、敏感遮罩；execute 留 audit——**RP1=A 配套：audit 須含側效異動摘要**（哪些 RI-MAT 分支觸發、各影響表/筆數），補償「無使用者確認步驟」的可追溯性；維持 IS/IU/CS/CU 四態 checkpoint。
 
 ## 🚩 @PENDING（PRD TBD → 規則；**裁定輪 2026-06-11**，✅＝已關、⏸＝仍開）
+> **本表＝每個待決的單一出處**（裁定內容只寫這裡；他處只標狀態 token + 指回本表）。
+> **入表判準**：擋契約/規則定版的待決一律入表（RPn 列，含非 PRD TBD 者）；純 RD 實作細節（如 prompt 錯誤碼落點）留 prose、不入表。本表 ↔ `pending-register.md` 由 gate⑦ 機械同步。
+
 | id | 狀態 | 待決（PRD TBD）| 裁定（06-11）/ 後續 | 影響規則 | owner |
 |---|---|---|---|---|---|
-| **RP1** | ✅已關 | TBD-006：保留 legacy 清除/還原副作用，或改使用者確認流程 | **A＝保留側效＋修 bug＋audit**。理由：資料完整性風險在實作 bug 非設計；自動維持關聯一致本身合理；不開 ADR（僅 B 需）。配套：R11 isNotSame gate 移除、R13.1~13.3 bug 修、R16 audit 側效摘要 | R13（13.4/5 另受 RP4）| ~~PM/SA/RD~~ |
+| **RP1** | ✅已關 | TBD-006：保留 legacy 清除/還原副作用，或改使用者確認流程 | **A＝保留側效＋修 bug＋audit**。理由：(1) 資料完整性風險在實作 bug 非設計、自動維持關聯一致本身合理；(2) B 須 R13/R11/FE 大改＋PRD v1.2 重新快照，00800 非關鍵路徑、報酬率低。配套：R11 isNotSame gate 移除、R13.1~13.3 bug 修、R16 audit 側效摘要。不開 ADR（無架構變更；僅 B 需）| R13（13.4/5 另受 RP4）| ~~PM/SA/RD~~ |
 | RP2 | ✅已關 | TBD-003：`LON_TYPE=03` 強制 ITEM1 之業務原因 | **保留強制、原因後補**（機制定版；原因＝SA 動作項，不擋實作）| R5 | SA（補文）|
 | RP3 | ✅已關 | TBD-004：`LON_TYPE=04` ITEM12 N→Y 刪 fee 之業務原因 | **保留、原因後補**（同 RP2 模式）| R13.6 | SA/RD（補文）|
 | RP4 | ⏸開 | TBD-005：ITEM1 與 ITEM10 皆 TENOR（legacy 設計 or 缺陷）| **連動 RP6 取數後裁**——ITEM10 正式名稱＝判據，匯出前不賭 | R13.4/5 | RD/SA |
@@ -105,6 +108,9 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 | RP6 | ⏸開 | TBD-001：ITEM1~14 正式業務名稱 | **動作項化**：SA 對 legacy DB 跑 `SELECT * FROM TB_COMMON_FIELD_OPTIONS WHERE SYSTEM='EPRO' AND FIELD_NAME='REVISED_ITEM'` → 名稱補 PRD §5/7/10＋本 SRS → **順帶裁 RP4** | 畫面顯示、RP4 判據 | **SA（取數）** |
 | RP7 | ✅已關 | TBD-002：`Finshed` → `Finished` | **修正為 `Finished`**（UI 文字定版；若有舊字串斷言隨實作同步）| UI 文字 | RD（實作）|
 | RP8 | ⏸開 | （as-is findings，非 PRD TBD）R6 `secureAttribute==='U'` vs `attrMap.isCU`、R7 `canEditList/isShowList` vs `isEdit`——as-is 判據與 to-be 語意是否全情境等價/等效 | （非本輪範圍）| R6/R7 | RD |
+| RP9 | ⏸開 | （契約待決，非 PRD TBD；原 B3）init-query method：PRD §6.1=GET vs 全站 RPC-POST vs as-is FE POST/BE GET | RD/架構定版；定版前 openapi 以 POST 佔位、不裁定 | R2 契約 method | RD/架構 |
+| RP10 | ⏸開 | （契約待決，非 PRD TBD；原「§5.6 checkpoint-keys」）`EPRO{IS/IU/CS/CU}_0260` 確切 key 清單（PRD §5.6；勿沿用 as-is legacy key）| RD 依 §5.6 定版後 openapi `checkPointMap` 補 required | R14 | RD/PM |
+| RP11 | ⏸開 | （契約待決，非 PRD TBD；原 B2）execute request body 形狀：to-be `itemMap.item1..14` vs as-is 平鋪欄位 | RD 確認 DTO 形狀（改 DTO 或 openapi 對齊）| R10/R12 契約 | RD |
 
 ### @PENDING（Bible→PRD seam；PRD 未承載的上游業務邊界）
 > 來源 Bible `../../bible/bible-eproposal.md`；PRD `CDC-EPRO-0001` 由 legacy code 反推、未帶下列**旅程級**邊界，故未進 PRD REQ/TBD、亦未進本 SRS。**本 SRS 標 pending、不自行裁定**。單一視圖見 [`pending-register.md`](../../../pending-register.md) §Bible→PRD seam——該表另有 **BP-5**（共用 vs 條件式頁籤用詞消歧，PRD 層）與 **BP-7**（Bible↔PRD 無機械 gate，流程層），非 SRS 承載點、故不列於下表。
@@ -116,7 +122,7 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 | **BP4-PENDING** | 下游頁映射：影響 `EPROISU0150`、顯示於 `EPROISU0173`（BR-017、SC-003/004）；§5.6 re-process 清單(0210~0290)未含、0173 未 disclaim（已補 Non-Goals）| 下游命名級追溯 | SA/RD |
 
 ## Trade-offs（架構取捨）
-- **RI-MAT 側效保留 legacy vs 改使用者確認流程**：**已裁 06-11＝A 保留側效**。理由：(1) 風險在實作 bug（還原傳空值、isNotSame gate）非設計，自動維持關聯一致本身合理；(2) B 須 R13/R11/FE 大改＋PRD v1.2 重新快照，00800 不在關鍵路徑、報酬率低。**稽核補償**：R16 audit 須含側效異動摘要。已知弱點留檔：使用者無確認步驟即被清資料——若日後內控提出要求，屆時走 B＋ADR。**走 A 不開 ADR**（無架構變更）。
+- **RI-MAT 側效：保留 legacy（A）vs 改使用者確認流程（B）**——已裁 06-11＝A（理由/配套詳 §@PENDING RP1）。本區只留取捨紀錄：**已知弱點留檔**＝使用者無確認步驟即被清資料；若日後內控提出要求，屆時走 B＋ADR。走 A 不開 ADR（無架構變更）。
 - **side-effect 判定來源**：以「DB 二次比對」（R11）為準 vs 信前端 `isNotSame`——SRS 選前者（正確性 > 省一次查詢）；隨 RP1=A 一併定版。
 
 ## Traceability Matrix（PRD REQ → Rn → QA）
@@ -136,11 +142,11 @@ execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一
 | §9 NFR | R16 | QA-012（transaction）；perf/log/audit（RD 補）|
 
 ## 硬界線
-- **不得自行裁定 ITEM 業務名稱**（RP6，取數動作項）；~~不得把 legacy 側效當已核准需求~~ → **RP1 已關（06-11，裁定 A）：R13.1–13.3/13.6/13.7 之 legacy 側效＝已核准 to-be**；R13.4/13.5 在 RP4 關閉前仍不定版。
+- **不得自行裁定 ITEM 業務名稱**（RP6，取數動作項）；~~不得把 legacy 側效當已核准需求~~ → RP1 已關（詳 §@PENDING）：R13.1–13.3/13.6/13.7 之 legacy 側效＝已核准 to-be；R13.4/13.5 在 RP4 關閉前仍不定版。
 - execute 必須單一 transaction（R10）——已隨 D1–D5 修復（`88328f9`）。
 - as-is 的 `file:line` 證據見 `00800-verification-findings.md`；實作以該頁現碼 + 本 SRS to-be 為準。
 
 ## as-is → to-be 摘要（給 RD）
 - **已修（D1–D5，`88328f9`）**：R10 transaction、execute→POST、R9 BE Y/N 驗證、R14 回 pageMenuCondition、R4 maxlength 3000。
 - **本輪解鎖（RP1=A，可實作）**：R11 移除 isNotSame gate；R13.1 還原傳空值修復；R13.2 補「reference 無 guarantor」判斷；R13.3 補 `IS_ANY_COLLATERAL_PROVIDER` 更新；R5 補 disabled（含非 03 且 DB=Y 不可編）；R16 execute audit 側效異動摘要；UI `Finshed`→`Finished`（RP7）。
-- **仍待**：R13.4/13.5（RP4，連動 RP6 取數）、R14 `_0260` key 清單（§5.6）、init-query method（B3）、R6/R7 判據等價性（RP8）。
+- **仍待**：R13.4/13.5（RP4，連動 RP6 取數）、R14 `_0260` key 清單（RP10）、init-query method（RP9）、execute DTO 形狀（RP11）、R6/R7 判據等價性（RP8）。

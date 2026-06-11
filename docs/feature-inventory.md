@@ -1,7 +1,7 @@
 # 舊→新 功能總盤點（Feature Inventory）— 70% + 30% 全量
 
 > **用途**：把舊 EPRO 系統（~250 JSP / 9 模組）轉新系統（前端 Angular + 後端 Spring Boot）的**每一項功能**、前後端狀態、剩餘事項、橫向 track、建議排程，收斂成一張可排程追蹤的主表。
-> **來源**（2026-06-10 已分資料夾）：`legacy/page-mapping.md`（舊→新對應）、`process/completion-ledger.md`（總盤點）、`verification/verification-handoff.md`（驗證待辦）、`disbursement/`（撥貸 triage+escalations）、`legacy/migration-backlog.md`（模組地圖/R1–R8）、`legacy/module-*.md`（頁內結構）。
+> **來源**（2026-06-10 已分資料夾）：`legacy/page-mapping.md`（舊→新對應）、`archive/completion-ledger.md`（總盤點，已凍結）、`verification/verification-handoff.md`（驗證待辦）、`disbursement/`（撥貸 triage+escalations）、`legacy/migration-backlog.md`（模組地圖/R1–R8）、`legacy/module-*.md`（頁內結構）。
 > ⚠️ 原始碼不外流；本 repo 只放對應/規格。前後端實作在各自專案。
 
 ## 0. 怎麼讀
@@ -106,7 +106,7 @@
 | EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`（info 留 isQuery、save 送 applicationNo/isFinish/financialList + cetOne/totalCapitalRatio）；i0 FI 有 list 但頁不消費 options → `getMenu()`回`of({})`不接；**未接 `-staff-fi`/funcIsStaffLoan**（cleanup）；BOM/build 過。授權列 |
 > **範本＝i0 `individual/credit-investigation`**：容器 component 動態載 tab（`epl-*-i0-credit-investigation-tab`、`creditInvestigationNav()` config、`CreditInvestigationPageCode` enum）、各子頁 `components/<name>/{component,services}`。c0 照此鏡像、改 `-c0-` endpoint + corporate DTO。
 > ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。
-> **進度（2026-06-06）**：✅ **Step 1**＝c0 容器（BE 驅動動態 tab、`epl-*-c0-credit-investigation-tab`）+ **00115 BGE** pilot，`ng build` 綠（容器 DTO 對齊 c0＝只 `businessType`/`pageMap`、無 i0 的 `assessmentType`/`isStaffLoan`，故容器只留 businessType radio）。✅ **Step 2 完成（Phase F 收工 2026-06-09，8 子頁齊）**：✅ `00112` CBC（`7e8aaf7`；無 calc→totals 本地加總）、✅ `00114` Collateral Assessment（`62ec62f`；無 calc→隱鈕、分數 BE save 算）、✅ `00118` Corp Scorecard（`39e95dd`；calc 保留、回填 riskLevel/scoreDatetime）、✅ `00116` FinStmt GI（`524d8dc`；calc 保留、export POST-blob 一致）、✅ `00119` FinStmt FI（`02d50e7`；無 sele、保留 c0 需要的 isQuery、`report.service.ts` 確認加法無 i0 回歸）；**staff 批 `00117`/`00120`**（business-only，決策 B；✅ `00117`=`b14ae05`、✅ `00120`=`6b084fb`）。✅ **2026-06-09 對舊 source 驗畢 → 決策 B**：舊 corporate c0 00117/00120 是 BusinessOwner-only（舊 c0 trx/module 無 staff 分版/staff save、staff token grep 全空），新 `funcIsStaffLoan` 對 CS/CU 恆 false 是**忠實沿用舊 i0**（staff 僅 IS+03 / IU+01，`legacy-epro/.../EPRO_I00111.java:267`）、**非 regression**。→ **只建 business 版**；c0 staff 端點（`epl-info/save-c0-financial-staff`、`epl-save-c0-financial-evaluation-staff-fi`）＝鏡像 i0 多餘物 → **cleanup backlog（不接 FE、刪除另案）**。判定來源＝容器 `businessType`/`pageMap`（**FE 不打 funcIsStaffLoan**；00117 在 G、00120 在 F 分支）。⚠️ **watch**：① 🔑 **calc 逐頁不同**——00112/00114 無 calc（已隱），但 **00118 Corp Scorecard 有 `epl-calc-c0-corporateScorecard`、00116/00119 FinStmt 亦有 calc → 這幾頁 calc 鈕要保留接上**，勿誤套「隱 calc」。② ✅ c0 staff-vs-business 判定已決（B：business-only，讀容器 businessType/pageMap、不打 funcIsStaffLoan）③ 真元件就緒後實跑 G/F 切換 ④ 整合測確認：00112 totals、00114 rating 是否仍**唯讀顯示**(BE save 算後回傳)、語意與 BE 一致。
+> **進度**：✅ Step 1 容器 + 00115 pilot；✅ Step 2 八子頁齊（**Phase F 收工 2026-06-09**；各頁 commit/calc 註記見上表列、過程見 `build-tasks/done/phase-f-*`）。✅ `00117`/`00120`＝business-only（**決策 B**，對舊 source 驗畢、非 regression——證據/裁決全文見 `decisions.md`；staff 端點 cleanup 已清 `dcd9602`）。⚠️ **watch（Phase V）**：① calc 逐頁不同——00118/00116/00119 有 calc 要保留接上、00112/00114 無（已隱），勿誤套 ② 真元件就緒後實跑 G/F 切換 ③ 整合測確認 00112 totals / 00114 rating 唯讀語意與 BE 一致。
 
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
@@ -125,7 +125,7 @@
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅（CR 範本）|
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；嚴謹可做 deputy↔0700 gap-check |
-| EPROZ00800 | Revised Item | 🟠 | 🟠 | **D1–D5 已修（`88328f9`）**；**✅ TBD-001~007 全裁（2026-06-11，SRS v0.5）**：RP1=**A 保留側效** → R5/R13.1–13.3/13.6/13.7 定版、**RI-MAT 修復解鎖**（isNotSame gate 移除、R13.1~13.3 bug、R5 disable、audit 摘要、Finished）。剩 R13.4/13.5（RP4←RP6 取數）、`_0260` key §5.6、init-query method、RP8。**SRS bundle**＝`specs/srs/EPROZ00800/` |
+| EPROZ00800 | Revised Item | 🟠 | 🟠 | D1–D5 已修（`88328f9`）；✅ TBD-001~007 全裁（06-11，SRS v0.5）→ RI-MAT 修復解鎖；仍開 RP4/RP6/RP8/RP9/RP10/RP11——**裁定/剩餘單一出處＝bundle spec.md §@PENDING**。**SRS bundle**＝`specs/srs/EPROZ00800/` |
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
 
 ### 2F. 撥貸 `EPROISU0920/0921/0922` + T24（🔴 唯一真未完成區塊）
@@ -175,10 +175,10 @@
 - `00300` Document Checklist：return action 空回 → 補實作。
 - ✅ `00600` Search method 已修（sweep① `48e687f`）。
 
-**④b 🟠 `00800` Revised Item（D1–D5 已修；✅ TBD 裁定輪 06-11 完成；owner：RD 實作＋SA 取數）**
-- ✅ **TBD-無關硬缺陷 D1–D5 已修**（`88328f9`，2026-06-09；prompt 已歸檔 `done/00800-fix-step1-tbd-independent.md`）：execute→POST、**execute 單一 `@Transactional`（資料遺失風險已除）**、item Y/N 驗證、回傳 pageMenuCondition、reason maxlength 3000+trim。QA-013/014/016/017 過；**QA-012 rollback 整合測 deferred-to-DB**。
-- ✅ **TBD-001~007 全裁（2026-06-11，SRS v0.5）**：`TBD-006`=**A 保留側效＋修bug＋audit**、`003/004`=保留原因後補、`007`=維持現狀定版、`002`=Finished、`001`=動作項化（**SA 匯 `TB_COMMON_FIELD_OPTIONS`**）、`005`=連動 001 取數後裁。**解鎖 RD 修復**：isNotSame gate 移除（R11）、R13.1 還原空值、R13.2 補判斷、R13.3 補 `IS_ANY_COLLATERAL_PROVIDER`、R5 disable、R16 audit 側效摘要、`Finshed`→`Finished`。
-- **剩**：R13.4/13.5（RP4 ← RP6 取數）、`_0260` checkpoint key 清單（§5.6）、init-query method、R6/R7 判據（RP8）。詳 `specs/srs/EPROZ00800/spec.md` v0.5。
+**④b 🟠 `00800` Revised Item（owner：RD 實作＋SA 取數）**
+- ✅ D1–D5 硬缺陷已修（`88328f9`，2026-06-09；prompt 歸檔 `done/00800-fix-step1-tbd-independent.md`；QA-013/014/016/017 過、QA-012 rollback deferred-to-DB）。
+- ✅ TBD-001~007 全裁（06-11，SRS v0.5）→ RD 修復解鎖：**修復包 prompt＝`build-tasks/00800-rimat-fix.md`**（F1–F7，待派工）。
+- 仍開：RP4/RP6/RP8/RP9/RP10/RP11——**裁定內容與剩餘事項單一出處＝`specs/srs/EPROZ00800/spec.md` §@PENDING**（待決視圖＝`pending-register.md`）。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 
@@ -224,4 +224,5 @@
 **關鍵路徑（兩條）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金評分可用 = Phase F（c0 評分前端，本次新發現、先前漏估）**。其餘前端 + i0 + c0 BE = **Phase V 驗證**即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。
 
 ---
-> 維護：本檔為**對應/排程主表**；逐項狀態變動回填本檔 + 對應細節 doc（`completion-ledger` 桶別、`verification-handoff` 驗證、`disbursement-*` 撥貸）。❓ 項一經唯讀盤點即升 ✅/🔴。
+> 維護：本檔為**對應/排程主表**；逐項狀態變動回填本檔 + 對應細節 doc（`verification-handoff` 驗證、`disbursement-*` 撥貸；`completion-ledger` 已凍結）。❓ 項一經唯讀盤點即升 ✅/🔴。
+> **行紀律（2026-06-11 健檢）**：每列＝狀態 + 一行摘要 + 連結；裁定理由/過程敘事不入本檔（→ `decisions.md` 或該頁 bundle spec §@PENDING）。

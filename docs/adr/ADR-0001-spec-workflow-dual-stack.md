@@ -22,6 +22,10 @@
 - ＋ SRS 既可機器驗證（gate ①–⑥）又有完整敘事（NFR/trade-off/追溯）；審查 read-only、不污染。
 - ＋ Claude/Codex 任一載具都能跑同一流程。
 - －維護成本：雙軌需同步（已在 constitution 標「改一版同步另一版」）。
+- **2026-06-11 更新（repo 總體檢採納）**：雙軌維持，但鏡像降為**薄殼指標**——Codex 範本
+  （prompts/spec-reviewer.toml）只含「指標＋Codex 側差異清單」，內容權威＝Claude 版檔案；
+  「改一版同步另一版」縮小為「差異清單變動才動 Codex 範本」。動機：健檢實證漂移都發生在
+  全文副本的描述層（gate 清單 8 處分裂），縮小可漂移面優於靠紀律同步。
 - 後續：上游 Bible→PRD 評估用官方 knowledge-work plugins；ADR 逐則取代 `decisions.md` 之「決策」部分（log 部分保留）。
 
 ## Alternatives considered

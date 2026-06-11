@@ -13,10 +13,11 @@
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **§5.6 / openapi checkpoint-keys** | `EPRO{IS/IU/CS/CU}_0260` 確切 key 清單 | `00800` R14 checkpoint key 重映射（S7） | RD/PM | 06-09 | `specs/srs/EPROZ00800/openapi.yaml` |
-| **init-query method** | GET（PRD §6.1）vs 全站 RPC-POST | `00800` init-query 契約 method | RD/架構 | 06-09 | `00800 spec.md Endpoints @PENDING(method)` |
-| **TBD-001 / RP6** | **動作項（06-11 改寫）**：SA 對 legacy DB 跑 `SELECT * FROM TB_COMMON_FIELD_OPTIONS WHERE SYSTEM='EPRO' AND FIELD_NAME='REVISED_ITEM'` → ITEM1~14 正式名稱補 PRD §5/7/10＋SRS → **順帶裁 TBD-005** | `00800` 畫面顯示＋RP4 判據 | **SA（取數）** | 06-08 | 00800 §@PENDING |
-| **TBD-005 / RP4** | ITEM1 與 ITEM10 皆 TENOR（設計 or 缺陷）——**06-11 裁：連動 TBD-001 取數後定**（ITEM10 正式名＝判據，匯出前不賭）| `00800` R13.4/5＋QA-009 | RD/SA | 06-08 | 同 |
+| **RP10 / checkpoint `_0260` keys** | `EPRO{IS/IU/CS/CU}_0260` 確切 key 清單（PRD §5.6）| `00800` R14 checkpoint key 重映射（S7） | RD/PM | 06-09 | `00800 spec.md §@PENDING` |
+| **RP9 / init-query method** | GET（PRD §6.1）vs 全站 RPC-POST vs as-is 不一致 | `00800` init-query 契約 method | RD/架構 | 06-09 | 同 |
+| **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
+| **RP6 / TBD-001** | ITEM1~14 正式名稱＝SA 取數動作項（內容詳 `00800 spec.md §@PENDING`；**順帶裁 RP4**）| `00800` 畫面顯示＋RP4 判據 | **SA（取數）** | 06-08 | 同 |
+| **RP4 / TBD-005** | ITEM1 與 ITEM10 皆 TENOR（設計 or 缺陷）——連動 RP6 取數後裁（詳同上）| `00800` R13.4/5＋QA-009 | RD/SA | 06-08 | 同 |
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤` |
 | **c0 escalation E2** | `crScoreCardCompleted` 整欄覆寫 `"NN"`（`:2890`） | 同上 | 信用決策 domain | 06-05 | 同 |
@@ -44,15 +45,16 @@
 | **BP-5** | 用詞消歧：PRD「共用頁籤」(跨 IS/IU/CS/CU 屬性) vs Bible「條件式頁籤」(跨案件類型)——PRD 未消歧、易誤讀為所有案件必走 | 文件一致性（🟢 nit） | PM | 06-10 |
 | **BP-7** ✅ **已收口（06-10）** | ~~Bible→PRD 漂移無 gate~~ → 控制點：trace sidecar（`specs/prd/trace-<docId>-<funcId>.md`，表 A 缺對應必標 BP/@PENDING）+ `check-srs-bundle.py` **gate⑥**（covers-prd 懸空=FAIL、trace 缺漏=warn） | —（漂移仍會發生，但**會被登記/警示**；裁定仍須人） | 流程/SA | 06-10 |
 
-## ✅ 已關（保留 30 天供交接，之後可清）
-| ID | 裁定（06-11）| 來源已同步 |
+## ✅ 已關（保留 30 天供交接，之後可清；**裁定內容單一出處＝來源 spec §@PENDING**，本表只留 verdict token）
+| ID | 裁定（06-11）| 來源（＝完整內容）|
 |---|---|---|
-| **TBD-006 / RP1** 🔴→✅ | **A＝保留 legacy 側效＋修 bug＋audit**（理由：風險在實作 bug 非設計；B 需 PRD v1.2 大改、00800 非關鍵路徑。配套：R11 isNotSame gate 移除、R13.1~13.3 修、R16 audit 側效摘要。不開 ADR）→ R13.1–13.3/13.6/13.7 定版、QA-007/008 解 pending | `00800 spec.md` v0.5 |
-| **TBD-003 / RP2** ✅ | 保留 `LON_TYPE=03` 強制 ITEM1、業務原因後補（SA 動作項，不擋實作）→ R5 定版 | 同 |
-| **TBD-004 / RP3** ✅ | 保留 `LON_TYPE=04` ITEM12 N→Y 刪 fee、原因後補 → R13.6 定版 | 同 |
-| **TBD-007 / RP5** ✅ | ITEM13/14 維持現狀＝僅持久化、無側效 → R13.7 定版（RP6 取數後若有新事證另開）| 同 |
-| **TBD-002 / RP7** ✅ | `Finshed`→`Finished` 修正定版 | 同 |
+| **TBD-006 / RP1** 🔴→✅ | **A＝保留側效＋修bug＋audit** → R13.1–13.3/13.6/13.7 定版、QA-007/008 解 pending | `00800 spec.md §@PENDING` |
+| **TBD-003 / RP2** ✅ | 保留強制、原因後補 → R5 定版 | 同 |
+| **TBD-004 / RP3** ✅ | 保留刪 fee、原因後補 → R13.6 定版 | 同 |
+| **TBD-007 / RP5** ✅ | 維持現狀（僅持久化、無側效）→ R13.7 定版 | 同 |
+| **TBD-002 / RP7** ✅ | `Finshed`→`Finished` 定版 | 同 |
 
 ---
-> 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。
+> 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。**裁定內容只寫來源檔（spec §@PENDING）**，本表只留 id/狀態/owner/指回——本表＝derived 視圖。
+> **機械同步**：SRS 來源列（RPn/BP-n）由 `scripts/check-srs-bundle.py` gate⑦ 對 spec §@PENDING 表自動 diff（漏登記/失步=FAIL）；非 SRS 來源列（A-1 OQ、撥貸 group、E1/E2…）仍靠人工。
 > 用途：站會/交接看這張就知道「等誰、等什麼」；🔴 **兩項**（A-1 OQ、撥貸 domain group）是目前**唯一擋住主線**的決策。

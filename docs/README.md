@@ -13,14 +13,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
                   原料         此處快照）   bundle×4檔                     ＋verification/*   （SSOT）
 ```
 
-| flow 層 | 資料夾 / 檔 | 說明 |
-|---|---|---|
-| **① Bible** 業務聖經 | [`specs/bible/`](specs/bible/)（正式檔待建；原料＝[`legacy/`](legacy/)） | Legacy 反推：北極星·黃金旅程·user story，證據接地 |
-| **② PRD** what/why | [`specs/prd/`](specs/prd/)（外部權威、此處放快照） | PM + AI；REQ-nnn、TBD |
-| **③ SRS（含 QA）** how | [`specs/srs/<funcId>/`](specs/srs/)（spec/openapi/schema/qa-cases） | SA + AI（`/prd-to-srs`）；`Rn`+契約+covers |
-| **④ RD 任務單** | [`build-tasks/`](build-tasks/)（live；完成 → `done/`） | 交 Codex 實作的 prompt；產品碼在 repo 外 |
-| **⑤ 驗證 / 閘門** | `../scripts/check-srs-bundle.py`（①②⑤+跨檔）、`../scripts/verify-c0.py`（③）、spec-reviewer（語意）；[`verification/`](verification/)（Phase V） | 機械先、語意後 |
-| **狀態回填** | **`feature-inventory.md`** ⭐ | 每事收尾必回填（SSOT） |
+> 逐層「資料夾 × 工具 × 閘門」對照表＝[`repo-structure.md`](repo-structure.md) §1（**單一出處，本檔不再複寫**）；機械閘門涵蓋範圍＝`../scripts/check-srs-bundle.py` 檔頭。狀態回填→`feature-inventory.md` ⭐（SSOT）。
 
 > **治理/憲法**（always-on，不屬單一層）：根 `CLAUDE.md`（Claude）/ `AGENTS.md`（Codex）/ `.github/`（Copilot）+ `backend/`·`frontend/AGENTS.md`；雙軌範本 `env/codex/`。
 
@@ -62,9 +55,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 | 檔 | 用途 |
 |---|---|
 | `process/vision-pipeline.md` | 願景與漸進落地 |
-| `process/runbook-30pct.md` | Codex 自走補完的順序/閘門/煞車 |
 | `process/SETUP-codex.md` | Codex CLI 設定/用法 + dev-box 疑難排解 |
-| `process/completion-ledger.md` | 桶別總盤點（明細以 feature-inventory 為準） |
 | `env/` | gitignore / yarnrc / maven-settings / **codex 雙軌範本**（prompts/agents/hooks/權限） |
 
 ## 🧩 樣板 / 規格家 / 圖
@@ -79,11 +70,14 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 - **進行中（live）**：
   - `a1-funcGetExchangeRate-spec.md`（A-1 換匯 stub 規格，A-1 未實作）+ `phase-d-a1-exchange-stub-investigation.md`（A-1 背景調查）
   - `00800-verification-findings.md`（as-is 證據／SRS as-is 來源；D1–D5 已修注記在內）
+  - `00800-rimat-fix.md`（step 2 修復包：RP1=A 解鎖項 F1–F7，待派工）
   - ＊**Phase F c0 FE 已收工**、**⑨ 靜態 sweep 三批已收齊** → prompt 全進 `done/`。
 - **`build-tasks/done/`**（已消化——歷史記錄）：c0 FE 逐頁（Phase F）、00800 修正、c0 cleanup、⑨ sweep×3、staff 調查鏈、早期 B-*/EPROC/EPROISU…
+- **live 任務單命名（2026-06-11 起）**：`<funcId>-<type>.md`（如 `00800-verification-findings.md`）；`done/` 歷史檔名不回溯改。
 
 ## 🗄 [`archive/`](archive/)（已消化、留存備查）
 - `review-c0-prompt.md`（c0 後端審查 prompt）、`phase1-eproz0_0700-spec.md`（Phase 1 切片，已完成）。
+- `completion-ledger.md`（30% 總盤點；內容併入 feature-inventory，2026-06-11 凍結）、`runbook-30pct.md`（30% 自走控制文件；c0 結清、撥貸改走 triage/A-1 專屬文件，2026-06-11 凍結）。
 
 ---
 > 維護：規格三層放 `specs/`；舊系統分析→`legacy/`、撥貸→`disbursement/`、驗證→`verification/`、流程→`process/`；任務完成→ `build-tasks/done/`；狀態變動回填 `feature-inventory.md`。

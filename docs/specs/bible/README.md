@@ -15,11 +15,11 @@
 
 | 原料 | 內容 |
 |---|---|
-| `../../module-is-iu-shell.md` | 個金主流程 shell（兩層頁籤、pageMap、IS/IU 差異） |
-| `../../module-cs-cu-shell.md` | 企金主流程 shell（formatCS/CU、c0 橋接） |
-| `../../module-i0-c0-scoring.md` | i0/c0 財報·評分·CBC 結構 |
-| `../../page-mapping.md` | 舊 funcId → 新頁對應（≈250 JSP → 9 模組×兩流程） |
-| `../../db-schema-catalog.md` | DB schema 目錄（TB_PAGE_MENU/權限三層/checkpoint…） |
+| `../../legacy/module-is-iu-shell.md` | 個金主流程 shell（兩層頁籤、pageMap、IS/IU 差異） |
+| `../../legacy/module-cs-cu-shell.md` | 企金主流程 shell（formatCS/CU、c0 橋接） |
+| `../../legacy/module-i0-c0-scoring.md` | i0/c0 財報·評分·CBC 結構 |
+| `../../legacy/page-mapping.md` | 舊 funcId → 新頁對應（≈250 JSP → 9 模組×兩流程） |
+| `../../legacy/db-schema-catalog.md` | DB schema 目錄（TB_PAGE_MENU/權限三層/checkpoint…） |
 | `../../decisions.md` §「舊系統(EPRO) 架構事實」 | D1–D6 反推事實（HttpDispatcher、SSO、JasperReports…） |
 
 ## 建檔規則（之後寫 Bible 時）

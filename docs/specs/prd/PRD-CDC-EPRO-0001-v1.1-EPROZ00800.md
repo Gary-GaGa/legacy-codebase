@@ -7,7 +7,8 @@
 > | funcId | `EPROZ00800` |
 > | 快照日期 | 2026-06-10 |
 > | Status | **Draft（PM Review Draft）** — TBD-001~007 未關，未進開發定版 |
-> | 未關 TBD | TBD-001~007（見 §0.3）→ 對映 SRS `@PENDING RP1~RP7`（見 `../srs/EPROZ00800/spec.md`）|
+> | 未關 TBD | TBD-001~007（見 §0.3）→ 對映 SRS `@PENDING RP1~RP7`（06-11 裁定狀態以 `../srs/EPROZ00800/spec.md` §@PENDING 為準）|
+> | 下次核對 | `00800` 正式 SA 簽核前——對外部文管核對是否仍為 v1.1（README 放置規則「快照時效」）|
 >
 > ⚠️ **權威版在 repo 外**（公司文管）；此處為工作快照。外部改版 → 重新快照 + SRS 重跑 `covers-prd`。**勿在快照上直接編需求。**
 > 🔗 下游 SRS bundle：[`../srs/EPROZ00800/`](../srs/EPROZ00800/)（由 `prd-to-srs` 從本 PRD 產出，機械閘門綠 + spec-reviewer 過）。

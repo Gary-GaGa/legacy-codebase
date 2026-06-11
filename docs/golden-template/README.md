@@ -146,7 +146,7 @@ src/app/<feature>/
 
 ## 八、子樣式：Workflow Shell + Section Tabs（複雜多頁籤主流程）
 
-> 適用申貸主流程（is/iu/cs/cu × 申請/覆核）這類「多流程頁 + 頁內區塊 tabs」的頁；**不適用** deputy 式單頁 CRUD（§一~§七）。詳見 `docs/module-is-iu-shell.md`。
+> 適用申貸主流程（is/iu/cs/cu × 申請/覆核）這類「多流程頁 + 頁內區塊 tabs」的頁；**不適用** deputy 式單頁 CRUD（§一~§七）。詳見 `docs/legacy/module-is-iu-shell.md`。
 > 舊系統為兩層：外層「流程頁籤」（pageMap 驅動、切頁 **server 重查**）+ 內層「區塊頁籤」（僅主借款人頁、client 切換）。對映：
 
 - **外層 = shell component + 子路由**：`<feature>-shell.component` 放流程頁籤 nav + `<router-outlet>`；每個流程頁是 **routed child**，`ngOnInit` 用案號（`APPLICATION_NO`）自取資料（對映「切頁重查」）。**勿做成單一巨型 component。**
