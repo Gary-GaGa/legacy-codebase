@@ -102,7 +102,7 @@
 | EPROC00116 | Financial Statement GI | ✅ | ✅ | `epl-*-c0-financial-statement-comments`（`524d8dc`；calc 保留、export POST-blob 兩邊一致、無 00640 式不符）；授權列；export 模板沿用 i0？|
 | EPROC00117 | Financial Evaluation GI | ✅ | ✅ | **business-only ✅**（`b14ae05`，決策 B）：接 `epl-sele-c0-financial-list`、`epl-info/save-c0-financial-business`（info 保留 BE 要的 isQuery、save 不帶）；**未接 `-financial-staff`/funcIsStaffLoan**（cleanup）；guard scan/BOM 過。授權列 |
 | EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`（`39e95dd`；**calc 保留接上**）；授權列；🚩 2 escalation |
-| EPROC00119 | Financial Statement FI | 🟡 | ✅ | `epl-*-c0-financial-statement-cmts-fi`（`02d50e7`）；audit F-8：**`getMenu()` 空 options 但必填 select 有消費→修復卡 `00119-options-fix.md`**；授權列；export 模板沿用 i0？|
+| EPROC00119 | Financial Statement FI | ✅ | ✅ | ✅ F-8 已修（`6919da5`，options 接 `epl-sele-c0-financial-statement-comments`）；**Phase V 必驗**：下拉有值+save 帶值+GI-sele 對 FI（businessType F）無分支影響；授權列；export 模板沿用 i0？|
 | EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`（info 留 isQuery、save 送 applicationNo/isFinish/financialList + cetOne/totalCapitalRatio）；i0 FI 有 list 但頁不消費 options → `getMenu()`回`of({})`不接；**未接 `-staff-fi`/funcIsStaffLoan**（cleanup）；BOM/build 過。授權列 |
 > **範本＝i0 `individual/credit-investigation`**：容器 component 動態載 tab（`epl-*-i0-credit-investigation-tab`、`creditInvestigationNav()` config、`CreditInvestigationPageCode` enum）、各子頁 `components/<name>/{component,services}`。c0 照此鏡像、改 `-c0-` endpoint + corporate DTO。
 > ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。
@@ -112,7 +112,7 @@
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
 |---|---|:--:|:--:|---|
-| EPROZ00100 | TO DO LIST（+00101/00102 popup）| 🟡 | ✅ | audit F-9/F-10：popup reason 被測試碼硬編碼覆蓋、呈報書下載 goPath/upload stub →**修復卡 `00100-todo-fix.md`** |
+| EPROZ00100 | TO DO LIST（+00101/00102 popup）| ✅ | ✅ | ✅ F-10 已修（`2599752`，popup reason 回 API 來源）；F-9＝`@PENDING` 掛 R2（呈報書下載走 goPath）/檔案 API（upload stub）兩 ⏸ track |
 | EPROZ00200 | New Case Application（進件入口）| ✅ | ✅ | ✅；案號序列細節未深入 |
 | EPROZ00300 | Document Checklist | ✅ | ✅ | 頁本體碼在（audit DIFF-011）；return 空回疑慮→recon 卡 `00300-return-recon.md`（待派工）|
 | EPROZ00400 | Case Distribution | ✅ | ✅ | cross-check ✅ |
@@ -124,7 +124,7 @@
 | EPROZ00630 | Deviation Case Report | ✅ | ✅ | 🟡（含 Excel export）|
 | EPROZ00640 | Scorecard Report | ✅ | 🟡 | export 介面已對齊（sweep①）；audit F-11：**BE PDF writer 註解殘碼（Excel 正常）→修復卡 `00640-pdf-export-fix.md`** |
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
-| EPROZ00660 | CAD On Hand Status | 🟡 | ✅ | audit F-12：**FE endpoint 名 TLOD≠BE CAD→查詢必 404；修復卡 `00660-endpoint-fix.md`**（修畢復稱 CR 範本）|
+| EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅ F-12 已修（product `5a47038`，FE endpoint 改 CAD）→ 復稱 CR 範本；Phase V 實測查詢一條 |
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；嚴謹可做 deputy↔0700 gap-check |
 | EPROZ00800 | Revised Item | 🟡 | ✅ | FE 🟡＝RP9 init-query method（audit 交叉重發現）；BE ✅（D1–D5 已修 `88328f9`）；RI-MAT 修復包待派（§4④b）；仍開 RP4/RP6/RP8/RP9/RP10/RP11——**單一出處＝bundle spec.md §@PENDING**。**SRS bundle**＝`specs/srs/EPROZ00800/` |
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
@@ -200,7 +200,7 @@
 - ✅ **Logback `D:\temp` 外部化**（`bbc4492`）：改 `${LOG_API_PATH:${LOG_PATH:logs}}` 等跨平台預設，appender/pattern/level 未動；連帶解掉 full `mvn clean package` 卡 D:\temp。
 - ✅ **c0 staff 端點 cleanup 已完成**（`dcd9602`，2026-06-09；prompt 已歸檔 `done/c0-staff-endpoints-cleanup.md`）：刪 `epl-info/save-c0-financial-staff` + `CsuFinancialEvaluationStaffFiController` 整檔（+ staff DTO/serviceImpl、staff option/funcIsStaffLoan 依賴）；**保留** `CsuFinancialStaffController` 的 sele(list)/business method（00117 在用）、table-fi（00120）；i0 未碰；mvn + npm build 綠。
 
-**⑩ audit 修復包（2026-06-11；owner：前後端）**：`00660-endpoint-fix.md`（F-12，最高 CP）、`00100-todo-fix.md`（F-9/10）、`00119-options-fix.md`（F-8）、`00640-pdf-export-fix.md`（F-11）——全部待派工；F-7（00114 鈕隱驗證）入 Phase V；待裁＝AUD-1~4＋BIBLE-GAP recon（`bible-gap-recon.md`）。
+**⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×3（06-11 同日收：`00660`/`00100`/`00119`，product commits `5a47038`/`2599752`/`6919da5`，卡歸檔 `done/`）；餘 `00640-pdf-export-fix.md`（F-11，待派工）；F-7（00114 鈕隱驗證）入 Phase V；待裁＝AUD-1~4＋BIBLE-GAP recon（`bible-gap-recon.md`）。
 
 ---
 
