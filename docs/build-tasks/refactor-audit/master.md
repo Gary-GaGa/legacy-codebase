@@ -36,7 +36,7 @@ These are only S0 hints from `docs/legacy/page-mapping.md`, not final audit tota
 |---|---|---|---|---|---|
 | S0 | Build `refactor-audit/` skeleton | `master.md` + module files + `diff-vs-inventory.md` | 完成 |  | Skeleton only; no product code read beyond allowed S0 hints. |
 | S1 | M1 `zz` login/home + M9 common/demo | `M1-zz.md`, `M9-common.md` | 完成 |  | M1 total 4; M9 total 11. No breakpoint. |
-| S2 | M2a `is` application flow `0110-0290` | `M2a-is-application.md` | 未開 |  | Recount from old source and dispatcher, not from new code. |
+| S2 | M2a `is` application flow `0110-0290` | `M2-is.md#a-s2-m2a-is-application-flow-0110-0290` | 完成 |  | Total 26; source old-source; no breakpoint. Output follows user instruction to write M2a into `M2-is.md`. |
 | S3 | M2b `is` contract/disbursement `0910-0922` + M3 `iu` | `M2b-is-contract-disbursement.md`, `M3-iu.md` | 未開 |  | IS/IU merged in new pages; list IU-only differences separately. |
 | S4 | M4 `cs` + M5 `cu` | `M4-cs.md`, `M5-cu.md` | 未開 |  | CS/CU merged in new pages; list source differences separately. |
 | S5 | M6a `i0` `00110-00115` | `M6a-i0-00110-00115.md` | 未開 |  | Use individual scoring source and controllers. |
@@ -53,7 +53,7 @@ All totals are empty until the owning session fills evidence-backed rows.
 | File | Scope | 總列數 | 碼在 | 🟡 | 🔴 | 🚫 | UNFOUND |
 |---|---|---:|---:|---:|---:|---:|---:|
 | `M1-zz.md` | M1 `zz` login/home | 4 | 4 | 0 | 0 | 0 | 0 |
-| `M2a-is-application.md` | M2a `is` `0110-0290` | 0 | 0 | 0 | 0 | 0 | 0 |
+| `M2-is.md` | M2a `is` `0110-0290` | 26 | 24 | 0 | 0 | 1 | 1 |
 | `M2b-is-contract-disbursement.md` | M2b `is` `0910-0922` | 0 | 0 | 0 | 0 | 0 | 0 |
 | `M3-iu.md` | M3 `iu` all | 0 | 0 | 0 | 0 | 0 | 0 |
 | `M4-cs.md` | M4 `cs` all | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -67,4 +67,4 @@ All totals are empty until the owning session fills evidence-backed rows.
 
 ## Next Session
 
-Recommended next session: S2. Read only the task card sections 0, 2, and S2; this `master.md`; and the relevant `page-mapping.md` hints. Then recount M2a from old source and dispatcher/web.xml before checking new FE/BE code.
+Recommended next session: S3. Read only the task card sections 0, 2, and S3; this `master.md`; and the relevant `page-mapping.md` hints. Then recount M2b/S3 from old source and dispatcher/web.xml before checking new FE/BE code.
