@@ -40,7 +40,7 @@ These are only S0 hints from `docs/legacy/page-mapping.md`, not final audit tota
 | S3 | M2b `is` contract/disbursement `0910-0922` + M3 `iu` | `M2-is.md#b-s3-m2b-is-contract--disbursement-0910-0922`, `M3-iu.md` | 完成 |  | M2b total 8; M3 total 20. No breakpoint. Removed empty split placeholders. |
 | S4 | M4 `cs` + M5 `cu` | `M4-cs.md`, `M5-cu.md` | 完成 |  | M4 total 20; M5 total 17. No breakpoint. CS/CU merged in new pages; list source differences separately. S4b 復核完成: 22 FE=UNFOUND rows rechecked by four anchors; totals unchanged. |
 | S5 | M6a `i0` `00110-00115` | `M6-i0.md#a-s5-m6a-i0-00110-00115` | 完成 |  | Total 12; source old-source; no breakpoint. Old `0110-0115` and `0210-0215` variants both counted and mapped to merged new `EPROI00110-00115` pages. |
-| S6 | M6b `i0` `00116-00120` + remaining i0 JSPs | `M6b-i0-00116-00120-rest.md` | 未開 |  | Exhaust all remaining i0 JSP/action entries. |
+| S6 | M6b `i0` `00116-00120` + remaining i0 JSPs | `M6-i0.md#b-s6-m6b-i0-00116-00120-and-remaining-i0-jsps` | 完成 |  | Total 10; source old-source; no breakpoint. Old `0116-0120` and `0216-0220` variants counted separately; no remaining non-partial `i0` JSP rows after section B. |
 | S7 | M7a `c0` `00110-00115` segment | `M7a-c0-00110-00115.md` | 未開 |  | Use corporate scoring source and controllers. |
 | S8 | M7b `c0` `00116-00120` + remaining c0 JSPs | `M7b-c0-00116-00120-rest.md` | 未開 |  | Exhaust all remaining c0 JSP/action entries. |
 | S9 | M8 `z0` `00100-00800` all pages | `M8-z0.md` | 未開 |  | Task card says 18 pages; S9 must verify from old source. |
@@ -57,8 +57,7 @@ All totals are empty until the owning session fills evidence-backed rows.
 | `M3-iu.md` | M3 `iu` all | 20 | 18 | 0 | 0 | 0 | 2 |
 | `M4-cs.md` | M4 `cs` all | 20 | 7 | 0 | 0 | 1 | 12 |
 | `M5-cu.md` | M5 `cu` all | 17 | 7 | 0 | 0 | 0 | 10 |
-| `M6-i0.md` | M6a `i0` `00110-00115` | 12 | 12 | 0 | 0 | 0 | 0 |
-| `M6b-i0-00116-00120-rest.md` | M6b `i0` rest | 0 | 0 | 0 | 0 | 0 | 0 |
+| `M6-i0.md` | M6 `i0` all `00110-00120` (old `01xx`/`02xx` variants) | 22 | 22 | 0 | 0 | 0 | 0 |
 | `M7a-c0-00110-00115.md` | M7a `c0` `00110-00115` | 0 | 0 | 0 | 0 | 0 | 0 |
 | `M7b-c0-00116-00120-rest.md` | M7b `c0` rest | 0 | 0 | 0 | 0 | 0 | 0 |
 | `M8-z0.md` | M8 `z0` all | 0 | 0 | 0 | 0 | 0 | 0 |
@@ -66,4 +65,4 @@ All totals are empty until the owning session fills evidence-backed rows.
 
 ## Next Session
 
-Recommended next session: S6. Read only the task card sections 0, 2, and S6; this `master.md`; existing `M6-i0.md`; and the relevant `page-mapping.md` hints. Then recount M6b `i0` from old source and dispatcher/web.xml before checking new FE/BE code.
+Recommended next session: S7. Read only the task card sections 0, 2, and S7; this `master.md`; the existing M7 audit target file; and the relevant `page-mapping.md` hints. Then recount M7a `c0` from old source and dispatcher/web.xml before checking new FE/BE code.
