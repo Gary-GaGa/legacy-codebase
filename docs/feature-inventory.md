@@ -158,6 +158,7 @@
 
 ## 4. 剩餘事項彙整（= 還有多少事要做）— cross-check 後更新（2026-06-06）
 > 🔗 **所有 open 決策/待決（@PENDING/escalation/OQ）的單一總表**＝[`pending-register.md`](pending-register.md)（誰欠裁定、卡什麼）。下面 ③⑤⑦ + ④b 的待決都登錄在那。
+> 🔍 **全量 zero-based 重盤進行中**（2026-06-11 起）：`build-tasks/full-refactor-audit.md`——從 Bible+舊源+畫面清單重推總量、diff 本檔；結果出來前**本檔狀態視為「未經 zero-based 覆核」**，diff 報告人審後回填。
 > **翻案**：新增 **c0 評分前端真缺口**（原以為前端全完）。❓ 多已坐實（i0/契約/多數 z0 ✅）。
 
 **① ✅ c0 評分前端（Phase F 收工 2026-06-09；owner：前端）— 原本次最大缺口、已補齊**
