@@ -10,6 +10,7 @@ description: Reverse-engineer a business Bible (北極星 / 黃金旅程 / user 
 
 ## ⚠️ 最重要的鐵則：證據接地（這層最會幻覺）
 反推＝從碼推「為何這樣設計」，**AI 最容易在這層 confabulate**。**每個業務主張都要引 legacy `file:line` / 表名 / trx-id**；推不出依據的標「**推測（待業務確認）**」，**絕不寫成既定事實**。寧缺勿假。
+> **證據分級（2026-06-11 健檢明文化）**：`[HUMAN]`（業務/系統知識持有人已確認）＝**合格證據層級**，可先支撐主張；legacy `file:line` 為升級項——標 `[CODE-TBD]` 者於 source 驗證階段回填。專案級 Bible（如 `bible-eproposal.md`）先以 `[HUMAN]` 入流＝**合規、非違規**。
 
 ## 輸入
 1. **Legacy source**（舊碼 `file:line`、JSP、DB schema、SQL）——主來源。
@@ -43,7 +44,7 @@ description: Reverse-engineer a business Bible (北極星 / 黃金旅程 / user 
 - [ ] 北極星明確（為何存在 + 成功樣貌）。
 - [ ] 黃金旅程**端到端**、每段標 funcId/角色/狀態轉移。
 - [ ] 每個 user story 有 `角色 × 目標 × 為何`，對到旅程節點。
-- [ ] **每個業務主張有證據**（`file:line`/表/trx）；無依據者標「待業務確認」。
+- [ ] **每個業務主張有證據**（legacy `file:line`/表/trx，**或 `[HUMAN]` 已確認標記**——`file:line` 為 `[CODE-TBD]` 升級項）；無依據者標「待業務確認」。
 - [ ] 敘事層（無 endpoint/欄位型別——那是 SRS）。
 - [ ] 下游 PRD `REQ` 可追溯到本檔 story/節點。
 

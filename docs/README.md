@@ -57,7 +57,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 | `process/vision-pipeline.md` | 願景與漸進落地 |
 | `process/runbook-30pct.md` | Codex 自走補完的順序/閘門/煞車 |
 | `process/SETUP-codex.md` | Codex CLI 設定/用法 + dev-box 疑難排解 |
-| `process/completion-ledger.md` | 桶別總盤點（明細以 feature-inventory 為準） |
+| `process/completion-ledger.md` | 🗄 已凍結（2026-06-11；內容併入 feature-inventory） |
 | `env/` | gitignore / yarnrc / maven-settings / **codex 雙軌範本**（prompts/agents/hooks/權限） |
 
 ## 🧩 樣板 / 規格家 / 圖
@@ -74,6 +74,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
   - `00800-verification-findings.md`（as-is 證據／SRS as-is 來源；D1–D5 已修注記在內）
   - ＊**Phase F c0 FE 已收工**、**⑨ 靜態 sweep 三批已收齊** → prompt 全進 `done/`。
 - **`build-tasks/done/`**（已消化——歷史記錄）：c0 FE 逐頁（Phase F）、00800 修正、c0 cleanup、⑨ sweep×3、staff 調查鏈、早期 B-*/EPROC/EPROISU…
+- **live 任務單命名（2026-06-11 起）**：`<funcId>-<type>.md`（如 `00800-verification-findings.md`）；`done/` 歷史檔名不回溯改。
 
 ## 🗄 [`archive/`](archive/)（已消化、留存備查）
 - `review-c0-prompt.md`（c0 後端審查 prompt）、`phase1-eproz0_0700-spec.md`（Phase 1 切片，已完成）。

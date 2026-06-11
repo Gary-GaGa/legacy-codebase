@@ -3,8 +3,9 @@
 > 把白板雛形正式化。**這是「補完 30%」之上的下一步**：從現在的「RD agent 自走補完」往上長成
 > `Bible → PRD → SRS → QA → RD-Agent` 一條**往上可追溯、往下可驗證**的鏈。
 > 本檔定**模型與原則**；第一個 worked example = [`specs/srs/EPROZ00800/`](../specs/srs/EPROZ00800/)（規格分層 bible→prd→srs 見 [`specs/README.md`](../specs/README.md)）。
+> 🗄 **定位（2026-06-11 健檢）**：本檔＝願景/歷史脈絡（為何長成這樣）；**現行權威**＝`spec-architecture.md`（方法論）+ `assets/ai-workflow.mmd`（flow）+ 各 gate 腳本檔頭（涵蓋範圍）——重疊處以該三者為準。
 >
-> 🖼 **一圖總覽（來源）**：[`assets/ai-workflow.mmd`](../assets/ai-workflow.mmd)（GitHub / Mermaid 直接 render；**＝AI Flow 權威來源**）。[`assets/ai-workflow.svg`](../assets/ai-workflow.svg) 為快取 render，**2026-06-09 .mmd 加 brownfield 機制後未重出 → 以 .mmd 為準、需要時重 render**。
+> 🖼 **一圖總覽（來源）**：[`assets/ai-workflow.mmd`](../assets/ai-workflow.mmd)（GitHub / Mermaid 直接 render；**＝AI Flow 唯一來源**）。〔過期的 `.svg` 快取已刪（2026-06-11 健檢）——需要圖檔時臨時 render，不再維護快取副本〕
 
 ## 1. 終極目標
 - 從 legacy 系統**反推出 Bible**：真實世界的 user story、業務**北極星**、**黃金旅程** → 讓團隊**不分角色一致理解業務**（這是「前傳」，講清楚原系統為何長這樣）。

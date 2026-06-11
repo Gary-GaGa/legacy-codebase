@@ -139,7 +139,7 @@
 ## 7. 自走（goal mode）補完剩餘 30%
 > 把「人工 review」寫進 repo，讓自走盡量安全。**`build 綠 ≠ 正確`**（本專案已多次綠但有 bug）。
 - **硬規則**：`backend/AGENTS.md` §6（自足鏡像、禁反射/委派/individual、checkpoint、UTF-8 No BOM、`-c0-` 命名、§6.6 煞車）。
-- **控制文件**：`docs/runbook-30pct.md`（剩餘 backlog 順序、每頁迴圈、閘門、停止點、並行注意）。
+- **控制文件**：`docs/process/runbook-30pct.md`（剩餘 backlog 順序、每頁迴圈、閘門、停止點、並行注意）。
 - **硬閘門腳本**：`python scripts/verify-c0.py --git`（驗 strict-UTF-8 + No BOM、禁用樣式、`-c0-` 命名、**修改既有 i0/Csu* 檔**；`FunctionService` 例外 allowlist）。可接 Codex hook（`docs/env/codex/hooks.json`，`Stop`/`PostToolUse`），但 **hook 未必真 block（exit≠0 需 wrapper），故當每頁必跑的手動/CI 閘門、別只靠 hook**。**只攔形式錯；語意正確性仍需對 i0/人審**。
 - **頁卡**：`docs/build-tasks/EPROC00118-*`、`EPROISU0920-*`、`EPROCSU0130-*`（含鏡像來源與煞車）。
 - **獨立審查（語意閘門）**：用原生 **`codex review --uncommitted "<指示>"`**（非互動、唯讀、自動含未追蹤新檔、獨立 context）。指示＝對照本頁 i0 鏡像來源 + 依 `backend/AGENTS.md §6`、`docs/archive/review-c0-prompt.md` 逐項 PASS/FAIL/UNSURE + 引用 i0:line↔c0:line、不准猜 PASS。更獨立加 `-c model="<別的模型>"`。全 PASS 才 build。備案＝唯讀 custom agent（`docs/env/codex/reviewer-c0.toml`）。仍非萬無一失（human + 整合測試留著）。

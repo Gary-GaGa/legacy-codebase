@@ -1,6 +1,7 @@
 # 30% 補完 — 總盤點（Completion Ledger）
 
-> 一頁 SSOT：舊系統比對後，**已重構(70%) + 後續補完(30%)** 還有多少「功能/細節未實作」。
+> 🗄 **已凍結（2026-06-11 健檢）**：內容已由 `feature-inventory.md`（狀態 SSOT）吸收，本檔停止維護、僅供歷史參考。「SSOT」一詞限 `feature-inventory.md`（狀態）與 `pending-register.md`（待決）兩處。
+> ~~一頁 SSOT~~：舊系統比對後，**已重構(70%) + 後續補完(30%)** 還有多少「功能/細節未實作」。
 > 彙整 `page-mapping.md` §2、`verification-handoff.md`、`disbursement-triage.md`。**逐頁狀態/排程明細以 `feature-inventory.md` 為準**（最新校正版；本檔只到桶別）。
 > **分類關鍵**：「未實作(碼缺/會錯)」≠「已實作待驗(碼在、待整合驗證)」≠「判斷題(待 owner)」。三者別混。
 
@@ -47,4 +48,4 @@
 - **c0**：oracle 是**新等價物 i0**（非 raw 舊系統）；正確性**繼承自 i0 對舊的驗證**，未對舊獨立重驗（此為 §2E 設計，可接受，但深度不同於撥貸）。
 
 ---
-> 維護：本檔為總盤點 SSOT；細節改動回填 `page-mapping.md` §2 / `verification-handoff.md` / `disbursement-triage.md`，此處只更新「桶別歸屬 + 盲點關閉狀態」。
+> （已凍結——見檔頭；勿再回填本檔，狀態一律回填 `feature-inventory.md`。）

@@ -54,7 +54,7 @@
 | `legacy/migration-backlog.md` | 模組地圖 M1–M9 + 橫向風險 R1–R8 |
 | `legacy/module-{is-iu,cs-cu}-shell.md`、`legacy/module-i0-c0-scoring.md` | 舊系統 shell / 評分結構分析 |
 | `legacy/db-schema-catalog.md` | DB schema 目錄（JIT 抽） |
-| `process/completion-ledger.md` | 桶別總盤點（明細以 feature-inventory 為準） |
+| `process/completion-ledger.md` | 🗄 已凍結（2026-06-11；內容併入 feature-inventory） |
 | `decisions.md` | 決策與事實流水帳（失敗教訓的原始紀錄；收斂表見 `spec-architecture.md §9`） |
 | `process/vision-pipeline.md` | flow 願景與原則 |
 
