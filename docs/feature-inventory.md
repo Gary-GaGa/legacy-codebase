@@ -121,7 +121,7 @@
 | EPROZ00610 | Credit Reviewer On Hand | ✅ | ✅ | 🟡 呈現/資料驗證 |
 | EPROZ00620 | Application Delete Report | ✅ | ✅ | 🟡（繼承 `base-application-report`）|
 | EPROZ00630 | Deviation Case Report | ✅ | ✅ | 🟡（含 Excel export）|
-| EPROZ00640 | Scorecard Report | ✅ | ✅ | 🟡；⚠️ **export FE POST blob vs BE GET `@RequestBody` 介面不一致→優先對** |
+| EPROZ00640 | Scorecard Report | ✅ | ✅ | 🟡；export 介面已對齊 GET（sweep① `48e687f`，⑨）|
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅（CR 範本）|
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；嚴謹可做 deputy↔0700 gap-check |
@@ -172,17 +172,17 @@
 - A-1 換匯 stub（**撥貸總開關、最優先**）、B-1 `T24_COMPANY`、換匯源 ID、檢核嚴格度、KHR、欄寬、async、精度（待舊 DDL）、M6 完工日 DTO 缺源。
 
 **④ z0 半成品收尾（小修；owner：前後端）**
-- `00300` Document Checklist：return action 空回 → 補實作。
+- `00300` Document Checklist：return action 空回 → 先坐實（recon 卡＝`build-tasks/00300-return-recon.md`，待派工），結論 🔴 才開修復卡。
 - ✅ `00600` Search method 已修（sweep① `48e687f`）。
 
 **④b 🟠 `00800` Revised Item（owner：RD 實作＋SA 取數）**
 - ✅ D1–D5 硬缺陷已修（`88328f9`，2026-06-09；prompt 歸檔 `done/00800-fix-step1-tbd-independent.md`；QA-013/014/016/017 過、QA-012 rollback deferred-to-DB）。
 - ✅ TBD-001~007 全裁（06-11，SRS v0.5）→ RD 修復解鎖：**修復包 prompt＝`build-tasks/00800-rimat-fix.md`**（F1–F7，待派工）。
-- 仍開：RP4/RP6/RP8/RP9/RP10/RP11——**裁定內容與剩餘事項單一出處＝`specs/srs/EPROZ00800/spec.md` §@PENDING**（待決視圖＝`pending-register.md`）。
+- 仍開：RP4/RP6/RP8/RP9/RP10/RP11——**裁定內容與剩餘事項單一出處＝`specs/srs/EPROZ00800/spec.md` §@PENDING**（待決視圖＝`pending-register.md`）；RP6/RP4/RP10 取證卡＝`build-tasks/00800-pending-recon.md`（待派工）。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 
-**⑥ 授權列（owner：DB/ops）**：新 c0 endpoint（00115/116/118/119/120）`TB_API_AUTH`/`TB_ROLE_TASK`（00117 既有）。
+**⑥ 授權列（owner：DB/ops）**：新 c0 endpoint（00115/116/118/119/120）`TB_API_AUTH`/`TB_ROLE_TASK`（00117 既有）；SQL 預產卡＝`build-tasks/c0-authz-sql.md`（DB-free，待派工）。
 
 **⑦ 暫緩 track（需先拍板）**：R2 報表服務（→0181/i0·c0 PDF/z0 PDF）、檔案上傳 API（→collateral/審批上傳）。〔CBC 已釐清＝頁內、非獨立 track〕
 

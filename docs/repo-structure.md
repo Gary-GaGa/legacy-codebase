@@ -69,7 +69,7 @@
 - **ADR**：`adr/ADR-0001-spec-workflow-dual-stack.md` + `README.md` + `_TEMPLATE.md`。
 
 ## 6. `build-tasks/` 生命週期（任務單怎麼流動）
-- **live**（還要用）：`00800-verification-findings.md`（SRS as-is 來源）、`00800-rimat-fix.md`（step 2 修復包）、`a1-funcGetExchangeRate-spec.md`、`phase-d-a1-exchange-stub-investigation.md`。
+- **live**（還要用）：`00800-verification-findings.md`（SRS as-is 來源）、`00800-rimat-fix.md`（step 2 修復包）、`00800-pending-recon.md`/`00300-return-recon.md`/`c0-authz-sql.md`（待派工：取證×2 + 授權列 SQL 預產）、`a1-funcGetExchangeRate-spec.md`、`phase-d-a1-exchange-stub-investigation.md`。
 - **`done/`**（22 份歷史）：完成的 build prompt（Phase F 逐頁、00800 修正、c0 cleanup、⑨ sweep×3、staff 調查鏈、早期 B-*/EPROC/EPROISU…）。
 - 規則（`README.md` 末）：**任務完成/消化 → `git mv` 到 `done/`，狀態回填 `feature-inventory.md`**。
 
