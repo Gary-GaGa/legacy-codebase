@@ -59,6 +59,8 @@
 - FE 判定標配=四錨點（S4b 起):目錄樹/page-code 註冊/service 動態拼接/共用元件分支;只做精確字串搜尋不得標 UNFOUND。
 
 > 維護:每場 QC 後加一列;S-final 出 `diff-vs-inventory.md` 後,本檔發現區與其對齊,人審逐條裁定 → 回填 `feature-inventory.md`。
+>
+> ✅ **回填已執行（2026-06-11,使用者裁示「都做」）**:inventory 已套用 DIFF 回填;開卡=`phase-g-csu-mainflow-fe.md`+修復×4（00660/00100/00119/00640）+`bible-gap-recon.md`;AUD-1~5 入 `pending-register.md`;F-7 入 Phase V。**`refactor-audit/` 歸檔（進 done/）待 AUD-1~5 與 BIBLE-GAP 收口後執行**。
 
 ## S-final 派工 prompt（定稿;S1–S9 在 master 全標完成後才跑）
 > 讀 `docs/build-tasks/full-refactor-audit.md` §5、`refactor-audit/master.md`、**`docs/build-tasks/refactor-audit-qc.md`（口徑備忘+累計發現必讀）**,以及各模組檔的小計列（不重讀明細,證據需要時才回查單列）。此時才允許讀 `docs/feature-inventory.md` 與 Bible 的 BR/SC 清單。產出 `refactor-audit/diff-vs-inventory.md`,含四節:
