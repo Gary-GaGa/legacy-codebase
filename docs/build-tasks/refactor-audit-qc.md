@@ -17,6 +17,23 @@
 | S7 | `8c7ea52` | 🟢 | M7a 10 列:6 綠+2🟡(0114/0214→F-7)+2 UNFOUND(0211/0213→F-6);四錨點完整;「page-mapping 待確認≠不遷裁決」判斷正確。 |
 | S8 | `859044a` | 🟢 | M7b 10 列:8 綠+2🟡(0119/0219→F-8) → **M7 c0 收口（20 列=14綠/4🟡/2UNFOUND）**;00117/00120 staff 不接判讀正確（合決策 B）;00118 oldCase pageMap 對等性獲驗;窮盡聲明已記。 |
 | S9 | `9c9aa81` | 🟢 | M8 z0 18 列:12 綠+6🟡 → **模組場全收（S1–S9 完成）**;新增 F-9~F-12;00800 init-query 🟡=已知 RP9（審計獨立重發現=方法交叉驗證通過）;窮盡聲明已記。 |
+| S-final | `a5f96bd` | 🟢 | `diff-vs-inventory.md`:總量 166 列（116綠/11🟡/2🚫/37UNFOUND）、DIFF-001~016、BIBLE-GAP-1~5、回填清單 23 項。**QC-INPUT-UNFOUND**:工作目錄未 merge main 致讀不到本檔——正確地不猜;F↔DIFF 映射由 QC 側補做（見下表）,gate 視為已關。 |
+
+## F↔DIFF 映射（QC 側補做,關 QC-INPUT-UNFOUND;2026-06-11）
+| F | DIFF 對應 | 備註 |
+|---|---|---|
+| F-1 | DIFF-001 | 頭條一致 |
+| F-2/F-3 | DIFF-016 | M9 整組（SysNews/BatchManager/cacheMonitor/demo）收斂在 M9 總列 |
+| F-4 | DIFF-002+DIFF-003 | Property Info 家族拆 IS/IU 兩條 |
+| F-5 | DIFF-016 | error/404 BE UNFOUND 併入 M9 |
+| F-6 | DIFF-007 | 0211/0213 |
+| F-7 | DIFF-006 | ⚠️ DIFF 建議「FE 改 🟡」;F-7 補充:先驗 Calc 鈕是否真隱（inventory §2D 設計）——隱=可降綠 |
+| F-8 | DIFF-008 | 00119 空 options |
+| F-9/F-10 | DIFF-010 | ToDo+兩 popup |
+| F-11 | DIFF-013 | 00640 PDF 註解 |
+| F-12 | DIFF-014 | 00660 endpoint 404 |
+| RP9（已知） | DIFF-015 | 交叉驗證通過 |
+| —（新增追蹤） | **BIBLE-GAP-1~5 驗證** | 待查舊源是否真有 `EPROZ00670`/`EPROIS_0180/0182/0183/0184` JSP/action:有=S2/S3 窮盡有漏需補列;無=Bible 錨點收斂到 0181/0922 |
 
 ## 累計發現（S-final diff 報告的預載;裁定全部留給人審）
 | # | 發現 | 證據位置 | 影響/建議動作 |
