@@ -5,7 +5,7 @@
 > **背景**：`00800` 仍開的待決中，RP6/RP4/RP10 缺的是**證據**而非裁定意見——取證到位後 SA/RD 即可關（內容詳 `docs/specs/srs/EPROZ00800/spec.md` §@PENDING；視圖 `docs/pending-register.md`）。
 
 ## 目標
-對舊 EPRO source（`z0` 模組 `EPROZ0_0800` 及 is/iu/cs/cu 的 `_0260`）取證三題，逐項附 `file:line`，寫進 `docs/build-tasks/00800-pending-recon-findings.md`。
+對舊 EPRO source（`z0` 模組 `EPROZ0_0800` 及 is/iu/cs/cu 的 `_0260`）取證三題，逐項附 `file:line`，寫進本資料夾新檔 `00800-pending-recon-findings.md`（產出後才存在）。
 
 ## 取證項
 | # | 為哪個待決 | 取什麼證 | 去哪找 |

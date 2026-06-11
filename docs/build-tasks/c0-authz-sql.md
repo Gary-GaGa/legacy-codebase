@@ -4,7 +4,7 @@
 > **背景**：`feature-inventory.md` §4⑥——Phase F 已收工，但新 c0 endpoint 的 `TB_API_AUTH`/`TB_ROLE_TASK` 授權列未建；**授權列未套用前打 c0 endpoint 會 403**，DB 一通這是第一件事。
 
 ## 目標
-產出可直接套用的 INSERT SQL + 對照表：`docs/build-tasks/c0-authz-sql-findings.md`（對照表）+ SQL 檔（放產品 repo 慣例位置，如既有 seed/migration 資料夾；位置照既有慣例、回報路徑）。
+產出可直接套用的 INSERT SQL + 對照表：本資料夾新檔 `c0-authz-sql-findings.md`（對照表，產出後才存在）+ SQL 檔（放產品 repo 慣例位置，如既有 seed/migration 資料夾；位置照既有慣例、回報路徑）。
 
 ## 步驟
 1. **找 pattern**：repo 內既有 `TB_API_AUTH`/`TB_ROLE_TASK` 的 seed/migration SQL——以 **i0 對應頁**（`EPROI00115/116/118/119/120`）的授權列為範本（欄位、角色、命名）；附出處 `file:line`。

@@ -5,7 +5,7 @@
 > **背景**：`feature-inventory.md` §2E/④——`00300` return action **空回、疑未完成**（`DocumentChecklistController:57`）。是「舊系統本來就 no-op」還是「新碼漏實作」未坐實。
 
 ## 目標
-回答一題：**舊系統 Document Checklist 的 return（退回）action 做了什麼？新碼缺多少？** 寫進 `docs/build-tasks/00300-return-recon-findings.md`。
+回答一題：**舊系統 Document Checklist 的 return（退回）action 做了什麼？新碼缺多少？** 寫進本資料夾新檔 `00300-return-recon-findings.md`（產出後才存在）。
 
 ## 取證項
 1. **新碼 as-is**：`DocumentChecklistController:57` 起的 return 路徑——controller/service 全鏈，確認回了什麼（空 DTO？）、有無 DB 寫入/狀態變更/通知；附 `file:line`。
