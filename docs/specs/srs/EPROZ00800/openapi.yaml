@@ -4,8 +4,8 @@
 openapi: 3.0.3
 info:
   title: EPROZ00800 Revised Item
-  version: 0.4.0-draft
-  description: PRD CDC-EPRO-0001 v1.1（Draft，TBD-001~007 未關）。method/欄位以 spec.md Rn 為準。與 spec.md v0.4 同步。
+  version: 0.5.0-draft
+  description: PRD CDC-EPRO-0001 v1.1。TBD-001~007 已於 2026-06-11 裁定（RP1=A 保留側效；仍開：RP4/RP6/RP8、checkpoint-keys §5.6、init-query method）。method/欄位以 spec.md Rn 為準。與 spec.md v0.5 同步。
 paths:
   /epl-case-query-reviseditem:          # R2 init-query
     # ⚠️ @PENDING(method)：PRD §6.1=GET、站上 RPC 慣例=POST、as-is FE POST/BE GET 不一致 → RD/架構定版前不裁定。下方 post 僅佔位。

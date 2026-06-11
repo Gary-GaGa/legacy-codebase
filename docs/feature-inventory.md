@@ -125,7 +125,7 @@
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅（CR 範本）|
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；嚴謹可做 deputy↔0700 gap-check |
-| EPROZ00800 | Revised Item | 🟠 | 🟠 | **D1–D5 已修（`88328f9`，2026-06-09）**：execute→POST、execute 單一 `@Transactional`（資料風險已除）、Y/N 驗證、回 pageMenuCondition、maxlength 3000+trim（QA-013/014/016/017 過、QA-012 rollback 待 DB）。**剩 S1–S8 RI-MAT 側效/checkpoint key→待 PRD TBD-006/§5.6/SA**。詳 `build-tasks/00800-verification-findings.md`；**SRS bundle**＝`specs/srs/EPROZ00800/` |
+| EPROZ00800 | Revised Item | 🟠 | 🟠 | **D1–D5 已修（`88328f9`）**；**✅ TBD-001~007 全裁（2026-06-11，SRS v0.5）**：RP1=**A 保留側效** → R5/R13.1–13.3/13.6/13.7 定版、**RI-MAT 修復解鎖**（isNotSame gate 移除、R13.1~13.3 bug、R5 disable、audit 摘要、Finished）。剩 R13.4/13.5（RP4←RP6 取數）、`_0260` key §5.6、init-query method、RP8。**SRS bundle**＝`specs/srs/EPROZ00800/` |
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
 
 ### 2F. 撥貸 `EPROISU0920/0921/0922` + T24（🔴 唯一真未完成區塊）
@@ -175,9 +175,10 @@
 - `00300` Document Checklist：return action 空回 → 補實作。
 - ✅ `00600` Search method 已修（sweep① `48e687f`）。
 
-**④b 🟠 `00800` Revised Item（D1–D5 已修；側效引擎待裁定；owner：PM/SA/RD）**
+**④b 🟠 `00800` Revised Item（D1–D5 已修；✅ TBD 裁定輪 06-11 完成；owner：RD 實作＋SA 取數）**
 - ✅ **TBD-無關硬缺陷 D1–D5 已修**（`88328f9`，2026-06-09；prompt 已歸檔 `done/00800-fix-step1-tbd-independent.md`）：execute→POST、**execute 單一 `@Transactional`（資料遺失風險已除）**、item Y/N 驗證、回傳 pageMenuCondition、reason maxlength 3000+trim。QA-013/014/016/017 過；**QA-012 rollback 整合測 deferred-to-DB**。
-- **剩：側效/checkpoint 正確性（RI-MAT-001~005、`_0260` 頁目標、isNotSame gate）→ 待 PRD `TBD-006`（保留 legacy 側效?）+ `TBD-003/004/005`（ITEM 規則）裁定再修**。詳 `build-tasks/00800-verification-findings.md`。
+- ✅ **TBD-001~007 全裁（2026-06-11，SRS v0.5）**：`TBD-006`=**A 保留側效＋修bug＋audit**、`003/004`=保留原因後補、`007`=維持現狀定版、`002`=Finished、`001`=動作項化（**SA 匯 `TB_COMMON_FIELD_OPTIONS`**）、`005`=連動 001 取數後裁。**解鎖 RD 修復**：isNotSame gate 移除（R11）、R13.1 還原空值、R13.2 補判斷、R13.3 補 `IS_ANY_COLLATERAL_PROVIDER`、R5 disable、R16 audit 側效摘要、`Finshed`→`Finished`。
+- **剩**：R13.4/13.5（RP4 ← RP6 取數）、`_0260` checkpoint key 清單（§5.6）、init-query method、R6/R7 判據（RP8）。詳 `specs/srs/EPROZ00800/spec.md` v0.5。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 
