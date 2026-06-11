@@ -14,6 +14,7 @@
 | S4b | `e4da52d` | 🟢 | 四錨點復核,22 列全維持 UNFOUND → **F-1 翻案實錘**。四錨點法自此為 FE 判定標配。 |
 | S5 | `9d3aa76` | 🟢 | M6 §A 12 列全綠;主動附四錨點證據（教訓內化）。M6a/M6b 空殼待 S6 清。 |
 | S6 | `bc3f2ca` | 🟢 | M6 §B 10 列全綠 → **M6 合計 22/22,i0 模組收口、inventory §2C 獲 zero-based 驗證**;空殼已清;窮盡聲明（無剩餘非 partial i0 JSP）已記。 |
+| S7 | `8c7ea52` | 🟢 | M7a 10 列:6 綠+2🟡(0114/0214→F-7)+2 UNFOUND(0211/0213→F-6);四錨點完整;「page-mapping 待確認≠不遷裁決」判斷正確。 |
 
 ## 累計發現（S-final diff 報告的預載;裁定全部留給人審）
 | # | 發現 | 證據位置 | 影響/建議動作 |
@@ -23,6 +24,8 @@
 | F-3 | M9:demo 頁 4 列 UNFOUND | `M9-common.md` | 大概率 🚫,等正式裁定 |
 | F-4 | Property Info 家族:`EPROIS_0240`/`EPROIU_0140`/`EPROIU_0240` UNFOUND——drop 裁決明文只點名 `EPROIS_0140` | `M2-is.md`、`M3-iu.md` | 一條裁決可關三列 |
 | F-5 | 404/error 頁 BE 端 UNFOUND（FE error route 在） | `M9-common.md` | 低風險;確認新架構是否本就 FE 承載 |
+| F-6 | `EPROC0_0211/0213`（展期限定 FinEvalTable/Scorecard）舊源有完整碼,新 FE/BE 全無;舊系統本身不對稱（0100 系列無 0111/0113） | `M7a-c0-00110-00115.md` | page-mapping「待確認」≠裁決——需正式裁定遷/不遷（c0 展期案的這兩功能是否由 00116-00120 涵蓋） |
+| F-7 | `EPROC0_0114/0214` FE calc handler 空 return、無 calc 路由（舊有 getRate） | `M7a-c0-00110-00115.md` | 疑為 inventory §2D 已知設計（無 c0 calc→隱鈕、BE save 算,`62ec62f`）;驗 template 鈕是否真隱——隱=降綠,未隱=真 UI bug |
 
 ## 口徑備忘（S-final 統計時遵守）
 - 狀態字彙同義:`✅ 碼在`≡`碼在`、`❓`≡`UNFOUND`（各場用字略飄,master 彙總表已正規化）。
