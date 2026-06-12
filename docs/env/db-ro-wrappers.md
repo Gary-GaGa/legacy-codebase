@@ -4,13 +4,14 @@
 > **06-12 修訂×2**：開發機鎖 PATH/環境變數權限 → 絕對路徑 wrapper（不依賴 PATH/setx）；**agent 自查為預設模式**（人工跑查詢僅為備援）。
 
 ## Agent 自查（預設）：絕對路徑 wrapper（免 PATH/env var/admin）
-1. 建立資料夾（可寫、**在兩個 repo 之外**、**永不進 git**）：
+1. 建立資料夾（可寫、**不在任何 git repo 內**、**永不進 git**）；**部署慣例（06-12 定）＝專案母資料夾同層 `epro-db\`**（與產品/規劃 repo 並排；若母資料夾本身是 git repo，將 `epro-db/` 加入其 `.gitignore` 防呆）：
    ```
-   C:\work\epro-db\
+   <母資料夾>\epro-db\
    ├── client\    ← sqlplus.exe 必須與 Instant Client 全部 DLL 同層（單獨複製 exe 跑不動）；
    │               機器上已有 Oracle 安裝者，改讓 wrapper 直接指向原安裝路徑、勿複製 exe
    ├── new.cmd
    ├── old.cmd
+   ├── out\       ← spool 輸出（schema-diff 等大結果落地處）
    └── sql\       ← 查詢檔（rp6.sql、precision.sql…）
    ```
 2. wrapper（帳密直接寫在檔內）：
