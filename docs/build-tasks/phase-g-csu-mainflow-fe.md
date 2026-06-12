@@ -27,8 +27,17 @@
 3. 一頁一 commit（pilot G1 先行、等審 OK 再放大）；每 commit `ng build` 綠＋guard scan。
 4. 產品 repo 後端**一行不改**。
 
+## Tasks（checklist——session 中斷在此記斷點續跑，勿靠 compact 記憶）
+- [ ] G1 `EPROCSU0160`＋`0261` popup（**pilot，報 diff 等審後才續 G2–G6**）
+- [ ] G2 `EPROCSU0150`（三 tab）
+- [ ] G3 `EPROCSU0170`＋`0174`/`0175` popup（含共用 dialog 改造）
+- [ ] G4 `EPROCSU0171`
+- [ ] G5 `EPROCSU0172`
+- [ ] G6 `EPROCSU0173`
+- 斷點：（無）
+
 ## 回報
-- 每頁 commit hash＋落點；dialog 改造方式一句＋「isu 行為未變」聲明;G2 三 tab 結構截點。
+- 每頁 commit hash＋落點；dialog 改造方式一句＋「isu 行為未變」聲明;G2 三 tab 結構截點;**更新上方 Tasks 勾選/斷點**。
 - `ng build` 結果;Phase V 待測清單（整合驗證歸 Phase V）。
 
 > 過了：企金案件可走完 collateral→loan condition→credit eval→LC→approved→old eval 全流程;回填 `feature-inventory.md` §2B＋§4①b;本卡進 `done/`。
