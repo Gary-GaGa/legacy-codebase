@@ -23,10 +23,10 @@
 | **B-5** | 行尾 `\r\n` vs `\n`（T24 可能敏感）、`C26` title-deed 全 join 到每筆 C row | T24 對行尾/重複的容忍度 | 格式符合性·中 | §3 P2 |
 | **B-6** | 架構：`t24DealResult`→批次 `EPROZ0B006`(async)、mail 改 scheduler 後送、`IS_AUTODIS=YC` | 是否採新批次/async 架構（非單純 bug） | 架構選擇·中 | §3 P2 |
 
-## C. DBA / 舊 DB2 DDL
+## C. DBA / 舊 DDL（**06-12：舊庫可連（Oracle），DDL 可自查**）
 | # | 主題 | 需要的決策 | 影響·信心 | 出處 |
 |---|---|---|---|---|
-| **C-1** | 金額 **precision**：新 `NUMBER(17,2)` vs 舊 DB2 scale **UNKNOWN** | 取**舊 DDL**核對 scale，定金額精度 | 金錢精度·UNSURE | §4 P3 |
+| **C-1** | 金額 **precision**：新 `NUMBER(17,2)` vs 舊 scale **UNKNOWN** | **舊庫 DDL 自查**核對 scale（已解鎖），定金額精度 | 金錢精度·UNSURE | §4 P3 |
 | **C-2** | `t24DealResult` 非 `0000`/無 done flag 是否更新 summary 狀態；`IS_CONTRACT`/`IS_CONTR` persist 目標；contract-source 可能 NPE；空 `APPLICATION_NO`（新 controller 擋、舊 throw 未明） | 對舊行為/DDL 確認後定 | 狀態/NPE·UNSURE | §4 P3 |
 
 ## D. 前端 / DTO 契約（M6 落這裡）
