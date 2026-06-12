@@ -5,7 +5,7 @@ openapi: 3.0.3
 info:
   title: EPROZ00800 Revised Item
   version: 0.5.0-draft
-  description: PRD CDC-EPRO-0001 v1.1。TBD 裁定狀態詳 spec.md §@PENDING（單一出處；仍開：RP4/RP6/RP8/RP9/RP10/RP11）。method/欄位以 spec.md Rn 為準。與 spec.md v0.7 同步（v0.6/v0.7＝EARS 句型整訂+複審輪、契約零變更，故 OpenAPI 版號停 0.5.0-draft）。
+  description: PRD CDC-EPRO-0001 v1.1。TBD 裁定狀態詳 spec.md §@PENDING（單一出處；仍開：RP4/RP6/RP8/RP9/RP11——RP10 已關 06-12）。method/欄位以 spec.md Rn 為準。與 spec.md v0.8 同步（v0.6/v0.7＝EARS 句型、v0.8＝checkpoint key 註解定版；**契約形狀未變**，故 OpenAPI 版號停 0.5.0-draft）。
 paths:
   /epl-case-query-reviseditem:          # R2 init-query
     # ⚠️ @PENDING RP9（init-query method，詳 spec.md §@PENDING）：RD/架構定版前不裁定，下方 post 僅佔位。
