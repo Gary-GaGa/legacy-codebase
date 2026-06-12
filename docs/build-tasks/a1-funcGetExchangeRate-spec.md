@@ -27,7 +27,7 @@
 ## 4. rounding / 精度
 - `funcGetExchangeRate` 本身**不套金額 rounding**，只存 API 回的 buy/sell。
 - T24 E21 非 USD 金額才用舊語意 `Math.round(CBC_FEE * ((BUY+SELL)/2))`；**不要**套 0921 fee 的 `RoundingMode.DOWN`。
-- 精度：`TB_DISBUR_DATE.EX_RATE_*` 新 entity `NUMBER(17,2)`；`TB_EXCHANGE_RATE.EX_RATE_*` `NUMBER(17,4)`；舊 scale UNKNOWN → **見 OQ-2（06-12 起舊庫（Oracle）可連，DDL 直接查）**。
+- 精度：✅ **已關（06-12 舊庫 DDL 實查）**——舊 `TB_DISBUR_DATE.EX_RATE_*`＝`NUMBER(17,2)`、`TB_EXCHANGE_RATE.EX_RATE_*`＝`NUMBER(17,4)`，與新 entity 完全一致，無精度落差（OQ-2 銷案）。另實查舊 `TB_EXCHANGE_RATE` 欄＝`NEXT_KEY/END_FLAG/EC_RATE_TYPE/CCY_CODE/EX_RATE_BUY/EX_RATE_SELL/VALID_DATE`。
 
 ## 5. transaction（必做）
 - 舊系統把 `TB_DISBUR_DATE.update` + `TB_EXCHANGE_RATE.insert` 包**同一交易**。
@@ -40,11 +40,11 @@
 ## 7. Open Questions（待裁）
 | # | 問題 | owner |
 |---|---|---|
-| OQ-1 | `IdNo` 應改回 `OVSLXLON01` 還是新系統刻意用 `OVSLXLON02` | domain / T24 API owner |
-| OQ-2 | `TB_DISBUR_DATE.EX_RATE_*` `NUMBER(17,2)` 對 API 匯率是否掉精度；調 schema 或明確 `setScale` | DBA / domain |
+| OQ-1 | `IdNo` 應改回 `OVSLXLON01` 還是新系統刻意用 `OVSLXLON02`。**06-12 實證**：兩者＝新庫**並存的兩個 schema owner**（`TB_BRANCH_PROFILE` 等表兩處皆有）——裁定性質明朗化為「選用哪個 schema/key」 | domain / T24 API owner |
+| ~~OQ-2~~ ✅ 已關（06-12 舊庫 DDL 實查）| 舊庫 `TB_DISBUR_DATE.EX_RATE_*`＝`NUMBER(17,2)`、`TB_EXCHANGE_RATE.EX_RATE_*`＝`NUMBER(17,4)`——**與新庫完全一致，行為對等無精度落差**；若要更高精度屬新需求另議 | —（已關）|
 | OQ-3 | 非 `0000` 用 `FAILED_E303` 還是沿用舊錯誤語意（`EPROIS0921_UI_RAET_FIND_ERROR`）| backend / domain |
 | OQ-4 | `callApiKHBFTR37001` catch 後回 null 的路徑是否改明確 throw（避免 NPE 被包成泛用 Authorize Fail）| backend / domain |
-| OQ-5 | T24 G/H 讀 `EXCHANGR_RATE`（非本方法寫的欄名）→ 是否欄名 bug、補後仍空值 | T24 / domain |
+| OQ-5 | T24 G/H 讀 `EXCHANGR_RATE`（非本方法寫的欄名）→ 是否欄名 bug、補後仍空值。**06-12 實證**：舊庫 `TB_DISBUR_DATE` **亦無** `EXCHANGR_RATE` 欄（實欄＝`EX_RATE_BUY/SELL`）→ 欄名 bug 機率大增 | T24 / domain |
 
 ## 8. 結論
 - 修法＝**補 return + 移尾端 throw + 兩表交易一致**，並先解 OQ-1/3/4/5（多為一行決策）。
