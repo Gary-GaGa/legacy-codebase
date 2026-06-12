@@ -5,8 +5,8 @@
 | Status | **Approved (subset)** — D1–D5 已定稿+實作（`88328f9`）；06-11 裁定輪：RP1/RP2/RP3/RP5/RP7 已關（**詳 §@PENDING＝單一出處**）→ R5、R13.1–13.3、R13.6、R13.7 定版；**仍 blocked**：RP4（R13.4/13.5，連動 RP6）、RP8、RP9、RP10、RP11、BP1–4；正式 SA 簽核待 owner 指派。就緒/blocked 分界見文末 as-is→to-be 摘要 |
 | Owner | SA（待指派）|
 | Slug | `EPROZ00800`（＝funcId）|
-| 版本 | v0.5（TBD 裁定輪——各 RP 裁定內容單一出處＝§@PENDING 表；QA 異動：QA-007/008 un-pend、QA-009 改掛 RP4、新增 QA-024/025。06-11 健檢後補：B2/B3/§5.6 契約待決正規化為 RP9–RP11）|
-| 最後更新 | 2026-06-11 |
+| 版本 | v0.6（06-12：**EARS 句型整訂**——skill 鐵則 1b 回溯適用（owner 指示）；僅句型調整，**語意/裁定/追溯零變更**。前版 v0.5＝TBD 裁定輪——各 RP 裁定內容單一出處＝§@PENDING 表；QA 異動：QA-007/008 un-pend、QA-009 改掛 RP4、新增 QA-024/025；B2/B3/§5.6 契約待決正規化為 RP9–RP11）|
+| 最後更新 | 2026-06-12 |
 | 上游 PRD | `CDC-EPRO-0001 v1.1` |
 | as-is 來源 | `docs/build-tasks/00800-verification-findings.md` |
 
@@ -40,59 +40,59 @@
 > 狀態：✅ as-is 符合 ／ ⚠️ as-is 出入 ／ 🔴 as-is 缺/風險 ／ 標 to-be＝PRD 要求。
 
 ### R1 — 開頁取屬性　`covers-prd: REQ-001`　**強制點：FE+BE**
-prompt 取 `attrMap`（`applicationNo`、`isEdit`、CU 判定）+ `lonTypeCode`；初始化失敗回 `MSG_INITIAL_FAIL`（prompt 非 `epl-*` RPC、不在 openapi 範圍，落點待 RD 於 routing 層定——見 Endpoints 註）。
+**當**使用者開啟本頁（prompt）時，系統應取得 `attrMap`（`applicationNo`、`isEdit`、CU 判定）＋`lonTypeCode`；**若**初始化失敗，系統應回 `MSG_INITIAL_FAIL`（prompt 非 `epl-*` RPC、不在 openapi 範圍，落點待 RD 於 routing 層定——見 Endpoints 註）。
 
 ### R2 — init-query 選項與既有資料　`covers-prd: REQ-002`　**強制點：FE+BE**
-查 `REVISED_ITEM` code table（`getCommonFieldOptions("EPRO",locale,"REVISED_ITEM")` ← `TB_COMMON_FIELD_OPTIONS`）→ `revisedType`+`revisedTypeSize`；查 `TB_LON_SUMMARY_INFO` → `LON_TYPE_CODE`；查 `TB_REVISED_ITEM` → `ITEM1~14`+`REASON_MEMO`（無則 blank）。**as-is ✅**（left join、null→""）。
+**當** init-query 被呼叫時，系統應查 `REVISED_ITEM` code table（`getCommonFieldOptions("EPRO",locale,"REVISED_ITEM")` ← `TB_COMMON_FIELD_OPTIONS`）→ 回 `revisedType`+`revisedTypeSize`；查 `TB_LON_SUMMARY_INFO` → 回 `LON_TYPE_CODE`；查 `TB_REVISED_ITEM` → 回 `ITEM1~14`+`REASON_MEMO`（無則 blank）。**as-is ✅**（left join、null→""）。
 
 ### R3 — 至少勾 1 項　`covers-prd: REQ-003`　**強制點：FE**
-未勾任一 → 前端阻擋送出。**as-is ✅**。
+**若**使用者未勾任一項即送出，系統（FE）應阻擋送出。**as-is ✅**。
 
 ### R4 — REASON_MEMO 必填 / maxlength **3000** / trim　`covers-prd: REQ-003`　**強制點：FE+BE**
-必填、上限 **3000**、需 trim；BE 亦應驗。**as-is ⚠️**：maxlength=**4000**、未 trim、BE DTO 未驗 → RD 修。
+系統應要求 `REASON_MEMO` 必填、上限 **3000** 字元並 trim；BE 亦應驗證。**as-is ⚠️**：maxlength=**4000**、未 trim、BE DTO 未驗 → RD 修。
 
 ### R5 — ITEM1 受 `LON_TYPE_CODE=03` 強制　`covers-prd: REQ-003`（**RP2 已裁 06-11：保留強制、業務原因後補**——降為動作項，不擋定版）　**強制點：FE**
-`=03` → ITEM1 強制勾且**不可編輯**；`≠03` → 強制不勾且不可編輯。**as-is ⚠️**：會強制勾回但欄位未 disabled；非 03 且 DB ITEM1=Y 仍可編輯 → RD 修。
+**當** `LON_TYPE_CODE=03` 時，系統應強制 ITEM1 勾選且**不可編輯**；**當** `≠03` 時，系統應強制不勾且不可編輯。**as-is ⚠️**：會強制勾回但欄位未 disabled；非 03 且 DB ITEM1=Y 仍可編輯 → RD 修。
 
 ### R6 — ITEM3 受 `isCU` 強制　`covers-prd: REQ-003`（as-is 判據等價性 → `@PENDING RP8`）　**強制點：FE**
-`isCU=true` → ITEM3 強制不勾且不可編輯。**as-is ⚠️**：用 `secureAttribute==='U'` 而非 `attrMap.isCU`——兩判據是否全情境等價待 RD 確認（RP8）；QA-006 僅驗 to-be 行為表象。
+**在** `isCU=true` 期間，系統應強制 ITEM3 不勾且不可編輯。**as-is ⚠️**：用 `secureAttribute==='U'` 而非 `attrMap.isCU`——兩判據是否全情境等價待 RD 確認（RP8）；QA-006 僅驗 to-be 行為表象。
 
 ### R7 — `isEdit=false` 全唯讀 + 隱藏完成鈕　`covers-prd: REQ-003`（as-is 判據等效性 → `@PENDING RP8`）　**強制點：FE**
-**as-is ⚠️**：靠 auth `canEditList`/`isShowList` 達成、非直接綁 `isEdit`——是否全情境等效待 RD 確認（RP8）；QA-019 僅驗 to-be 行為表象。
+**在** `isEdit=false` 期間，系統應使全頁唯讀並隱藏完成鈕。**as-is ⚠️**：靠 auth `canEditList`/`isShowList` 達成、非直接綁 `isEdit`——是否全情境等效待 RD 確認（RP8）；QA-019 僅驗 to-be 行為表象。
 
 ### R8 — 變更提示　`covers-prd: §2.3 / §3.1-6`　**強制點：FE**
-checkbox 與既有不同 → 送出前提示「移除 Revised Item 會清除相關修改」。**as-is ✅**。
+**當** checkbox 與既有資料不同且使用者送出時，系統應先提示「移除 Revised Item 會清除相關修改」。**as-is ✅**。
 
 ### R9 — blank/N/Y 正規化　`covers-prd: §5.3.2`　**強制點：FE+BE**
-init-query 允許 blank；execute request / DB **只允許 Y/N**；FE 送出前 blank→N；BE 不得存 blank（**結果確定**；BE 對殘留 blank 採拒絕或正規化之**手段**待 RD，見 QA-014 註）。**as-is**：FE ✅；**BE 🔴**（`InsertRevisedItemRequest` 無 `@Pattern`，可存非 Y/N）→ RD 修。
+系統應於 init-query 允許 blank；**當** execute 時，request / DB **只允許 Y/N**——FE 應於送出前將 blank→N；**若** BE 收到殘留 blank，系統不得存入（**結果確定**；採拒絕或正規化之**手段**待 RD，見 QA-014 註）。**as-is**：FE ✅；**BE 🔴**（`InsertRevisedItemRequest` 無 `@Pattern`，可存非 Y/N）→ RD 修。
 
 ### R10 — execute = POST + **單一 transaction**　`covers-prd: REQ-004 / §9`　**強制點：BE**
-execute 為 **POST**；整個儲存（刪/複製/insert/checkpoint）在**單一 `@Transactional`**，任一失敗整批 rollback。**as-is 🔴🔴**：BE GET；**無外層 `@Transactional`** → 多表刪/還原可**半更新＝資料遺失風險**（最高優先）。
+execute 應為 **POST**；**當** execute 執行時，系統應將整個儲存（刪/複製/insert/checkpoint）置於**單一 `@Transactional`**；**若**任一步失敗，系統應整批 rollback。**as-is 🔴🔴**：BE GET；**無外層 `@Transactional`** → 多表刪/還原可**半更新＝資料遺失風險**（最高優先）。
 
 ### R11 — execute 後端二次比對為準　`covers-prd: §5.4.1`　**強制點：BE**
-重查 DB 既有 `ITEM1~14`、與 request 正規化結果比對，作為觸發側效之**唯一依據**；`isNotSame` 僅前端提示輔助、**不得作判斷依據**；查無既有 → 全部視為 N。**as-is ⚠️**：有重查，但側效仍被 `request.getIsNotSame()` gate；僅 ITEM2 特判 null → RD 修。
+**當** execute 時，系統應重查 DB 既有 `ITEM1~14`、與 request 正規化結果比對，並以此為觸發側效之**唯一依據**；`isNotSame` 僅前端提示輔助、**不得作判斷依據**；**若**查無既有資料，系統應將全部視為 N。**as-is ⚠️**：有重查，但側效仍被 `request.getIsNotSame()` gate；僅 ITEM2 特判 null → RD 修。
 
 ### R12 — 刪+insert TB_REVISED_ITEM　`covers-prd: §5.4-6/7`　**強制點：BE**
-刪目前 `APPLICATION_NO` 的 `TB_REVISED_ITEM` → insert `ITEM1~14`+`REASON_MEMO`+`UPD_DATE`。**as-is ✅**。
+**當** execute 時，系統應先刪除目前 `APPLICATION_NO` 的 `TB_REVISED_ITEM`，再 insert `ITEM1~14`+`REASON_MEMO`+`UPD_DATE`。**as-is ✅**。
 
 ### R13 — 關聯資料清除/還原矩陣 RI-MAT　`covers-prd: REQ-005 / §5.5`　**✅ RP1 已裁（06-11）：A＝保留側效＋修 bug＋audit**　**強制點：BE**
 > **RP1=A 已裁（06-11，理由/配套詳 §@PENDING＝單一出處）**：legacy 側效保留為已核准 to-be（使用者確認流程不改；R8 變更提示維持）；下列 as-is bug＝修復項而非設計取捨；execute 須留側效異動摘要 audit（→R16）。**R13.1–13.3、13.6、13.7 定版**；R13.4/13.5 仍待 RP4（連動 RP6 取數）。
-- **R13.1 RI-MAT-001 ✅定版**（ITEM2 Y→N）：刪 `GUARANTOR_INFO`/`_CORP`，由 `REF_APPLICATION_NO` 複製還原 + 還原 `IS_ANY_GUARANTOR`。as-is ⚠️：取 `baseInfo.refApplicationNo/lonTypeCode` 傳**空值**（還原失效）→ RD 修。
-- **R13.2 RI-MAT-002 ✅定版**（ITEM2 N→Y，reference 無 guarantor）：borrower `IS_ANY_GUARANTOR=Y`。as-is ⚠️：缺「reference 無 guarantor」判斷 → RD 修。
-- **R13.3 RI-MAT-003 ✅定版**（ITEM3 Y→N）：刪 collateral/valuation/site-visit/title/provider/owner，由 reference 複製 + 更新 `IS_ANY_COLLATERAL_PROVIDER`。as-is ⚠️：未更新 `IS_ANY_COLLATERAL_PROVIDER` → RD 修。
-- **R13.4 RI-MAT-004 ⏸ @PENDING RP4**（ITEM1/4~11 特定組合）：刪 `LOAN_CONDITION_DETAIL`+`REVISED_ITEM_DETAIL`，相關 page menu 標重處理。as-is ⚠️：page menu 標 0110~0160（非 §5.6 清單，見 R14）。
-- **R13.5 RI-MAT-005 ⏸ @PENDING RP4**（ITEM1/4~11 Y→N）：從原始 detail 還原欄位（§5.5.2 矩陣）+ 更新 `REVISED_ITEM_DETAIL`。as-is ⚠️：ITEM10/11 else ITEM1 疑錯欄（＝RP4 命題、判據待 RP6 取數）、受 isNotSame gate（gate 移除已隨 RP1=A 定版，見 R11）。
-- **R13.6 RI-MAT-006 ✅定版**（`LON_TYPE=04` 且 ITEM12 N→Y）：刪 `LOAN_CONDITION_FEE`（**RP3 已裁 06-11：保留、業務原因後補**——降為動作項）。**as-is ✅**。
-- **R13.7 RI-MAT-007 ✅定版**（ITEM13/14）：**僅持久化勾選狀態、無下游側效**（**RP5 已裁 06-11：維持現狀＝定版**；若 RP6 取數後發現 13/14 有下游語意，另開新待決 RPn）。**as-is ✅**（行為即現狀）。
+- **R13.1 RI-MAT-001 ✅定版**：**當** ITEM2 由 Y→N 時，系統應刪 `GUARANTOR_INFO`/`_CORP`、由 `REF_APPLICATION_NO` 複製還原，並還原 `IS_ANY_GUARANTOR`。as-is ⚠️：取 `baseInfo.refApplicationNo/lonTypeCode` 傳**空值**（還原失效）→ RD 修。
+- **R13.2 RI-MAT-002 ✅定版**：**當** ITEM2 由 N→Y 且 reference 無 guarantor 時，系統應將 borrower `IS_ANY_GUARANTOR` 設為 Y。as-is ⚠️：缺「reference 無 guarantor」判斷 → RD 修。
+- **R13.3 RI-MAT-003 ✅定版**：**當** ITEM3 由 Y→N 時，系統應刪 collateral/valuation/site-visit/title/provider/owner、由 reference 複製，並更新 `IS_ANY_COLLATERAL_PROVIDER`。as-is ⚠️：未更新 `IS_ANY_COLLATERAL_PROVIDER` → RD 修。
+- **R13.4 RI-MAT-004 ⏸ @PENDING RP4**：**當** ITEM1/4~11 特定組合變更時，系統應刪 `LOAN_CONDITION_DETAIL`+`REVISED_ITEM_DETAIL`，並將相關 page menu 標重處理。as-is ⚠️：page menu 標 0110~0160（非 §5.6 清單，見 R14）。
+- **R13.5 RI-MAT-005 ⏸ @PENDING RP4**：**當** ITEM1/4~11 由 Y→N 時，系統應從原始 detail 還原欄位（§5.5.2 矩陣）並更新 `REVISED_ITEM_DETAIL`。as-is ⚠️：ITEM10/11 else ITEM1 疑錯欄（＝RP4 命題、判據待 RP6 取數）、受 isNotSame gate（gate 移除已隨 RP1=A 定版，見 R11）。
+- **R13.6 RI-MAT-006 ✅定版**：**當** `LON_TYPE=04` 且 ITEM12 由 N→Y 時，系統應刪 `LOAN_CONDITION_FEE`（**RP3 已裁 06-11：保留、業務原因後補**——降為動作項）。**as-is ✅**。
+- **R13.7 RI-MAT-007 ✅定版**：**當** ITEM13/14 變更時，系統應**僅持久化勾選狀態、不觸發下游側效**（**RP5 已裁 06-11：維持現狀＝定版**；若 RP6 取數後發現 13/14 有下游語意，另開新待決 RPn）。**as-is ✅**（行為即現狀）。
 
 ### R14 — Checkpoint / Page Menu 更新　`covers-prd: REQ-006 / §5.6`　**強制點：FE+BE**
-依 `IS/IU/CS/CU` 寫對 checkpoint 表（`TB_CHECK_POINT_RC` / `_IU` / `_CORP` / `_CU`）、標 `EPRO{IS/IU/CS/CU}_0260`（確切 key 清單＝`@PENDING RP10`，詳 §@PENDING）；execute 回傳 `pageMenuCondition`（§5.6 重處理頁清單，如 IS：0210/0220/0230/0250/0290）。**as-is 🔴**：標 `EPROZ00800`/`0160`/`0110~0150`（非 `_0260`）；`pageMenuCondition` **未回傳** → RD 修。
+**當** execute 完成時，系統應依 `IS/IU/CS/CU` 寫對 checkpoint 表（`TB_CHECK_POINT_RC` / `_IU` / `_CORP` / `_CU`）、標 `EPRO{IS/IU/CS/CU}_0260`（確切 key 清單＝`@PENDING RP10`，詳 §@PENDING），並於回應回傳 `pageMenuCondition`（§5.6 重處理頁清單，如 IS：0210/0220/0230/0250/0290）。**as-is 🔴**：標 `EPROZ00800`/`0160`/`0110~0150`（非 `_0260`）；`pageMenuCondition` **未回傳** → RD 修。
 
 ### R15 — 錯誤處理　`covers-prd: REQ-007 / §6.4 / §8`　**強制點：FE+BE**
-`MSG_INITIAL_FAIL`(prompt)、`COMMON_MSG_ERROR_LON`/`MSG_DATA_NOT_FOUND`(init/execute)、`COMMON_MSG_SAVE_FAIL`(execute rollback)、`COMMON_MSG_SAVE_SUCCESS`。**as-is ⚠️**：無 RevisedItem 專屬 mapping。
+**若** prompt 初始化失敗，系統應回 `MSG_INITIAL_FAIL`；**若** init/execute 查詢失敗或查無資料，應回 `COMMON_MSG_ERROR_LON`/`MSG_DATA_NOT_FOUND`；**若** execute rollback，應回 `COMMON_MSG_SAVE_FAIL`；**當**儲存成功時，應回 `COMMON_MSG_SAVE_SUCCESS`。**as-is ⚠️**：無 RevisedItem 專屬 mapping。
 
 ### R16 — 非功能　`covers-prd: §9`　**強制點：BE**
-單一 transaction（→R10）；init-query≤3s / execute≤5s（大量複製另測）；log 含 requestId/applicationNo/userId/action/result/耗時、敏感遮罩；execute 留 audit——**RP1=A 配套：audit 須含側效異動摘要**（哪些 RI-MAT 分支觸發、各影響表/筆數），補償「無使用者確認步驟」的可追溯性；維持 IS/IU/CS/CU 四態 checkpoint。
+系統應以單一 transaction 執行儲存（→R10）；init-query 應 ≤3s、execute 應 ≤5s（大量複製另測）；log 應含 requestId/applicationNo/userId/action/result/耗時並做敏感遮罩；**當** execute 時，系統應留 audit——**RP1=A 配套：audit 須含側效異動摘要**（哪些 RI-MAT 分支觸發、各影響表/筆數），補償「無使用者確認步驟」的可追溯性；系統應維持 IS/IU/CS/CU 四態 checkpoint。
 
 ## 🚩 @PENDING（PRD TBD → 規則；**裁定輪 2026-06-11**，✅＝已關、⏸＝仍開）
 > **本表＝每個待決的單一出處**（裁定內容只寫這裡；他處只標狀態 token + 指回本表）。
