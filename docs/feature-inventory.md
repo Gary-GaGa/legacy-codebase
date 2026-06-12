@@ -201,6 +201,8 @@
 - ✅ **Logback `D:\temp` 外部化**（`bbc4492`）：改 `${LOG_API_PATH:${LOG_PATH:logs}}` 等跨平台預設，appender/pattern/level 未動；連帶解掉 full `mvn clean package` 卡 D:\temp。
 - ✅ **c0 staff 端點 cleanup 已完成**（`dcd9602`，2026-06-09；prompt 已歸檔 `done/c0-staff-endpoints-cleanup.md`）：刪 `epl-info/save-c0-financial-staff` + `CsuFinancialEvaluationStaffFiController` 整檔（+ staff DTO/serviceImpl、staff option/funcIsStaffLoan 依賴）；**保留** `CsuFinancialStaffController` 的 sele(list)/business method（00117 在用）、table-fi（00120）；i0 未碰；mvn + npm build 綠。
 
+- 🟡 **命名 tech-debt（06-12 快檢記錄）**：`epl-comm-isu-update-total-amount`（+class/DTO）實為 case-type 無關（計算不落 DB；LDTC 副作用被 `LON_ATTRIBUTE='I'` gate 限定），corporate 沿用安全——rename 低優先、閒時清。
+
 **⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×3（06-11 同日收：`00660`/`00100`/`00119`，product commits `5a47038`/`2599752`/`6919da5`，卡歸檔 `done/`）；餘 `00640-pdf-export-fix.md`（F-11，待派工）；F-7（00114 鈕隱驗證）入 Phase V；待裁＝AUD-1~4＋BIBLE-GAP recon（`bible-gap-recon.md`）。
 
 ---

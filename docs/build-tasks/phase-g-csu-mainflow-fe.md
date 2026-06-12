@@ -34,7 +34,7 @@
 - [ ] G4 `EPROCSU0171`
 - [ ] G5 `EPROCSU0172`
 - [ ] G6 `EPROCSU0173`
-- 斷點：**放大前置＝`epl-comm-isu-update-total-amount` 唯讀快檢**（ISU 限定 or case-type 無關；「無關」才續 G2）。Phase V 待測：G1 載入/save/finish、approved-case popup view/save/update、total amount 更新、ISU loan-condition popup 回歸。
+- 斷點：（無——**前置快檢已解 06-12**：`epl-comm-isu-update-total-amount` 計算 case-type 無關、LDTC 副作用被 `LON_ATTRIBUTE='I'` gate 擋死，corporate 零誤寫；命名 tech-debt 記 inventory §4⑨。**G2–G6 綠燈**）。Phase V 待測：G1 載入/save/finish、approved-case popup view/save/update、total amount 更新、ISU loan-condition popup 回歸。
 
 ## 回報
 - 每頁 commit hash＋落點；dialog 改造方式一句＋「isu 行為未變」聲明;G2 三 tab 結構截點;**更新上方 Tasks 勾選/斷點**。
