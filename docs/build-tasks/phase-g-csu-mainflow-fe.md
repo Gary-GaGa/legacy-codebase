@@ -34,7 +34,7 @@
 - [ ] G4 `EPROCSU0171`
 - [ ] G5 `EPROCSU0172`
 - [ ] G6 `EPROCSU0173`
-- 斷點：續跑 G4 `EPROCSU0171`。Phase V 待測：G1 載入/save/finish、approved-case popup view/save/update、total amount 更新、ISU loan-condition popup 回歸；G3 載入/dropdown/save/submit/upload/delete-file/return/cancel/delete-return、suggested additional conditions confirm 後保存、LC/LLC/Reject action-specific validation、ISU return dialog 回歸、CSU LLC 檔案下載（controller 目前無 CSU download route，勿猜 endpoint）、CSU Credit Proposal report 下載（目前沿用既有 `epl-ppdf-isu-credit-proposal-report` 共用 report endpoint）、`cgccGuarantee` 條件顯示回歸。
+- 斷點：續跑 G4 `EPROCSU0171`。Phase V 待測：G1 載入/save/finish、approved-case popup view/save/update、total amount 更新、ISU loan-condition popup 回歸；G3 載入/dropdown/save/submit/upload/delete-file/return/cancel/delete-return、suggested additional conditions confirm 後保存、LC/LLC/Reject action-specific validation、ISU return dialog 回歸、CSU LLC 檔案下載（controller 目前無 CSU download route，勿猜 endpoint）、CSU Credit Proposal report 下載（目前沿用既有 `epl-ppdf-isu-credit-proposal-report` 共用 report endpoint）、`cgccGuarantee` 條件顯示回歸；**全卡共通：G1–G6 頁對 Adobe XD 設計走查**（本卡規格來源＝isu 鏡像＋舊 JSP 結構，未走 `frontend/AGENTS.md §5`「人摘 XD」步——XD 若有企金專屬標註需對齊；只有通用版型則免）。**G3 回報待補（06-12 審查條件）**：product commit hash、`ng build` 結果、ISU return dialog 回歸自測聲明。
 
 ## 回報
 - 每頁 commit hash＋落點；dialog 改造方式一句＋「isu 行為未變」聲明;G2 三 tab 結構截點;**更新上方 Tasks 勾選/斷點**。
