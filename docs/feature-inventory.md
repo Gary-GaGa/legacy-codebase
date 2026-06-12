@@ -189,7 +189,7 @@
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 
-**⑥ 授權列（owner：DB/ops）**：✅ SQL 已產＋DB precheck 完（`c0-authz-sql.sql`＋findings，`203c375`）——29 endpoint 中 c0 已有 15、**預期 insert 13**、ROLE_TASK 8/8 已存在；NOT EXISTS 冪等。**待裁**：00117 的 3 個 API auth 列實缺（「既有」premise 被 DB 推翻——補產 or ops 補）；gap＝`epl-pxls-c0-financial-statement-comments`（i0 source 亦無列，UNSURE）。下一步＝ops 簽核→以 `OVSLXLON02` 套用→Phase V 開門。
+**⑥ 授權列（owner：DB/ops）**：✅ **SQL 全就緒**（`c0-authz-sql.sql`＋findings，precheck `203c375`＋00117 翻案補產 `78f0b51`，06-12 審過）——**32 mappings、預期 insert 16**（13＋00117 三列；使用者已裁「補」）、ROLE_TASK 8/8 已存在、NOT EXISTS 冪等；唯一 gap＝`epl-pxls-c0-financial-statement-comments`（i0 source 亦無列，UNSURE 交 ops）。卡已歸檔 done/。**下一步＝ops 照 findings『Ops Apply Checklist』簽核→以 `OVSLXLON02` 套用→Phase V 開門**（403 解除）。
 
 **⑦ 暫緩 track（需先拍板）**：R2 報表服務（→0181/i0·c0 PDF/z0 PDF）、檔案上傳 API（→collateral/審批上傳）。〔CBC 已釐清＝頁內、非獨立 track〕
 
@@ -209,7 +209,7 @@
 
 ## 5. 建議排程（依依賴與風險）— cross-check 後更新
 > 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策。
-> **✅ DB 連線已打通（2026-06-12）**——Phase V 全隊列解鎖。**解鎖順序**：① 派 `c0-authz-sql.md` 產 SQL→ops 簽核→**先套授權列**（未套打 c0 endpoint 全 403）② RP6 取數（一條 SELECT，順帶裁 RP4）③ A-1 DB 端 OQ 實查（`EXCHANGR_RATE` 欄名/精度/欄寬→縮小撥貸待裁）④ Phase V 開跑（`verification-execution.md` 分階段；deferred-to-DB QA-007/008/012/024/025、00119 三條必驗、00660 實測、map-key runtime 複測、M7/M9 確認點）。agent 自主驗 DB 時用**唯讀帳號**、帳密走環境變數不進 repo（CLAUDE.md §7）。
+> **✅ DB 連線已打通（2026-06-12）**——Phase V 全隊列解鎖。**解鎖順序**：① ✅ SQL 全就緒（含 00117 三列，見 ⑥）→**剩 ops 簽核＋以 `OVSLXLON02` 套用**（未套打 c0 endpoint 全 403）② ✅ RP6 取數完（14 名齊；RP4 順帶裁定=設計非缺陷，均已關 06-12）③ ✅ A-1 DB 端實查完（01=舊/02=新坐實、`EXCHANGR_RATE` 欄兩庫 DDL 皆無——OQ-1/OQ-5 證據入 `pending-register.md`，剩 owner 蓋章）④ Phase V 開跑（`verification-execution.md` 分階段；deferred-to-DB QA-007/008/009a/b/012/024/025、00119 三條必驗、00660 實測、map-key runtime 複測、M7/M9 確認點）——**只等 ① 的 ops 套用**。agent 自主驗 DB 時用**唯讀帳號**、帳密走環境變數不進 repo（CLAUDE.md §7）。
 
 **Phase 0 — 坐實缺口（c0 FE ✅ 已坐實）**
 0. ✅ c0 評分 FE 範圍已坐實（容器 + 8 子頁）；✅ `CS 0240` 裁定**不開發**。**Phase 0 清空。**
