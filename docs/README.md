@@ -70,7 +70,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 - **進行中（live）**：
   - `a1-funcGetExchangeRate-spec.md`（A-1 換匯 stub 規格，A-1 未實作）+ `phase-d-a1-exchange-stub-investigation.md`（A-1 背景調查）
   - `00800-verification-findings.md`（as-is 證據／SRS as-is 來源；D1–D5 已修注記在內）
-  - `00800-rimat-fix.md`（step 2 修復包：RP1=A 解鎖項 F1–F7，待派工）
+  - ✅ `00800-rimat-fix.md` **F1–F9 已落地**（product `5580eb7`，06-12 審過）→ 歸檔 done/
   - `00300-return-recon.md`（00300 return 坐實，待派工）、`c0-authz-sql.md`（c0 授權列 SQL 預產，待派工）
   - `schema-diff-recon.md`（**新舊庫 schema 全量 diff**，agent 自查首任務，待派工）
   - `full-refactor-audit.md` + `refactor-audit/`（**全量 zero-based 盤點 ✅ 完成 2026-06-11**：166 列，diff 報告=`refactor-audit/diff-vs-inventory.md`、QC=`refactor-audit-qc.md`；歸檔待 AUD-1~5 收口）
