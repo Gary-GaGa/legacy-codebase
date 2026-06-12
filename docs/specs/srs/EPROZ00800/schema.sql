@@ -42,4 +42,7 @@ CREATE TABLE TB_REVISED_ITEM (
 --   key＝表欄位（新 funcId 形）：自欄 EPROZ00800＋§5.6 重處理頁新欄（IS: EPROISU0110/0120/0130/0140/0150；CS/CU/IU=DDL 子集）
 
 -- ✅ RP1 已關（詳 spec.md §@PENDING＝單一出處）：R13.1–13.3/13.6/13.7 之刪除/複製範圍定版、可實作。
--- ⚠️ 僅 R13.4/13.5（TB_LOAN_CONDITION_DETAIL / TB_REVISED_ITEM_DETAIL）仍受 RP4 控制 → 未關前勿定版其刪除/還原範圍。
+-- ✅ R13.4/13.5（TB_LOAN_CONDITION_DETAIL / TB_REVISED_ITEM_DETAIL）已定版（06-12 RP4/RP6 關閉；欄對應判據＝ITEM 名稱表，findings E1）。
+
+-- TB_COMMON_FIELD_OPTIONS（SYS_CODE/MSG_CODE/MSG_OPTION/MSG_SER_NO/LANG_KEY）+ TB_MULTI_LANG（LANG_KEY→LANG_NAME）
+--   : R2 選項來源；ITEM1~14 名稱定版（✅RP6 已關 06-12，取數證據＝build-tasks/00800-pending-recon-findings.md E1）
