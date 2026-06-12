@@ -7,7 +7,7 @@
 | # | 主題 | 需要的決策 | 影響·信心 | 出處 |
 |---|---|---|---|---|
 | **A-1** 🔴 | `funcGetExchangeRate` **尾端 throw-stub**（`common/impl/FunctionServiceImpl:1156`；**已有** API key 讀取/T24 呼叫/`TB_DISBUR_DATE`+`TB_EXCHANGE_RATE` 寫入，只是尾端無條件 throw、無 return） | **實作規格已備 → 見 [`build-tasks/a1-funcGetExchangeRate-spec.md`](../build-tasks/a1-funcGetExchangeRate-spec.md)**。修＝補 return + 移尾端 throw + 兩表交易一致 + 解 OQ-1/3/4/5；⚠️ **鏡像舊 0922 換匯、勿鏡像 `funcGetRate`（那是 scorecard 計分、非匯率）**。**最高優先** | 阻斷全流程·高 | §1 P0-1 |
-| **A-2** | `EXCHANGE_RATE` 來源 ID `OVSLXLON01`→`02` | 確認換匯源 ID 是**刻意改**還是 regression（金錢） | 換錯匯率源·中 | §2 / §7 line71 |
+| **A-2** | `EXCHANGE_RATE` 來源 ID `OVSLXLON01`→`02` | 確認換匯源 ID 是**刻意改**還是 regression（金錢）。**06-12 schema-diff 實證：01=舊 app schema、02=新 app schema → 「刻意改」機率壓倒性，待 domain 蓋章** | 換錯匯率源·中→低 | §2 / §7 line71 |
 | **A-3** | `E21` 非 USD 非 KHR 輸出 `0`（舊全換匯） | 是否隨 KHR 在地化刻意改；非 USD/KHR 幣別該如何出 | T24 值錯·中 | §2 / §7 |
 | **A-4** | `0921` 檢核對等：`CheckMainBorr`/`CheckCoBorr`（身分/sector/account/`DATA_SEQ`/business-section）、`info CO_CHECK ='Y'` vs 舊 `!='N'`、Finished gate 未驗 `mbCheck`、law firm `IS_SHOW` 版本條件、address `UPD_DATE` 來源 | 逐項裁「嚴格度差異是 intended 還是 regression」 | 檢核漏放/誤擋·中 | §3 P2 |
 | **A-5** 🟢 | `KHR` 換匯 + 在地化（舊僅 USD） | **疑刻意演進——確認後標明「勿改回」**，避免後續被當 bug 還原 | 改回會破壞·高 | §3 / §7 |
