@@ -30,11 +30,11 @@
 ## Tasks（checklist——session 中斷在此記斷點續跑，勿靠 compact 記憶）
 - [x] G1 `EPROCSU0160`＋`0261` popup（✅ 審過 06-12，product `809d25d`；CSU popup 變體、ISU 零修改）
 - [x] G2 `EPROCSU0150`（三 tab）（✅ 審過 06-12，product `14b254e`；Info/Valuation/Site Visit 三 mat-tab、上傳區守 ⏸ 現狀、BE 零改）
-- [ ] G3 `EPROCSU0170`＋`0174`/`0175` popup（含共用 dialog 改造）
+- [x] G3 `EPROCSU0170`＋`0174`/`0175` popup（✅ 06-12：return dialog endpointConfig 參數化、cancel popup CSU 變體；actual controller routes 含 sele/upload/del-file/submit/info/save/retu/cancel/del-retu）
 - [ ] G4 `EPROCSU0171`
 - [ ] G5 `EPROCSU0172`
 - [ ] G6 `EPROCSU0173`
-- 斷點：（無——**前置快檢已解 06-12**：`epl-comm-isu-update-total-amount` 計算 case-type 無關、LDTC 副作用被 `LON_ATTRIBUTE='I'` gate 擋死，corporate 零誤寫；命名 tech-debt 記 inventory §4⑨。**G2–G6 綠燈**）。Phase V 待測：G1 載入/save/finish、approved-case popup view/save/update、total amount 更新、ISU loan-condition popup 回歸。
+- 斷點：續跑 G4 `EPROCSU0171`。Phase V 待測：G1 載入/save/finish、approved-case popup view/save/update、total amount 更新、ISU loan-condition popup 回歸；G3 載入/dropdown/save/submit/upload/delete-file/return/cancel/delete-return、suggested additional conditions confirm 後保存、LC/LLC/Reject action-specific validation、ISU return dialog 回歸、CSU LLC 檔案下載（controller 目前無 CSU download route，勿猜 endpoint）、CSU Credit Proposal report 下載（目前沿用既有 `epl-ppdf-isu-credit-proposal-report` 共用 report endpoint）、`cgccGuarantee` 條件顯示回歸。
 
 ## 回報
 - 每頁 commit hash＋落點；dialog 改造方式一句＋「isu 行為未變」聲明;G2 三 tab 結構截點;**更新上方 Tasks 勾選/斷點**。
