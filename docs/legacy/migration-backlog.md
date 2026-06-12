@@ -35,7 +35,7 @@
 
 子頁類型分佈（共通）：主容器(頁籤) · 子表單分頁 · `_JS.jsp`（頁面 JS partial → component 邏輯）· 上傳/下載 · 列印(Jasper) · popup。
 已知具名報表：`*_0181` CAD Report、`z0_0620` Application Delete、`z0_0630` Deviation Case、`z0_0640` MIS Scorecard/CRCG、`z0_0650` Application Cancel。
-已知具名表：CBC `EPRO_TB_CBC_BGL/_INFO`、`_GBGL/_INFO`。
+已知具名表：CBC `EPRO_TB_CBC_BGL/_INFO`、`_GBGL/_INFO`（Java VO 類名；06-12 實查舊庫表名無 `EPRO_` 前綴，實表＝`TB_CBC_*`）。
 
 ## 2. 跨頁共用（D1 回填）
 - **共用版型**：無 Tiles、無 `.tag`/`.tagx`；靠 `<%@ include %>` 串 `header` + `skeleton-header/sidebar/footer` + `pageMenu` → 對應 `main-layout` shell + `app-side-bar-list`/`app-user-menu`/`app-lang-menu`。
@@ -56,7 +56,7 @@
 - **外部整合**：MIS/SSO 登入與權限、JasperReports、應用內部檔案上傳/下載、CBC/Scorecard/MIS 報表、DB（06-12 更正：舊庫＝Oracle）。
 
 ## 3. 風險 / 待確認決策
-- **R1 ✅ 已定：舊→新 Oracle schema 遷移**（**06-12 實連更正：舊庫亦 Oracle**，原依 `DB2PoolSvc.xml` 誤判跨引擎）。entity/SQL 一律以 Oracle＋新 schema 為準、**勿原樣沿用舊 SQL**（表名/前綴/checkpoint 改名、型別與 map-key 大小寫）；舊源殘留 DB2 方言（`FETCH FIRST`/`WITH UR`/序列等）照改。
+- **R1 ✅ 已定：舊→新 Oracle schema 遷移**（**06-12 實連更正：舊庫亦 Oracle**，原依 `DB2PoolSvc.xml` 誤判跨引擎；**舊庫表名本即 `TB_*`**，`EPRO_TB_*` 為 Java VO 類名非表名）。entity/SQL 一律以 Oracle＋新 schema 為準、**勿原樣沿用舊 SQL**（checkpoint 表改名、欄位增減/整併、型別與 map-key 大小寫）；舊源殘留 DB2 方言（`FETCH FIRST`/`WITH UR`/序列等）照改。
 - **R2 ✅ 已定：改用新報表服務**（汰換 Jasper），為**獨立 track**，需另立評估（報表/匯出方案）。**含報表/列印的頁（`*_0181` CAD、z0 報表群、i0/c0 印表）暫緩，不納入 Phase 1～初期模組**，待報表服務拍板再排。
 - **R3（中）主流程是多頁籤複雜表單**，非 `deputy` 式 list+popup CRUD。`golden-template` 直接適用於 z0 查詢/管理與簡單清單；主申貸流程 **✅ 已定子樣式「Workflow Shell + Section Tabs」**（外層 shell+子路由、內層 mat-tab、後端 pageMap 決定可見頁、一套 shell 多份 config）→ 見 `golden-template` §八 與 `module-is-iu-shell.md`。
 - **R4（中）後端是重寫非搬移**：自製 `HttpDispatcher`/`@CallMethod` action → 逐一對應成 REST endpoint + service/repository；DTO/驗證重新定義。
