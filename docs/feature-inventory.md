@@ -19,17 +19,18 @@
 ---
 
 ## 1. 模組總表（M1–M9）
-| # | 舊模組 | 用途 | 舊 JSP | 新對應 | 狀態 |
-|---|---|---|---:|---|---|
-| M1 | `zz` | 登入/首頁（SSO）| 1 | `main-layout` + Spring Security/JWT（驗 MIS） | ✅ |
-| M2 | `is` | 個人申貸 主流程（有擔）| 39 | `EPROISU*`（IS+IU 合併） | ✅ 前端／🟡 驗證 |
-| M3 | `iu` | 個人申貸（無擔）| 20 | 併入 `EPROISU*` | ✅ 前端／🟡 驗證 |
-| M4 | `cs` | 企金申貸（有擔）| 20 | `EPROCSU*`（CS+CU 合併） | 🔴 **FE 後半缺（Phase G，§4①b）**／BE ✅ |
-| M5 | `cu` | 企金申貸（無擔）| 17 | 併入 `EPROCSU*` | 🔴 **FE 後半缺（同 M4）**／BE ✅ |
-| M6 | `i0` | 個人 財報/評分/CBC | 42（audit 22 列，01xx/02xx 變體） | `EPROI00*` | ✅ **audit 22/22 全綠（06-11）** |
-| M7 | `c0` | 企金 財報/評分/CBC | 38（audit 20 列） | `EPROC00*` | ✅ BE＋評分 FE（Phase F）；audit 4🟡＋2 待裁（§2D）|
-| M8 | `z0` | 管理/報表/工具 | 18 | `EPROZ00*` | ✅ 大多／⏸ 報表服務 R2 |
-| M9 | common/demo | 版型/例外/demo | 11 列（頁級 16；audit 重數） | `main-layout`/error pages | 🟡 殼/error ✅；admin/demo 10 列 UNFOUND 待裁（AUD-3/4）|
+> **audit 驗證**欄＝最近一次 zero-based 盤點（`/refactor-audit` skill）校正該模組的日期＋ref。**該欄日期 stale ＝ 該模組自上次校正後有增量改動但未重盤 → 提醒該再跑一次**（drift 可見化；首盤 2026-06-11＝`build-tasks/refactor-audit/`）。
+| # | 舊模組 | 用途 | 舊 JSP | 新對應 | 狀態 | audit 驗證 |
+|---|---|---|---:|---|---|---|
+| M1 | `zz` | 登入/首頁（SSO）| 1 | `main-layout` + Spring Security/JWT（驗 MIS） | ✅ | 06-11 `S1` |
+| M2 | `is` | 個人申貸 主流程（有擔）| 39 | `EPROISU*`（IS+IU 合併） | ✅ 前端／🟡 驗證 | 06-11 `S2/S3` |
+| M3 | `iu` | 個人申貸（無擔）| 20 | 併入 `EPROISU*` | ✅ 前端／🟡 驗證 | 06-11 `S3` |
+| M4 | `cs` | 企金申貸（有擔）| 20 | `EPROCSU*`（CS+CU 合併） | 🔴 **FE 後半缺（Phase G，§4①b）**／BE ✅ | 06-11 `S4`（F-1 翻案）|
+| M5 | `cu` | 企金申貸（無擔）| 17 | 併入 `EPROCSU*` | 🔴 **FE 後半缺（同 M4）**／BE ✅ | 06-11 `S4`（F-1 翻案）|
+| M6 | `i0` | 個人 財報/評分/CBC | 42（audit 22 列，01xx/02xx 變體） | `EPROI00*` | ✅ **audit 22/22 全綠（06-11）** | 06-11 `S5/S6` |
+| M7 | `c0` | 企金 財報/評分/CBC | 38（audit 20 列） | `EPROC00*` | ✅ BE＋評分 FE（Phase F）；audit 4🟡＋2 待裁（§2D）| 06-11 `S7/S8` |
+| M8 | `z0` | 管理/報表/工具 | 18 | `EPROZ00*` | ✅ 大多／⏸ 報表服務 R2 | 06-11 `S9` |
+| M9 | common/demo | 版型/例外/demo | 11 列（頁級 16；audit 重數） | `main-layout`/error pages | 🟡 殼/error ✅；admin/demo 10 列 UNFOUND 待裁（AUD-3/4）| 06-11 `S1` |
 
 ---
 

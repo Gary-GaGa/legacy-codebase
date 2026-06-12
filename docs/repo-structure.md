@@ -24,12 +24,15 @@
 | **DoD 閘門牆** | RD 過 SA/QA 邊界 | — | SRS 機械 pre-gate `scripts/check-srs-bundle.py`（涵蓋見腳本檔頭；與 DoD ①–⑦ 編號對照見 `specs/srs/README.md`）；**③** `scripts/verify-c0.py`；**⑦語意** `.claude/agents/spec-reviewer.md` ∥ `docs/env/codex/spec-reviewer.toml`+`reviewer-c0.toml`；**自動觸發** `.claude/settings.json`(Stop hook) ∥ `docs/env/codex/hooks.json` | ①–⑦ |
 | **裁定 / escalation** | 判斷題交人 | — | SRS 的 `@PENDING`；`decisions.md`；`pending-register.md`；`disbursement/disbursement-domain-escalations.md` | — |
 | **Done → 回歸** | 回填狀態 + bug→回歸 case | — | `feature-inventory.md` 回填；bug → 新 `qa-cases.md` case | — |
+| **盤點 / 校正**（drift loop，非主線一站）| zero-based 重推總量、對 SSOT 做 diff（只報不改）| **`.claude/skills/refactor-audit/`** ∥ `docs/env/codex/prompts/refactor-audit.md` | `build-tasks/refactor-audit/`（diff-vs-inventory + QC 日誌）；回填 `feature-inventory.md` §1「audit 驗證」欄 | — |
 
 ## 2. 雙軌對照（同一角色、三個載具）
 | 角色 | Claude Code | Codex CLI（範本→部署 `.codex/`） | GitHub Copilot |
 |---|---|---|---|
 | 憲法 | `CLAUDE.md` | `AGENTS.md` §Spec workflow | `.github/copilot-instructions.md` |
 | PRD→SRS | `.claude/skills/prd-to-srs/` | `docs/env/codex/prompts/prd-to-srs.md` | — |
+| Legacy→Bible | `.claude/skills/legacy-to-bible/` | `docs/env/codex/prompts/legacy-to-bible.md` | — |
+| 進度盤點（zero-based） | `.claude/skills/refactor-audit/` | `docs/env/codex/prompts/refactor-audit.md` | — |
 | spec 審查（唯讀） | `.claude/agents/spec-reviewer.md` | `docs/env/codex/spec-reviewer.toml` | — |
 | c0 鏡像審查 | （用 spec-reviewer/語意） | `docs/env/codex/reviewer-c0.toml` | — |
 | 權限/安全 | `.claude/settings.json` | `docs/env/codex/config-permissions.md` | — |
