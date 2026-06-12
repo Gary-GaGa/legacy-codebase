@@ -207,7 +207,7 @@
 
 ## 5. 建議排程（依依賴與風險）— cross-check 後更新
 > 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策。
-> **🔒 DB 連線尚未打通（2026-06-09 更正；先前誤記「已可用」）**：以下仍 **gated on DB** → **Phase V 整合驗證、c0 授權列「套用/驗證」、DB-相關 OQ（精度/schema/DDL）、M7/M9 確認點、z0 半成品(method/return) 實測**。DB 打通前 **先做 DB-無關工作**：00800 可先修子集（code+build）、c0 staff cleanup、靜態 tech-debt sweep（HTTP method 不一致、map-key 大小寫、Logback 外部化）、c0 授權列 **SQL 產出（先寫好、待 DB 套用）**。⚠️ 提醒：c0 FE 已做完，但 **授權列未套用前打 c0 endpoint 會 403** → DB 一通先套授權列。
+> **✅ DB 連線已打通（2026-06-12）**——Phase V 全隊列解鎖。**解鎖順序**：① 派 `c0-authz-sql.md` 產 SQL→ops 簽核→**先套授權列**（未套打 c0 endpoint 全 403）② RP6 取數（一條 SELECT，順帶裁 RP4）③ A-1 DB 端 OQ 實查（`EXCHANGR_RATE` 欄名/精度/欄寬→縮小撥貸待裁）④ Phase V 開跑（`verification-execution.md` 分階段；deferred-to-DB QA-007/008/012/024/025、00119 三條必驗、00660 實測、map-key runtime 複測、M7/M9 確認點）。agent 自主驗 DB 時用**唯讀帳號**、帳密走環境變數不進 repo（CLAUDE.md §7）。
 
 **Phase 0 — 坐實缺口（c0 FE ✅ 已坐實）**
 0. ✅ c0 評分 FE 範圍已坐實（容器 + 8 子頁）；✅ `CS 0240` 裁定**不開發**。**Phase 0 清空。**
