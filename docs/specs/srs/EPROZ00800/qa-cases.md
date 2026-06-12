@@ -38,5 +38,5 @@
 | QA-025 | R13.7 | **兩方向各執行一次**：(a) 既有 ITEM13/14=N、新=Y；(b) 既有=Y、新=N / 儲存 / 僅勾選狀態持久化、**無任何關聯表側效** | 兩方向皆驗：`TB_REVISED_ITEM.ITEM13/14` 更新；guarantor/collateral/loan-condition/fee 各表**零異動** |
 
 ## 覆蓋率（gate ⑤）
-- R1：QA-018｜R2：QA-001/002｜R3：QA-003｜R4：QA-004/017｜R5：QA-005｜R6：QA-006（+QA-023 @PENDING RP8）｜R7：QA-019（+QA-023 @PENDING RP8）｜R8：QA-020｜R9：QA-002/014｜R10：QA-012/013｜R11：QA-015｜R12：QA-021｜R13.1：QA-007｜R13.2：QA-024｜R13.3：QA-008｜R13.4/13.5：QA-009（@PENDING RP4）｜R13.6：QA-010｜R13.7：QA-025｜R14：QA-011/016｜R15：QA-012（**僅 rollback 分支**；成功/not-found path 尚無實 case → QA-022 RD 補，未撰寫）｜R16：QA-012（transaction）+ perf/log/**audit 側效摘要**（RP1=A 配套，RD 補）。
-- 每個 `Rn` 至少 1 case ✅；但 R15 目前僅覆蓋 rollback 分支、R16 僅覆蓋 transaction，成功/not-found/perf/log/audit 之 happy/error path 待 RD 補實 case（QA-022 等尚未撰寫，不可當已覆蓋）。@PENDING 餘 QA-009（RP4）/QA-023（RP8），不計入 gate⑤；QA-007/008 已隨 RP1 關閉解 pending、計入 gate⑤。
+- R1：QA-018｜R2：QA-001/002｜R3：QA-003｜R4：QA-004/017｜R5：QA-005｜R6：QA-006（+QA-023 @PENDING RP8）｜R7：QA-019（+QA-023 @PENDING RP8）｜R8：QA-020｜R9：QA-002/014｜R10：QA-012/013｜R11：QA-015｜R12：QA-021｜R13.1：QA-007｜R13.2：QA-024｜R13.3：QA-008｜R13.4：QA-009a｜R13.5：QA-009b（✅RP4 已關 06-12，計入 gate⑤）｜R13.6：QA-010｜R13.7：QA-025｜R14：QA-011/016｜R15：QA-012（**僅 rollback 分支**；成功/not-found path 尚無實 case → QA-022 RD 補，未撰寫）｜R16：QA-012（transaction）+ perf/log/**audit 側效摘要**（RP1=A 配套，RD 補）。
+- 每個 `Rn` 至少 1 case ✅；但 R15 目前僅覆蓋 rollback 分支、R16 僅覆蓋 transaction，成功/not-found/perf/log/audit 之 happy/error path 待 RD 補實 case（QA-022 等尚未撰寫，不可當已覆蓋）。@PENDING 餘 QA-023（RP8），不計入 gate⑤；QA-007/008 已隨 RP1、QA-009a/b 已隨 RP4 關閉解 pending、計入 gate⑤。

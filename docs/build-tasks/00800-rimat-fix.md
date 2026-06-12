@@ -32,7 +32,7 @@
 
 ## 鐵則
 1. **F1 是骨幹**：先把側效觸發判定改為 DB 二次比對，再驗 F2–F4（它們都在 gate 之後的路徑上）；完成後全檔搜 `getIsNotSame` 確認無殘留判斷用途（提示回傳除外）。
-2. **嚴守 IN/OUT**：碰到 RP4/RP8–RP11 控制區**只讀不改**；diff 不得改變 R13.4/13.5 分支內容、checkpoint key、DTO 形狀。
+2. **嚴守 IN/OUT**：碰到 RP8/RP9/RP11 控制區**只讀不改**；R13.4/13.5 分支與 checkpoint key 的修改**僅限 F9/F8 範圍內**（照 SRS v0.9/v0.8 定版）、DTO 形狀不得動（RP11）。
 3. Brownfield 鐵則照舊（`prd-to-srs` skill §Brownfield）：引 `file:line`、不臆測；異於 findings 的現碼狀況先回報再動。
 4. 對齊 `openapi.yaml`（`isNotSame` description＝「僅前端提示輔助」、`ItemFlag` enum）；audit 不改契約。
 5. 各 commit build 綠（BE `mvn clean package -Dmaven.test.skip=true`、FE `ng build`）；**報 diff 等審後才推**。
@@ -40,7 +40,7 @@
 ## 回報
 - 每項 F1–F7 一句落點（檔/method）；**F1 附 `getIsNotSame` 全檔搜尋結果**；F5 附一筆 audit 記錄樣例。
 - **明確聲明**：未動 R13.4/13.5 分支內容、未改 checkpoint key 值、未改 init-query method、未改 DTO 形狀、未動 R6/R7 判據來源。
-- build 結果；可跑 QA：QA-015/QA-005 屬單元/靜態可驗；**QA-007/008/024/025 涉 DB 複製還原 → deferred-to-DB**（同 QA-012 模式，列 Phase V 待測）；QA-009/QA-023 為 `@PENDING`（RP4/RP8）→ 照 `docs/specs/qa-to-test.md` 產 `@Disabled` skeleton、不啟用。
+- build 結果；可跑 QA：QA-015/QA-005 屬單元/靜態可驗；**QA-007/008/024/025 涉 DB 複製還原 → deferred-to-DB**（同 QA-012 模式，列 Phase V 待測）；QA-009a/b 已隨 RP4 解 pending → 歸 **deferred-to-DB**（同 QA-007/008 模式）；僅 QA-023（RP8）仍 `@PENDING` → 照 `docs/specs/qa-to-test.md` 產 `@Disabled` skeleton、不啟用。
 - `git status --short`（應乾淨）。
 
-> 過了：00800 的 RP1=A 解鎖項全數落地；剩 RP4/RP6/RP8/RP9/RP10/RP11（見 `spec.md` §@PENDING ↔ `pending-register.md`）。完成後本檔 `git mv` 進 `done/`、狀態回填 `feature-inventory.md` §④b。
+> 過了：00800 的已解鎖項（F1–F9）全數落地；剩 RP8/RP9/RP11（見 `spec.md` §@PENDING ↔ `pending-register.md`）。完成後本檔 `git mv` 進 `done/`、狀態回填 `feature-inventory.md` §④b。
