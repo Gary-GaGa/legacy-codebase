@@ -17,7 +17,7 @@
 | QA-008 | R13.3 | 既有 ITEM3=Y、新=N、reference 有 collateral / 確認後儲存 / 清 collateral 並還原 | `COLL_*`/`COLL_PROVIDER_INFO`/`COLL_TITLE_REGIS_OWNER` 正確；`IS_ANY_COLLATERAL_PROVIDER` 更新 |
 | QA-009 `@PENDING RP4` | R13.4,R13.5 | ITEM1/4~11 任一 Y→N / 確認後儲存 / detail 依組合刪或還原 | `LOAN_CONDITION_DETAIL`/`REVISED_ITEM_DETAIL` 符 RI-MAT-004/005（ITEM10 欄位對應待 RP4/RP6）。⚠️ **RP4 關閉時須拆 QA-009a（R13.4 刪除分支：特定組合成立→刪）/QA-009b（R13.5 還原分支：Y→N→逐欄還原）**——兩分支語意相反，單一 case 會漏測刪除觸發條件 |
 | QA-010 | R13.6 | `LON_TYPE=04`、既有 ITEM12=N、新=Y / 儲存 / 刪 fee | `LOAN_CONDITION_FEE` 目前 APPLICATION_NO 無資料 |
-| QA-011 | R14 | 備 IS/IU/CS/CU 四種案件 / 各儲存 / 正確 checkpoint 表 + page-menu flag | `CHECK_POINT_RC`/`_IU`/`_CORP`/`_CU` 對應 `_0260` 欄=Y |
+| QA-011 | R14 | 備 IS/IU/CS/CU 四種案件 / 各儲存 / 正確 checkpoint 表 + page-menu flag | `TB_CHECK_POINTS_{IS,IU,CS,CU}`：自欄 `EPROZ00800`=完成＋§5.6 重處理新頁欄=Y（IS: `EPROISU0110/0120/0130/0140/0150`；CS/CU/IU=DDL 子集；RP10 ✅06-12）|
 | QA-012 | R10,R15,R16 | execute 中模擬 DAO exception / 送出 / rollback + `COMMON_MSG_SAVE_FAIL` | `TB_REVISED_ITEM`、關聯表、checkpoint **均無部分更新**（單一 transaction：R16）|
 
 ## SRS 補強（PRD §10 未涵蓋、但規則需驗）

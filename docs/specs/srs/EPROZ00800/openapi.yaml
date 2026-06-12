@@ -5,7 +5,7 @@ openapi: 3.0.3
 info:
   title: EPROZ00800 Revised Item
   version: 0.5.0-draft
-  description: PRD CDC-EPRO-0001 v1.1。TBD 裁定狀態詳 spec.md §@PENDING（單一出處；仍開：RP4/RP6/RP8/RP9/RP10/RP11）。method/欄位以 spec.md Rn 為準。與 spec.md v0.7 同步（v0.6/v0.7＝EARS 句型整訂+複審輪、契約零變更，故 OpenAPI 版號停 0.5.0-draft）。
+  description: PRD CDC-EPRO-0001 v1.1。TBD 裁定狀態詳 spec.md §@PENDING（單一出處；仍開：RP4/RP6/RP8/RP9/RP11——RP10 已關 06-12）。method/欄位以 spec.md Rn 為準。與 spec.md v0.8 同步（v0.6/v0.7＝EARS 句型、v0.8＝checkpoint key 註解定版；**契約形狀未變**，故 OpenAPI 版號停 0.5.0-draft）。
 paths:
   /epl-case-query-reviseditem:          # R2 init-query
     # ⚠️ @PENDING RP9（init-query method，詳 spec.md §@PENDING）：RD/架構定版前不裁定，下方 post 僅佔位。
@@ -88,10 +88,9 @@ components:
             reasonMemo: { type: string, maxLength: 3000 }      # R4：3000、trim、必填
         checkPointMap:
           type: object
-          # R14 to-be：key = EPRO{IS/IU/CS/CU}_0260（依 attribute；確切清單見 PRD §5.6，RD 定）。
-          # ⚠️ 勿沿用 as-is legacy key（EPROZ00800 / EPROISU0160…，findings 標 🔴）。
-          # @PENDING RP10（checkpoint _0260 key 清單，詳 spec.md §@PENDING）→ 定版後補 required。
-          #   不用 applicationNo 佔位（它是頂層欄位、非本 map 的 key）。
+          # R14 定版（✅RP10 已關 06-12，DDL 機械枚舉）：key＝TB_CHECK_POINTS_{IS,IU,CS,CU} 欄位名
+          #   （新 funcId 形：自欄 EPROZ00800＋§5.6 重處理新頁欄；欄集依 attribute 而異=DDL 為準）
+          #   → additionalProperties 維持（四 attribute 欄集不同，不設全域 required）。
           additionalProperties: { $ref: '#/components/schemas/ItemFlag' }
         isNotSame: { type: boolean, nullable: true, description: 'R11：僅前端提示輔助；後端不得以此為側效判斷依據' }
     InsertRevisedItemResponse:

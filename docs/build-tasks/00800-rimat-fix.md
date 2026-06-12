@@ -18,10 +18,11 @@
 | **F5 / R16** | **execute audit 側效異動摘要**（RP1=A 配套）：log/audit 記錄哪些 RI-MAT 分支觸發、各影響表/筆數；沿 R16 既有要求（requestId/applicationNo/userId/action/result/耗時、敏感遮罩）| —（新增）| R16 | RD 補實 case（見 qa-cases 覆蓋註記）|
 | **F6 / R5（FE）** | **ITEM1 disabled 補強**：`LON_TYPE_CODE=03` 強制勾**且不可編輯**；`≠03` 強制不勾且不可編輯（**含「非 03 且 DB ITEM1=Y 仍可編輯」的洞**）| FE 段：會強制勾回但未 disabled（`revised-item.ts:68-73`）| R5（✅定版，RP2 已關）| QA-005 |
 | **F7 / RP7（FE）** | UI 按鈕文字 **`Finshed`→`Finished`**；舊字串斷言（測試/locale 檔）隨改 | PRD TBD-002 | RP7（✅已關）| —（UI 文字）|
+| **F8 / R14**（06-12 增，RP10 已關）| **checkpoint 欄位寫入對齊 DDL/R14 v0.8**：表＝`TB_CHECK_POINTS_{IS,IU,CS,CU}`；寫自欄 `EPROZ00800`＋§5.6 重處理新頁欄（IS：`EPROISU0110/0120/0130/0140/0150`；CS/CU/IU＝DDL 子集）；`pageMenuCondition` 值集合同步 | S7（重判 ⚠️）| R14（✅定版 v0.8）| QA-011/QA-016 |
 
 ## 範圍外（OUT，**不准碰**——全部受 `spec.md` §@PENDING 開著的待決控制）
 - **R13.4/13.5**（ITEM1/4~11 detail 刪/還原；含 findings S6「ITEM10/11 else ITEM1 疑錯欄」）→ `RP4`（連動 RP6 取數）。**F1 移除 gate 後，R13.4/13.5 分支邏輯本身一行不改**——只允許它們改由 DB 比對觸發（gate 移除的自然結果），分支內容/欄位對應不動。
-- **checkpoint `_0260` key 值**（S7）→ `RP10`。F5 audit 不得順手改 checkpoint 寫入的 key。
+- ~~checkpoint key 值（S7）→ RP10~~ **RP10 ✅已關（06-12）→ key 修正＝F8 統一處理**；F5 audit 仍不得在 audit 實作中順手動 key（歸 F8）。
 - **init-query method** → `RP9`。本包只動 execute 路徑。
 - **execute DTO 形狀**（itemMap vs as-is 平鋪）→ `RP11`。**修 bug 不改 DTO 形狀**：F1–F4 以現形 DTO 實作；若落點被形狀牽動，引 RP11 標註、不先改。
 - **R6/R7 判據來源**（`secureAttribute`/`canEditList` vs `isCU`/`isEdit`）→ `RP8`。F6 只修 R5 的 disabled 行為，不動判據來源。
