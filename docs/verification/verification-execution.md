@@ -43,7 +43,7 @@
 ### 3.1 ⚠️ 舊→新 SQL + 欄位整併（撥貸比對前必讀；c0/csu 遇整併也適用）
 > **06-12 更正**：新舊庫皆 Oracle（原誤判舊庫 DB2）。方言規則改為「**先判因**」：舊源 SQL 殘留 DB2 語法（`FETCH FIRST`/`WITH UR`/`SYSIBM.SYSDUMMY1`/`days()`）→ 改寫差異照舊**不報 bug**；**舊 SQL 若已是 Oracle 方言而文字仍異 → 不可當方言差異放過**，須判語意（WHERE/join/排序/結果集/算值/狀態轉移）。比對基準仍是**業務語意、不是 SQL 文字**。
 - **欄位整併 = 真風險，要先有 mapping**：某些舊表欄位在新系統併表/併欄。**沒有 old↔new 欄位 mapping 就比 →（a）假紅**（以為新少欄、其實併到別處）**（b）漏抓真 bug**（整併時掉欄/錯映關鍵欄：撥貸金額精度、狀態碼合併丟值）。
-- → **新增 Step A2（schema mapping）**：就比對範圍觸及的表，對「舊 `EPRO_TB_*.java` VO 欄位 ↔ 新 `db-schema-catalog`/entity 欄位」逐欄對映，標**同名直映 / 改名 / 整併（多舊→一新 或 拆）/ 新增 / 移除 / 型別變更（舊→新：`CHAR/VARCHAR2`、`DECIMAL/NUMBER`、`DATE/TIMESTAMP`、`CLOB` 等；06-12 起舊庫可連——**型別/精度直接查舊 DDL，不再猜**）**。輸出 `docs/legacy-extract/<domain>-schema-map.md`（本機 only），含每表「⚠️ 整併/型別風險」清單（哪些併欄、是否可能掉精度/丟狀態值）。
+- → **新增 Step A2（schema mapping）**：就比對範圍觸及的表，對「舊 `EPRO_TB_*.java` VO 欄位（類名慣例；**06-12 實查：舊庫實表＝`TB_*`、與新庫多同名**）↔ 新 `db-schema-catalog`/entity 欄位」逐欄對映，標**同名直映 / 改名 / 整併（多舊→一新 或 拆）/ 新增 / 移除 / 型別變更（舊→新：`CHAR/VARCHAR2`、`DECIMAL/NUMBER`、`DATE/TIMESTAMP`、`CLOB` 等；06-12 起舊庫可連——**型別/精度直接查舊 DDL，不再猜**）**。輸出 `docs/legacy-extract/<domain>-schema-map.md`（本機 only），含每表「⚠️ 整併/型別風險」清單（哪些併欄、是否可能掉精度/丟狀態值）。
 - **Step B 以此 mapping 對齊欄位**，並明寫上面兩條規則。此 mapping 方法 c0/csu 頁若也遇整併可重用。
 
 ## 4. 各群組怎麼切（對 `verification-handoff.md` 五組）

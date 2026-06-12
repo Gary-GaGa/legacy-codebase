@@ -29,4 +29,4 @@
 
 ## 部署驗收（第二級啟用時）
 1. `C:\work\epro-db\new.cmd` 跑 `SELECT 1 FROM DUAL;` → 通。
-2. `old.cmd` 跑 RP6 取數：先 `SELECT table_name FROM all_tables WHERE table_name LIKE '%COMMON_FIELD%';` 確認表名（可能帶 `EPRO_` 前綴），再 `SELECT * FROM <表名> WHERE SYSTEM='EPRO' AND FIELD_NAME='REVISED_ITEM';`。
+2. `old.cmd` 跑 RP6 取數：`SELECT * FROM TB_COMMON_FIELD_OPTIONS WHERE SYSTEM='EPRO' AND FIELD_NAME='REVISED_ITEM';`（06-12 實查：舊庫表名即 `TB_*`、無 `EPRO_` 前綴——該前綴為 Java VO 類名慣例）。
