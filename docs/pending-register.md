@@ -13,7 +13,6 @@
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **RP10 / checkpoint `_0260` keys** | `EPRO{IS/IU/CS/CU}_0260` 確切 key 清單（PRD §5.6）。**06-12 schema-diff 實證**：新 schema（OVSLXLON02）checkpoint 實表＝`TB_CHECK_POINTS_{IS,IU,CS,CU}`（**SRS R14 現載 `TB_CHECK_POINT_RC/_IU/_CORP/_CU` 係舊表名、新 schema 不存在→RP10 關閉時一併修 R14+schema.sql**）；key＝表欄位、可 DDL 機械枚舉（查詢已交付）| `00800` R14 checkpoint key 重映射（S7） | RD/PM | 06-09 | `00800 spec.md §@PENDING` |
 | **RP9 / init-query method** | GET（PRD §6.1）vs 全站 RPC-POST vs as-is 不一致 | `00800` init-query 契約 method | RD/架構 | 06-09 | 同 |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
 | **RP6 / TBD-001** | ITEM1~14 正式名稱＝SA 取數動作項（內容詳 `00800 spec.md §@PENDING`；**順帶裁 RP4**）| `00800` 畫面顯示＋RP4 判據 | **SA（取數）** | 06-08 | 同 |
@@ -61,6 +60,7 @@
 | **TBD-004 / RP3** ✅ | 保留刪 fee、原因後補 → R13.6 定版 | 同 |
 | **TBD-007 / RP5** ✅ | 維持現狀（僅持久化、無側效）→ R13.7 定版 | 同 |
 | **TBD-002 / RP7** ✅ | `Finshed`→`Finished` 定版 | 同 |
+| **RP10** ✅（06-12）| checkpoint key＝`TB_CHECK_POINTS_{IS,IU,CS,CU}` 欄位（新 funcId 形，DDL 機械枚舉；R14 表名同步修正）→ R14 定版、殘差實作＝rimat F8 | 同 |
 
 ---
 > 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。**裁定內容只寫來源檔（spec §@PENDING）**，本表只留 id/狀態/owner/指回——本表＝derived 視圖。

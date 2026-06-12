@@ -185,7 +185,7 @@
 **④b 🟠 `00800` Revised Item（owner：RD 實作＋SA 取數）**
 - ✅ D1–D5 硬缺陷已修（`88328f9`，2026-06-09；prompt 歸檔 `done/00800-fix-step1-tbd-independent.md`；QA-013/014/016/017 過、QA-012 rollback deferred-to-DB）。
 - ✅ TBD-001~007 全裁（06-11，SRS v0.5）→ RD 修復解鎖：**修復包 prompt＝`build-tasks/00800-rimat-fix.md`**（F1–F7，待派工）。
-- 仍開：RP4/RP6/RP8/RP9/RP10/RP11——**裁定內容與剩餘事項單一出處＝`specs/srs/EPROZ00800/spec.md` §@PENDING**（待決視圖＝`pending-register.md`）；RP6/RP4/RP10 取證卡＝`build-tasks/00800-pending-recon.md`（待派工）。
+- 仍開：RP4/RP6/RP8/RP9/RP11（**RP10 ✅06-12 DDL 關閉→R14 定版、rimat 加 F8**）——**裁定內容與剩餘事項單一出處＝`specs/srs/EPROZ00800/spec.md` §@PENDING**（待決視圖＝`pending-register.md`）；RP6/RP4 取證卡＝`build-tasks/00800-pending-recon.md`（E3 已由 DDL 枚舉取代）。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 
