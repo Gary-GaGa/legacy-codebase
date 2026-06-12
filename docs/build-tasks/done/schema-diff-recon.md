@@ -1,5 +1,7 @@
 # Build Task — 新舊庫 schema 全量 diff（唯讀 recon；agent 自查）
 
+> ✅ **完成（2026-06-12，審過）**：產出＝`schema-diff-findings.md`（**schema 事實 SSOT**，留 live）。頭條：old01≡new01、`OVSLXLON01`=舊 app schema（194 表）/`OVSLXLON02`=新（142 表）；54 舊表-only/2 新表-only（權限表×2）；44 加欄/12 刪欄（MARIAL→MARITAL 家族）；🔴 財評精度縮減（AUD-6）；column-order drift 349 欄/17 表。新增 AUD-6/7/8 入 `pending-register.md`。
+
 > 載具：Codex＋DB 唯讀 wrapper（`C:\work\epro-db\new.cmd`/`old.cmd`；政策＝decisions §三：SELECT only、DML/DDL 禁止）。
 > **動機**：文件版 schema 知識已兩度被 DDL 實查打臉（`EPRO_` 前綴誤判、`T24_COMPANY` 漏列＝B-1 假死路）——schema 事實的 SSOT 改為 **DB 實況**。本卡產出供 Phase V schema-map（撥貸 D8、c0/csu 整併風險）與 `db-schema-catalog` 校正。
 > ⚠️ **context 衛生**：查詢結果**spool 到本機檔**（`C:\work\epro-db\out\`），agent 只讀檔做 diff、**不把全量 dump 貼進 context**；分批處理（每批 ~20 表）。

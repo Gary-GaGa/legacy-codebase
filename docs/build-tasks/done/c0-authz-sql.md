@@ -1,5 +1,7 @@
 # Build Task — c0 評分新 endpoint 授權列 SQL 預產（DB-free，待 DB 通套用）
 
+> ✅ **完成（2026-06-12，三輪）**：①DB-free 產 SQL ②DB 通後升級 precheck（`OVSLXLON02` SELECT-only：c0 已有 15、ROLE_TASK 8/8 在）③**00117 翻案補產**（使用者裁「補」，`78f0b51`）——步驟 2「00117 既有不動」被 precheck 推翻，3 個 API auth 列實缺，已比照 i0-copy＋NOT EXISTS 補三列。最終：**32 mappings、預期 insert 16**、gap=`epl-pxls-c0-financial-statement-comments`（i0 source 亦無，UNSURE 交 ops）。產出＝`c0-authz-sql.sql`＋`c0-authz-sql-findings.md`（含 Ops Apply Checklist）。後續＝ops 簽核→套用→Phase V，追蹤歸 `feature-inventory.md` §4⑥。
+
 > 載具：Codex（母資料夾，讀新碼 + repo 內既有 SQL/seed/migration）。**不連 DB、不執行 SQL**——DB 連線未通（`feature-inventory.md` §5 🔒），本卡只「先寫好、待套用」。
 > **背景**：`feature-inventory.md` §4⑥——Phase F 已收工，但新 c0 endpoint 的 `TB_API_AUTH`/`TB_ROLE_TASK` 授權列未建；**授權列未套用前打 c0 endpoint 會 403**，DB 一通這是第一件事。
 

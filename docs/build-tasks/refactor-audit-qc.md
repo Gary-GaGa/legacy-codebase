@@ -75,6 +75,7 @@
 | rimat 修復包 F1–F9 | product `5580eb7` | ✅ PASS | getIsNotSame 零命中、F8 對齊 v0.8 集合（含移除 0160 多寫）、F9 各自對欄＋**加修 seqNo 括號跨案件還原 bug**;OUT guard 驗未越界;focused 12/0/0（QA-023 skip 正確）;隨 push 確認項=F6 ≠03 分支、audit userId（Phase V）|
 | `c0-authz-sql`＋DB precheck | `203c375` | ✅ PASS | INSERT…SELECT 由 i0 列複製角色（零硬編）;precheck 回本：**c0 已有 15/29（盲套會撞）**、預期 insert 13、ROLE_TASK 8/8 已存在;NOT EXISTS 冪等化;**翻案待裁：00117 ROLE_TASK 有但 3 個 API auth 列缺**（「既有」premise 被 DB 推翻——補產 or 留 ops）;gap：`epl-pxls-c0-financial-statement-comments` 連 i0 source 無列（UNSURE 交裁）|
 | `schema-diff-recon` | —（唯讀,findings 待推）| ✅ PASS | spool/分批/只報不裁全守。**頭條:old01≡new01、02=新 app schema**（01=舊/02=新——A-1 OQ-1 近自答、A-2 降風險）;checkpoint 實表=`TB_CHECK_POINTS_*`（**SRS R14 表名要修,併 RP10**）;新增 AUD-6（🔴財評精度縮減）/AUD-7（54 舊表去留）/AUD-8（新權限表×2）;column-order drift 349 欄/17 表→Phase V `SELECT *`/map-key 警示;MARIAL→MARITAL typo 改名家族→資料遷移對映點 |
+| `c0-authz` 00117 翻案補產 | `78f0b51` | ✅ PASS | 使用者裁「補」;3 列照既有模式（i0-copy `API_ID`+`REF_FUNCTION_ID`、NOT EXISTS on `API_ID`=PK 語意一致、`C0AUTHZ`/SYSDATE 同主塊）;controller file:line 證據齊（Csu:29/36/43↔i0:52/65/78）;算術核過:**32 mappings=15 既有+16 insert+1 pxls gap**、i0 source 30/32;findings 三處同步更新（flip 節/Apply Impact/Ops Checklist）;卡＋schema-diff-recon 卡雙歸檔 done/ |
 
 ## S-final 派工 prompt（定稿;S1–S9 在 master 全標完成後才跑）
 > 讀 `docs/build-tasks/full-refactor-audit.md` §5、`refactor-audit/master.md`、**`docs/build-tasks/refactor-audit-qc.md`（口徑備忘+累計發現必讀）**,以及各模組檔的小計列（不重讀明細,證據需要時才回查單列）。此時才允許讀 `docs/feature-inventory.md` 與 Bible 的 BR/SC 清單。產出 `refactor-audit/diff-vs-inventory.md`,含四節:
