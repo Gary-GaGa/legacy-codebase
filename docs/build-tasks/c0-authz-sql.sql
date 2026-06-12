@@ -112,9 +112,40 @@ WHERE NOT EXISTS (
       AND dst.FUNCTION = src.FUNCTION
 );
 
--- 00117 is intentionally check-only in this build task.
--- Run after DB connectivity is restored:
--- SELECT API_ID, ROLE, REF_FUNCTION_ID FROM TB_API_AUTH WHERE REF_FUNCTION_ID = 'EPROC00117' ORDER BY API_ID, ROLE;
--- SELECT PAGE_CODE, ROLE, FUNCTION, PAGE_NAME FROM TB_ROLE_TASK WHERE PAGE_CODE = 'EPROC00117' ORDER BY FUNCTION, ROLE;
+-- 00117 flip: OVSLXLON02 SELECT-only precheck confirmed TB_ROLE_TASK exists
+-- but the three CsuFinancialStaffController API auth rows are missing.
+INSERT INTO TB_API_AUTH (
+    API_ID,
+    ROLE,
+    REF_FUNCTION_ID,
+    UPDATE_USER,
+    UPDATE_DATE
+)
+WITH endpoint_map_00117 (
+    TARGET_API_ID,
+    TARGET_FUNCTION_ID,
+    SOURCE_API_ID,
+    SOURCE_FUNCTION_ID
+) AS (
+    SELECT 'epl-info-c0-financial-business', 'EPROC00117', 'epl-info-i0-financial-business', 'EPROI00117' FROM DUAL UNION ALL
+    SELECT 'epl-save-c0-financial-business', 'EPROC00117', 'epl-save-i0-financial-business', 'EPROI00117' FROM DUAL UNION ALL
+    SELECT 'epl-sele-c0-financial-list', 'EPROC00117', 'epl-sele-i0-financial-list', 'EPROI00117' FROM DUAL
+)
+SELECT
+    DISTINCT
+    m.TARGET_API_ID,
+    src.ROLE,
+    m.TARGET_FUNCTION_ID,
+    'C0AUTHZ',
+    SYSDATE
+FROM endpoint_map_00117 m
+JOIN TB_API_AUTH src
+    ON src.API_ID = m.SOURCE_API_ID
+    AND src.REF_FUNCTION_ID = m.SOURCE_FUNCTION_ID
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM TB_API_AUTH dst
+    WHERE dst.API_ID = m.TARGET_API_ID
+);
 
 COMMIT;

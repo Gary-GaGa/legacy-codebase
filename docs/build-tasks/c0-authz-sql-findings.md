@@ -5,10 +5,10 @@ Status: DB SELECT-only precheck completed; INSERT SQL not executed
 ## Output
 
 - SQL: `docs/build-tasks/c0-authz-sql.sql`
-- Statements: 2 set-based Oracle `INSERT ... WITH ... SELECT` statements plus `COMMIT`
-- Logical mappings: 29 `TB_API_AUTH` endpoint mappings + 8 `TB_ROLE_TASK` page mappings
-- DB precheck scope: `epro-db/new.cmd`, SELECT only, `OVSLXLON02` owner/schema, no INSERT executed
-- Expected `TB_API_AUTH` inserts now: 13. Current c0 rows: 15/29. Source i0 rows: 27/29.
+- Statements: 3 set-based Oracle `INSERT ... WITH ... SELECT` statements plus `COMMIT`
+- Logical mappings: 32 `TB_API_AUTH` endpoint mappings + 8 `TB_ROLE_TASK` page mappings
+- DB precheck scope: `epro-db/new.cmd`, SELECT only, `OVSLXLON02` current schema / owner in precheck queries, no INSERT executed
+- Expected `TB_API_AUTH` inserts now: 16. Current c0 rows: 15/32. Source i0 rows: 30/32.
 - Expected `TB_ROLE_TASK` inserts now: 0. Current c0 rows: 8/8. Source i0 rows: 8/8.
 - UNSURE / gap rows: 1 endpoint remains c0-missing with i0 source auth missing: `epl-pxls-c0-financial-statement-comments`.
 
@@ -55,6 +55,9 @@ Command scope: `epro-db/new.cmd`, `SELECT` only, `OVSLXLON02` current schema / o
 | EPROC00116 | `epl-quer-c0-financial-statement-comments` | Y | `001;002` | `epl-quer-i0-financial-statement-comments` | Y | `001;002` | 0 | skip existing |
 | EPROC00116 | `epl-save-c0-financial-statement-comments` | Y | `001;002` | `epl-save-i0-financial-statement-comments` | Y | `001;002` | 0 | skip existing |
 | EPROC00116 | `epl-sele-c0-financial-statement-comments` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | `epl-sele-i0-financial-statement-comments` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | 0 | skip existing |
+| EPROC00117 | `epl-info-c0-financial-business` | N |  | `epl-info-i0-financial-business` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | 1 | 00117 flip: will insert |
+| EPROC00117 | `epl-save-c0-financial-business` | N |  | `epl-save-i0-financial-business` | Y | `001;002` | 1 | 00117 flip: will insert |
+| EPROC00117 | `epl-sele-c0-financial-list` | N |  | `epl-sele-i0-financial-list` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;402;404;405` | 1 | 00117 flip: will insert |
 | EPROC00118 | `epl-calc-c0-corporateScorecard` | N |  | `epl-calc-i0-corporateScorecard` | Y | `001;002;102;103` | 1 | will insert |
 | EPROC00118 | `epl-info-c0-corporateScorecard` | N |  | `epl-info-i0-corporateScorecard` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;402;403;404;405` | 1 | will insert |
 | EPROC00118 | `epl-save-c0-corporateScorecard` | N |  | `epl-save-i0-corporateScorecard` | Y | `001;002;102;103` | 1 | will insert |
@@ -81,26 +84,28 @@ Command scope: `epro-db/new.cmd`, `SELECT` only, `OVSLXLON02` current schema / o
 | EPROC00119 | EPROI00119 | Y | `E:001,002,403:信用調查_財務報表Credit Investigation_Financial Statement and Comments Highlight_FI (business owner)` | Y | `E:001,002,403:信用調查_財務報表Credit Investigation_Financial Statement and Comments Highlight_FI (business owner)` | 0 |
 | EPROC00120 | EPROI00120 | Y | `E:001,002,403:信用調查_Credit Investigation_Financial Evaluation Table_FI(business owner)` | Y | `E:001,002,403:信用調查_Credit Investigation_Financial Evaluation Table_FI(business owner)` | 0 |
 
-### 00117 Check-Only Verification
+### 00117 Flip Verification
 
-| Object | Key | Exists? | Count | Roles / tasks | SQL action |
+Original card said existing 00117 (`CsuFinancialStaffController`) should not be changed. SELECT-only precheck proved `TB_ROLE_TASK.EPROC00117` exists but the three current c0 API auth rows are absent, so this SQL now appends the three `TB_API_AUTH` rows from exact i0 templates.
+
+| Object | Key | Exists? | Count | Source key / roles | SQL action |
 |---|---|---|---:|---|---|
-| TB_API_AUTH | `epl-info-c0-financial-business` | N | 0 |  | check-only, no INSERT generated |
-| TB_API_AUTH | `epl-save-c0-financial-business` | N | 0 |  | check-only, no INSERT generated |
-| TB_API_AUTH | `epl-sele-c0-financial-list` | N | 0 |  | check-only, no INSERT generated |
-| TB_ROLE_TASK | `EPROC00117` | Y | 1 | `E:001,002,403:信用調查_Credit Investigation_Financial Evaluation Table_GI(business owner)` | no INSERT generated |
+| TB_API_AUTH | `epl-info-c0-financial-business` | N | 0 | `epl-info-i0-financial-business` / `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | will insert |
+| TB_API_AUTH | `epl-save-c0-financial-business` | N | 0 | `epl-save-i0-financial-business` / `001;002` | will insert |
+| TB_API_AUTH | `epl-sele-c0-financial-list` | N | 0 | `epl-sele-i0-financial-list` / `001;002;003;101;102;103;201;202;203;301;302;401;402;404;405` | will insert |
+| TB_ROLE_TASK | `EPROC00117` | Y | 1 | `E:001,002,403:信用調查_Credit Investigation_Financial Evaluation Table_GI(business owner)` | no insert needed |
 
 ### Apply Impact Summary
 
-- `TB_API_AUTH`: 13 rows expected to insert; 15 target endpoints already exist and will be skipped; 1 target endpoint remains missing because its i0 source auth row is absent.
+- `TB_API_AUTH`: 16 rows expected to insert; 15 target endpoints already exist and will be skipped; 1 target endpoint remains missing because its i0 source auth row is absent.
 - `TB_ROLE_TASK`: 0 rows expected to insert; all 8 target pages already have the source-equivalent task row.
-- `00117`: `TB_ROLE_TASK` exists, but all 3 current `TB_API_AUTH` endpoint rows are absent. This remains check-only per task scope and should be resolved by ops/owner if those endpoints are still expected to be callable under API auth.
+- `00117`: `TB_ROLE_TASK` exists, but all 3 current `TB_API_AUTH` endpoint rows are absent; this addendum now expects 3 `TB_API_AUTH` inserts for `EPROC00117`.
 
 ### Ops Apply Checklist
 
 1. Execute/apply only against schema `OVSLXLON02`; confirm current schema before applying and do not run against `OVSLXLON01`.
-2. Idempotency check: first apply should insert 13 `TB_API_AUTH` rows and 0 `TB_ROLE_TASK` rows from the current DB state; a second apply should insert 0 rows because `TB_API_AUTH` is guarded by `API_ID` and `TB_ROLE_TASK` by `PAGE_CODE,FUNCTION`.
-3. Resolve the missing-source list before Phase V signoff: `epl-pxls-c0-financial-statement-comments` has no c0 row and no i0 source auth row, and `00117` API auth rows are absent but intentionally outside this SQL's INSERT scope.
+2. Idempotency check: first apply should insert 16 `TB_API_AUTH` rows and 0 `TB_ROLE_TASK` rows from the current DB state; a second apply should insert 0 rows because `TB_API_AUTH` is guarded by `API_ID` and `TB_ROLE_TASK` by `PAGE_CODE,FUNCTION`.
+3. Resolve the missing-source list before Phase V signoff: `epl-pxls-c0-financial-statement-comments` has no c0 row and no i0 source auth row; the 00117 API auth gap is addressed by the appended insert block.
 
 ## Endpoint Mapping
 
@@ -123,6 +128,9 @@ Command scope: `epro-db/new.cmd`, `SELECT` only, `OVSLXLON02` current schema / o
 | EPROC00116 | `epl-save-c0-financial-statement-comments` | `backend/src/main/java/khd/svc/epro/controller/corporate/CsuFinancialStatementController.java:86` | `epl-save-i0-financial-statement-comments` | `backend/src/main/java/khd/svc/epro/controller/individual/FinancialStatementController.java:86` | exact i0 `TB_API_AUTH` row | No |
 | EPROC00116 | `epl-ppdf-c0-financial-statement-comments` | `backend/src/main/java/khd/svc/epro/controller/corporate/CsuFinancialStatementController.java:99` | `epl-ppdf-i0-financial-statement-comments` | `backend/src/main/java/khd/svc/epro/controller/individual/FinancialStatementController.java:99` | exact i0 `TB_API_AUTH` row | No |
 | EPROC00116 | `epl-pxls-c0-financial-statement-comments` | `backend/src/main/java/khd/svc/epro/controller/corporate/CsuFinancialStatementController.java:112` | `epl-pxls-i0-financial-statement-comments` | `backend/src/main/java/khd/svc/epro/controller/individual/FinancialStatementController.java:112` | no DB auth row; exact i0 source auth missing in DB | Yes (source missing; c0 missing) |
+| EPROC00117 | `epl-info-c0-financial-business` | `backend/src/main/java/khd/svc/epro/controller/corporate/CsuFinancialStaffController.java:43` | `epl-info-i0-financial-business` | `backend/src/main/java/khd/svc/epro/controller/individual/FinancialStaffController.java:78` | exact i0 `TB_API_AUTH` row; 00117 flip: original card said existing/no-touch, precheck proved c0 API auth missing | No |
+| EPROC00117 | `epl-save-c0-financial-business` | `backend/src/main/java/khd/svc/epro/controller/corporate/CsuFinancialStaffController.java:36` | `epl-save-i0-financial-business` | `backend/src/main/java/khd/svc/epro/controller/individual/FinancialStaffController.java:65` | exact i0 `TB_API_AUTH` row; 00117 flip: original card said existing/no-touch, precheck proved c0 API auth missing | No |
+| EPROC00117 | `epl-sele-c0-financial-list` | `backend/src/main/java/khd/svc/epro/controller/corporate/CsuFinancialStaffController.java:29` | `epl-sele-i0-financial-list` | `backend/src/main/java/khd/svc/epro/controller/individual/FinancialStaffController.java:52` | exact i0 `TB_API_AUTH` row; 00117 flip: original card said existing/no-touch, precheck proved c0 API auth missing | No |
 | EPROC00118 | `epl-sele-c0-corporateScorecard-list` | `backend/src/main/java/khd/svc/epro/controller/corporate/CsuCorporateScorecardController.java:31` | `epl-sele-i0-corporateScorecard-list` | `backend/src/main/java/khd/svc/epro/controller/individual/CorporateScorecardController.java:38` | exact i0 `TB_API_AUTH` row | No |
 | EPROC00118 | `epl-info-c0-corporateScorecard` | `backend/src/main/java/khd/svc/epro/controller/corporate/CsuCorporateScorecardController.java:38` | `epl-info-i0-corporateScorecard` | `backend/src/main/java/khd/svc/epro/controller/individual/CorporateScorecardController.java:51` | exact i0 `TB_API_AUTH` row | No |
 | EPROC00118 | `epl-calc-c0-corporateScorecard` | `backend/src/main/java/khd/svc/epro/controller/corporate/CsuCorporateScorecardController.java:45` | `epl-calc-i0-corporateScorecard` | `backend/src/main/java/khd/svc/epro/controller/individual/CorporateScorecardController.java:64` | exact i0 `TB_API_AUTH` row | No |
@@ -153,15 +161,18 @@ Command scope: `epro-db/new.cmd`, `SELECT` only, `OVSLXLON02` current schema / o
 
 - No role is hard-coded or guessed.
 - `epl-pxls-c0-financial-statement-comments`: current c0 auth row is absent, and exact i0 source auth row `epl-pxls-i0-financial-statement-comments` / `EPROI00116` is also absent. The SQL keeps the mapping but inserts 0 rows until ops supplies a reviewed source/auth role.
+
+## Resolved Precheck Notes
+
 - `epl-calc-c0-financial-statement-comments`: exact i0 source auth row is absent, but current c0 auth row already exists, so the SQL safely skips it and there is no apply-time insert gap.
-- `00117` current c0 API auth rows are absent in DB, but remain check-only / no INSERT generated by this task.
+- `00117` current c0 API auth rows were absent in DB; source i0 rows exist, so this addendum now generates those 3 rows.
 
 ## Side Checks
 
 - `00110`: DB verified two current c0 API auth rows exist, and `TB_ROLE_TASK.EPROC00110` exists; SQL skips all 00110 rows.
 - `00112`: DB verified two current c0 API auth rows exist, and `TB_ROLE_TASK.EPROC00112` exists; SQL skips all 00112 rows.
 - `00114`: DB verified three current c0 API auth rows exist, and `TB_ROLE_TASK.EPROC00114` exists; no c0 calc endpoint exists, so no calc auth row was generated.
-- `00117`: current c0 routes exist at `CsuFinancialStaffController.java:29`, `:36`, `:43`; DB verified `TB_ROLE_TASK.EPROC00117` exists, but the three current c0 API auth rows are absent. Per task, no SQL was generated for 00117.
+- `00117`: current c0 routes exist at `CsuFinancialStaffController.java:29`, `:36`, `:43`; DB verified `TB_ROLE_TASK.EPROC00117` exists and the three current c0 API auth rows are absent. This addendum now generates those 3 rows from exact i0 `EPROI00117` source rows.
 
 ## Code vs Document Differences
 
