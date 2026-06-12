@@ -135,7 +135,7 @@
 |---|---|---|
 | 機械修正 M1–M10 | ✅ 全結案（master） | 尾欄/submit mail/RECEIVED_DATE/C20/fee key/E 位/H 段/A52/fee-delete-FN |
 | 🔴 **A-1 換匯 stub** | **未做（總開關）** | `funcGetExchangeRate` throw-stub → authorize 全斷、從未端到端跑過 |
-| 🔴 B-1 `T24_COMPANY` 值來源 | 未決 | B8/C9 讀已移除欄、無替代 |
+| 🟡 B-1 `T24_COMPANY`（06-12 降級）| **前提推翻→RD 接值** | 新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存（OVSLXLON01/02 兩 schema，DDL 實查）；entity 補映射＋B8/C9 接值 |
 | 🔴 其餘 domain | 未決 | 換匯源 ID、檢核嚴格度、KHR、欄寬、async 架構、精度… |
 | 整合測確認點 | 待驗 | M7 facility fee 值、M9 district name join |
 > **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ⚠️ 機械修正全 inert——A-1 未通,撥貸跑不起來。
@@ -176,7 +176,7 @@
 - z0 報表 00610/00620–00650 呈現。
 
 **③ 🔴 撥貸 domain（owner：撥貸 domain + T24 + DBA）— 見 escalation doc**
-- A-1 換匯 stub（**撥貸總開關、最優先**）、B-1 `T24_COMPANY`、換匯源 ID、檢核嚴格度、KHR、欄寬、async、精度（待舊 DDL）、M6 完工日 DTO 缺源。
+- A-1 換匯 stub（**撥貸總開關、最優先**；OQ-2 精度✅已關 06-12）、B-1 `T24_COMPANY`（✅前提推翻→RD 接值）、換匯源 ID（=新庫兩 schema 選一）、檢核嚴格度、KHR、欄寬、async、M6 完工日 DTO 缺源。
 
 **④ z0 半成品收尾（小修；owner：前後端）**
 - `00300` Document Checklist：return action 空回 → 先坐實（recon 卡＝`build-tasks/00300-return-recon.md`，待派工），結論 🔴 才開修復卡。

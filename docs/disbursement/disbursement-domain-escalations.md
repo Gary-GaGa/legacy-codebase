@@ -16,7 +16,7 @@
 ## B. T24 整合 owner / T24 spec
 | # | 主題 | 需要的決策 | 影響·信心 | 出處 |
 |---|---|---|---|---|
-| **B-1** 🔴 | `T24_COMPANY` 死路：`B8`/`C9` 讀新 schema **已移除的欄** → 空值，**無替代來源** | **決定值來源**（從哪取 B8/C9）；無解則此二欄永遠空 | T24 缺值·高 | §1 P0-3 |
+| **B-1** 🟡 降級（06-12 前提推翻）| ~~`T24_COMPANY` 死路：讀已移除欄~~ → **新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存**（`OVSLXLON01`/`OVSLXLON02` 兩 schema 皆有，06-12 DDL 實查）——「舊有新無」係 schema-Excel/entity 盤點漏列 | **轉 RD 動作**：確認 app 連用 schema → entity 補欄位映射 → `B8`/`C9` 接值；殘留小裁定＝兩 schema 選哪個（連動 A-1 OQ-1）| T24 缺值·高→**可解** | §1 P0-3 |
 | **B-2** | `A16` `NORMAL.LAON`→`LOAN` | 確認 `LAON` 是否為 **T24 期望的 key**（疑非錯字、勿順手改） | 改錯會破 T24·中 | §2 / §7 |
 | **B-3** | `C12` `SUG_VAL` 讀錯表、`C13` `DECISION_DATE`→`CHECK_DATE` 來源、`G4`/`G10`/`H8` 換匯欄、`G11–G12` fee remark mapping、`A15` 空值補 `N/A` | 逐欄對 **真 T24 spec** 定來源/格式（部分金錢） | T24 值/格式·中 | §2 / §7 line71 |
 | **B-4** | `AGREEMENT_NO` 截斷（`A31`/`G7`，舊取後 16 碼） | confirm **T24 欄寬**後定截斷規則 | T24 欄寬·中 | §2 / §7 |
@@ -26,7 +26,7 @@
 ## C. DBA / 舊 DDL（**06-12：舊庫可連（Oracle），DDL 可自查**）
 | # | 主題 | 需要的決策 | 影響·信心 | 出處 |
 |---|---|---|---|---|
-| **C-1** | 金額 **precision**：新 `NUMBER(17,2)` vs 舊 scale **UNKNOWN** | **舊庫 DDL 自查**核對 scale（已解鎖），定金額精度 | 金錢精度·UNSURE | §4 P3 |
+| ~~**C-1**~~ ✅ 已關（06-12 DDL 實查）| 金額 precision：舊庫全金額欄＝`NUMBER(17,2)`、`TB_EXCHANGE_RATE.EX_RATE_*`＝`(17,4)`——**與新庫完全一致，無精度落差** | —（銷案；證據另見 `a1-funcGetExchangeRate-spec.md` §5）| 已解·確認 | §4 P3 |
 | **C-2** | `t24DealResult` 非 `0000`/無 done flag 是否更新 summary 狀態；`IS_CONTRACT`/`IS_CONTR` persist 目標；contract-source 可能 NPE；空 `APPLICATION_NO`（新 controller 擋、舊 throw 未明） | 對舊行為/DDL 確認後定 | 狀態/NPE·UNSURE | §4 P3 |
 
 ## D. 前端 / DTO 契約（M6 落這裡）
