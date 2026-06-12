@@ -111,8 +111,8 @@
 
 > 共同主軸：既有前後端在開發機上其實都**部分繞過 Nexus**（前端預設 registry=公開 npmjs、後端=Maven Central）。Phase 0 的核心工作即用 `docs/env/` 樣板把建置環境標準化，使一切走內網。
 
-- [ ] **後端 Maven 來源未合規**：既有後端機器無 Nexus settings.xml，實際從 Maven Central 下載，違反「禁止公開 registry」。修正：安裝 `docs/env/maven-settings.xml` 至 `%USERPROFILE%\.m2\settings.xml`（maven-public 為 group，會代理 Central，安裝後即全走內網）。
-- [ ] **npm 預設 registry 政策**：既有前端 `.yarnrc` 預設仍指向公開 `https://registry.npmjs.org/`（僅 @internal 走 Nexus），與「禁止公開 registry」衝突。新專案建議預設 registry 直接指向 `npm-all`（已代理公開套件），以符合離線/合規。**待確認採用。**
+- [x] **後端 Maven 來源合規（✅ 2026-06-12 已部署）**：`docs/env/maven-settings.xml` 已安裝至 `%USERPROFILE%\.m2\settings.xml`（maven-public group 代理 Central，全走內網）。
+- [x] **npm 預設 registry 政策（✅ 2026-06-12 已採用）**：`docs/env/frontend.yarnrc` 已部署至前端專案 `.yarnrc`（預設 registry＝`npm-all`，公開+企業套件全走內網）。
 - [x] 認證模式（已定案，依既有後端）：**Spring Security + JWT，STATELESS**（非 cookie+CSRF）；外部整合 MIS token/session verifier；前端 interceptor 附 Bearer
 - [ ] 過渡期 reverse proxy 路由規劃（/legacy、/app、/api）
 - [ ] DB schema 是否維持凍結（初期建議凍結）

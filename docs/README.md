@@ -56,7 +56,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 |---|---|
 | `process/vision-pipeline.md` | 願景與漸進落地 |
 | `process/SETUP-codex.md` | Codex CLI 設定/用法 + dev-box 疑難排解 |
-| `env/` | gitignore / yarnrc / maven-settings / **codex 雙軌範本**（prompts/agents/hooks/權限） |
+| `env/` | gitignore / yarnrc / maven-settings / **db-ro-wrappers**（DB 唯讀部署）/ **codex 雙軌範本**（prompts/agents/hooks/權限） |
 
 ## 🧩 樣板 / 規格家 / 圖
 | 檔 | 用途 |
