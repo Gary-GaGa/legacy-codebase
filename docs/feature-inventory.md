@@ -12,7 +12,7 @@
 - ⏸ **暫緩 track**（R2 報表服務 / 檔案 API / CBC R8——刻意延後、非遺漏）
 - ❓ **待 cross-check**（推定既有，未實證；開做前先唯讀盤點）
 
-**全局結論（zero-based audit 後更新 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND。真缺口**兩個**——① 🔴 **撥貸核心**（A-1 換匯 stub + T24 + domain）② 🔴 **企金主流程 FE 後半段**（`EPROCSU0150–0173` 六頁+3 popup，BE 全在；**audit F-1 翻案發現，Phase G 補建**）。已收口：c0 評分 FE（Phase F）、i0 全模組（audit 22/22 驗證）。另 11🟡 小修（§4⑩）＋待裁 AUD-1~5。
+**全局結論（zero-based audit 後更新 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND。真缺口**兩個**——① 🔴 **撥貸核心**（A-1 換匯 stub + T24 + domain）② 🟡 **企金主流程 FE 後半段**（Phase G 補建中：**G1–G3 ✅ 06-12**＝0160/0150/0170＋0261/0174/0175 三 popup，G4–G6 排隊＝0171/0172/0173；BE 全在）。已收口：c0 評分 FE（Phase F）、i0 全模組（audit 22/22 驗證）。另 11🟡 小修（§4⑩）＋待裁 AUD-1~5。
 
 **三層結構**（避免把「模組」當「單頁」）：① 模組流程（M1–M9）② 流程頁（外層 pageMap 頁籤）③ 頁內區塊（內層 tab）。遷移單位＝模組流程。
 
@@ -25,8 +25,8 @@
 | M1 | `zz` | 登入/首頁（SSO）| 1 | `main-layout` + Spring Security/JWT（驗 MIS） | ✅ | 06-11 `S1` |
 | M2 | `is` | 個人申貸 主流程（有擔）| 39 | `EPROISU*`（IS+IU 合併） | ✅ 前端／🟡 驗證 | 06-11 `S2/S3` |
 | M3 | `iu` | 個人申貸（無擔）| 20 | 併入 `EPROISU*` | ✅ 前端／🟡 驗證 | 06-11 `S3` |
-| M4 | `cs` | 企金申貸（有擔）| 20 | `EPROCSU*`（CS+CU 合併） | 🔴 **FE 後半缺（Phase G，§4①b）**／BE ✅ | 06-11 `S4`（F-1 翻案）|
-| M5 | `cu` | 企金申貸（無擔）| 17 | 併入 `EPROCSU*` | 🔴 **FE 後半缺（同 M4）**／BE ✅ | 06-11 `S4`（F-1 翻案）|
+| M4 | `cs` | 企金申貸（有擔）| 20 | `EPROCSU*`（CS+CU 合併） | 🟡 **FE 後半補建中 3/6（Phase G，§4①b）**／BE ✅ | 06-11 `S4`（F-1 翻案）→06-12 G1–G3 落地 |
+| M5 | `cu` | 企金申貸（無擔）| 17 | 併入 `EPROCSU*` | 🟡 **FE 後半補建中（同 M4）**／BE ✅ | 06-11 `S4`（F-1 翻案）→06-12 G1–G3 落地 |
 | M6 | `i0` | 個人 財報/評分/CBC | 42（audit 22 列，01xx/02xx 變體） | `EPROI00*` | ✅ **audit 22/22 全綠（06-11）** | 06-11 `S5/S6` |
 | M7 | `c0` | 企金 財報/評分/CBC | 38（audit 20 列） | `EPROC00*` | ✅ BE＋評分 FE（Phase F）；audit 4🟡＋2 待裁（§2D）| 06-11 `S7/S8` |
 | M8 | `z0` | 管理/報表/工具 | 18 | `EPROZ00*` | ✅ 大多／⏸ 報表服務 R2 | 06-11 `S9` |
@@ -65,9 +65,9 @@
 | EPROCSU0110 | CS/CU 0110+0210 | Main Borrower（單 tab）| ✅ | ✅ | 🟡 驗證 |
 | EPROCSU0120 | 0120+0220 | Co-Borrower | ✅ | ✅ | 🟡 驗證 |
 | EPROCSU0130 | 0130+0230 | Guarantor | ✅ | ✅ | **✅ 2026-06-05 收尾（ng build 綠）** |
-| EPROCSU0150 | 0150+0250 | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| 🔴 | ✅ | **FE 缺（audit DIFF-001）→ Phase G**；⏸ 檔案 API |
-| EPROCSU0160 | 0160+0260 | Loan Condition（+0261 popup）| 🔴 | ✅ | **FE 缺 → Phase G（pilot）** |
-| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| 🔴 | ✅ | **FE 缺 → Phase G**；❓ 審批段細節(B1) |
+| EPROCSU0150 | 0150+0250 | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| ✅ | ✅ | **FE 補建 G2 ✅ 06-12**（`14b254e`，三 mat-tab 照舊 cs 結構）；⏸ 檔案 API（上傳區守現狀）；Phase V 待測 |
+| EPROCSU0160 | 0160+0260 | Loan Condition（+0261 popup）| ✅ | ✅ | **FE 補建 G1 ✅ 06-12**（`809d25d`，pilot；0261 CSU popup 變體、ISU 零修改）；Phase V 待測 |
+| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | **FE 補建 G3 ✅ 06-12**（return dialog `endpointConfig` 參數化＋cancel CSU 變體；**product hash/ng build/ISU 回歸聲明待補**）；Phase V 待測（含 ❓ 審批段細節(B1)、CSU download route 無）|
 | EPROCSU0171 | 0171 | Loan Committee Conclusion | 🔴 | ✅ | **FE 缺 → Phase G** |
 | EPROCSU0172 | 0172 | Approved Loan Condition | 🔴 | ✅ | **FE 缺 → Phase G**；⏸ 列印 |
 | EPROCSU0173 | 0173 | Credit Evaluation Old | 🔴 | ✅ | **FE 缺 → Phase G** |
@@ -168,8 +168,8 @@
 - **剩（非 coding）**：納入 Phase V 整合驗證 + c0 新 endpoint 授權列（見 ⑥）；staff 端點 cleanup（見 ⑨）。
 
 **①b 🔴 企金主流程 FE 後半段（Phase G；audit F-1/DIFF-001；owner：前端）**
-- `EPROCSU0150/0160/0170/0171/0172/0173` 六頁＋3 popup（0174/0175/0261）FE 全缺；BE `Csu*Controller` 全在。
-- 補建卡＝`build-tasks/phase-g-csu-mainflow-fe.md`（照 isu 鏡像、Phase F 同型；G1=0160 pilot；待派工）。
+- 原況：六頁＋3 popup（0174/0175/0261）FE 全缺；BE `Csu*Controller` 全在。**進度 06-12：G1（0160+0261，`809d25d`）/G2（0150 三 tab，`14b254e`）/G3（0170+0174/0175，hash 待補）✅；G4–G6（0171/0172/0173）排隊。**
+- 補建卡＝`build-tasks/phase-g-csu-mainflow-fe.md`（照 isu 鏡像、Phase F 同型；含 tasks checklist/斷點欄）。
 
 **② 整合驗證（owner：dev/uat 整合測試）— 量大、非補碼**
 - 主流程（is/iu/cs/cu 0110–0173）+ 契約頁（0910–0913）+ i0 全頁 FE↔BE `epl-*` DTO/授權各跑一次。
@@ -220,7 +220,7 @@
 3. **剩**：納入 Phase V 驗證 + c0 新 endpoint 授權列（⑥）；staff 端點 cleanup（⑨）。
 
 **Phase G — 企金主流程 FE 後半段（2026-06-11 audit 坐實；owner：前端；DB-無關可即做）**
-2b. `EPROCSU0160`(pilot)→`0150/0170(+popup)/0171/0172/0173` 照 isu 鏡像補建，對接既有 `Csu*` endpoints；卡＝`build-tasks/phase-g-csu-mainflow-fe.md`。
+2b. `EPROCSU0160`(pilot)→`0150/0170(+popup)/0171/0172/0173` 照 isu 鏡像補建，對接既有 `Csu*` endpoints；卡＝`build-tasks/phase-g-csu-mainflow-fe.md`。**06-12 進度：G1/G2/G3 ✅（pilot+三 tab+dialog 改造全過），剩 G4–G6 三頁直線收尾。**
 
 **Phase V — 整合驗證（即刻，可與 Phase F 並行；owner：整合測試）**
 3. 契約對齊 sweep：主流程 + i0 全頁 + 契約頁 FE↔BE DTO（真資料/真授權）。
