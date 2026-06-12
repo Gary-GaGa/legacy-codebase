@@ -67,7 +67,7 @@
 | EPROCSU0130 | 0130+0230 | Guarantor | ✅ | ✅ | **✅ 2026-06-05 收尾（ng build 綠）** |
 | EPROCSU0150 | 0150+0250 | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| ✅ | ✅ | **FE 補建 G2 ✅ 06-12**（`14b254e`，三 mat-tab 照舊 cs 結構）；⏸ 檔案 API（上傳區守現狀）；Phase V 待測 |
 | EPROCSU0160 | 0160+0260 | Loan Condition（+0261 popup）| ✅ | ✅ | **FE 補建 G1 ✅ 06-12**（`809d25d`，pilot；0261 CSU popup 變體、ISU 零修改）；Phase V 待測 |
-| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | **FE 補建 G3 ✅ 06-12**（return dialog `endpointConfig` 參數化＋cancel CSU 變體；**product hash/ng build/ISU 回歸聲明待補**）；Phase V 待測（含 ❓ 審批段細節(B1)、CSU download route 無）|
+| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | **FE 補建 G3 ✅ 06-12**（`646e178`；return dialog `endpointConfig` 參數化＋cancel CSU 變體、ISU 零 diff、build 綠）；Phase V 待測（含 ❓ 審批段細節(B1)、CSU download route 無）|
 | EPROCSU0171 | 0171 | Loan Committee Conclusion | 🔴 | ✅ | **FE 缺 → Phase G** |
 | EPROCSU0172 | 0172 | Approved Loan Condition | 🔴 | ✅ | **FE 缺 → Phase G**；⏸ 列印 |
 | EPROCSU0173 | 0173 | Credit Evaluation Old | 🔴 | ✅ | **FE 缺 → Phase G** |
