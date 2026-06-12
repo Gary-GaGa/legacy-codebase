@@ -1,8 +1,8 @@
 # Bible↔PRD 對照表（trace sidecar）— `CDC-EPRO-0001` × `EPROZ00800`
 
 > **為什麼是 sidecar**：PRD 快照 verbatim 不可編（[`README.md`](README.md) 放置規則），追溯標記故放本表。
-> **誰讀**：`scripts/check-srs-bundle.py` **gate⑥**（機械、advisory）+ `spec-reviewer`（語意）。
-> **行格式（機械約定）**：表 A 每列第 1 欄 `BR-nnn`——無 `REQ-nnn` 對應時**必須**含 `BP-n` 或 `@PENDING`（否則 gate⑥ warn=漂移未登記）；表 B 每列第 1 欄 `REQ-nnn`，PRD 快照的每個 REQ 都要在本表出現。
+> **誰讀**：`scripts/check-srs-bundle.py` **gateⒷ**（機械、advisory）+ `spec-reviewer`（語意）。
+> **行格式（機械約定）**：表 A 每列第 1 欄 `BR-nnn`——無 `REQ-nnn` 對應時**必須**含 `BP-n` 或 `@PENDING`（否則 gateⒷ warn=漂移未登記）；表 B 每列第 1 欄 `REQ-nnn`，PRD 快照的每個 REQ 都要在本表出現。
 > 來源：Bible [`../bible/bible-eproposal.md`](../bible/bible-eproposal.md)（BR 表）、PRD 快照 [`PRD-CDC-EPRO-0001-v1.1-EPROZ00800.md`](PRD-CDC-EPRO-0001-v1.1-EPROZ00800.md)、缺口登記 [`../../pending-register.md`](../../pending-register.md) §Bible→PRD seam。
 
 ## A. Bible → PRD（下行：業務邊界有沒有被 PRD 承載）

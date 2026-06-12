@@ -21,8 +21,8 @@
   3. **spec.md**：每條業務規則給 `Rn`，**引用 i0 `file:line` 當證據**（不准憑印象）。
   4. **qa-cases.md**：每條 case 標 `covers: Rn`；未決 / escalation 寫成 `@PENDING`。
 
-## 閘門編號對照（⚠️ 本表＝三套編號的**唯一**對齊處）
-> 權威編號＝DoD 閘門牆 ①–⑦（`../../assets/ai-workflow.mmd`）。`check-srs-bundle.py` 的 gate 編號＝對應牆上同號項在 **SRS 定稿階段的 pre-check**（同號、不同階段）；腳本專屬檢查在牆上無對應格。涵蓋細節一律見**腳本檔頭**。
+## 閘門編號對照（⚠️ 本表＝兩套編號的**唯一**對齊處）
+> 權威編號＝DoD 閘門牆 ①–⑦（`../../assets/ai-workflow.mmd`，code 階段）。`check-srs-bundle.py` 的 **數字** gate（①②⑤）＝牆上**同位、同義**項在 SRS 定稿階段的 pre-check（同號、不同階段）。腳本的 **SRS 階段專屬**檢查（牆上無對應格）改用**字母標**（gateⒷ/gateⓅ）+ 非數字名（xfile/doc-paths），**刻意不接續 ⑥⑦** 以免與牆上 ⑥Build/⑦LLM-advisory 撞號（2026-06-12 改）。涵蓋細節一律見**腳本檔頭**。
 
 | DoD 閘門牆（code 階段，產品 repo）| SRS 定稿 pre-check（本 repo，`scripts/check-srs-bundle.py`）|
 |---|---|
@@ -31,9 +31,9 @@
 | ③ 結構：`scripts/verify-c0.py --git` | —（不適用 SRS 階段）|
 | ④ QA 驗收：Testcontainers oracle-xe 跑 case（橋接 `../qa-to-test.md`）| —（寫法閘＝qa-cases **test-ready**）|
 | ⑤ 覆蓋率：ID 對表 | gate⑤：Rn↔QA covers / 懸空引用 |
-| ⑥ Build 綠 | —（注意：與腳本 gate⑥ **同號不同義**）|
-| ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與 ⑦ 混）|
-| —（牆上無對應格）| gate⑥ Bible↔PRD、gate⑦ @PENDING↔register、xfile 跨檔、doc-paths |
+| ⑥ Build 綠 | —（牆上 ⑥；腳本無同號項，撞號已消除）|
+| ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與牆上 ⑦ 混）|
+| —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、xfile 跨檔、doc-paths |
 
 ## 與 vision 的關係
 boundary bundle 是把閘門 ①/②/④/⑤ 從「文件 + 延後」升級成「迴圈內可跑」的路徑（`../../process/vision-pipeline.md` §8 漸進落地）——**不必一次到位**，先一頁跑通再放大。

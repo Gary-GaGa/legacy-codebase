@@ -23,4 +23,4 @@
 ## 回報
 - `00800-pending-recon-findings.md` 三節齊（或標 UNFOUND）；產品 repo `git status --short` 乾淨（零修改）。
 
-> 過了：SA 拿 E1 裁 RP6（順帶 E2→RP4）、RD 拿 E3 裁 RP10 → 回填 spec §@PENDING + `pending-register.md`（gate⑦ 會驗同步）→ 解鎖 R13.4/13.5 與 R14 key 重映射的後續修復卡。
+> 過了：SA 拿 E1 裁 RP6（順帶 E2→RP4）、RD 拿 E3 裁 RP10 → 回填 spec §@PENDING + `pending-register.md`（gateⓅ 會驗同步）→ 解鎖 R13.4/13.5 與 R14 key 重映射的後續修復卡。
