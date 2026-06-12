@@ -79,6 +79,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 - **`build-tasks/done/`**（已消化——歷史記錄）：c0 FE 逐頁（Phase F）、00800 修正、c0 cleanup、⑨ sweep×3、staff 調查鏈、早期 B-*/EPROC/EPROISU…
 - **live 任務單命名（2026-06-11 起）**：`<funcId>-<type>.md`（如 `00800-verification-findings.md`）；`done/` 歷史檔名不回溯改。
 - **done/・archive/ 清理規則（2026-06-11 訂）**：平時不刪（audit trail）；**里程碑後批次清**（如 Phase V 收口）——刪前逐檔跑引用檢查，仍被 live 文件引用者（如 `archive/review-c0-prompt.md` 語意審查模板、`archive/phase1-eproz0_0700-spec.md` entity 定稿）續留。
+- **大卡 tasks checklist（2026-06-12 訂，SDD 技巧）**：多頁/多步的卡（如 phase-g）內含 checkbox tasks 段＋斷點欄（沿 `refactor-audit/master.md` 模式）——session 中斷從斷點續查、不靠 compact 記憶；單頁小修卡免。
 
 ## 🗄 [`archive/`](archive/)（已消化、留存備查）
 - `review-c0-prompt.md`（c0 後端審查 prompt）、`phase1-eproz0_0700-spec.md`（Phase 1 切片，已完成）。
