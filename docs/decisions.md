@@ -116,3 +116,4 @@
 - [x] 認證模式（已定案，依既有後端）：**Spring Security + JWT，STATELESS**（非 cookie+CSRF）；外部整合 MIS token/session verifier；前端 interceptor 附 Bearer
 - [ ] 過渡期 reverse proxy 路由規劃（/legacy、/app、/api）
 - [ ] DB schema 是否維持凍結（初期建議凍結）
+- [x] **agent DB 存取政策（2026-06-12 已定，DB 連線打通同日）**：AI agent（Codex/Claude）僅配**唯讀帳號**；帳密走環境變數、不進 repo（CLAUDE.md §7）；**任何 DML/DDL 一律產 SQL 檔交人審執行**（同 `c0-authz-sql` 卡模式）；Codex 端 DB 指令 approval 設 ask。**MCP 暫不導入**——Phase V 需要 agent 自主驗 DB 驗證點時再評（先 SQL CLI 唯讀即可）。
