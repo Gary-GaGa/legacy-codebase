@@ -68,6 +68,7 @@
 | `00660-endpoint-fix` | `5a47038` | ✅ PASS | 一行修、TLOD 殘留 grep 清零、報表家族未誤動 |
 | `00100-todo-fix` | `2599752` | ✅ PASS | F-10 只刪覆蓋、無發明行為;F-9 兩處 @PENDING 標註(R2/檔案 API);發現 E_CREDIT_PROPOSAL 實導 `directToCaseEdition`→R2 track 素材 |
 | `00119-options-fix` | `6919da5` | ✅ PASS | 查證正確(info 不供 options→GI sele 同型);**Phase V 必驗**:下拉有值+save 帶值+GI-sele 對 businessType F 無分支影響(推前快檢未回報,以 Phase V 涵蓋) |
+| `phase-g` G1 pilot | `809d25d` | ✅ PASS（條件式放大）| CSU popup 變體、ISU 零修改、BE 未動、自抓 payload 缺口;**G2 前置**=`epl-comm-isu-update-total-amount` ISU 限定性快檢 |
 
 ## S-final 派工 prompt（定稿;S1–S9 在 master 全標完成後才跑）
 > 讀 `docs/build-tasks/full-refactor-audit.md` §5、`refactor-audit/master.md`、**`docs/build-tasks/refactor-audit-qc.md`（口徑備忘+累計發現必讀）**,以及各模組檔的小計列（不重讀明細,證據需要時才回查單列）。此時才允許讀 `docs/feature-inventory.md` 與 Bible 的 BR/SC 清單。產出 `refactor-audit/diff-vs-inventory.md`,含四節:

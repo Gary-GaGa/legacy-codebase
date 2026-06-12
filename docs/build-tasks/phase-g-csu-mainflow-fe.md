@@ -28,13 +28,13 @@
 4. 產品 repo 後端**一行不改**。
 
 ## Tasks（checklist——session 中斷在此記斷點續跑，勿靠 compact 記憶）
-- [ ] G1 `EPROCSU0160`＋`0261` popup（**pilot，報 diff 等審後才續 G2–G6**）
+- [x] G1 `EPROCSU0160`＋`0261` popup（✅ 審過 06-12，product `809d25d`；CSU popup 變體、ISU 零修改）
 - [ ] G2 `EPROCSU0150`（三 tab）
 - [ ] G3 `EPROCSU0170`＋`0174`/`0175` popup（含共用 dialog 改造）
 - [ ] G4 `EPROCSU0171`
 - [ ] G5 `EPROCSU0172`
 - [ ] G6 `EPROCSU0173`
-- 斷點：（無）
+- 斷點：**放大前置＝`epl-comm-isu-update-total-amount` 唯讀快檢**（ISU 限定 or case-type 無關；「無關」才續 G2）。Phase V 待測：G1 載入/save/finish、approved-case popup view/save/update、total amount 更新、ISU loan-condition popup 回歸。
 
 ## 回報
 - 每頁 commit hash＋落點；dialog 改造方式一句＋「isu 行為未變」聲明;G2 三 tab 結構截點;**更新上方 Tasks 勾選/斷點**。
