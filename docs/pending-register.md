@@ -7,13 +7,13 @@
 ## 🔴 擋主線（卡住才能往下走）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **A-1 OQ×4**（06-12：OQ-2 精度✅已關——舊庫 DDL 實查新舊一致）| 匯率源 ID（OVSLXLON01 vs 02——**06-12 實證＝新庫並存兩 schema owner**）、錯誤碼、catch 回 null?、`EXCHANGR_RATE` 欄名（**06-12 實證：新舊 DDL 皆無此欄→bug 機率大**）| 撥貸 authorize 端到端（換匯→T24→定案）；**撥貸上線關鍵路徑** | PM/SA/T24/DBA | 06-05 | `build-tasks/a1-funcGetExchangeRate-spec.md` |
+| **A-1 OQ×4**（06-12：OQ-2 精度✅已關——舊庫 DDL 實查新舊一致）| 匯率源 ID（OVSLXLON01 vs 02——**06-12 schema-diff：old01≡new01、02=新 app schema → 01=舊/02=新，新 stub 用 02 幾乎可斷為刻意，待 domain 蓋章**）、錯誤碼、catch 回 null?、`EXCHANGR_RATE` 欄名（**06-12 實證：新舊 DDL 皆無此欄→bug 機率大**）| 撥貸 authorize 端到端（換匯→T24→定案）；**撥貸上線關鍵路徑** | PM/SA/T24/DBA | 06-05 | `build-tasks/a1-funcGetExchangeRate-spec.md` |
 | **撥貸 domain group** | ~~`T24_COMPANY` 值源~~（**06-12 前提推翻→B-1 降級轉 RD 接值**，escalations B-1）、檢核嚴格度、`KHR`(演進勿改回)、欄寬、async、M6 完工日 DTO 缺源；~~精度~~（C-1 ✅已關）| 撥貸 0921/0922/T24 行為對等 | 撥貸 domain/T24/DBA | 06-05 | `disbursement-domain-escalations.md` |
 
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **RP10 / checkpoint `_0260` keys** | `EPRO{IS/IU/CS/CU}_0260` 確切 key 清單（PRD §5.6）| `00800` R14 checkpoint key 重映射（S7） | RD/PM | 06-09 | `00800 spec.md §@PENDING` |
+| **RP10 / checkpoint `_0260` keys** | `EPRO{IS/IU/CS/CU}_0260` 確切 key 清單（PRD §5.6）。**06-12 schema-diff 實證**：新 schema（OVSLXLON02）checkpoint 實表＝`TB_CHECK_POINTS_{IS,IU,CS,CU}`（**SRS R14 現載 `TB_CHECK_POINT_RC/_IU/_CORP/_CU` 係舊表名、新 schema 不存在→RP10 關閉時一併修 R14+schema.sql**）；key＝表欄位、可 DDL 機械枚舉（查詢已交付）| `00800` R14 checkpoint key 重映射（S7） | RD/PM | 06-09 | `00800 spec.md §@PENDING` |
 | **RP9 / init-query method** | GET（PRD §6.1）vs 全站 RPC-POST vs as-is 不一致 | `00800` init-query 契約 method | RD/架構 | 06-09 | 同 |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
 | **RP6 / TBD-001** | ITEM1~14 正式名稱＝SA 取數動作項（內容詳 `00800 spec.md §@PENDING`；**順帶裁 RP4**）| `00800` 畫面顯示＋RP4 判據 | **SA（取數）** | 06-08 | 同 |
@@ -26,6 +26,9 @@
 | **AUD-3**（F-2）| `SysNews` 公告/`BatchManager`/`cacheMonitor` 遷/不遷 | M9 admin 列定版 | PM/ops | 06-11 | 同（DIFF-016）|
 | **AUD-4**（F-3）| demo 頁（`DEMOA0_*`）正式不遷裁決 | M9 demo 列定版 | PM | 06-11 | 同（DIFF-016）|
 | **AUD-5** | BIBLE-GAP-1~5（`EPROZ00670`/`EPROISU0180/0182/0183/0184`）舊源存在性驗證→補列或收斂 Bible 錨點 | audit 窮盡聲明完備性 | recon 卡 `build-tasks/bible-gap-recon.md`（待派工）| 06-11 | 同（§3）|
+| **AUD-6** 🔴（schema-diff）| `TB_FINANCIAL_EVALUATION_INFO` 6 金額欄精度縮減 `(28,2)→(20,2)`＋`FIX_RATE (10,6)→(4,2)`/`SOFR (4,2)`——利率 6 位小數→2 位疑掉精度 | 財評資料完整性（i0/c0 財評頁）| DBA/domain | 06-12 | `build-tasks/schema-diff-findings.md` |
+| **AUD-7**（schema-diff）| 舊 schema 54 表 new02 未帶——扣 `_BK/_TEST/TMP` 後的 reference/config 表（`TB_OCCUPATION`/`TB_COLL_TYPE` 系/`TB_MENU_TREE`/`TB_SCORE_CARD_PARAM_*` 等）刻意捨棄 or 漏建 | 下游功能缺表風險 | SA/DBA | 06-12 | 同 |
+| **AUD-8**（schema-diff）| new02 獨有 `TB_PAGE_COLUMN_AUTH_CATEGORY/_DETAIL` 用途確認（R7 三表外的新權限機制？）| 權限模型完整性 | SA/ops | 06-12 | 同 |
 
 ## ⚪ 非阻擋 / 暫緩 / 待業務（可獨立排）
 | ID | 待決 | owner | 來源 |

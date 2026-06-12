@@ -1,5 +1,6 @@
 # DB Schema Catalog（新 Oracle DB，表名同舊）
 
+> ⚠️ **schema 事實 SSOT 換軌（2026-06-12）**：本檔（Excel 來源）已兩度被 DDL 實查打臉（`T24_COMPANY` 漏列、表數 71 vs 實際 142）——**schema 以 `build-tasks/schema-diff-findings.md`（DB 實查）為準**，本檔降為輔助索引。實況：新 app schema＝`OVSLXLON02`（142 表）、舊 app schema＝`OVSLXLON01`（194 表，新庫亦掛載同構副本）；checkpoint 實表＝`TB_CHECK_POINTS_{IS,IU,CS,CU}`。
 > 來源：使用者提供的 Excel —— **已遷移至新 Oracle DB 後的 schema**，表名與舊系統相同。
 > `HOME` 工作表 = 全表索引；其餘每個工作表 = 單一表細節。
 > 用途：補齊各 entity 的**精確 Oracle 型別 / 長度 / nullable / PK**（直接收掉 **A1**，並供後續各模組 entity 定稿）。

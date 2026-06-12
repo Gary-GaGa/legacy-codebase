@@ -71,6 +71,7 @@
 | `phase-g` G1 pilot | `809d25d` | ✅ PASS（條件式放大）| CSU popup 變體、ISU 零修改、BE 未動、自抓 payload 缺口;**G2 前置**=`epl-comm-isu-update-total-amount` ISU 限定性快檢 |
 | G1 前置快檢 | —（唯讀）| ✅ PASS → **G2–G6 綠燈** | total amount 計算無 DB 寫入、case-type 無關;LDTC 標準化副作用 ISU 限定但被 `LON_ATTRIBUTE='I'`+四條件 gate 擋死（corporate='C' 走不到）;無 checkpoint 寫入;命名 tech-debt（isu 字樣）入 inventory §4⑨ |
 | `phase-g` G2 | `14b254e` | ✅ PASS | 三 tab 照舊 cs 結構（非 isu 單層）;DTO 以 BE 為準（checkFile→checkFileList 等轉換）;上傳區守 ⏸ 現狀;diff-tree 證 BE 零改;individual 未動 |
+| `schema-diff-recon` | —（唯讀,findings 待推）| ✅ PASS | spool/分批/只報不裁全守。**頭條:old01≡new01、02=新 app schema**（01=舊/02=新——A-1 OQ-1 近自答、A-2 降風險）;checkpoint 實表=`TB_CHECK_POINTS_*`（**SRS R14 表名要修,併 RP10**）;新增 AUD-6（🔴財評精度縮減）/AUD-7（54 舊表去留）/AUD-8（新權限表×2）;column-order drift 349 欄/17 表→Phase V `SELECT *`/map-key 警示;MARIAL→MARITAL typo 改名家族→資料遷移對映點 |
 
 ## S-final 派工 prompt（定稿;S1–S9 在 master 全標完成後才跑）
 > 讀 `docs/build-tasks/full-refactor-audit.md` §5、`refactor-audit/master.md`、**`docs/build-tasks/refactor-audit-qc.md`（口徑備忘+累計發現必讀）**,以及各模組檔的小計列（不重讀明細,證據需要時才回查單列）。此時才允許讀 `docs/feature-inventory.md` 與 Bible 的 BR/SC 清單。產出 `refactor-audit/diff-vs-inventory.md`,含四節:
