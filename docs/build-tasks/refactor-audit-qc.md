@@ -70,6 +70,7 @@
 | `00119-options-fix` | `6919da5` | ✅ PASS | 查證正確(info 不供 options→GI sele 同型);**Phase V 必驗**:下拉有值+save 帶值+GI-sele 對 businessType F 無分支影響(推前快檢未回報,以 Phase V 涵蓋) |
 | `phase-g` G1 pilot | `809d25d` | ✅ PASS（條件式放大）| CSU popup 變體、ISU 零修改、BE 未動、自抓 payload 缺口;**G2 前置**=`epl-comm-isu-update-total-amount` ISU 限定性快檢 |
 | G1 前置快檢 | —（唯讀）| ✅ PASS → **G2–G6 綠燈** | total amount 計算無 DB 寫入、case-type 無關;LDTC 標準化副作用 ISU 限定但被 `LON_ATTRIBUTE='I'`+四條件 gate 擋死（corporate='C' 走不到）;無 checkpoint 寫入;命名 tech-debt（isu 字樣）入 inventory §4⑨ |
+| `phase-g` G2 | `14b254e` | ✅ PASS | 三 tab 照舊 cs 結構（非 isu 單層）;DTO 以 BE 為準（checkFile→checkFileList 等轉換）;上傳區守 ⏸ 現狀;diff-tree 證 BE 零改;individual 未動 |
 
 ## S-final 派工 prompt（定稿;S1–S9 在 master 全標完成後才跑）
 > 讀 `docs/build-tasks/full-refactor-audit.md` §5、`refactor-audit/master.md`、**`docs/build-tasks/refactor-audit-qc.md`（口徑備忘+累計發現必讀）**,以及各模組檔的小計列（不重讀明細,證據需要時才回查單列）。此時才允許讀 `docs/feature-inventory.md` 與 Bible 的 BR/SC 清單。產出 `refactor-audit/diff-vs-inventory.md`,含四節:

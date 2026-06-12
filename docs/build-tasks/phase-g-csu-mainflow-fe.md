@@ -29,7 +29,7 @@
 
 ## Tasks（checklist——session 中斷在此記斷點續跑，勿靠 compact 記憶）
 - [x] G1 `EPROCSU0160`＋`0261` popup（✅ 審過 06-12，product `809d25d`；CSU popup 變體、ISU 零修改）
-- [ ] G2 `EPROCSU0150`（三 tab）
+- [x] G2 `EPROCSU0150`（三 tab）（✅ 審過 06-12，product `14b254e`；Info/Valuation/Site Visit 三 mat-tab、上傳區守 ⏸ 現狀、BE 零改）
 - [ ] G3 `EPROCSU0170`＋`0174`/`0175` popup（含共用 dialog 改造）
 - [ ] G4 `EPROCSU0171`
 - [ ] G5 `EPROCSU0172`
