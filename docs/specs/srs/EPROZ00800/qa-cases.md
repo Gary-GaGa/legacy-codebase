@@ -15,7 +15,8 @@
 | QA-006 | R6 | `isCU=true` / 進頁 / ITEM3 強制不勾且不可編輯 | 儲存後 ITEM3=N |
 | QA-007 | R13.1 | 既有 ITEM2=Y、新=N、reference 有 guarantor / 確認提示後儲存 / 清目前 guarantor 並由 reference 還原 | `GUARANTOR_INFO`/`_CORP` 筆數與 reference 一致；`IS_ANY_GUARANTOR` 正確 |
 | QA-008 | R13.3 | 既有 ITEM3=Y、新=N、reference 有 collateral / 確認後儲存 / 清 collateral 並還原 | `COLL_*`/`COLL_PROVIDER_INFO`/`COLL_TITLE_REGIS_OWNER` 正確；`IS_ANY_COLLATERAL_PROVIDER` 更新 |
-| QA-009 `@PENDING RP4` | R13.4,R13.5 | ITEM1/4~11 任一 Y→N / 確認後儲存 / detail 依組合刪或還原 | `LOAN_CONDITION_DETAIL`/`REVISED_ITEM_DETAIL` 符 RI-MAT-004/005（ITEM10 欄位對應待 RP4/RP6）。⚠️ **RP4 關閉時須拆 QA-009a（R13.4 刪除分支：特定組合成立→刪）/QA-009b（R13.5 還原分支：Y→N→逐欄還原）**——兩分支語意相反，單一 case 會漏測刪除觸發條件 |
+| QA-009a | R13.4 | ITEM1/4~11 特定組合成立 / 確認後儲存 / 刪 detail＋page menu 標重處理 | `LOAN_CONDITION_DETAIL`/`REVISED_ITEM_DETAIL` 刪除符 RI-MAT-004；page menu 欄＝R14 v0.8 新欄（✅RP4 已關 06-12 拆分）|
+| QA-009b | R13.5 | ITEM1/4~11 任一 Y→N / 確認後儲存 / 從原始 detail 逐欄還原 | 還原欄符 §5.5.2 矩陣——欄對應判據＝RP6 名稱表（ITEM1=Renew Loan Tenor／ITEM10=ATC_Tenor／ITEM11=ATC_Interest Rate 各自對欄）|
 | QA-010 | R13.6 | `LON_TYPE=04`、既有 ITEM12=N、新=Y / 儲存 / 刪 fee | `LOAN_CONDITION_FEE` 目前 APPLICATION_NO 無資料 |
 | QA-011 | R14 | 備 IS/IU/CS/CU 四種案件 / 各儲存 / 正確 checkpoint 表 + page-menu flag | `TB_CHECK_POINTS_{IS,IU,CS,CU}`：自欄 `EPROZ00800`=完成＋§5.6 重處理新頁欄=Y（IS: `EPROISU0110/0120/0130/0140/0150`；CS/CU/IU=DDL 子集；RP10 ✅06-12）|
 | QA-012 | R10,R15,R16 | execute 中模擬 DAO exception / 送出 / rollback + `COMMON_MSG_SAVE_FAIL` | `TB_REVISED_ITEM`、關聯表、checkpoint **均無部分更新**（單一 transaction：R16）|

@@ -15,8 +15,6 @@
 |---|---|---|---|---|---|
 | **RP9 / init-query method** | GET（PRD §6.1）vs 全站 RPC-POST vs as-is 不一致 | `00800` init-query 契約 method | RD/架構 | 06-09 | 同 |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
-| **RP6 / TBD-001** | ITEM1~14 正式名稱＝SA 取數動作項（內容詳 `00800 spec.md §@PENDING`；**順帶裁 RP4**）| `00800` 畫面顯示＋RP4 判據 | **SA（取數）** | 06-08 | 同 |
-| **RP4 / TBD-005** | ITEM1 與 ITEM10 皆 TENOR（設計 or 缺陷）——連動 RP6 取數後裁（詳同上）| `00800` R13.4/5＋QA-009 | RD/SA | 06-08 | 同 |
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤` |
 | **c0 escalation E2** | `crScoreCardCompleted` 整欄覆寫 `"NN"`（`:2890`） | 同上 | 信用決策 domain | 06-05 | 同 |
@@ -61,6 +59,8 @@
 | **TBD-007 / RP5** ✅ | 維持現狀（僅持久化、無側效）→ R13.7 定版 | 同 |
 | **TBD-002 / RP7** ✅ | `Finshed`→`Finished` 定版 | 同 |
 | **RP10** ✅（06-12）| checkpoint key＝`TB_CHECK_POINTS_{IS,IU,CS,CU}` 欄位（新 funcId 形，DDL 機械枚舉；R14 表名同步修正）→ R14 定版、殘差實作＝rimat F8 | 同 |
+| **TBD-001 / RP6** ✅（06-12）| ITEM1~14 名稱取數定版（舊庫 `TB_COMMON_FIELD_OPTIONS`+`TB_MULTI_LANG`，findings E1）→ 畫面顯示定版、順帶裁 RP4、RP2 原因補文 | 同 |
+| **TBD-005 / RP4** ✅（06-12）| **設計非缺陷**：ITEM1=Renew Loan Tenor ≠ ITEM10=ATC_Tenor → R13.4/13.5 定版、QA-009 拆 a/b、實作＝rimat F9 | 同 |
 
 ---
 > 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。**裁定內容只寫來源檔（spec §@PENDING）**，本表只留 id/狀態/owner/指回——本表＝derived 視圖。
