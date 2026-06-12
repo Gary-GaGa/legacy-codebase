@@ -189,7 +189,7 @@
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 
-**⑥ 授權列（owner：DB/ops）**：新 c0 endpoint（00115/116/118/119/120）`TB_API_AUTH`/`TB_ROLE_TASK`（00117 既有）；SQL 預產卡＝`build-tasks/c0-authz-sql.md`（DB-free，待派工）。
+**⑥ 授權列（owner：DB/ops）**：✅ SQL 已產＋DB precheck 完（`c0-authz-sql.sql`＋findings，`203c375`）——29 endpoint 中 c0 已有 15、**預期 insert 13**、ROLE_TASK 8/8 已存在；NOT EXISTS 冪等。**待裁**：00117 的 3 個 API auth 列實缺（「既有」premise 被 DB 推翻——補產 or ops 補）；gap＝`epl-pxls-c0-financial-statement-comments`（i0 source 亦無列，UNSURE）。下一步＝ops 簽核→以 `OVSLXLON02` 套用→Phase V 開門。
 
 **⑦ 暫緩 track（需先拍板）**：R2 報表服務（→0181/i0·c0 PDF/z0 PDF）、檔案上傳 API（→collateral/審批上傳）。〔CBC 已釐清＝頁內、非獨立 track〕
 
