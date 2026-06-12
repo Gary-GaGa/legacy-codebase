@@ -145,7 +145,7 @@
 ## 3. 橫向基礎建設 track（R1–R8）
 | R | 主題 | 狀態 | 影響面 |
 |---|---|---|---|
-| R1 | DB2 → **Oracle** 遷移 | ✅ 已定/進行（native SQL 逐一改 Oracle 方言）| 全後端；⚠️ map-key 大小寫 sweep（見 §4）|
+| R1 | 舊→新 **Oracle schema** 遷移（**06-12 更正：舊庫亦 Oracle**，原依 `DB2PoolSvc.xml` 誤判 DB2）| ✅ 已定/進行（SQL 以新 Oracle 慣例改寫＋schema 改名對映）| 全後端；⚠️ map-key 大小寫 sweep（見 §4）|
 | R2 | **報表服務（汰換 Jasper）** | ⏸ **未定（獨立 track）** | `*_0181` CAD、i0/c0 FinStmt PDF（0116/0119）、z0 報表呈現 |
 | R3 | 主流程 shell 子樣式 | ✅ 已定（Workflow Shell + Section Tabs）| is/iu/cs/cu 共用 |
 | R4 | 後端 action→REST 重寫 | ✅ 進行 pattern | 全後端 |

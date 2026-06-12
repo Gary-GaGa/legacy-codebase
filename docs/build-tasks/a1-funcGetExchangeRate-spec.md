@@ -27,7 +27,7 @@
 ## 4. rounding / 精度
 - `funcGetExchangeRate` 本身**不套金額 rounding**，只存 API 回的 buy/sell。
 - T24 E21 非 USD 金額才用舊語意 `Math.round(CBC_FEE * ((BUY+SELL)/2))`；**不要**套 0921 fee 的 `RoundingMode.DOWN`。
-- 精度：`TB_DISBUR_DATE.EX_RATE_*` 新 entity `NUMBER(17,2)`；`TB_EXCHANGE_RATE.EX_RATE_*` `NUMBER(17,4)`；舊 DB2 scale UNKNOWN → **見 OQ-2**。
+- 精度：`TB_DISBUR_DATE.EX_RATE_*` 新 entity `NUMBER(17,2)`；`TB_EXCHANGE_RATE.EX_RATE_*` `NUMBER(17,4)`；舊 scale UNKNOWN → **見 OQ-2（06-12 起舊庫（Oracle）可連，DDL 直接查）**。
 
 ## 5. transaction（必做）
 - 舊系統把 `TB_DISBUR_DATE.update` + `TB_EXCHANGE_RATE.insert` 包**同一交易**。

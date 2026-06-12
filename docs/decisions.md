@@ -99,11 +99,11 @@
 - 前後端 cross-check 對齊（✅）：30% 缺口 = ① **6 個企金評分頁**（`EPROC00115-00120`）缺後端 controller（鏡像 i0 補）② **撥貸 `EPROISU0920`** 缺後端 ③ **7 個 z0/共用前端頁**（後端已就緒，含 `EPROZ00700`=`DeputyController`）。
   > ⚠️ **2026-06-06 翻案（以 `feature-inventory.md` §2D 為準）**：①的 c0 評分**前端**當時被當「已就緒」，實則 **corporate 評分容器+8 子頁整組缺** → 現 Phase F 鏡像 i0 補建中。即「c0 缺口」不只後端 controller，前端也缺。**後端 API 慣例 = RPC 式 `epl-{verb}-{scope}-{feature}`（非 REST）**；phase1 spec 的 `/api/emp-proxy` 為理想化、實際以 `DeputyController` 為準。詳見 `page-mapping.md` §2。
 - Phase 1 entity 定稿（Prompt B）：✅ A1 關閉（註：`EPROZ00700` 後端已存在為 `DeputyController`，本頁實作只缺前端）。**⚠️ `TB_EMP_PROXY` 新 DB PK = `EMP_ID` 單鍵**（與舊 DAO 複合鍵不一致 → 一人一筆代理、存檔為 upsert）→ 待業務確認。`STR_TIME` NOT NULL；`RETURN_CASE_TO_CA` default 'N'；新 DB 無 `T24_COMPANY`。
-- ⚠️ 舊系統 DB 為 **DB2**（`DB2PoolSvc.xml`），與新後端 Oracle 慣例不一致 → R1。
+- ⚠️ 舊系統 DB **歷史配置標示 DB2**（`DB2PoolSvc.xml`）→ 原以跨引擎遷移立論；**2026-06-12 實連更正：現行舊庫實例＝Oracle（新舊皆 Oracle、皆可連、皆唯讀開放 agent）**——R1 重新定性為「舊 schema→新 schema」遷移，方言改寫視舊源 SQL 實況（見 migration-backlog R1）。
 - 權限（A2）：`AuthManager` **source=db**，function→role 在 `TB_FUNCTION_INFO`+`TB_FUNCTION_AUTH`(FUNC_ID/USER_ROLE)；funcId = bean 名**去底線**（`EPROZ0_0700`→`EPROZ00700`）。與新 `APIAuthorizationFilter`(apiPath+roleId) **同型** → 整系統權限為「搬資料 + `FUNC_ID↔apiPath`」（R7），實際 roleId 為 runtime DB 內容。
 
 #### 待確認決策（D1 浮現）
-- [x] **R1 已定：DB2 → Oracle 遷移**。目標 Oracle（`OracleDialect`/`OracleDriver`）；DB2 native SQL 逐一改寫為 Oracle 方言。
+- [x] **R1 已定：DB→Oracle**（06-12 更正：舊庫實例亦 Oracle，原依 `DB2PoolSvc.xml` 誤判跨引擎）。實質＝舊 schema→新 schema 對映；舊源殘留 DB2 方言照改、已是 Oracle 方言仍須對 schema 改名/型別調整。
 - [x] **R2 已定：改用新報表服務**（汰換 Jasper，獨立 track）；含報表/列印頁初期暫緩、不納入 Phase 1～初期模組。
 - [x] **Phase 1 切片已定：z0 單純查詢/管理頁**（避開 Jasper/多頁籤）→ 下一步 D2 鎖定具體頁。
 
@@ -116,4 +116,4 @@
 - [x] 認證模式（已定案，依既有後端）：**Spring Security + JWT，STATELESS**（非 cookie+CSRF）；外部整合 MIS token/session verifier；前端 interceptor 附 Bearer
 - [ ] 過渡期 reverse proxy 路由規劃（/legacy、/app、/api）
 - [ ] DB schema 是否維持凍結（初期建議凍結）
-- [x] **agent DB 存取政策（2026-06-12 已定，DB 連線打通同日）**：AI agent（Codex/Claude）僅配**唯讀帳號**；帳密走環境變數、不進 repo（CLAUDE.md §7）；**任何 DML/DDL 一律產 SQL 檔交人審執行**（同 `c0-authz-sql` 卡模式）；Codex 端 DB 指令 approval 設 ask。**MCP 暫不導入**——Phase V 需要 agent 自主驗 DB 驗證點時再評（先 SQL CLI 唯讀即可）。
+- [x] **agent DB 存取政策（2026-06-12 已定，DB 連線打通同日；同日補：新舊兩庫皆 Oracle、皆可連）**：AI agent（Codex/Claude）僅配**唯讀帳號（新舊兩庫各一）**；帳密走環境變數、不進 repo（CLAUDE.md §7）；**任何 DML/DDL 一律產 SQL 檔交人審執行**（同 `c0-authz-sql` 卡模式；舊庫無寫入情境、純查證）；Codex 端 DB 指令 approval 設 ask。**MCP 暫不導入**——Phase V 需要 agent 自主驗 DB 驗證點時再評（先 SQL CLI 唯讀即可）。

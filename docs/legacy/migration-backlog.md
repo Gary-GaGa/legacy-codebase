@@ -12,7 +12,7 @@
 | View：JSP + JSTL + 自訂 taglib（`CXL`/`cathaybk`/`input`）| Angular component + config-driven |
 | 前端：jQuery + 自家 JS 元件（CSRUtil/Tabs/TableUI/FileUpload/Validate/ZRUtil…）| Angular + `cub-*`/Material + HttpClient |
 | 認證：**MIS/SSO**（`SSOFilter`/`SSOUtils`，MIS token）| Spring Security + JWT(STATELESS)，驗 MIS session ✅ **與新後端一致** |
-| DB：**DB2**（`DB2PoolSvc.xml`）| **遷移至 Oracle**（R1 已定）；DB2 native SQL 改寫為 Oracle 方言 |
+| DB：歷史配置標示 **DB2**（`DB2PoolSvc.xml`）；**06-12 實連更正：現行舊庫＝Oracle** | **舊→新 Oracle schema 遷移**（R1 已定）；SQL 以新慣例改寫＋schema 改名對映 |
 | 報表：**JasperReports 3.5.2**（`RptUtils`、printPDF/printProposal）| **改用新報表服務**（R2 已定，獨立 track，Jasper 頁暫緩）|
 | 檔案：commons-fileupload，內部 upload/downloadFile | 檔案上傳/下載 API（待設計） |
 | 權限：`AuthManager` **source=db** → `TB_FUNCTION_INFO`+`TB_FUNCTION_AUTH`(FUNC_ID/USER_ROLE)，funcId=bean **去底線**（`EPROZ0_0700`→`EPROZ00700`）| `APIAuthorizationFilter`（apiPath+roleId 查 DB）**同型** → 遷移資料、`FUNC_ID↔apiPath`；前端 `role-id-config` |
@@ -53,10 +53,10 @@
   | `SimplePopupWin`/`MsgBox` | 彈窗 | `mat-dialog` / `popup-add-*` |
   | `quill`/`html2canvas` | 富文本/截圖 | 視需求引入（走 Nexus）|
 
-- **外部整合**：MIS/SSO 登入與權限、JasperReports、應用內部檔案上傳/下載、CBC/Scorecard/MIS 報表、**DB2**。
+- **外部整合**：MIS/SSO 登入與權限、JasperReports、應用內部檔案上傳/下載、CBC/Scorecard/MIS 報表、DB（06-12 更正：舊庫＝Oracle）。
 
 ## 3. 風險 / 待確認決策
-- **R1 ✅ 已定：DB2 → Oracle 遷移**。目標 DB 為 Oracle（`OracleDialect`/`OracleDriver`，與新後端一致）；**既有 DB2 native SQL 需逐一改寫為 Oracle 方言**（分頁 `ROWNUM`/`OFFSET…FETCH`、函式 `NVL`/`FETCH FIRST`、序列、型別差異等），entity/SQL 一律以 Oracle 為準，勿原樣沿用 DB2 SQL。
+- **R1 ✅ 已定：舊→新 Oracle schema 遷移**（**06-12 實連更正：舊庫亦 Oracle**，原依 `DB2PoolSvc.xml` 誤判跨引擎）。entity/SQL 一律以 Oracle＋新 schema 為準、**勿原樣沿用舊 SQL**（表名/前綴/checkpoint 改名、型別與 map-key 大小寫）；舊源殘留 DB2 方言（`FETCH FIRST`/`WITH UR`/序列等）照改。
 - **R2 ✅ 已定：改用新報表服務**（汰換 Jasper），為**獨立 track**，需另立評估（報表/匯出方案）。**含報表/列印的頁（`*_0181` CAD、z0 報表群、i0/c0 印表）暫緩，不納入 Phase 1～初期模組**，待報表服務拍板再排。
 - **R3（中）主流程是多頁籤複雜表單**，非 `deputy` 式 list+popup CRUD。`golden-template` 直接適用於 z0 查詢/管理與簡單清單；主申貸流程 **✅ 已定子樣式「Workflow Shell + Section Tabs」**（外層 shell+子路由、內層 mat-tab、後端 pageMap 決定可見頁、一套 shell 多份 config）→ 見 `golden-template` §八 與 `module-is-iu-shell.md`。
 - **R4（中）後端是重寫非搬移**：自製 `HttpDispatcher`/`@CallMethod` action → 逐一對應成 REST endpoint + service/repository；DTO/驗證重新定義。
@@ -72,7 +72,7 @@
 - **D2 完成** → 詳細施工單見 **[`phase1-eproz0_0700-spec.md`](../archive/phase1-eproz0_0700-spec.md)**（API 合約 / DTO / Oracle entity+SQL / Angular feature 骨架 / 驗證 / 開放項）。
 
 ## 5. 下一步
-- [x] **R1（DB 目標）= DB2→Oracle 遷移**、**R2（報表）= 換新報表服務（獨立 track）**
+- [x] **R1（DB 目標）= 舊→新 Oracle schema 遷移（06-12 更正：非跨引擎）**、**R2（報表）= 換新報表服務（獨立 track）**
 - [x] **D2 完成**：Phase 1 切片 = `EPROZ0_0700` → build spec 已產出
 - [ ] 在實際 monorepo 依 spec 實作 Phase 1。開放項：✅ A1（entity 定稿，新 DB schema）、⬜ A2（roleId 白名單 = 查 `TB_FUNCTION_AUTH` runtime 資料）、A3 Self/Others、A5 XD 連結；**需業務確認：`TB_EMP_PROXY` PK=EMP_ID 單鍵（一人一筆代理）**
 - [x] **D3 完成**：`is`/`iu` 共用 shell = **兩層**（外層 pageMap 流程頁 + 內層區塊 tabs），主鍵 `APPLICATION_NO`，IS=有擔/IU=無擔 → 目標架構與子樣式見 [`module-is-iu-shell.md`](module-is-iu-shell.md)、`golden-template` §八（解 R6/R3）

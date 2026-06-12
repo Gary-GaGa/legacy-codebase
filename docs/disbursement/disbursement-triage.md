@@ -28,8 +28,8 @@
 - **0922-t24**：行尾 `\r\n` vs `\n`（T24 可能敏感）；`C26` title-deed 全 join 到每筆 C row。
 - 🟢 **疑刻意演進（勿改回）**：`KHR` 換匯 + 在地化（舊僅 USD）。
 
-## 4. P3 — UNSURE / 需舊 DB2 DDL 或 DBA
-- 金額 **precision** 全面（新 `NUMBER(17,2)` vs 舊 DB2 scale UNKNOWN）→ 需舊 DDL/DBA。
+## 4. P3 — UNSURE / 舊 DDL 核對（**06-12 起舊庫可連（Oracle），DDL 自查即可、不必等 DBA**）
+- 金額 **precision** 全面（新 `NUMBER(17,2)` vs 舊 scale UNKNOWN）→ **舊庫 DDL 自查**（06-12 解鎖）。
 - `t24DealResult` 非 `0000`/無 done flag 是否更新 summary 狀態。
 - `IS_CONTRACT`/`IS_CONTR` persist 目標；contract-source 可能 NPE；空 `APPLICATION_NO`（新 controller 擋、舊 throw 未明）。
 
