@@ -106,5 +106,18 @@
 ## 5. 契約對齊（整合測試；多已 code review）
 - 各 `c0`/`csu` 頁 **FE 送/收欄位 ↔ BE `epl-*` DTO**：以真資料 / 真授權跑一次（`00115` CS/CU 判斷已 code review 確認正確）。
 
+## 6. 🟢 runtime 整合 bring-up（owner：dev；本機 FE+BE 同跑）
+> **怎麼跑＝`build-tasks/local-phase-v-bringup.md`**（前置 gate + bring-up order + 能驗/不能驗矩陣 + smoke 順序）。DB 連線已通（06-12）後 runtime 這層才可行；與本檔 §1–§5 的「程式碼/語意逐項比對」互補。
+> ⚠️ **寫測 schema＝`OVSLXLON02`（使用者裁定 06-14，直連正式新庫）**——護欄見該卡 §0.1（保留測試案件號段 / teardown SQL 交人審 / DBA 快照 / 唯讀帳號查證）。
+
+| # | 項目 | 對應 smoke | 狀態 |
+|---|---|---|---|
+| **V-1** | 登入 + 唯讀載入頁通（FE↔BE↔DB 三段）| smoke 1 | ☐ |
+| **V-2** | Phase G 新頁 render/載入（0150/0160/0170）| smoke 2 | ☐ |
+| **V-3** | 主流程 save 落庫正確（測試案件段）| smoke 3 | ☐ |
+| **V-4** | c0/csu 評分頁非 403（授權列已套）| smoke 4 | ☐ |
+| **V-5** | G3 共用 return dialog ISU 回歸 | smoke 5 | ☐ |
+| **V-6** | teardown SQL 產出交人審清庫 | smoke 6 | ☐ |
+
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`；原 `archive/runbook-30pct.md` §5），不影響「程式補完」里程碑。
