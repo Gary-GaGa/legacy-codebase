@@ -125,5 +125,17 @@
 | **RV-1** | **Search 頁開即 E999**：`getSearchOptions` `Required request body is missing`（GET 無 body＋BE `@RequestBody` 殘留，疑 sweep① `48e687f` 不完整 regression）| ✅ 已修 runtime bug（角色無關，AO 也噴）| `getSearchOptions` 改為 GET query/model binding；FE 改用 `?langType=`，不再送 GET body；見 `build-tasks/00600-search-options-fix.md` |
 | **RV-2** | **TODO List 空**（中文 UI）| 🔴 **坐實（F12 06-15）**：`zh_TW`→`totalCount:0`／`en_US`→`totalCount:92`，langType 砍資料確認 | **根因**：新版 SQL `VMainBorrowerInfoRepository:46` 多 `S.LOAN_TYPE_LANG_TYPE=:langType`，**舊版 initQuery 無此條件＝regression**（findings `82e8592`）。**Owner 裁示 06-15**：①語系只剩 `zh_TW`+`en_US` ②**語系只影響翻譯、不影響資料數量**＝修向定案。修＝langType 退出資料過濾（多語系 view→LEFT JOIN+fallback，非 INNER WHERE；不可無腦拿掉）→ 併入 `langtype-data-filter-sweep.md`（盤同型頁＋修，TODO 首例）|
 
+### 6.2 橫向 sweep 盤點結果（2026-06-15，審過；＝「更動多少地方」的答案）
+> 兩份盤點 findings 審查 PASS（file:line 密、舊系統對照齊、UNFOUND 誠實標、附「正確用法不算候選」反向清單）。**僅盤點，未批量修**。
+
+**langType 當資料過濾（`langtype-data-filter-sweep-findings.md`）＝5 處**：
+- **(a) 純過濾、舊版無 langType 注入 → 移除 WHERE 條件（2）**：`/epl-list-todolist`（`VMainBorrowerInfoRepository:46`，RV-2 首例）、`/epl-list-casedistribution`（`:104`）。
+- **(b) 多語系 join 但 LANG_TYPE 誤放 outer WHERE → 改 join ON + fallback（en_US）（3）**：`/epl-list-caseapplication`（`TBLonSummaryInfoRepository:75`）、`/epl-list-deviation`（`:366`）、`/epl-list-cancelreport`（`:557`）。
+
+**GET 端配 request body（`get-body-contract-sweep-findings.md`）＝3 處**（FE 無直接 `apiGetRequestWithBody`，但有 2 處 `apiGetRequestForBlob` GET-body 等價）：
+- **#1/#2 scorecard export（pdf/excel）→ 兩邊改 POST body**：`ScorecardReportController:55/73` + FE `mis-report/scorecard-report`（export 帶多 filter、generated-file 不該 GET body）。
+- **⚠️ #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query**：BE GET+`@RequestBody` 但 FE 已 POST（method mismatch）。**此條碰 00800 SRS init-query `@PENDING`（inventory §4⑩/⑨ 記「按 SRS 不動」）→ 不可當普通 sweep 逕改，先對 00800 SRS 那條 @PENDING 裁定**。
+- 00600 已修為樣板（不算候選）。
+
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`；原 `archive/runbook-30pct.md` §5），不影響「程式補完」里程碑。
