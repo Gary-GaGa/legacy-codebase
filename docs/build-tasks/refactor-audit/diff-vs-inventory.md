@@ -1,6 +1,6 @@
 # Diff Vs Feature Inventory
 
-Status: S-final complete on 2026-06-11.
+Status: S-final complete on 2026-06-11. BIBLE-GAP recon completed on 2026-06-15; no audit row total changed.
 
 Input note: required QC memo `docs/build-tasks/refactor-audit-qc.md` is not present in the workspace and is not tracked by `git ls-files`; searches for `F-1` through `F-5` under `docs/` returned no QC log. This report maps the one QC item named in the task prompt, `F-1 企金 FE 缺口`, to DIFF-001 and marks `F-2` through `F-5` as `QC-INPUT-UNFOUND` instead of guessing.
 
@@ -60,11 +60,11 @@ Bible page mentions were taken from the golden journey, BR table, and SC table i
 | `EPROISU0910-0922` disbursement/contract path | `bible-eproposal.md:324`, `:365`, `:440` | `M2-is.md:52` through `M2-is.md:59` | Covered, with `EPROISU0922` audit status 🟡. |
 | `EPROZ00300` AO flow checklist | `bible-eproposal.md:387` | `M8-z0.md:21` | Covered. |
 | `EPROISU0181` / TLOD Report | `bible-eproposal.md:342`, `:356` | `M2-is.md:38`, `M3-iu.md:35`, `M4-cs.md:32`, `M5-cu.md:29` | Covered as shared TLOD/CAD report rows. |
-| `EPROZ00670` common report query | `bible-eproposal.md:340`, `:356` | None found in audit rows. | `BIBLE-GAP-1`: Bible names `EPROZ00670`, but S1-S9 audit has no carrier row. |
-| `EPROISU0180` Credit Proposal report | `bible-eproposal.md:341`, `:364` | No dedicated audit row; related report service evidence exists under ToDo/Search rows only. | `BIBLE-GAP-2`: add a carrier row or decide it is covered by existing report actions. |
-| `EPROISU0182` Summary Report | `bible-eproposal.md:343`, `:364` | None found in audit rows. | `BIBLE-GAP-3`. |
-| `EPROISU0183` Transaction Result report | `bible-eproposal.md:344`, `:365` | No dedicated audit row; 0922 row references report endpoints. | `BIBLE-GAP-4`: add a carrier row or decide it is covered by `EPROISU0922`. |
-| `EPROISU0184` Message Code Record report | `bible-eproposal.md:345`, `:365` | No dedicated audit row; 0922 row references report endpoints. | `BIBLE-GAP-5`: add a carrier row or decide it is covered by `EPROISU0922`. |
+| `EPROZ00670` common report query | `bible-eproposal.md:340`, `:356` | No old-source JSP/trx/report id found; existing TLOD carrier is `M2-is.md:38`. | Recon-closed: `EPROZ00670` should converge to the `EPROISU0181` / TLOD row. Evidence: `docs/build-tasks/bible-gap-recon-findings.md`. |
+| `EPROISU0180` Credit Proposal report | `bible-eproposal.md:341`, `:364` | Existing M8 report-action carriers: `M8-z0.md:17`, `M8-z0.md:25`. | Recon-closed: no independent page; old report generator/actions are carried by ToDo/Search rows, so no new row total. Evidence: `docs/build-tasks/bible-gap-recon-findings.md`. |
+| `EPROISU0182` Summary Report | `bible-eproposal.md:343`, `:364` | Existing carrier: `M2-is.md:59`. | Recon-closed: report id should converge to the `EPROISU0922` Summary row. Evidence: `docs/build-tasks/bible-gap-recon-findings.md`. |
+| `EPROISU0183` Transaction Result report | `bible-eproposal.md:344`, `:365` | Existing carrier: `M2-is.md:59`. | Recon-closed: report id should converge to the `EPROISU0922` Summary row. Evidence: `docs/build-tasks/bible-gap-recon-findings.md`. |
+| `EPROISU0184` Message Code Record report | `bible-eproposal.md:345`, `:365` | Existing carrier: `M2-is.md:59`. | Recon-closed: report id should converge to the `EPROISU0922` Summary row. Evidence: `docs/build-tasks/bible-gap-recon-findings.md`. |
 
 ## 4. 建議回填項
 
@@ -93,5 +93,5 @@ These are proposed edits for human review. Do not apply them to `docs/feature-in
 | [ ] | `feature-inventory.md:126` | Change `EPROZ00660` FE to 🟡 for TLOD/CAD endpoint mismatch. | `M8-z0.md:32`. |
 | [ ] | `feature-inventory.md:128` | Replace 🟠/🟠 with `FE 🟡 / BE 碼在`; keep SRS pending list separately. | `M8-z0.md:34`. |
 | [ ] | `feature-inventory.md:32` | Replace M9 `~50`/✅ with `11 action/group rows; page-level conversion 16; 1 碼在 / 10 UNFOUND`. | `M9-common.md:23`. |
-| [ ] | Bible follow-up | Add audit carrier rows or explicit scope decisions for `BIBLE-GAP-1` through `BIBLE-GAP-5`. | `bible-eproposal.md:340` through `bible-eproposal.md:345`; audit carrier absence confirmed by S-final search. |
+| [x] | Bible follow-up | `BIBLE-GAP-1` through `BIBLE-GAP-5` recon closed; all five are absent as independent old pages, existing report-action carriers, or report ids converged to `EPROISU0181` / `EPROISU0922`. | `docs/build-tasks/bible-gap-recon-findings.md`; no audit row total changed. |
 | [ ] | QC follow-up | Add or restore `docs/build-tasks/refactor-audit-qc.md`; map F-2 through F-5 before final human sign-off. | `QC-INPUT-UNFOUND`. |

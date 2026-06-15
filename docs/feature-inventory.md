@@ -123,7 +123,7 @@
 | EPROZ00610 | Credit Reviewer On Hand | ✅ | ✅ | 🟡 呈現/資料驗證 |
 | EPROZ00620 | Application Delete Report | ✅ | ✅ | 🟡（繼承 `base-application-report`）|
 | EPROZ00630 | Deviation Case Report | ✅ | ✅ | 🟡（含 Excel export）|
-| EPROZ00640 | Scorecard Report | ✅ | 🟡 | export 介面已對齊（sweep①）；audit F-11：**BE PDF writer 註解殘碼（Excel 正常）→修復卡 `00640-pdf-export-fix.md`** |
+| EPROZ00640 | Scorecard Report | ✅ | ✅ | export 介面已對齊（sweep①）；BE PDF 改回 blob（`ResponseEntity<byte[]>`，openhtmltopdf/FileService），Excel 正常且未動；Phase V 待實測 PDF |
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅ F-12 已修（product `5a47038`，FE endpoint 改 CAD）→ 復稱 CR 範本；Phase V 實測查詢一條 |
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；嚴謹可做 deputy↔0700 gap-check |
