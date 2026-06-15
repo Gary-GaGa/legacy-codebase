@@ -47,5 +47,9 @@
 | OQ-5 | T24 G/H 讀 `EXCHANGR_RATE`（非本方法寫的欄名）→ 是否欄名 bug、補後仍空值。**06-12 實證**：舊庫 `TB_DISBUR_DATE` **亦無** `EXCHANGR_RATE` 欄（實欄＝`EX_RATE_BUY/SELL`）→ 欄名 bug 機率大增 | T24 / domain |
 
 ## 8. 結論
+> **方向（2026-06-15，使用者洞察）**：OQ 本質＝**對等舊 `EPROIS_0922` 換匯行為**（非政策發明）→ 走舊系統 recon 坐實舊做法＋附對等建議，owner 僅需確認「忠實對等 vs 刻意演進」。
+> - **OQ-3/4/5 舊系統可直接定**：錯誤碼（沿用 `EPROIS0921_UI_RAET_FIND_ERROR`）、失敗 throw 行為、T24 組檔讀的**正確欄名**（坐實 `EXCHANGR_RATE` 是否 typo）。
+> - **OQ-1 例外**：`01/02`＝新舊兩個 schema 身份 key（01=舊庫、02=新庫），recon 能確認「舊一致用 01」，但「新系統用 02 是否刻意＋T24 端認哪個 IdNo」屬新環境身份對接 → **仍需 T24 owner 一個確認點**（非純對等舊行為）。
+> - recon findings＝`a1-oq-legacy-recon-findings.md`（派工中）→ 回來回填本 §7 表＋`pending-register` A-1。
 - 修法＝**補 return + 移尾端 throw + 兩表交易一致**，並先解 OQ-1/3/4/5（多為一行決策）。
 - **鏡像對象＝舊 `EPROIS_0922` 換匯流程**，**非** `funcGetRate`。

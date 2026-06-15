@@ -7,7 +7,7 @@
 ## 🔴 擋主線（卡住才能往下走）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **A-1 OQ×4**（06-12：OQ-2 精度✅已關——舊庫 DDL 實查新舊一致）| 匯率源 ID（OVSLXLON01 vs 02——**06-12 schema-diff：old01≡new01、02=新 app schema → 01=舊/02=新，新 stub 用 02 幾乎可斷為刻意，待 domain 蓋章**）、錯誤碼、catch 回 null?、`EXCHANGR_RATE` 欄名（**06-12 實證：新舊 DDL 皆無此欄→bug 機率大**）| 撥貸 authorize 端到端（換匯→T24→定案）；**撥貸上線關鍵路徑** | PM/SA/T24/DBA | 06-05 | `build-tasks/a1-funcGetExchangeRate-spec.md` |
+| **A-1 OQ×4**（06-12：OQ-2 精度✅已關——舊庫 DDL 實查新舊一致）→ **06-15 改走舊系統對等 recon**（OQ 本質＝對等舊 `EPROIS_0922` 行為）：**OQ-3/4/5 舊系統可定**（錯誤碼/失敗 throw/T24 正確欄名）、**OQ-1 縮小**至 T24 確認 `01/02` 身份 key | 匯率源 ID（OVSLXLON01 vs 02——01=舊庫/02=新庫，新 stub 用 02 待 T24 蓋章）、錯誤碼、catch 回 null?、`EXCHANGR_RATE` 欄名（**新舊 DDL 皆無此欄→bug 機率大**）| 撥貸 authorize 端到端（換匯→T24→定案）；**撥貸上線關鍵路徑** | recon→T24/domain 確認 | 06-05 | `build-tasks/a1-funcGetExchangeRate-spec.md`＋`a1-oq-legacy-recon-findings.md`（派工中）|
 | **撥貸 domain group** | ~~`T24_COMPANY` 值源~~（**06-12 前提推翻→B-1 降級轉 RD 接值**，escalations B-1）、檢核嚴格度、`KHR`(演進勿改回)、欄寬、async、M6 完工日 DTO 缺源；~~精度~~（C-1 ✅已關）| 撥貸 0921/0922/T24 行為對等 | 撥貸 domain/T24/DBA | 06-05 | `disbursement-domain-escalations.md` |
 
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
