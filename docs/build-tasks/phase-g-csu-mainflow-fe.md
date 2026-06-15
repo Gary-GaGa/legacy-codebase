@@ -31,10 +31,10 @@
 - [x] G1 `EPROCSU0160`＋`0261` popup（✅ 審過 06-12，product `809d25d`；CSU popup 變體、ISU 零修改）
 - [x] G2 `EPROCSU0150`（三 tab）（✅ 審過 06-12，product `14b254e`；Info/Valuation/Site Visit 三 mat-tab、上傳區守 ⏸ 現狀、BE 零改）
 - [x] G3 `EPROCSU0170`＋`0174`/`0175` popup（✅ 審過 06-12，product `646e178`；return dialog endpointConfig 參數化（ISU default 保留＝`epl-info/save-isu-cr-dec-retu`、individual 頁零 diff）、cancel popup CSU 變體；ng build 綠 `fdd5a63f`；**bonus fix**＝sugLoan popup save 舊值覆蓋→改依已改 category 從 LDTC refresh、save/submit 前等待）
-- [ ] G4 `EPROCSU0171`
-- [ ] G5 `EPROCSU0172`
-- [ ] G6 `EPROCSU0173`
-- 斷點：續跑 G4 `EPROCSU0171`。Phase V 待測：G1 載入/save/finish、approved-case popup view/save/update、total amount 更新、ISU loan-condition popup 回歸；G3 載入/dropdown/save/submit/upload/delete-file/return/cancel/delete-return、suggested additional conditions confirm 後保存、LC/LLC/Reject action-specific validation、ISU return dialog 回歸、CSU LLC 檔案下載（controller 目前無 CSU download route，勿猜 endpoint）、CSU Credit Proposal report 下載（目前沿用既有 `epl-ppdf-isu-credit-proposal-report` 共用 report endpoint）、`cgccGuarantee` 條件顯示回歸；**全卡共通：G1–G6 頁對 Adobe XD 設計走查**（本卡規格來源＝isu 鏡像＋舊 JSP 結構，未走 `frontend/AGENTS.md §5`「人摘 XD」步——XD 若有企金專屬標註需對齊；只有通用版型則免）。〔G3 待補三樣已於 06-12 補齊→正式 PASS〕
+- [x] G4 `EPROCSU0171`
+- [x] G5 `EPROCSU0172`
+- [x] G6 `EPROCSU0173`
+- 收口：Phase G FE 已完成。Phase V 待測：G1 載入/save/finish、approved-case popup view/save/update、total amount 更新、ISU loan-condition popup 回歸；G3 載入/dropdown/save/submit/upload/delete-file/return/cancel/delete-return、suggested additional conditions confirm 後保存、LC/LLC/Reject action-specific validation、ISU return dialog 回歸、CSU LLC 檔案下載（controller 目前無 CSU download route，勿猜 endpoint）、CSU Credit Proposal report 下載（目前沿用既有 `epl-ppdf-isu-credit-proposal-report` 共用 report endpoint）、`cgccGuarantee` 條件顯示回歸；G4 載入/dropdown/save/finish、suggested condition/fee 儲存、Loan Committee file upload/download/delete 缺 CSU route 現狀驗證；G5 載入、Approved Loan Condition 列印/下載依 R2 鏡像 ISU 現狀驗證、LLC file download 缺 CSU route 現狀驗證；G6 載入、LC/LLC file download 缺 CSU route 現狀驗證；**全卡共通：G1–G6 頁對 Adobe XD 設計走查**（本卡規格來源＝isu 鏡像＋舊 JSP 結構，未走 `frontend/AGENTS.md §5`「人摘 XD」步——XD 若有企金專屬標註需對齊；只有通用版型則免）。〔G3 待補三樣已於 06-12 補齊→正式 PASS〕
 
 ## 回報
 - 每頁 commit hash＋落點；dialog 改造方式一句＋「isu 行為未變」聲明;G2 三 tab 結構截點;**更新上方 Tasks 勾選/斷點**。
