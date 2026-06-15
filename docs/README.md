@@ -75,7 +75,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
   - `schema-diff-findings.md`（**schema 事實 SSOT**，06-12 全量 diff 完成；recon 卡已歸檔 done/）
   - `full-refactor-audit.md` + `refactor-audit/`（**全量 zero-based 盤點 ✅ 完成 2026-06-11**：166 列，diff 報告=`refactor-audit/diff-vs-inventory.md`、QC=`refactor-audit-qc.md`；歸檔待 AUD-1~5 收口）
   - ✅ `phase-g-csu-mainflow-fe.md` **Phase G 全收口（G1–G6，06-15）**→ 歸檔 done/（企金主流程 FE 後半段補齊，M4/M5 升 ✅）
-  - `local-phase-v-bringup.md`（**本機 FE+BE 同跑 runtime 整合驗證**；DB 已通後可行，寫測打 `OVSLXLON02`＋護欄；06-14 開卡）；**Phase V runtime findings（06-15 開跑）**：`00600-search-options-fix.md`（🔴 Search E999 修復）、`00100-todo-empty-recon-findings.md`（TODO 空坐實）
+  - `local-phase-v-bringup.md`（**本機 FE+BE 同跑 runtime 整合驗證**；DB 已通後可行，寫測打 `OVSLXLON02`＋護欄；06-14 開卡）；**Phase V runtime findings（06-15 開跑）**：✅ `00600-search-options-fix.md`（RV-1 Search E999 已修 GET query→歸檔 done/）、`00100-todo-empty-recon-findings.md`（RV-2 TODO 空坐實＝langType regression，待 F12 分流→開修復卡）
   - audit 修復包：✅ 已修×4 歸檔 done/（00660/00100/00119/**00640** `c1bda77` 06-15）；✅ `bible-gap-recon`（AUD-5 收斂，06-15）歸檔；findings 留 live
   - ＊**Phase F c0 FE 已收工**、**⑨ 靜態 sweep 三批已收齊** → prompt 全進 `done/`。
 - **`build-tasks/done/`**（已消化——歷史記錄）：c0 FE 逐頁（Phase F）、00800 修正、c0 cleanup、⑨ sweep×3、staff 調查鏈、早期 B-*/EPROC/EPROISU…；06-12 進：`00800-rimat-fix`、`c0-authz-sql`、`schema-diff-recon`。
