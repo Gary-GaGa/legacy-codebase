@@ -112,12 +112,18 @@
 
 | # | 項目 | 對應 smoke | 狀態 |
 |---|---|---|---|
-| **V-1** | 登入 + 唯讀載入頁通（FE↔BE↔DB 三段）| smoke 1 | ☐ |
+| **V-1** | 登入 + 唯讀載入頁通（FE↔BE↔DB 三段）| smoke 1 | ✅ 06-15（AO 登入通；起服務正常）|
 | **V-2** | Phase G 新頁 render/載入（0150/0160/0170）| smoke 2 | ☐ |
 | **V-3** | 主流程 save 落庫正確（測試案件段）| smoke 3 | ☐ |
 | **V-4** | c0/csu 評分頁非 403（授權列已套）| smoke 4 | ☐ |
 | **V-5** | G3 共用 return dialog ISU 回歸 | smoke 5 | ☐ |
 | **V-6** | teardown SQL 產出交人審清庫 | smoke 6 | ☐ |
+
+### 6.1 runtime findings（2026-06-15 Phase V 本機，AO 70201／連 `OVSLXLON02`）
+| # | 發現 | 性質 | 處置 |
+|---|---|---|---|
+| **RV-1** | **Search 頁開即 E999**：`getSearchOptions` `Required request body is missing`（GET 無 body＋BE `@RequestBody` 殘留，疑 sweep① `48e687f` 不完整 regression）| 🔴 真 bug（角色無關，AO 也噴）| 修復卡 `build-tasks/00600-search-options-fix.md`（坐實+修，派工中）|
+| **RV-2** | **TODO List 空**，但 `OVSLXLON02.TB_LON_SUMMARY_INFO` 內 70201 有 194 筆（CASE_PROGRESS 01=86/R0397=59/D1=23/C1=15/27=7/08=4）| ⚠️ 坐實中（有案件卻不顯示 vs 這些狀態本就不入 TODO）| recon `build-tasks/00100-todo-empty-recon-findings.md`（派工中）；附帶查 `R0397` 異常值 |
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`；原 `archive/runbook-30pct.md` §5），不影響「程式補完」里程碑。
