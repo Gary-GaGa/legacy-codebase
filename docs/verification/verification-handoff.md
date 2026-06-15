@@ -123,7 +123,7 @@
 | # | 發現 | 性質 | 處置 |
 |---|---|---|---|
 | **RV-1** | **Search 頁開即 E999**：`getSearchOptions` `Required request body is missing`（GET 無 body＋BE `@RequestBody` 殘留，疑 sweep① `48e687f` 不完整 regression）| 🔴 真 bug（角色無關，AO 也噴）| 修復卡 `build-tasks/00600-search-options-fix.md`（坐實+修，派工中）|
-| **RV-2** | **TODO List 空**，但 `OVSLXLON02.TB_LON_SUMMARY_INFO` 內 70201 有 194 筆（CASE_PROGRESS 01=86/R0397=59/D1=23/C1=15/27=7/08=4）| ⚠️ 坐實中（有案件卻不顯示 vs 這些狀態本就不入 TODO）| recon `build-tasks/00100-todo-empty-recon-findings.md`（派工中）；附帶查 `R0397` 異常值 |
+| **RV-2** | **TODO List 空**，但 `OVSLXLON02.TB_LON_SUMMARY_INFO` 內 70201（role 002）有 194 筆；新版查詢**應回 85 筆**（CASE_PROGRESS=01，langType=en_US）卻顯示 0 | 🔴 坐實＝bug（非正常空；R0397=合法 `TB_PROCESS_CODE` IS_SHOW=N 在排除集，非髒資料）| **根因待定位**（「85→0」斷點，`langType` 首要嫌疑＝FE→BE 參數沒對上，同 RV-1 家族）；findings 待 Codex 補實質＋file:line（目前檔誤植 prompt）→ 定位後開 `00100-todo-empty-fix.md` |
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`；原 `archive/runbook-30pct.md` §5），不影響「程式補完」里程碑。
