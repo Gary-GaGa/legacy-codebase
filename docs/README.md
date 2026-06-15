@@ -20,6 +20,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 ## 🟢 狀態 / SSOT（先看這裡｜頂層）
 | 檔 | 用途 |
 |---|---|
+| **`STATUS.md`** | ⭐ **總彙整 Dashboard**（單一入口）：整體進度%／剩什麼／卡在誰；彙總層、指向下列 SSOT |
 | **`feature-inventory.md`** | ⭐ **權威**：舊→新逐頁對應 + 前後端狀態 + 剩餘事項 + R1–R8 track + 建議排程 |
 | **`pending-register.md`** | ⭐ **待決總表**：所有 open `@PENDING`/escalation/OQ（誰欠裁定、卡什麼、多久）；🔴 三項擋主線 |
 | `decisions.md` | 決策與事實紀錄（逐輪更新；教訓收斂表＝`spec-architecture.md §9`） |
