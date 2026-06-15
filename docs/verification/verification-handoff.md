@@ -123,7 +123,7 @@
 | # | 發現 | 性質 | 處置 |
 |---|---|---|---|
 | **RV-1** | **Search 頁開即 E999**：`getSearchOptions` `Required request body is missing`（GET 無 body＋BE `@RequestBody` 殘留，疑 sweep① `48e687f` 不完整 regression）| 🔴 真 bug（角色無關，AO 也噴）| 修復卡 `build-tasks/00600-search-options-fix.md`（坐實+修，派工中）|
-| **RV-2** | **TODO List 空**，但 70201（role 002）有 85 筆 `CASE_PROGRESS=01`+`CURRENT_USER_ID=70201` 應顯示卻 0 | 🔴 坐實＝bug（findings `82e8592` 補齊：file:line 密、逐狀態比對、R0397=合法碼 IS_SHOW=N 查清、舊對照）| **根因收斂**：新版 SQL `VMainBorrowerInfoRepository:46` 多一條 `S.LOAN_TYPE_LANG_TYPE=:langType`（en_US→85／zh_TW→0），**舊版 initQuery 無此條件→疑 regression**。**待 F12 分流**：`epl-list-todolist` request `langType` + response `totalCount` → 定向後開 `00100-todo-empty-fix.md`（注意 `V_MAIN_BORROWER_INFO` 可能多語系列、langType 或為去重，修向待釐清）|
+| **RV-2** | **TODO List 空**，但 70201（role 002）有 85 筆 `CASE_PROGRESS=01`+`CURRENT_USER_ID=70201` 應顯示卻 0 | 🔴 坐實＝bug（findings `82e8592` 補齊：file:line 密、逐狀態比對、R0397=合法碼 IS_SHOW=N 查清、舊對照）| **根因收斂**：新版 SQL `VMainBorrowerInfoRepository:46` 多一條 `S.LOAN_TYPE_LANG_TYPE=:langType`（en_US→85／zh_TW→0），**舊版 initQuery 無此條件→疑 regression**。**修向原則**：langType 屬呈現層、只該決定「顯示哪語系名稱」、**不該決定「案件可見性」**——多語系 view 應 LEFT JOIN+langType fallback（沒該語系退英文），**非 INNER WHERE 砍整案**；亦不可無腦拿掉（會案件重複）。**待 F12 分流**：`epl-list-todolist` request `langType`+response `totalCount`→開 `00100-todo-empty-fix.md` |
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`；原 `archive/runbook-30pct.md` §5），不影響「程式補完」里程碑。
