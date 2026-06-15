@@ -22,12 +22,14 @@
 - [ ] **FE `environment`** API base 指向 local BE（**勿 commit 進正式 profile**）。
 
 ## 2. Bring-up 順序
+> **分工（2026-06-15 改）**：AI（Codex/Slack）**只做設定**（撈帳號→設 profile→build 確認→**產出 `start-local` 啟動腳本**），**不啟動長程序**（避免 session 卡死）；**啟動由人執行腳本**（兩視窗各起 BE/FE）。
 ```
-後端  自己終端：mvn spring-boot:run（或 java -jar target/*.jar）——啟動後確認健康/連 DB OK
-前端  自己終端：yarn ng serve ——啟動後瀏覽器開 localhost
+設定  AI：撈既有帳號→設 BE profile（url=OVSLXLON02）→ mvn build 綠 / yarn install →產 start-local 腳本
+啟動  你：執行 start-local（BE 視窗 mvn spring-boot:run、FE 視窗 yarn ng serve；各自獨立視窗不互卡）
 登入  真 dev 帳號登入拿 JWT（看真資料）；或 DevTools 塞 dummy token（只看皮，API 401）
 ```
 > auth bypass（dummy token / 關 guard）**只限本機、絕不 commit**（`SETUP-codex.md` 疑難排解）。
+> 啟動腳本＝**本機 only、勿 commit**（含本機路徑/profile；母資料夾已 gitignore）。
 
 ## 3. 能驗 / 不能驗矩陣
 | 範圍 | 能否本機 | 前提 / 備註 |
@@ -50,8 +52,9 @@
 6. 寫測收尾：產 **teardown SQL**（限測試案件）交人審清庫。
 
 ## Tasks（checklist——session 中斷在此記斷點續跑）
+- [ ] T0 AI 撈既有帳號→設 BE profile→build 確認→**產 start-local 腳本交人**（AI 到此停，不啟動）
 - [ ] T1 前置 gate 四項綠（build×2 / 授權列 / profile+environment）
-- [ ] T2 BE+FE 起來、登入通（smoke 1）
+- [ ] T2 人執行 start-local → BE+FE 起來、登入通（smoke 1）
 - [ ] T3 Phase G 新頁 render/載入（smoke 2）
 - [ ] T4 主流程 save 落庫驗證（smoke 3；測試案件段）
 - [ ] T5 c0/csu 評分頁非 403（smoke 4；授權列已套）
