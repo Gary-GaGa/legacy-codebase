@@ -74,7 +74,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
   - `c0-authz-sql-findings.md`（**授權列套用對照表**：SQL 全就緒 06-12——32 mappings／預期 insert 16 含 00117 翻案三列；待 ops 簽核→`OVSLXLON02` 套用；卡已歸檔 done/）
   - `schema-diff-findings.md`（**schema 事實 SSOT**，06-12 全量 diff 完成；recon 卡已歸檔 done/）
   - `full-refactor-audit.md` + `refactor-audit/`（**全量 zero-based 盤點 ✅ 完成 2026-06-11**：166 列，diff 報告=`refactor-audit/diff-vs-inventory.md`、QC=`refactor-audit-qc.md`；歸檔待 AUD-1~5 收口）
-  - `phase-g-csu-mainflow-fe.md`（**Phase G：企金主流程 FE 後半段補建**，audit F-1 頭條；G1–G3 ✅，G4–G6 續跑）
+  - ✅ `phase-g-csu-mainflow-fe.md` **Phase G 全收口（G1–G6，06-15）**→ 歸檔 done/（企金主流程 FE 後半段補齊，M4/M5 升 ✅）
   - `local-phase-v-bringup.md`（**本機 FE+BE 同跑 runtime 整合驗證**；DB 已通後可行，寫測打 `OVSLXLON02`＋護欄；06-14 開卡）
   - audit 修復包：✅ 已修×3 歸檔 done/（00660/00100/00119）；餘 `00640-pdf-export-fix.md`（待派工）+ `bible-gap-recon.md`（AUD-5 取證，待派工）
   - ＊**Phase F c0 FE 已收工**、**⑨ 靜態 sweep 三批已收齊** → prompt 全進 `done/`。
