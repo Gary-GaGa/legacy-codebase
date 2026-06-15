@@ -1,5 +1,7 @@
 # Build Task — `EPROZ00300` Document Checklist：FE return 成功導回（修復；DIFF-011/00300-recon）
 
+> ✅ **完成（2026-06-15，審過）**：product `40d931c`（單檔 `shared.service.ts:149`）。實作共用 `goPreviousPage()`＝既有 `addContentOnly('/to-do-list')`+`router.navigate`；Document Checklist return callback 生效。backend 零改、ng build 綠。⚠️ **Phase V 驗**：共用方法由 no-op→一律回 ToDo，連帶 Related Party/Revised Item 三呼叫端語意確認；日後要回原入口再加 `originPage` 分流（sub-agent 已標）。DIFF-011 收。
+
 > 載具：Codex（前端為主）。**依據＝`done/00300-return-recon.md` + `00300-return-recon-findings.md`**：return 後端 side effects 已坐實舊有新無（非缺陷）；**真缺口＝FE `goPreviousPage()` 為 TODO/no-op**——舊系統 return 成功後 submit back `EPROZ0_0100/prompt`（導回 ToDo 清單），新碼按了 return、後端有寫，但畫面停在原頁。
 
 ## 目標
