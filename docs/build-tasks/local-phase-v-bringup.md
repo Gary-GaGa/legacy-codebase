@@ -5,7 +5,7 @@
 > **長程序鐵則**（`process/SETUP-codex.md`）：`ng serve` / `spring-boot:run` **絕不讓 agent 跑**（等不到結束會卡死）——你在自己終端跑，agent 只改 code / 看錯誤。
 
 ## 0. 決策：寫入測試打 `OVSLXLON02`（使用者裁定 2026-06-14）
-> 本機 BE 用 **app 寫帳號**（`application.yml` 既有，非 agent 唯讀帳號）直連 **正式新 app schema `OVSLXLON02`** 做 save/submit 寫測。**已知代價＝測試髒資料會寫進正式新庫**——故下列護欄為**強制**：
+> 本機 BE 用 **DB 既有帳號**（**不創新帳號**——讀 backend datasource config 既有 profile，或唯讀查 `ALL_USERS` 撈 `OVSLXLON02` 既有可用帳號）直連 **正式新 app schema `OVSLXLON02`** 做 save/submit 寫測。**已知代價＝測試髒資料會寫進正式新庫**——故下列護欄為**強制**：
 
 ### 0.1 護欄（寫測前必讀，強制）
 1. **測試案件可識別**：寫測一律用**保留測試案件號段**（與真案件不撞；開測前先 SELECT 確認該段未被佔用，記錄用了哪些 `APPLICATION_NO`/caseNo）。
@@ -18,7 +18,7 @@
 - [ ] **後端可 build**：Nexus `maven-settings.xml` → `mvn clean package -Dmaven.test.skip=true` 綠（baseline 測試與 main 不同步，跳測試編譯）。
 - [ ] **前端可 build**：Node **16.20.2**（`nvm use`；切版刪 `node_modules` 重裝）→ `yarn install --frozen-lockfile` → `yarn ng build` 綠。
 - [ ] **授權列已套**（**測 c0/csu 頁的前提**）：在 `OVSLXLON02` 套 `docs/build-tasks/c0-authz-sql.sql`（ops 照 `c0-authz-sql-findings.md` 的 Ops Apply Checklist；預期 insert 16）——**未套打 c0 endpoint 全 403**。不測 c0/csu 可暫略，但主流程 save 仍需此庫。
-- [ ] **BE profile** 指向：DB URL=`OVSLXLON02`、app 寫帳號、（護欄 0.1 的測試案件段就緒）。
+- [ ] **BE profile** 指向：DB URL=`OVSLXLON02`、**既有帳號**（讀 config／`ALL_USERS` 撈，不創新；密碼不進 repo）、（護欄 0.1 的測試案件段就緒）。
 - [ ] **FE `environment`** API base 指向 local BE（**勿 commit 進正式 profile**）。
 
 ## 2. Bring-up 順序
