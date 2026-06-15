@@ -70,13 +70,13 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 - **進行中（live）**：
   - `a1-funcGetExchangeRate-spec.md`（A-1 換匯 stub 規格，A-1 未實作）+ `phase-d-a1-exchange-stub-investigation.md`（A-1 背景調查）
   - `00800-verification-findings.md`（as-is 證據／SRS as-is 來源；D1–D5 已修注記在內）
-  - `00300-return-recon.md`（00300 return 坐實，待派工）
+  - `00300-return-fix.md`（FE return 導回 ToDo；recon 翻案後開卡，待派工）；`00300-return-recon-findings.md`（坐實證據，留 live）
   - `c0-authz-sql-findings.md`（**授權列套用對照表**：SQL 全就緒 06-12——32 mappings／預期 insert 16 含 00117 翻案三列；待 ops 簽核→`OVSLXLON02` 套用；卡已歸檔 done/）
   - `schema-diff-findings.md`（**schema 事實 SSOT**，06-12 全量 diff 完成；recon 卡已歸檔 done/）
   - `full-refactor-audit.md` + `refactor-audit/`（**全量 zero-based 盤點 ✅ 完成 2026-06-11**：166 列，diff 報告=`refactor-audit/diff-vs-inventory.md`、QC=`refactor-audit-qc.md`；歸檔待 AUD-1~5 收口）
   - ✅ `phase-g-csu-mainflow-fe.md` **Phase G 全收口（G1–G6，06-15）**→ 歸檔 done/（企金主流程 FE 後半段補齊，M4/M5 升 ✅）
   - `local-phase-v-bringup.md`（**本機 FE+BE 同跑 runtime 整合驗證**；DB 已通後可行，寫測打 `OVSLXLON02`＋護欄；06-14 開卡）
-  - audit 修復包：✅ 已修×3 歸檔 done/（00660/00100/00119）；餘 `00640-pdf-export-fix.md`（待派工）+ `bible-gap-recon.md`（AUD-5 取證，待派工）
+  - audit 修復包：✅ 已修×4 歸檔 done/（00660/00100/00119/**00640** `c1bda77` 06-15）；✅ `bible-gap-recon`（AUD-5 收斂，06-15）歸檔；findings 留 live
   - ＊**Phase F c0 FE 已收工**、**⑨ 靜態 sweep 三批已收齊** → prompt 全進 `done/`。
 - **`build-tasks/done/`**（已消化——歷史記錄）：c0 FE 逐頁（Phase F）、00800 修正、c0 cleanup、⑨ sweep×3、staff 調查鏈、早期 B-*/EPROC/EPROISU…；06-12 進：`00800-rimat-fix`、`c0-authz-sql`、`schema-diff-recon`。
 - **live 任務單命名（2026-06-11 起）**：`<funcId>-<type>.md`（如 `00800-verification-findings.md`）；`done/` 歷史檔名不回溯改。

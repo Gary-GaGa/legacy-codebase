@@ -1,5 +1,7 @@
 # Build Task — `EPROZ00300` Document Checklist：return action 坐實（唯讀 recon）
 
+> ✅ **完成（2026-06-15，審過）**：findings＝`00300-return-recon-findings.md`。坐實**後端 DB side effects 舊有新無**（summary `CASE_PROGRESS`/`RECEIVED_DATE`/`CURRENT_USER_ID` 更新＋computed `APP_HISTORY` 都在）→ 原「空回疑慮」**非後端缺陷**。真缺口＝**FE `goPreviousPage()` 為 TODO/no-op**（舊 return 成功後 submit back `EPROZ0_0100/prompt` 導回 ToDo）。裁定 🔴 → 開修復卡 `00300-return-fix.md`。次要待產品裁定：新多寫 `APP_HISTORY=98`、branch-vs-dept、權限/錯誤訊息等價（UNFOUND，留 Phase V/owner）。
+
 > 載具：Codex（母資料夾，需新碼；舊 EPRO source 可讀則一併比對，不在則標 `UNFOUND`）。
 > **性質＝唯讀坐實**（❓→✅/🔴）：**不修碼**；產出＝findings 報告。修復另開卡。
 > **背景**：`feature-inventory.md` §2E/④——`00300` return action **空回、疑未完成**（`DocumentChecklistController:57`）。是「舊系統本來就 no-op」還是「新碼漏實作」未坐實。

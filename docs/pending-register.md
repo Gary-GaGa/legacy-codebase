@@ -22,7 +22,7 @@
 | **AUD-2**（F-6）| `EPROC0_0211/0213`（展期限定 FinEvalTable/Scorecard）遷/不遷——是否由 00116-00120 涵蓋 | M7 兩列定版 | 信用評分 domain | 06-11 | 同（DIFF-007）|
 | **AUD-3**（F-2）| `SysNews` 公告/`BatchManager`/`cacheMonitor` 遷/不遷 | M9 admin 列定版 | PM/ops | 06-11 | 同（DIFF-016）|
 | **AUD-4**（F-3）| demo 頁（`DEMOA0_*`）正式不遷裁決 | M9 demo 列定版 | PM | 06-11 | 同（DIFF-016）|
-| **AUD-5** | BIBLE-GAP-1~5（`EPROZ00670`/`EPROISU0180/0182/0183/0184`）舊源存在性驗證→補列或收斂 Bible 錨點 | audit 窮盡聲明完備性 | recon 卡 `build-tasks/bible-gap-recon.md`（待派工）| 06-11 | 同（§3）|
+| ~~**AUD-5**~~ ✅ 06-15 關 | BIBLE-GAP-1~5 舊源存在性驗證 | — | **recon 完成（`done/bible-gap-recon.md`+findings）：五項全收斂、審計總量不變**（00670→0181/TLOD；0180→z0 ToDo/Search；0182/0183/0184→0922）| 06-11→06-15 | `bible-gap-recon-findings.md` |
 | **AUD-6** 🔴（schema-diff）| `TB_FINANCIAL_EVALUATION_INFO` 6 金額欄精度縮減 `(28,2)→(20,2)`＋`FIX_RATE (10,6)→(4,2)`/`SOFR (4,2)`——利率 6 位小數→2 位疑掉精度 | 財評資料完整性（i0/c0 財評頁）| DBA/domain | 06-12 | `build-tasks/schema-diff-findings.md` |
 | **AUD-7**（schema-diff）| 舊 schema 54 表 new02 未帶——扣 `_BK/_TEST/TMP` 後的 reference/config 表（`TB_OCCUPATION`/`TB_COLL_TYPE` 系/`TB_MENU_TREE`/`TB_SCORE_CARD_PARAM_*` 等）刻意捨棄 or 漏建 | 下游功能缺表風險 | SA/DBA | 06-12 | 同 |
 | **AUD-8**（schema-diff）| new02 獨有 `TB_PAGE_COLUMN_AUTH_CATEGORY/_DETAIL` 用途確認（R7 三表外的新權限機制？）| 權限模型完整性 | SA/ops | 06-12 | 同 |

@@ -1,5 +1,7 @@
 # Build Task — `EPROZ00640` Scorecard Report：BE PDF export 殘碼處置（F-11/DIFF-013）
 
+> ✅ **完成（2026-06-15，審過，修通不掛 R2）**：product `c1bda77`。依賴查證＝被註解段依 iText7，但 repo 既有可用路徑＝openhtmltopdf+Thymeleaf+`FileService.downloadPDF`（同 TLOD `epl-ppdf-*` 模式）→ PDF endpoint 改回 `ResponseEntity<byte[]>`、移除註解殘碼、新增 `templates/pdf/EPROZ00640/scorecard-report.html`、測試改驗 blob；`mvn clean package` PASS（490 tests/0 fail）；Excel/FE 未動。inventory §2E/⑩ 回填 ✅；Phase V 實測 PDF。
+
 > 載具：Codex（後端為主）。證據＝`refactor-audit/M8-z0.md`（00640 列）：FE 期待 blob，BE controller 回 `ResponseEntity<String>` 且 **PDF writer/document 輸出整段被註解**;Excel export 正常。
 
 ## 步驟

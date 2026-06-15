@@ -72,7 +72,7 @@
 - **ADR**：`adr/ADR-0001-spec-workflow-dual-stack.md` + `README.md` + `_TEMPLATE.md`。
 
 ## 6. `build-tasks/` 生命週期（任務單怎麼流動）
-- **live**（還要用）：`00800-verification-findings.md`（SRS as-is 來源）、`00300-return-recon.md`（待派工）、`c0-authz-sql-findings.md`（授權列套用對照表——SQL 就緒、待 ops 簽核套用）、`schema-diff-findings.md`（schema SSOT）、`full-refactor-audit.md`+`refactor-audit/`（✅ 完成 06-11；歸檔待 AUD 收口）、`local-phase-v-bringup.md`（本機 runtime 整合 bring-up，06-14 開卡）、audit 修復包（✅×3 已歸檔；餘 `00640-pdf-export-fix`）、`bible-gap-recon.md`、`a1-funcGetExchangeRate-spec.md`、`phase-d-a1-exchange-stub-investigation.md`；✅ 06-12 歸檔：`00800-rimat-fix`（F1–F9 落地）、`c0-authz-sql`（SQL+precheck+00117 補產）、`schema-diff-recon`（findings 留 live）；✅ 06-15 歸檔：`phase-g-csu-mainflow-fe`（G1–G6 全收口）。
+- **live**（還要用）：`00800-verification-findings.md`（SRS as-is 來源）、`00300-return-fix.md`（FE 導回，recon 翻案後開卡，待派工）、`c0-authz-sql-findings.md`（授權列套用對照表——SQL 就緒、待 ops 簽核套用）、`schema-diff-findings.md`（schema SSOT）、`full-refactor-audit.md`+`refactor-audit/`（✅ 完成 06-11；歸檔待 AUD 收口）、`local-phase-v-bringup.md`（本機 runtime 整合 bring-up，06-14 開卡）、`a1-funcGetExchangeRate-spec.md`、`phase-d-a1-exchange-stub-investigation.md`；✅ 06-12 歸檔：`00800-rimat-fix`、`c0-authz-sql`、`schema-diff-recon`（findings 留 live）；✅ 06-15 歸檔：`phase-g-csu-mainflow-fe`（G1–G6）、`bible-gap-recon`（AUD-5 收斂）、`00300-return-recon`（→開修復卡）、`00640-pdf-export-fix`（`c1bda77` 修通）。
 - **`done/`**（22 份歷史）：完成的 build prompt（Phase F 逐頁、00800 修正、c0 cleanup、⑨ sweep×3、staff 調查鏈、早期 B-*/EPROC/EPROISU…）。
 - 規則（`README.md` 末）：**任務完成/消化 → `git mv` 到 `done/`，狀態回填 `feature-inventory.md`**。
 
