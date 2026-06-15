@@ -1,5 +1,7 @@
 # Build Task — BIBLE-GAP 驗證（唯讀 recon;AUD-5）
 
+> ✅ **完成（2026-06-15，審過）**：五項全收斂、審計總量不變。findings＝`bible-gap-recon-findings.md`；`diff-vs-inventory.md` BIBLE-GAP-1~5 改 recon-closed。00670 舊源全無→收斂 0181/TLOD；0180→z0 ToDo(00100)/Search(00600) downloadFile 承載；0182/0183/0184→Summary(0922) 三 download 承載。AUD-5 銷案。
+
 > 載具：Codex（母資料夾，唯讀）。**依據**＝`refactor-audit/diff-vs-inventory.md` §3：Bible 點名 `EPROZ00670`、`EPROISU0180/0182/0183/0184` 五個報表頁，S1–S9 審計無承載列。二選一結論：舊源真有 → S2/S3/S9 窮盡聲明有漏，補列;舊源沒有 → Bible 錨點收斂。
 
 ## 取證項
