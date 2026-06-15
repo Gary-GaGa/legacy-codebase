@@ -1,5 +1,7 @@
 # Build Task — GET 端配 request body 契約 盤點＋修（Phase V 橫向 sweep；RV-1 起）
 
+> ✅ **盤點完成（2026-06-15，審過，findings `8a06253`）＝3 處**（FE 無直接 `apiGetRequestWithBody`，但 2 處 `apiGetRequestForBlob` GET-body 等價）：#1/#2 scorecard export pdf/excel（`ScorecardReportController:55/73`）→兩邊改 POST body；**⚠️ #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）=00800 init-query→碰 SRS `@PENDING`（按 SRS 不動）→ 不可逕改，先對 00800 SRS 裁定**。00600 為已修樣板。**下一步＝C 階段修**（#1/#2 可做；#3 待 SRS）。
+
 > 載具：Codex（母資料夾，FE+BE+legacy-epro 唯讀對照）。**性質＝橫向 sweep**：先盤點同型、再批量修。
 > **背景**：Phase V 坐實 Search（`EPROZ00600`）E999＝**GET endpoint 配 `@RequestBody`**（`getSearchOptions`：`@RequestMapping(GET)` + 參數 `@RequestBody` → 請求無 body 必拋 `HttpMessageNotReadableException`）。成因＝sweep① `48e687f`「FE→GET 對齊 BE」**只改 method、body/binding 沒對齊**；FE 端對應徵狀＝以 `apiGetRequestWithBody`（GET 帶 body）呼叫。已修範例＝`done/00600-search-options-fix.md`（BE `@RequestBody`→`@ModelAttribute`、FE 改 `?param=`）。
 > **目的**：回答「**還有多少處同型殘留**」——產盤點清單（＝更動範圍）＋分類＋批量修。

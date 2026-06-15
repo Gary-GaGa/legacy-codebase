@@ -1,5 +1,7 @@
 # Build Task — langType 當資料過濾 盤點＋修（Phase V 橫向 sweep；RV-2 起）
 
+> ✅ **盤點完成（2026-06-15，審過，findings `8a06253`）＝5 處**：(a) 純過濾移除×2（`/epl-list-todolist` `VMainBorrowerInfoRepository:46`＝RV-2 首例、`/epl-list-casedistribution` `:104`）、(b) 多語系 join 誤放 outer WHERE→改 join ON+fallback×3（`/epl-list-caseapplication` `TBLonSummaryInfoRepository:75`、`/epl-list-deviation` `:366`、`/epl-list-cancelreport` `:557`）。**下一步＝C 階段批量修**（清單見 `langtype-data-filter-sweep-findings.md`）。
+
 > 載具：Codex（母資料夾，FE+BE+legacy-epro 唯讀對照）。**性質＝橫向 sweep**：先盤點同型、再批量修。
 > **背景**：Phase V 本機坐實 TODO（`EPROZ00100`）查詢用 `S.LOAN_TYPE_LANG_TYPE = :langType` 當**資料過濾**（`zh_TW`→`totalCount:0`／`en_US`→`92`），**舊版 initQuery 無此條件＝regression**（`VMainBorrowerInfoRepository:46`；findings `00100-todo-empty-recon-findings.md`）。
 > **Owner 裁示（2026-06-15，`decisions.md`）**：①語系僅 `zh_TW`+`en_US` ②**語系切換只影響元件翻譯、不影響查詢資料筆數**＝修向定案。
