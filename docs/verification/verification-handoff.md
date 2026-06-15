@@ -134,7 +134,7 @@
 
 **GET 端配 request body（`get-body-contract-sweep-findings.md`）＝3 處**（FE 無直接 `apiGetRequestWithBody`，但有 2 處 `apiGetRequestForBlob` GET-body 等價）：
 - **#1/#2 scorecard export（pdf/excel）→ 兩邊改 POST body**：`ScorecardReportController:55/73` + FE `mis-report/scorecard-report`（export 帶多 filter、generated-file 不該 GET body）。
-- **⚠️ #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query**：BE GET+`@RequestBody` 但 FE 已 POST（method mismatch）。**此條碰 00800 SRS init-query `@PENDING`（inventory §4⑩/⑨ 記「按 SRS 不動」）→ 不可當普通 sweep 逕改，先對 00800 SRS 那條 @PENDING 裁定**。
+- **⚠️ #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query → SRS `@PENDING RP9`**（`spec.md:111`；init-query method：PRD §6.1=GET vs 全站 RPC-POST vs as-is FE POST/BE GET；owner=RD/架構）。**證據盤點（06-15）傾向 GET query**：PRD §6.1=GET、舊 `EPROZ0_0800` 用 request param（GET 語意）、`00600` 已立 GET-query 樣板、execute(R10)已定 POST→「query=GET／mutation=POST」對稱。**唯一待坐實＝全站 `epl-*` method 慣例**（是否 RPC 一律 POST 凌駕個別 RESTful）→ grep 坐實後 RD/架構裁 RP9 → #3 修法隨之定（GET query 同 00600 ／ 或 POST 最小對齊 FE）。**不逕改**。
 - 00600 已修為樣板（不算候選）。
 
 ---
