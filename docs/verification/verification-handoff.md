@@ -123,7 +123,7 @@
 | # | 發現 | 性質 | 處置 |
 |---|---|---|---|
 | **RV-1** | **Search 頁開即 E999**：`getSearchOptions` `Required request body is missing`（GET 無 body＋BE `@RequestBody` 殘留，疑 sweep① `48e687f` 不完整 regression）| ✅ 已修 runtime bug（角色無關，AO 也噴）| `getSearchOptions` 改為 GET query/model binding；FE 改用 `?langType=`，不再送 GET body；見 `build-tasks/00600-search-options-fix.md` |
-| **RV-2** | **TODO List 空**，但 `OVSLXLON02.TB_LON_SUMMARY_INFO` 內 70201 有 194 筆（CASE_PROGRESS 01=86/R0397=59/D1=23/C1=15/27=7/08=4）| ⚠️ 坐實中（有案件卻不顯示 vs 這些狀態本就不入 TODO）| recon `build-tasks/00100-todo-empty-recon-findings.md`（派工中）；附帶查 `R0397` 異常值 |
+| **RV-2** | **TODO List 空**（中文 UI）| 🔴 **坐實（F12 06-15）**：`zh_TW`→`totalCount:0`／`en_US`→`totalCount:92`，langType 砍資料確認 | **根因**：新版 SQL `VMainBorrowerInfoRepository:46` 多 `S.LOAN_TYPE_LANG_TYPE=:langType`，**舊版 initQuery 無此條件＝regression**（findings `82e8592`）。**Owner 裁示 06-15**：①語系只剩 `zh_TW`+`en_US` ②**語系只影響翻譯、不影響資料數量**＝修向定案。修＝langType 退出資料過濾（多語系 view→LEFT JOIN+fallback，非 INNER WHERE；不可無腦拿掉）→ 併入 `langtype-data-filter-sweep.md`（盤同型頁＋修，TODO 首例）|
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`；原 `archive/runbook-30pct.md` §5），不影響「程式補完」里程碑。
