@@ -115,7 +115,7 @@
 |---|---|:--:|:--:|---|
 | EPROZ00100 | TO DO LIST（+00101/00102 popup）| ✅ | ✅ | ✅ F-10 已修（`2599752`，popup reason 回 API 來源）；F-9＝`@PENDING` 掛 R2（呈報書下載走 goPath）/檔案 API（upload stub）兩 ⏸ track |
 | EPROZ00200 | New Case Application（進件入口）| ✅ | ✅ | ✅；案號序列細節未深入 |
-| EPROZ00300 | Document Checklist | 🟡 | ✅ | **recon 坐實 06-15**（`done/00300-return-recon.md`）：BE return **非缺陷**（summary 更新＋computed APP_HISTORY 都在）；**FE `goPreviousPage()` 為 no-op**→缺導回 ToDo（🔴）→修復卡 `00300-return-fix.md`。次要待裁：APP_HISTORY=98/branch-vs-dept/權限·錯誤訊息等價（UNFOUND）|
+| EPROZ00300 | Document Checklist | ✅ | ✅ | **FE 導回已修 06-15**（`40d931c`；實作共用 `goPreviousPage()`＝`addContentOnly('/to-do-list')`+navigate、backend 零改）；BE return 早坐實非缺陷。⚠️ **Phase V 驗**：共用方法由 no-op→一律回 ToDo，連帶 Related Party/Revised Item 三呼叫端，語意確認（日後要回原入口再加 originPage 分流）。次要待裁：APP_HISTORY=98/branch-vs-dept/權限·錯誤訊息等價（UNFOUND）|
 | EPROZ00400 | Case Distribution | ✅ | ✅ | cross-check ✅ |
 | EPROZ00410 | Related Party Info | ✅ | ✅ | cross-check ✅ |
 | EPROZ00500 | Comparison table…CUBC | ✅ | ✅ | cross-check ✅ |
@@ -179,7 +179,7 @@
 - A-1 換匯 stub（**撥貸總開關、最優先**；OQ-2 精度✅已關 06-12）、B-1 `T24_COMPANY`（✅前提推翻→RD 接值）、換匯源 ID（=新庫兩 schema 選一）、檢核嚴格度、KHR、欄寬、async、M6 完工日 DTO 缺源。
 
 **④ z0 半成品收尾（小修；owner：前後端）**
-- `00300` Document Checklist：✅ recon 坐實 06-15（`done/00300-return-recon.md`）——BE 非缺陷；**FE 缺導回 ToDo（`goPreviousPage` no-op）→ 修復卡 `00300-return-fix.md`（待派工）**。
+- `00300` Document Checklist：✅ **recon 坐實＋FE 導回已修 06-15**（recon `done/00300-return-recon.md`；fix `40d931c`，卡歸檔 `done/00300-return-fix.md`）——BE 非缺陷、FE 導回 ToDo 已實作（共用 `goPreviousPage()`）；DIFF-011 收。Phase V 驗共用方法連帶呼叫端語意。
 - ✅ `00600` Search method 已修（sweep① `48e687f`）。
 
 **④b 🟠 `00800` Revised Item（owner：RD 實作＋SA 取數）**
@@ -203,7 +203,7 @@
 
 - 🟡 **命名 tech-debt（06-12 快檢記錄）**：`epl-comm-isu-update-total-amount`（+class/DTO）實為 case-type 無關（計算不落 DB；LDTC 副作用被 `LON_ATTRIBUTE='I'` gate 限定），corporate 沿用安全——rename 低優先、閒時清。
 
-**⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×4（`00660`/`00100`/`00119` `5a47038`/`2599752`/`6919da5`，06-11；**`00640` PDF 修通不掛 R2 `c1bda77`，06-15**，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ **BIBLE-GAP recon 完成（AUD-5 關 06-15）**；新增 `00300-return-fix.md`（FE 導回，recon 翻案後開卡，待派工）；待裁＝AUD-1~4/6/7/8。
+**⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×5（`00660`/`00100`/`00119` `5a47038`/`2599752`/`6919da5`，06-11；**`00640` PDF `c1bda77`、`00300` FE 導回 `40d931c`，06-15**，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ **BIBLE-GAP recon 完成（AUD-5 關 06-15）**；待裁＝AUD-1~4/6/7/8。
 
 ---
 
