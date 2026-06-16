@@ -2,6 +2,7 @@
 
 > **舊系統比對（Step A/A2/B）完成後的綜合裁決**（2026-06-05）。逐項證據表（含 T24 段位、舊業務規則、`file:line`）存本機 `legacy-extract/*-compare.md`（gitignore）；本檔只到**主題 / 嚴重度 / owner / 信心**。
 > 配 `verification-handoff.md` §2.1/§2.2/§2.3。
+> ⚠️ **重大裁定更新（2026-06-16）**：① **A-1 換匯 stub 已實作＋conformance PASS**（`daae4c3`，P0-1 結）② **批次層 AUD-10 結**（6/8 FOUND + B005 inline-取代銷案）③ **owner「T24 都照舊系統規格」** → §2/§3 所有 T24 欄值/來源/格式/截斷 **全收編＝照舊 parity、轉執行**（卡 `build-tasks/t24-bgroup-legacy-parity-fix.md`；邊界＝KHR 無舊 spec→維持新）。**下文 §6「需真 T24 spec/domain」對 T24 欄部分已被此裁定 supersede**；殘 domain＝A-4 檢核嚴格度、M6 完工日 DTO。
 
 ## 0. 總結論（里程碑更正）
 **新撥貸後端（`0921 DataInput` + `0922 Summary` + T24 組檔）＝結構搭好、但功能未完成且與舊系統實質分歧。**

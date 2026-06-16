@@ -14,7 +14,8 @@
 | **A-6** | `0922 submit` history `25`→`24` | confirm 正確序號後再定 | 狀態序·低 | §7 line72 |
 
 ## B. T24 整合 owner / T24 spec
-| # | 主題 | 需要的決策 | 影響·信心 | 出處 |
+> ✅ **owner 裁定（2026-06-16）：「T24 都照舊系統規格」** → **B-2/B-3/B-4/B-5 + A-3 全收編＝照舊 parity**，轉**執行階段**（卡 `build-tasks/t24-bgroup-legacy-parity-fix.md`：Codex 逐欄坐実舊行為+對齊，金錢欄最嚴人審）。**邊界**：KHR 在地化無舊 spec → 維持新（A-5）；換匯欄「位置/來源/格式照舊、幣別涵蓋維持新」。下表 B-2~B-5 主題保留作執行清單；裁定已定（照舊），不再逐項 owner。
+| # | 主題 | 需要的決策（✅ 06-16 全裁＝照舊）| 影響·信心 | 出處 |
 |---|---|---|---|---|
 | **B-1** 🟡 降級（06-12 前提推翻）| ~~`T24_COMPANY` 死路：讀已移除欄~~ → **新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存**（`OVSLXLON01`/`OVSLXLON02` 兩 schema 皆有，06-12 DDL 實查）——「舊有新無」係 schema-Excel/entity 盤點漏列 | **轉 RD 動作**：確認 app 連用 schema → entity 補欄位映射 → `B8`/`C9` 接值；殘留小裁定＝兩 schema 選哪個（連動 A-1 OQ-1）| T24 缺值·高→**可解** | §1 P0-3 |
 | **B-2** | `A16` `NORMAL.LAON`→`LOAN` | 確認 `LAON` 是否為 **T24 期望的 key**（疑非錯字、勿順手改） | 改錯會破 T24·中 | §2 / §7 |
