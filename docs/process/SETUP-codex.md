@@ -30,7 +30,7 @@
 
 放好後 → 在母資料夾執行 Codex 就自動遵守全部慣例 → **prompt 裡不用再寫它們**。
 
-> （可選）若也用 Copilot：path-scoped `.github/instructions/*.instructions.md` 同理放各子目錄。用 Codex 的話 `AGENTS.md` 就夠。
+> 用 Codex 的話 `AGENTS.md`（root + `backend/` + `frontend/`）就夠。〔GitHub Copilot 第三軌已於 2026-06-16 移除。〕
 
 ## 2. 不用每次重打 prompt 的關鍵
 重複的「慣例」（config-driven、`app-*→cub-*→mat-*`、空/載入/錯誤狀態、JWT、分層、`EPROResponse`…）**已在 `AGENTS.md` 裡** → Codex 自動吃。**每張任務你只貼「頁面專屬」那一小段**（從 `docs/build-tasks/*.md` 複製）。

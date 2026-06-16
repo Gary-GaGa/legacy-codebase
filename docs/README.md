@@ -15,7 +15,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 
 > 逐層「資料夾 × 工具 × 閘門」對照表＝[`repo-structure.md`](repo-structure.md) §1（**單一出處，本檔不再複寫**）；機械閘門涵蓋範圍＝`../scripts/check-srs-bundle.py` 檔頭。狀態回填→`feature-inventory.md` ⭐（SSOT）。
 
-> **治理/憲法**（always-on，不屬單一層）：根 `CLAUDE.md`（Claude）/ `AGENTS.md`（Codex）/ `.github/`（Copilot）+ `backend/`·`frontend/AGENTS.md`；雙軌範本 `env/codex/`。
+> **治理/憲法**（always-on，不屬單一層）：根 `CLAUDE.md`（Claude）/ `AGENTS.md`（Codex）+ `backend/`·`frontend/AGENTS.md`；雙軌範本 `env/codex/`。〔GitHub Copilot 第三軌 2026-06-16 移除。〕
 
 ## 🟢 狀態 / SSOT（先看這裡｜頂層）
 | 檔 | 用途 |
