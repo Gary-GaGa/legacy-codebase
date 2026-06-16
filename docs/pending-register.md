@@ -13,7 +13,7 @@
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **RP9 / init-query method** | GET（PRD §6.1）vs 全站 RPC-POST vs as-is 不一致 | `00800` init-query 契約 method | RD/架構 | 06-09 | 同 |
+| **RP9 / init-query method** | GET（PRD §6.1）vs 全站 RPC-POST vs as-is 不一致。**證據齊（06-16 method recon）**：全站 280/282 POST、query-like 132/133 POST，2 GET=reviseditem 自己+剛立 00600；**POST=全站一致(#3 最小修)vs GET=RESTful/PRD/舊系統**——雙向證據備齊,待架構取捨 | `00800` init-query 契約 method（連 get-body #3）| RD/架構 | 06-09 | `epl-method-convention-findings.md`＋handoff §6.2 |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤` |

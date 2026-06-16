@@ -5,7 +5,8 @@
 
 name = "verifier-regression"
 description = "orchestration 三軸驗證之回歸軸：只查對舊系統/i0 鏡像有無偏離、既有路徑回歸、有無 reflection/委派。只審不改。"
-model = "claude-opus-4-8"          # 建議與另兩軸跨模型（跨廠更佳），降 correlated blindness
+model = "gpt-5.4"                 # 預設同廠可行（pilot 06-16：綁跨廠 claude-opus 在 Codex 帳號失敗→fallback）
+                                  # 跨廠（claude/gemini）降 correlated blindness 更佳，但須帳號支援；不支援則退同廠不同模型+不同指示
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 

@@ -1,5 +1,7 @@
 # Build Task — 撥貸 T24 G/H 段匯率欄名 typo 修（OQ-5 坐實 bug）
 
+> ✅ **完成（2026-06-16，orchestration pilot Task 2，審過）**：product `581e717`——`SummaryServiceImpl:2223` G/H 兩處 `EXCHANGR_RATE`→`EX_RATE_BUY`（1 file 2+/2−）；E 段(:2146)/A-1 stub 未動；`git grep EXCHANGR_RATE` 無殘留；`mvn clean package` BUILD SUCCESS；三軸 verifier(contract/scope/regression) PASS。⚠️ 撥貸 authorize 端到端仍待 A-1 stub。
+
 > 載具：Codex（後端；明確 typo 修，附舊系統+DB 鐵證）**或**交撥貸 domain。**獨立可做**——不依賴 A-1 換匯 stub（雖同在撥貸 authorize 鏈）。
 > **來源**：`a1-oq-legacy-recon-findings.md` OQ-5（2026-06-16 審過）。
 

@@ -50,6 +50,7 @@
 - `funcGetExchangeRate` 應讓 API exception/timeout 中止 authorize，避免 NPE 被包成泛用 Authorize Fail，也避免錯誤後續組 T24/SFTP。
 
 ## OQ-5 - exchange-rate column name used by T24 composition
+> ✅ **已修（2026-06-16，product `581e717`）**：`SummaryServiceImpl:2223` G/H `EXCHANGR_RATE`→`EX_RATE_BUY`（卡 `done/0922-t24-exchrate-colname-fix.md`）。下列為原 recon 證據。
 
 ### 舊系統做法
 - 舊 `getExchangeRate` 成功後寫 `TB_DISBUR_DATE.EX_RATE_BUY/EX_RATE_SELL` 與 `TB_EXCHANGE_RATE.EX_RATE_BUY/EX_RATE_SELL`：`legacy-epro/JavaSource/com/cathaybk/epro/is/module/EPROIS_0922_mod.java:1085-1106`。
