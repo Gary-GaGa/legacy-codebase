@@ -7,7 +7,7 @@
 ## 0. 先抓三大類
 | 類 | 是什麼 | 代表 |
 |---|---|---|
-| **A 治理/憲法**（always-on，跨所有 flow） | 規則、權限、雙軌對照 | `CLAUDE.md`、`AGENTS.md`、`backend/`+`frontend/AGENTS.md`、`.github/` |
+| **A 治理/憲法**（always-on，跨所有 flow） | 規則、權限、雙軌對照 | `CLAUDE.md`、`AGENTS.md`、`backend/`+`frontend/AGENTS.md` |
 | **B AI flow 工具與產物** | 各階段的 skill/agent/閘門 + 產出的 bundle/任務單 | `.claude/`、`docs/env/codex/`、`scripts/`、`golden-template/`、`build-tasks/` |
 | **C 規劃 / 狀態 SSOT**（橫向參考） | 盤點、對應、決策、驗證交接 | `feature-inventory.md` ⭐、`pending-register.md`、`decisions.md`、`legacy/`、`verification/` … |
 
@@ -26,19 +26,21 @@
 | **Done → 回歸** | 回填狀態 + bug→回歸 case | — | `feature-inventory.md` 回填；bug → 新 `qa-cases.md` case | — |
 | **盤點 / 校正**（drift loop，非主線一站）| zero-based 重推總量、對 SSOT 做 diff（只報不改）| **`.claude/skills/refactor-audit/`** ∥ `docs/env/codex/prompts/refactor-audit.md` | `build-tasks/refactor-audit/`（diff-vs-inventory + QC 日誌）；回填 `feature-inventory.md` §1「audit 驗證」欄 | — |
 
-## 2. 雙軌對照（同一角色、三個載具）
-| 角色 | Claude Code | Codex CLI（範本→部署 `.codex/`） | GitHub Copilot |
-|---|---|---|---|
-| 憲法 | `CLAUDE.md` | `AGENTS.md` §Spec workflow | `.github/copilot-instructions.md` |
-| PRD→SRS | `.claude/skills/prd-to-srs/` | `docs/env/codex/prompts/prd-to-srs.md` | — |
-| Legacy→Bible | `.claude/skills/legacy-to-bible/` | `docs/env/codex/prompts/legacy-to-bible.md` | — |
-| 進度盤點（zero-based） | `.claude/skills/refactor-audit/` | `docs/env/codex/prompts/refactor-audit.md` | — |
-| spec 審查（唯讀） | `.claude/agents/spec-reviewer.md` | `docs/env/codex/spec-reviewer.toml` | — |
-| c0 鏡像審查 | （用 spec-reviewer/語意） | `docs/env/codex/reviewer-c0.toml` | — |
-| 權限/安全 | `.claude/settings.json` | `docs/env/codex/config-permissions.md` | — |
-| 形式硬閘門 hook | `.claude/settings.json`(hooks) | `docs/env/codex/hooks.json` | — |
-| 機械閘門腳本（共用） | `scripts/check-srs-bundle.py`、`scripts/verify-c0.py` | 同（hooks 掛同腳本） | 同 |
-| 分層開發規則 | — | `backend/AGENTS.md`、`frontend/AGENTS.md` | `.github/instructions/{backend,frontend}.instructions.md` |
+## 2. 雙軌對照（同一角色、兩個載具）
+> 〔GitHub Copilot 第三軌 2026-06-16 移除（`.github/` 刪）→ 回歸 Claude↔Codex 雙軌；見 `decisions.md`。〕
+
+| 角色 | Claude Code | Codex CLI（範本→部署 `.codex/`） |
+|---|---|---|
+| 憲法 | `CLAUDE.md` | `AGENTS.md` §Spec workflow |
+| PRD→SRS | `.claude/skills/prd-to-srs/` | `docs/env/codex/prompts/prd-to-srs.md` |
+| Legacy→Bible | `.claude/skills/legacy-to-bible/` | `docs/env/codex/prompts/legacy-to-bible.md` |
+| 進度盤點（zero-based） | `.claude/skills/refactor-audit/` | `docs/env/codex/prompts/refactor-audit.md` |
+| spec 審查（唯讀） | `.claude/agents/spec-reviewer.md` | `docs/env/codex/spec-reviewer.toml` |
+| c0 鏡像審查 | （用 spec-reviewer/語意） | `docs/env/codex/reviewer-c0.toml` |
+| 權限/安全 | `.claude/settings.json` | `docs/env/codex/config-permissions.md` |
+| 形式硬閘門 hook | `.claude/settings.json`(hooks) | `docs/env/codex/hooks.json` |
+| 機械閘門腳本（共用） | `scripts/check-srs-bundle.py`、`scripts/verify-c0.py` | 同（hooks 掛同腳本） |
+| 分層開發規則 | — | `backend/AGENTS.md`、`frontend/AGENTS.md` |
 > **鏡像＝薄殼指標**（2026-06-11）：Codex 範本只含指標＋差異清單，**內容權威＝Claude 版**；詳 `CLAUDE.md §2`。
 
 ## 3. 治理 / 憲法層（always-on）
@@ -46,7 +48,6 @@
 - `AGENTS.md`（root）— 共用開發規則 + Spec workflow（Codex 側憲法）。
 - `backend/AGENTS.md` — 後端鐵則（§6 c0 自足鏡像、§6.1 例外、registry/版本鎖定）。
 - `frontend/AGENTS.md` — 前端鐵則（config-driven、cub-* 元件、§5 Adobe XD 設計規格）。
-- `.github/copilot-instructions.md` + `instructions/{backend,frontend}.instructions.md` — Copilot 版（`applyTo` 依資料夾自動套用）。
 
 ## 4. 規劃 / 狀態 SSOT（橫向參考）
 | 檔 | 角色 |

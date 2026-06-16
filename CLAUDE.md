@@ -22,7 +22,7 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 | **SRS 機械閘門** | `scripts/check-srs-bundle.py`（雙軌共用，非 LLM；**涵蓋範圍＝腳本檔頭 canonical 清單，勿在他處複寫**）| 同（hooks 掛同腳本）|
 | c0 鏡像審查 | —（用 review/語意審）| `.codex/agents/reviewer-c0.toml` |
 
-> Codex 版皆為 `docs/env/codex/` 範本，部署到本機/專案 `.codex/`。**鏡像＝薄殼指標**（2026-06-11 健檢採納，ADR-0001 更新）：Codex prompt/agent 範本只含「指標＋Codex 側差異清單」，**內容權威＝Claude 版檔案**——改內容只改 Claude 版；Codex 範本僅在差異清單（語法/部署）變動時才動。第三軌 Copilot（`.github/`，精簡摘要）對照見 `docs/repo-structure.md` §2。
+> Codex 版皆為 `docs/env/codex/` 範本，部署到本機/專案 `.codex/`。**鏡像＝薄殼指標**（2026-06-11 健檢採納，ADR-0001 更新）：Codex prompt/agent 範本只含「指標＋Codex 側差異清單」，**內容權威＝Claude 版檔案**——改內容只改 Claude 版；Codex 範本僅在差異清單（語法/部署）變動時才動。〔第三軌 GitHub Copilot（`.github/`）已於 2026-06-16 移除——回歸 Claude↔Codex 雙軌；見 `decisions.md`。〕
 > **雙軌 parity 機械化**（2026-06-12）：本表 ↔ `AGENTS.md §Spec workflow` 的工具/共用參照同步由 `python scripts/check-dualtrack-parity.py` 驗（任一 parity anchor 漏在一邊＝FAIL）。**加雙軌工具時兩份 constitution 都要提到**（內容仍只改 Claude 版＝薄殼指標）；anchor 清單單一出處＝該腳本 `ANCHORS`。
 
 ## 3. 生命週期
