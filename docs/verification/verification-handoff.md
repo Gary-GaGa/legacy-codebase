@@ -138,4 +138,4 @@
 - 00600 已修為樣板（不算候選）。
 
 ---
-> 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`；原 `archive/runbook-30pct.md` §5），不影響「程式補完」里程碑。
+> 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`），不影響「程式補完」里程碑。
