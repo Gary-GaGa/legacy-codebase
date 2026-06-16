@@ -6,7 +6,7 @@
 ## A. 撥貸 domain 開發（金錢核心 / 行為語意）
 | # | 主題 | 需要的決策 | 影響·信心 | 出處 |
 |---|---|---|---|---|
-| ~~**A-1**~~ ✅ 已實作（`daae4c3` 06-16）| `funcGetExchangeRate` 尾端 throw-stub | **依 a1-spec OQ-1~5 補 return＋移尾端 throw → mvn clean package 綠**（附 3 測試修：CaseDistribution 8 參數/Scorecard POST/FileService @TempDir）。⚠️ **spec-conformance 待碼驗/Phase V**：OQ-1 `IdNo=01`、OQ-3 `EPROIS0921_UI_RAET_FIND_ERROR` 映射、OQ-4 throw 勿回 null、兩表同交易——terse 回報未明 | 已實作·待 conformance | §1 P0-1 |
+| ~~**A-1**~~ ✅ 已實作＋conformance PASS（`daae4c3` 06-16）| `funcGetExchangeRate` 尾端 throw-stub | **依 a1-spec OQ-1~5 補 return＋移尾端 throw、mvn 綠；Codex 唯讀碼驗 4/4 PASS**（OQ-1 `IdNo=01` `:1181`、OQ-3 非0000拋錯中止 authorize、OQ-4 throw 勿回 null、兩表同 `@Transactional`；錯誤碼＝專屬 `FAILED_E304` 非泛用 E303）。詳 `done/a1-funcGetExchangeRate-spec.md` 標頭 | ✅ 全結 | §1 P0-1 |
 | ~~**A-2**~~ ✅（06-16 owner）| `EXCHANGE_RATE` 來源 ID `OVSLXLON01`→`02` | **裁定＝先對齊舊 parity→`OVSLXLON01`**（與 OQ-1 係同一分歧，同步取舊值）。⚠️ schema-diff 證據偏「02=新庫刻意」，故為「先固定」，唯一復驗點＝新環境 T24 拒收 `01` | 換錯匯率源·已裁 | §2 / §7 line71 |
 | **A-3** | `E21` 非 USD 非 KHR 輸出 `0`（舊全換匯） | 是否隨 KHR 在地化刻意改；非 USD/KHR 幣別該如何出 | T24 值錯·中 | §2 / §7 |
 | **A-4** | `0921` 檢核對等：`CheckMainBorr`/`CheckCoBorr`（身分/sector/account/`DATA_SEQ`/business-section）、`info CO_CHECK ='Y'` vs 舊 `!='N'`、Finished gate 未驗 `mbCheck`、law firm `IS_SHOW` 版本條件、address `UPD_DATE` 來源 | 逐項裁「嚴格度差異是 intended 還是 regression」 | 檢核漏放/誤擋·中 | §3 P2 |

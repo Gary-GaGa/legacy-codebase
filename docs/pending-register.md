@@ -22,7 +22,7 @@
 | ~~**AUD-5**~~ ✅ 06-15 關 | BIBLE-GAP-1~5 舊源存在性驗證 | — | **recon 完成（`done/bible-gap-recon.md`+findings）：五項全收斂、審計總量不變**（00670→0181/TLOD；0180→z0 ToDo/Search；0182/0183/0184→0922）| 06-11→06-15 | `bible-gap-recon-findings.md` |
 | **AUD-7**（schema-diff）| 舊 schema 54 表 new02 未帶——扣 `_BK/_TEST/TMP` 後的 reference/config 表（`TB_OCCUPATION`/`TB_COLL_TYPE` 系/`TB_MENU_TREE`/`TB_SCORE_CARD_PARAM_*` 等）刻意捨棄 or 漏建。**06-16 legacy-reverify 確認**：`TB_SCORE_CARD_PARAM_MAIN/SUB` 舊有新無（新僅 `_DETAIL`）、db-schema-catalog/module 已校正——餘 54 表去留仍待裁 | 下游功能缺表風險 | SA/DBA | 06-12 | 同＋`legacy-schema-db-reverify-findings.md` |
 | **AUD-8**（schema-diff）| new02 獨有 `TB_PAGE_COLUMN_AUTH_CATEGORY/_DETAIL` 用途確認（R7 三表外的新權限機制？）| 權限模型完整性 | SA/ops | 06-12 | 同 |
-| **AUD-10**（F-OWN-1，owner 盤點 reconcile）| **批次層 `EPROZ0_B001–B008` 完全未當工作單位追蹤**——owner 權威盤點列 8 批次，我們 inventory/diff 全無；新系統等價物存否未知（B005 匯率/B006 放款結果 async/B007 SFTP＝撥貸下游交付關鍵）| 進度 % 漏批次層；撥貸端到端下游 | RD/ops（先 Codex 碼驗） | 06-16 | `refactor-audit/owner-inventory-reconcile.md` F-OWN-1 |
+| **AUD-10**（F-OWN-1，owner 盤點 reconcile）| **批次層 `EPROZ0_B001–B008` 完全未當工作單位追蹤**——owner 權威盤點列 8 批次，我們 inventory/diff 全無；新系統等價物存否未知（B005 匯率/B006 放款結果 async/B007 SFTP＝撥貸下游交付關鍵）| 進度 % 漏批次層；撥貸端到端下游 | RD/ops（先 Codex 碼驗） | 06-16 | 卡＝`build-tasks/aud10-batch-layer-reverify.md`；source F-OWN-1 |
 | **AUD-11**（F-OWN-4）| `EPROCU0160` owner 盤點分出獨立新頁 vs 我們併 `EPROCSU0160`——typo 還是真分歧 | 企金無擔 Loan Condition 頁對應 | RD（Codex 碼驗）| 06-16 | 同 F-OWN-4 |
 
 ## ⚪ 非阻擋 / 暫緩 / 待業務（可獨立排）
