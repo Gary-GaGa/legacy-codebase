@@ -1,5 +1,7 @@
 # Build Task — legacy/ 早期 schema 推斷 vs DB 全面復驗（A 類唯讀 recon）
 
+> ✅ **完成（2026-06-16，審過，findings `legacy-schema-db-reverify-findings.md`）**：96 表斷言查證、93 證實、**7 🔴 推翻 + 2 ⚠️ 未涵蓋**。7 推翻已回填 legacy 內文（db-schema-catalog ×6：71→142 表／CROSS_CHARGE 表名／SCORE_CARD MAIN-SUB 舊有新無／EMP_PROXY 複合 PK／T24_BRANCH_CODE(20)／FUNCTION_AUTH FUNCTION_ID(50)；migration-backlog ×2：TB_FUNCTION_INFO 移除/EMP_PROXY PK；module-i0-c0-scoring ×1：SCORE_CARD）。連動：EMP_PROXY 複合 PK→`00700-deputy-pk-reverify.md`（deputy 已完成頁潛在 bug）;SCORE_CARD→AUD-7。findings 留 live。
+
 > 載具：Codex＋DB 唯讀 wrapper（或先用既有 `schema-diff-findings.md` 對照）。**A 類**（唯讀產 findings，可進 orchestration）。
 > **背景**：`legacy/` 多檔的 schema/entity 斷言產於 **DB 未通時代（曾誤判 DB2）**——已抓到錯：`TB_BRANCH_PROFILE`「無 `T24_COMPANY`」實為**有**（`schema-diff-findings.md:246`，連動撥貸 B-1/A-1 OQ-1）。**系統性復驗**：把所有「資料事實」推斷對 DB DDL 校正,一次掃乾淨「DB 未通時代的誤判」（別逐檔踩雷）。
 > **判準（DB 通後重驗什麼）**：只驗「**資料事實**」（entity 欄位/PK/型別/長度/schema/表存在性）——DB 是更高權威;**不驗「方法/規格/流程」**（那些 DB 不取代）。
