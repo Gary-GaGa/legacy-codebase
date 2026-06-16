@@ -66,7 +66,7 @@
 - **[`disbursement/`](disbursement/)**：`disbursement-triage.md`（0921/0922/T24 triage）、`disbursement-domain-escalations.md`（待 domain/T24/DBA 裁決）；A-1＝`build-tasks/a1-funcGetExchangeRate-spec.md` + `phase-d-a1-exchange-stub-investigation.md`。
 - **[`verification/`](verification/)**（Phase V）：`verification-handoff.md`（殘留驗證項清單）、`verification-execution.md`（怎麼分階段跑）。
 - **[`process/`](process/)**：`SETUP-codex.md`（dev-box 設定+疑難排解）、`vision-pipeline.md`。
-- **[`archive/`](archive/)**（已消化、留存備查）：`review-c0-prompt.md`、`phase1-eproz0_0700-spec.md`、`completion-ledger.md`、`runbook-30pct.md`（後兩者 2026-06-11 凍結）。
+- **[`archive/`](archive/)**（已消化、留存備查）：`review-c0-prompt.md`、`phase1-eproz0_0700-spec.md`、`completion-ledger.md`（2026-06-11 凍結）。〔`runbook-30pct.md` 已刪 2026-06-16：內容被 `build-tasks/`+`STATUS.md` 取代、引用失效〕
 - **環境 / 設定**：`docs/env/`（`backend.gitignore`/`frontend.gitignore`/`frontend.yarnrc`/`maven-settings.xml` + `codex/`）。
 - **樣板**：`golden-template/README.md`（FE 黃金樣板 + JSP→元件對照）；SRS bundle 範本說明＝`specs/srs/README.md`（原 boundary-bundle，2026-06-09 移）。
 - **規格 pipeline 家**：`specs/`（`bible/` → `prd/` → `srs/`，分層即 flow；見 `specs/README.md`）。

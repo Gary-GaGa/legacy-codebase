@@ -22,7 +22,7 @@
 | 產品 | PM/PO | **PRD**（what）| 散在 `build-tasks/` `page-mapping.md` | 🟡 |
 | 規格 | SA | **SRS**：OpenAPI + spec + DB schema | `module-*.md` `db-schema-catalog.md` `AGENTS.md` | 🟡（OpenAPI 未落地）|
 | 測試 | QA | **QA case** + bug case | `待整合驗證清單`（散文、延後）| 🔴 缺可跑測試 |
-| 實作 | RD-Agent | code → CICD → issue | `AGENTS.md` + `verify-c0` + `runbook-30pct` | ✅ 最成熟 |
+| 實作 | RD-Agent | code → CICD → issue | `AGENTS.md` + `verify-c0` + `build-tasks/`（live 卡）+ `STATUS.md` | ✅ 最成熟 |
 
 ## 3. 核心原則：往上可追溯、往下可驗證
 - **AI 在每一層都會 confabulate** → 每個交接點（邊界）必須是**機器可驗證的契約**，不是純文字，否則 AI 只是自己給自己打分。

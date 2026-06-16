@@ -76,7 +76,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 
 ## 🗄 [`archive/`](archive/)（已消化、留存備查）
 - `review-c0-prompt.md`（c0 後端審查 prompt）、`phase1-eproz0_0700-spec.md`（Phase 1 切片，已完成）。
-- `completion-ledger.md`（30% 總盤點；內容併入 feature-inventory，2026-06-11 凍結）、`runbook-30pct.md`（30% 自走控制文件；c0 結清、撥貸改走 triage/A-1 專屬文件，2026-06-11 凍結）。
+- `completion-ledger.md`（30% 總盤點；內容併入 feature-inventory，2026-06-11 凍結）。〔`runbook-30pct.md` 已刪 2026-06-16：內容被 `build-tasks/`+`STATUS.md` 取代、引用失效〕
 
 ---
 > 維護：規格三層放 `specs/`；舊系統分析→`legacy/`、撥貸→`disbursement/`、驗證→`verification/`、流程→`process/`；任務完成→ `build-tasks/done/`；狀態變動回填 `feature-inventory.md`。

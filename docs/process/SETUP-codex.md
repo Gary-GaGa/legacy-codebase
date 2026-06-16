@@ -139,7 +139,7 @@
 ## 7. 自走（goal mode）補完剩餘 30%
 > 把「人工 review」寫進 repo，讓自走盡量安全。**`build 綠 ≠ 正確`**（本專案已多次綠但有 bug）。
 - **硬規則**：`backend/AGENTS.md` §6（自足鏡像、禁反射/委派/individual、checkpoint、UTF-8 No BOM、`-c0-` 命名、§6.6 煞車）。
-- **控制文件**：🗄 `docs/archive/runbook-30pct.md`（30% 自走已結案、檔已凍結；現行派工＝`docs/build-tasks/` live 任務單、狀態＝`docs/feature-inventory.md`）。
+- **控制文件**：現行派工＝`docs/build-tasks/` live 任務單、狀態＝`docs/STATUS.md`+`docs/feature-inventory.md`。〔原 `archive/runbook-30pct.md`＝30% 自走控制,已結案並於 2026-06-16 刪除（內容被上述取代）〕
 - **DB 存取（2026-06-12 定案，`decisions.md` §三；新舊兩庫皆 Oracle、皆可連）**：agent 一律**唯讀帳號（新舊各一）**——環境變數建議 `EPRO_DB_NEW_RO_*`／`EPRO_DB_OLD_RO_*`（URL/USER/PASS），帳密不進 repo、不進 prompt；查詢走 sqlplus/SQLcl、`config.toml` 對 DB 指令設 **ask**；**DML/DDL 禁止 agent 直執行**——產 SQL 檔交人審套用（c0-authz-sql 卡模式；舊庫純查證、無寫入情境）。**部署範本＝`docs/env/db-ro-wrappers.md`**（env var＋wrapper×2＋config ask）。MCP 暫不導入，Phase V 再評。
 - **硬閘門腳本**：`python scripts/verify-c0.py --git`（驗 strict-UTF-8 + No BOM、禁用樣式、`-c0-` 命名、**修改既有 i0/Csu* 檔**；`FunctionService` 例外 allowlist）。可接 Codex hook（`docs/env/codex/hooks.json`，`Stop`/`PostToolUse`），但 **hook 未必真 block（exit≠0 需 wrapper），故當每頁必跑的手動/CI 閘門、別只靠 hook**。**只攔形式錯；語意正確性仍需對 i0/人審**。
 - **頁卡**：`docs/build-tasks/done/EPROC00118-*`、`EPROISU0920-*`、`EPROCSU0130-*`（已完成歸檔；含鏡像來源與煞車）。
