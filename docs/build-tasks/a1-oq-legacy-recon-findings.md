@@ -21,7 +21,8 @@
 - 新系統是否刻意改用 `OVSLXLON02` 不可由舊碼裁定。
 
 ### 留 T24 確認點
-- 請 T24 owner 確認 `KH-B-FTR37001` 在新環境認可的 `IdNo` 是 `OVSLXLON01` 還是 `OVSLXLON02`，以及此值是否等同 schema/key 身份。
+- ✅ **owner 裁定（2026-06-16，先對齊舊系統 parity）：`IdNo=OVSLXLON01`**。原確認點降為**唯一復驗點**——若新環境 `KH-B-FTR37001` 拒收 `01`（schema-diff 證 02=新庫），改 `02` 並回填。
+- （原問，留參）請 T24 owner 確認 `KH-B-FTR37001` 在新環境認可的 `IdNo` 是 `OVSLXLON01` 還是 `OVSLXLON02`，以及此值是否等同 schema/key 身份。
 
 ## OQ-3 - non-0000 failure code and message
 

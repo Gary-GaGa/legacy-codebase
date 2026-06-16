@@ -7,7 +7,6 @@
 ## 🔴 擋主線（卡住才能往下走）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **A-1 OQ**（OQ-2 精度✅關）→ **✅ 舊系統對等 recon 完成（06-16，審過）**：**OQ-3**（舊 throw `EPROIS0921_UI_RAET_FIND_ERROR`、勿用 FAILED_E303）/**OQ-4**（舊不吞錯往外拋、新 stub catch 回 null→NPE，建議明確 throw）/**OQ-5**（🔴 坐實 `EXCHANGR_RATE`=typo，G/H 應讀 `EX_RATE_BUY`）舊系統皆給對等建議；**OQ-1 縮小至 T24 一個確認**（舊固定 `OVSLXLON01`，新用 `02` 不可由舊碼裁）| owner 僅需確認「忠實對等 vs 刻意演進」＋OQ-1 T24 身份；之後撥貸 domain RD 照規格施工 | 撥貸 authorize 端到端；**撥貸上線關鍵路徑** | T24/domain 確認對等 | 06-05 | `a1-funcGetExchangeRate-spec.md` §7＋`a1-oq-legacy-recon-findings.md` |
 | **撥貸 domain group** | ~~`T24_COMPANY` 值源~~（**06-12 前提推翻→B-1 降級轉 RD 接值**，escalations B-1）、檢核嚴格度、`KHR`(演進勿改回)、欄寬、async、M6 完工日 DTO 缺源；~~精度~~（C-1 ✅已關）| 撥貸 0921/0922/T24 行為對等 | 撥貸 domain/T24/DBA | 06-05 | `disbursement-domain-escalations.md` |
 
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
@@ -60,10 +59,11 @@
 | **RP9** ✅（06-16 RD/架構）| init-query＝GET（Follow PRD §6.1；method recon 全站 280/282 POST 仍依 PRD 走 RESTful）→ R2/Endpoints/openapi 定版、get-body #3 解鎖 | `00800 spec.md §@PENDING` |
 | **AUD-6** ✅（06-16 DBA/domain）| 接受財評精度縮減（`(28,2)→(20,2)`、利率 6→2 位；新 DB 為準不還原）⚠️ 利率 2 位 caveat | `schema-diff-findings.md` |
 | **AUD-9** ✅（06-16）| deputy 已對齊複合 PK（`@EmbeddedId` EMP_ID+STR_TIME）＝無 bug，早期單鍵係文件假設錯、碼對 | `00700-deputy-pk-reverify-findings.md` |
+| **A-1 OQ**（OQ-1~5）✅（06-16 owner：先對齊舊 parity）| OQ-1=`IdNo=OVSLXLON01`（非新 stub `02`；同 A-2 匯率源）、OQ-3=映射 `EPROIS0921_UI_RAET_FIND_ERROR`＋非 0000 中止 authorize、OQ-4=catch throw 勿回 null、OQ-5=G/H 讀 `EX_RATE_BUY`（已修 `581e717`）、OQ-2 精度（已關）→ **A-1 stub 轉施工-ready**（編碼缺口見 STATUS §三）。⚠️ 唯一復驗點＝新環境 T24 拒收 `01` | `a1-funcGetExchangeRate-spec.md` §7＋`a1-oq-legacy-recon-findings.md` |
 | **TBD-001 / RP6** ✅（06-12）| ITEM1~14 名稱取數定版（舊庫 `TB_COMMON_FIELD_OPTIONS`+`TB_MULTI_LANG`，findings E1）→ 畫面顯示定版、順帶裁 RP4、RP2 原因補文 | 同 |
 | **TBD-005 / RP4** ✅（06-12）| **設計非缺陷**：ITEM1=Renew Loan Tenor ≠ ITEM10=ATC_Tenor → R13.4/13.5 定版、QA-009 拆 a/b、實作＝rimat F9 | 同 |
 
 ---
 > 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。**裁定內容只寫來源檔（spec §@PENDING）**，本表只留 id/狀態/owner/指回——本表＝derived 視圖。
 > **機械同步**：SRS 來源列（RPn/BP-n）由 `scripts/check-srs-bundle.py` gateⓅ 對 spec §@PENDING 表自動 diff（漏登記/失步=FAIL）；非 SRS 來源列（A-1 OQ、撥貸 group、E1/E2…）仍靠人工。
-> 用途：站會/交接看這張就知道「等誰、等什麼」；🔴 **兩項**（A-1 OQ、撥貸 domain group）是目前**唯一擋住主線**的決策。
+> 用途：站會/交接看這張就知道「等誰、等什麼」；🔴 **一項**（撥貸 domain group）是目前**唯一擋住主線**的決策。**A-1 OQ 已全裁（06-16，先對齊舊 parity）→ 移已關區**，A-1 stub 轉施工-ready（編碼缺口、非決策）。
