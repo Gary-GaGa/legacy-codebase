@@ -42,12 +42,13 @@ model: opus
 - 每條 case **真的測到該 `Rn` 的精神**（不是掛個 `covers:` 充數）；Given/When/Then 具體可執行、有**明確 DB/可觀察驗證點**。
 - happy / error / edge 三類齊；邊界值（maxlength+1、空、非法 enum）有測；`@PENDING` case 標明且不計 gate⑤。
 
-## 批判輪2 紅旗（2026-06-16；轉換固有、PRD 反推自 code 必復發 → 每次必查）
-> 這 4 類是 00800 批判複審蒸餾出的「轉換固有病」——原則多半已寫在 spec/DoD，但**沒被逐條 check 就等於虛設**。逐項主動查：
+## 批判輪2/3 紅旗（2026-06-16；轉換固有、PRD 反推自 code 必復發 → 每次必查）
+> 這 5 類是 00800 批判複審蒸餾出的「轉換固有病」——原則多半已寫在 spec/DoD，但**沒被逐條 check 就等於虛設**。逐項主動查：
 - **① Bible 安全網**：列 Bible 點名的 BR/SC/**災難情境** → 每條在 SRS 有承載 `Rn` **或**明文 disclaim？**安全/災難類未承載卻標 Approved(含 subset)＝🔴 Blocker**（源 00800 BR-014「不該顯示卻顯示」被降 BP1 seam 仍 Approved subset）。
 - **② 契約 ⊥『後端為準』**：凡 `Rn` 寫「後端為準／不得信前端」（如 DB 二次比對為唯一側效依據），request 契約**竟讓 client 送該決策欄**＝🔴/🟡（源 `checkPointMap`/`isNotSame` 入 request vs R11）。
 - **③ mutating 端點 FE-only 強制**：強制點＝FE-only 的規則落在會 mutate/刪資料的端點（execute/POST），**無對應 BE 強制 `Rn`** 且無「為何 FE-only 足夠」說明＝🟡（源 00800 R3/R5/R6/R7 FE-only on execute）。
 - **④ Status 雙軸**：Status 未分『規格定版／實作完成』、用單一 `Approved(subset)` 混『規格定了』與『實作好了』＝🟡（gateⓈ(b) 已 warn，你確認語意）。
+- **⑤（批判輪3）PRD 錯誤碼漏承載 / status conflation**：PRD Error Response 表逐碼 → SRS 有無對應 `Rn` 錯誤規則 **且** openapi response？**PRD 列了、spec/openapi 皆漏且無 disclaim＝🔴 Blocker**（源 00800 SR-B1 `MSG_OVER_COUNT_LIMIT`/`MSG_QUERY_FAIL`）。**把不同 HTTP status 的錯誤併成一碼**（如查詢失敗 500 併進輸入錯誤 400）＝🔴/🟡（源 SR-B2）。gateⒺ 已機械 warn 漏承載/status 不一致，你確認 disclaim 是否合理（如 init-query 無分頁→count-limit 可不適用）。⚠️ 機械 gate 對 PRD 表格已去 `\_` 跳脫；你人讀時也別被 `MSG\_X` 跳脫騙過。
 
 ## 輸出（依嚴重度，每項標 **檔名:行號 + 具體修法**）
 - **🔴 Blocker** — 定稿前必修（缺需求、矛盾、無法驗證的 criteria、endpoint 用理想化 REST、TBD 沒掛 @PENDING）。
