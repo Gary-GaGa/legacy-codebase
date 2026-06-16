@@ -21,7 +21,7 @@
 ```
 - **manifest 來源**：各頁 `qa-cases.md` 的讀型 case（When＝epl-*、Then＝DB 驗證點）；等價 SQL＝該 endpoint 的查詢（從 `verification-handoff`/findings 已知者起手，如 langType 五頁的 count 比對）。
 - **可重複 / idempotent**：唯讀、可連跑、結果一致（同 `verification-execution §1.5`）。
-- **langType regression 守門**：v1 必含「`zh_TW` 與 `en_US` 筆數一致」斷言（五頁）——直接把 RV-2 修復變成**回歸守門**，未來再有人加 langType WHERE 會被這支抓到。
+- **langType regression 守門**：v1 必含「`zh_TW` 與 `en_US` 筆數一致」斷言（五頁）——直接把 RV-2 修復變成**回歸守門**，未來再有人加 langType WHERE 會被這支抓到。**此段 manifest 約定已 grounded 寫出＝`phase-v-harness-manifest-v1-langtype.md`（五列 endpoint/handler/repo `file:line` + 基準筆數齊、差分斷言定義）；harness author materialize 成 runnable 即可。**
 
 ## 鐵則
 1. **v1 全唯讀**：只 GET/查詢 + 唯讀帳號 SELECT；**不寫 DB**（任何寫入留 v3）。
