@@ -15,7 +15,7 @@
 | DB：歷史配置標示 **DB2**（`DB2PoolSvc.xml`）；**06-12 實連更正：現行舊庫＝Oracle** | **舊→新 Oracle schema 遷移**（R1 已定）；SQL 以新慣例改寫＋schema 改名對映 |
 | 報表：**JasperReports 3.5.2**（`RptUtils`、printPDF/printProposal）| **改用新報表服務**（R2 已定，獨立 track，Jasper 頁暫緩）|
 | 檔案：commons-fileupload，內部 upload/downloadFile | 檔案上傳/下載 API（待設計） |
-| 權限：`AuthManager` **source=db** → `TB_FUNCTION_INFO`+`TB_FUNCTION_AUTH`(FUNC_ID/USER_ROLE)，funcId=bean **去底線**（`EPROZ0_0700`→`EPROZ00700`）| `APIAuthorizationFilter`（apiPath+roleId 查 DB）**同型** → 遷移資料、`FUNC_ID↔apiPath`；前端 `role-id-config` |
+| 權限：`AuthManager` **source=db** → `TB_FUNCTION_AUTH`(FUNC_ID/USER_ROLE)，funcId=bean **去底線**（`EPROZ0_0700`→`EPROZ00700`）〔⚠️ 2026-06-16 DB 校正：原列 `TB_FUNCTION_INFO` 在新舊 DB extract **皆無**，已移除——勿據此設計遷移資料,除非另有 legacy 證據〕| `APIAuthorizationFilter`（apiPath+roleId 查 DB）**同型** → 遷移資料、`FUNC_ID↔apiPath`；前端 `role-id-config` |
 
 ## 1. 模組地圖（遷移單位 = 模組流程）
 > 共通樣式：每個業務模組有兩套近乎平行流程——`_0100` 申請、`_0200` 覆核；且 `is↔iu`、`cs↔cu` 兩兩平行。
@@ -74,7 +74,7 @@
 ## 5. 下一步
 - [x] **R1（DB 目標）= 舊→新 Oracle schema 遷移（06-12 更正：非跨引擎）**、**R2（報表）= 換新報表服務（獨立 track）**
 - [x] **D2 完成**：Phase 1 切片 = `EPROZ0_0700` → build spec 已產出
-- [ ] 在實際 monorepo 依 spec 實作 Phase 1。開放項：✅ A1（entity 定稿，新 DB schema）、⬜ A2（roleId 白名單 = 查 `TB_FUNCTION_AUTH` runtime 資料）、A3 Self/Others、A5 XD 連結；**需業務確認：`TB_EMP_PROXY` PK=EMP_ID 單鍵（一人一筆代理）**
+- [ ] 在實際 monorepo 依 spec 實作 Phase 1。開放項：✅ A1（entity 定稿，新 DB schema）、⬜ A2（roleId 白名單 = 查 `TB_FUNCTION_AUTH` runtime 資料）、A3 Self/Others、A5 XD 連結；**⚠️ 2026-06-16 DB 校正：`TB_EMP_PROXY` PK 實為複合 `EMP_ID`+`STR_TIME`（一人可多筆代理期間），非「EMP_ID 單鍵/一人一筆」——deputy entity/upsert/delete 須對齊複合 PK（連動 `done/EPROZ00700`）**
 - [x] **D3 完成**：`is`/`iu` 共用 shell = **兩層**（外層 pageMap 流程頁 + 內層區塊 tabs），主鍵 `APPLICATION_NO`，IS=有擔/IU=無擔 → 目標架構與子樣式見 [`module-is-iu-shell.md`](module-is-iu-shell.md)、`golden-template` §八（解 R6/R3）
 - [x] **B3 完成**：cs/cu **重用外層 shell 機制**；差異 = 每模組 descriptor config + 企金內層元件（collateral `0250` 三分頁）+ **c0 評分/檢核橋接層**（`EPROC0_0110` 掛入 pageMap）→ [`module-cs-cu-shell.md`](module-cs-cu-shell.md)。M4/M5：殼免費、需 config + 企金 section（非「幾乎免費」但遠低於重做 shell）。
 - [ ] **c0 與主流程綁定**：M6/M7（i0/c0）的 c0 評分部分嵌在企金流程中 → 盤點 i0/c0 時與 M4/M5 一起考慮
