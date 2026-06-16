@@ -5,13 +5,12 @@
 > **06-11 裁定輪**：`00800` TBD-001~007 七條全裁（五關二改追蹤），見文末 §✅ 已關。
 
 ## 🔴 擋主線（卡住才能往下走）
-| ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
-|---|---|---|---|---|---|
-| **撥貸 domain group** | ~~`T24_COMPANY` 值源~~（**06-12 前提推翻→B-1 降級轉 RD 接值**，escalations B-1）、檢核嚴格度、`KHR`(演進勿改回)、欄寬、async、M6 完工日 DTO 缺源；~~精度~~（C-1 ✅已關）| 撥貸 0921/0922/T24 行為對等 | 撥貸 domain/T24/DBA | 06-05 | `disbursement-domain-escalations.md` |
+> **（目前無）**——2026-06-16 owner「**T24 都照舊系統規格**」後，撥貸 domain group **大縮移 🟡**；A-1（換匯 stub+conformance）、批次層 AUD-10 全結 → **無 owner 決策擋主線**，撥貸剩**執行**（Codex T24 B-group batch-fix）+ 小 domain。
 
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
+| **撥貸 domain 殘**（group 大縮）| ~~T24 欄值/格式/欄寬~~（✅ 06-16「T24 照舊規格」→ 執行 `build-tasks/t24-bgroup-legacy-parity-fix.md`）、~~async~~(AUD-10)、~~KHR~~(保留)；**殘＝A-4 檢核嚴格度、M6 完工日 DTO 來源**（較小）| 撥貸 0921 檢核/M6 正確性 | 撥貸 domain | 06-05 | `disbursement-domain-escalations.md` |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤` |
@@ -68,4 +67,4 @@
 ---
 > 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。**裁定內容只寫來源檔（spec §@PENDING）**，本表只留 id/狀態/owner/指回——本表＝derived 視圖。
 > **機械同步**：SRS 來源列（RPn/BP-n）由 `scripts/check-srs-bundle.py` gateⓅ 對 spec §@PENDING 表自動 diff（漏登記/失步=FAIL）；非 SRS 來源列（A-1 OQ、撥貸 group、E1/E2…）仍靠人工。
-> 用途：站會/交接看這張就知道「等誰、等什麼」；🔴 **一項**（撥貸 domain group）是目前**唯一擋住主線**的決策。**A-1 OQ 已全裁（06-16，先對齊舊 parity）→ 移已關區**，A-1 stub 轉施工-ready（編碼缺口、非決策）。
+> 用途：站會/交接看這張就知道「等誰、等什麼」；**🔴 擋主線 owner 決策＝目前無**（2026-06-16 T24 全裁「照舊規格」後清空）——撥貸 A-1/批次層/T24 全裁，殘 owner-decision＝🟡 A-4 檢核/M6（較小）+ T24 轉 Codex 執行。
