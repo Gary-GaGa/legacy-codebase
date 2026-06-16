@@ -1,7 +1,7 @@
 # langType Data Filter Sweep Findings
 
 > Scope: grep / inventory only. No source changes. Date: 2026-06-15.
-> Task source: `docs/build-tasks/langtype-data-filter-sweep.md`.
+> Task source: `docs/build-tasks/done/langtype-data-filter-sweep.md`.
 
 ## Summary
 
