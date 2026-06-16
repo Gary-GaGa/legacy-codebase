@@ -82,13 +82,13 @@
 >
 > 判準演進：~~有無引用~~ → ~~引用死活~~ → ~~資料復驗~~ → **結論是否已進 SSOT**。**「被引用」不再是「該留」的理由**（證據被引很正常）；**「結論已進 SSOT」才是「可收」的理由**。⚠️ 例外：一份 findings 若**被某個 open 項當『來源』長期依賴**（如 as-is 來源、open AUD 的證據），即使其本身 card 已 done 仍**留 live**（如 `00800-verification-findings`＝RP8/RP11 as-is 來源、`legacy-schema-db-reverify-findings`＝open AUD-7 證據）。
 
-- **active＝只留四種**（2026-06-16，13 份）：
-  1. **open 工單／進行中 sweep**：`get-body-contract-sweep.md`+`-findings.md`（#3 待修，RP9✅解鎖）、`local-phase-v-bringup.md`（Phase V bring-up）、`phase-v-api-selfverify-harness.md`（Phase V API 自驗 v1 唯讀）、`t24-bgroup-legacy-parity-fix.md`（T24 照舊 batch-fix）、`khr-currency-handling-recon.md`（A-5 坐実、已關待收）。
+- **active＝只留四種**（2026-06-16，11 份）：
+  1. **open 工單／進行中 sweep**：`get-body-contract-sweep.md`+`-findings.md`（#3 待修，RP9✅解鎖）、`local-phase-v-bringup.md`（Phase V bring-up）、`phase-v-api-selfverify-harness.md`（Phase V API 自驗 v1 唯讀）、`t24-bgroup-legacy-parity-fix.md`（T24 照舊 batch-fix）。
   2. **尚未套用的 ops artifact**：`c0-authz-sql-findings.md`（授權列對照——SQL 就緒、待 ops 簽核套 `OVSLXLON02`）。
   3. **長青參考／SSOT**：`schema-diff-findings.md`（schema SSOT，AUD-7/8 還開）、`full-refactor-audit.md`+`refactor-audit/`（audit 工作集，待 AUD 收口）、`refactor-audit-qc.md`（QC 日誌）。
   4. **進行中里程碑的 evidence（open 項來源例外）**：`00800-verification-findings.md`（RP8/RP11 as-is 來源）、`legacy-schema-db-reverify-findings.md`（open AUD-7 證據）。
 - **2026-06-16 收納批**（A-1 落地＋conformance PASS `daae4c3` 後）：`a1-funcGetExchangeRate-spec.md`（含 conformance 記錄）、`a1-oq-legacy-recon-findings.md`、`phase-d-a1-exchange-stub-investigation.md` → `done/`（A-1 全結，三份證據已消化）。
-- **`done/`**（完成歸檔，含 card + 已消化 findings）：Phase F 逐頁、00800 修正、c0 cleanup、⑨ sweep、staff 調查鏈、早期 B-*/EPROC/EPROISU…；**2026-06-16 收納批**：`00300-return-recon-findings`、`00800-pending-recon-findings`、`langtype-data-filter-sweep-findings`、`bible-gap-recon-findings`、`00700-deputy-pk-reverify-findings`、`00100-todo-empty-recon-findings`、`epl-method-convention-findings`（結論皆已進 SSOT、card 已 done → 隨 card 歸檔，引用已 rewire 至 `done/`）；**AUD-10 結後**：`aud10-batch-layer-reverify.md`+`-findings.md`（批次層 app 層完整、B005 銷案）。
+- **`done/`**（完成歸檔，含 card + 已消化 findings）：Phase F 逐頁、00800 修正、c0 cleanup、⑨ sweep、staff 調查鏈、早期 B-*/EPROC/EPROISU…；**2026-06-16 收納批**：`00300-return-recon-findings`、`00800-pending-recon-findings`、`langtype-data-filter-sweep-findings`、`bible-gap-recon-findings`、`00700-deputy-pk-reverify-findings`、`00100-todo-empty-recon-findings`、`epl-method-convention-findings`（結論皆已進 SSOT、card 已 done → 隨 card 歸檔，引用已 rewire 至 `done/`）；**AUD-10 結後**：`aud10-batch-layer-reverify.md`+`-findings.md`（批次層 app 層完整、B005 銷案）；**A-5 結後**：`khr-currency-handling-recon.md`+`-findings.md`（幣別坐実、owner 裁 keep）。
 - 規則（`README.md` 末同步）：**任務完成/消化 → `git mv` 到 `done/`、引用 rewire、狀態回填 `feature-inventory.md`**。
 
 ---
