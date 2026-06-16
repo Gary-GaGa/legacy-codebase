@@ -33,6 +33,6 @@
 3. 不改碼、不跑 build。
 
 ## 回報
-產表：`批次 ↔ legacy 職責 ↔ 新等價物 file:line ↔ found/UNFOUND/partial ↔ 性質(app/ops/缺)`，寫 `docs/build-tasks/aud10-batch-layer-reverify-findings.md`。**先報清單給人審**：缺的（尤其 B005/B006/B007）→ 回填 feature-inventory 批次層 + 開修復卡；ops 類 → 交 ops。
+產表：`批次 ↔ legacy 職責 ↔ 新等價物 file:line ↔ found/UNFOUND/partial ↔ 性質(app/ops/缺)`，寫 `docs/build-tasks/done/aud10-batch-layer-reverify-findings.md`。**先報清單給人審**：缺的（尤其 B005/B006/B007）→ 回填 feature-inventory 批次層 + 開修復卡；ops 類 → 交 ops。
 
 > 過了：批次層從「進度盲區」收進 inventory；撥貸端到端的「下游交付」缺口坐實或排除（AUD-10 結）。
