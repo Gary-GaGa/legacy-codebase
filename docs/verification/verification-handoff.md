@@ -134,7 +134,7 @@
 
 **GET 端配 request body（3 處）**：
 - **#1/#2 scorecard export（pdf/excel）＝✅ 兩邊改 POST body（product `751f78f`，06-16）**：`ScorecardReportController:55/73` + FE `apiPostRequestForBlob`、`@RequestBody` 保留、query-list 未誤動。
-- **⏸ #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query → SRS `@PENDING RP9`**：**method 慣例 recon 完成（06-16，`epl-method-convention-findings.md`）**——全站 `epl-*` 280/282 POST、query-like 132/133 POST；**2 個 GET ＝ 此 reviseditem 自己 + 剛立的 00600 樣板**（扣掉即 100% POST）。RP9 雙向證據齊：**POST（全站一致,#3 最小修=BE GET→POST、FE 已 POST）vs GET（PRD §6.1+舊系統+00600 樣板,同型先例僅 00600）**→ **C 類交 RD/架構裁；不逕改**。
+- **🔧 #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query → RP9 ✅ 關（06-16 RD/架構：GET，Follow PRD §6.1）**：解鎖。修向＝**GET query 同 00600**（BE `@RequestBody`→`@ModelAttribute` applicationNo、FE 改 GET query）。**可派工**（get-body sweep 卡 #3）。
 - 00600 已修為樣板（不算候選）。
 
 ---

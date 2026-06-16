@@ -2,7 +2,7 @@
 
 > **進度（盤點 06-15＋部分修 06-16，審過）＝3 處**（FE 無直接 `apiGetRequestWithBody`，但 2 處 `apiGetRequestForBlob` GET-body 等價）：
 > - ✅ **#1/#2 scorecard export pdf/excel 已修**（`ScorecardReportController:55/73` 改 POST、FE `apiPostRequestForBlob`、`@RequestBody` 保留，product `751f78f`）。
-> - ⏸ **#3 `epl-case-query-reviseditem`（`RevisedItemController:38`）=00800 init-query → SRS `@PENDING RP9`**：待全站 `epl-*` method 慣例 grep 坐實→RD/架構裁 RP9，**不逕改**。**本卡因 #3 續留 live**。00600 為已修樣板。
+> - 🔧 **#3 `epl-case-query-reviseditem`（`RevisedItemController:38`）=00800 init-query → RP9 ✅ 關（06-16：GET，Follow PRD §6.1）**：解鎖,修向＝**GET query 同 00600**（BE `@RequestBody`→`@ModelAttribute`/`@RequestParam` applicationNo、FE 改 GET query）。**可派工**。00600 為已修樣板。
 
 > 載具：Codex（母資料夾，FE+BE+legacy-epro 唯讀對照）。**性質＝橫向 sweep**：先盤點同型、再批量修。
 > **背景**：Phase V 坐實 Search（`EPROZ00600`）E999＝**GET endpoint 配 `@RequestBody`**（`getSearchOptions`：`@RequestMapping(GET)` + 參數 `@RequestBody` → 請求無 body 必拋 `HttpMessageNotReadableException`）。成因＝sweep① `48e687f`「FE→GET 對齊 BE」**只改 method、body/binding 沒對齊**；FE 端對應徵狀＝以 `apiGetRequestWithBody`（GET 帶 body）呼叫。已修範例＝`done/00600-search-options-fix.md`（BE `@RequestBody`→`@ModelAttribute`、FE 改 `?param=`）。
