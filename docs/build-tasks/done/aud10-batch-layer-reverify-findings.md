@@ -1,5 +1,7 @@
 # AUD10 batch layer reverify findings
 
+> ✅ **判定回填（2026-06-16）**：**B005 銷案**——Codex 唯讀查證 backend **無任何 `TB_EXCHANGE_RATE` read 點**（entity mapping + repository surface 無 custom query 亦無呼叫；`FunctionServiceImpl:1208/:1218` 純 write/persist；無 native `FROM/JOIN TB_EXCHANGE_RATE`）。T24 組檔/PDF 報表讀的是**個案 `TB_DISBUR_DATE.EX_RATE_*`**（inline `funcGetExchangeRate:1199` 寫、authorize `:2322` 觸發），**非每日 `TB_EXCHANGE_RATE`**。→ 無非-authorize reader 依賴預匯當日匯率 ⇒ **B005 每日批次由 inline 取代、非缺口**。附帶觀察：`TB_EXCHANGE_RATE` 在新系統為 **write-only**（寫了沒人讀＝vestigial、鏡像舊行為、無害）。**AUD-10 結（app 層）**：6/8 FOUND + B005 inline-取代；**僅 B008 log 歸檔屬 ops（非 app 碼）**。
+
 日期：2026-06-16
 
 範圍：唯讀碼驗 `backend/` 新後端是否存在 legacy `EPROZ0_B001` 至 `EPROZ0_B008` 等價物。結論只採用程式碼與設定檔 `file:line` 證據，不以 inventory 或頁面 mapping 作為等價證據。

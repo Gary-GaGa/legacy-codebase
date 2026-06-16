@@ -21,7 +21,21 @@
 | **B-3** | `C12` `SUG_VAL` 讀錯表、`C13` `DECISION_DATE`→`CHECK_DATE` 來源、`G4`/`G10`/`H8` 換匯欄、`G11–G12` fee remark mapping、`A15` 空值補 `N/A` | 逐欄對 **真 T24 spec** 定來源/格式（部分金錢） | T24 值/格式·中 | §2 / §7 line71 |
 | **B-4** | `AGREEMENT_NO` 截斷（`A31`/`G7`，舊取後 16 碼） | confirm **T24 欄寬**後定截斷規則 | T24 欄寬·中 | §2 / §7 |
 | **B-5** | 行尾 `\r\n` vs `\n`（T24 可能敏感）、`C26` title-deed 全 join 到每筆 C row | T24 對行尾/重複的容忍度 | 格式符合性·中 | §3 P2 |
-| **B-6** | 架構：`t24DealResult`→批次 `EPROZ0B006`(async)、mail 改 scheduler 後送、`IS_AUTODIS=YC` | 是否採新批次/async 架構（非單純 bug） | 架構選擇·中 | §3 P2 |
+| **B-6** 🟢 大致解 | 架構：`t24DealResult`→批次 `EPROZ0B006`(async)、mail scheduler、`IS_AUTODIS=YC` | **AUD-10 已坐実新系統採 async 批次架構**（B006 結果處理器、B007 結案皆 active scheduled）→「是否採新批次/async 架構」＝**是、已建**；殘＝mail scheduler timing／`IS_AUTODIS=YC` 語意（小，domain 確認）| 架構選擇·已答 | §3 P2＋AUD-10 |
+
+### B-group parity-first 預分類（2026-06-16；依 owner parity 裁定〔A-1/A-2 已立〕＋ AUD-10）
+> owner 已立原則「**撥貸 outbound 參數先對齊舊系統 parity**」（A-1 OQ-1/A-2 落地）。把 B-group 同型（T24 outbound 欄值新/舊分歧）依此預分三類，**收斂 owner 裁定量**：
+>
+> **① parity-default（鏡像舊、建議 owner 一次裁「T24 outbound 欄一律先對齊舊 parity」→ 之後 Codex 逐欄坐実舊行為即可批量修）**
+> - **B-2** `A16` `LAON`：parity → **保留舊值 `LAON`**（勿改 `LOAN`；本就疑 T24 期望 key）。
+> - **B-3/C12** `SUG_VAL` 讀錯表 → 還原舊讀的表；**C13** 日期來源 → 還原舊 `DECISION_DATE`；**G11–G12** fee remark → 舊 mapping；**A15** 空值 → 舊行為。
+> - 動作：owner 蓋「parity 適用」一次 → 派 Codex 逐欄坐実舊 T24 組檔行為（`file:line`）→ 批量修（同 get-body/langtype sweep 模式）。
+>
+> **② 需 T24-spec（parity 給預設、外部確認）**：**B-4** `AGREEMENT_NO` 截斷（parity=舊取後16碼；**T24 欄寬**待確認，同 A-1「先固定 parity、新環境拒收再調」）、**B-5** 行尾 `\r\n`／`C26` 重複（T24 格式容忍度）。
+>
+> **③ 需 domain（刻意演進、parity 會錯）**：**B-3/G4·G10·H8** 換匯欄（與 KHR 在地化纏一起，非-USD/KHR 幣別出法）、**B-6** mail timing／`IS_AUTODIS`（架構已建、殘語意）。
+>
+> → **collapse 效果**：B-group 從「逐欄對 T24 spec」降為「owner 蓋 ① parity 一次 + ②兩項 T24-spec + ③兩項 domain」。①是大宗、可批量。
 
 ## C. DBA / 舊 DDL（**06-12：舊庫可連（Oracle），DDL 可自查**）
 | # | 主題 | 需要的決策 | 影響·信心 | 出處 |
@@ -39,5 +53,7 @@
 - **整合驗證確認點**（繼承既有行為、非新引入，整合測時跑）：**M7** facility fee 改 `LOANAMOUNT` 後實際有值；**M9** A52 該 `UPD_DATE` 慣例能 join 到非空 `DISTRICT_NAME`。
 - **Tech-debt sweep**（工程、非 domain）：codebase native-query map-key **大小寫混用**（`loanAmount` vs `LOANAMOUNT`）→ 可能藏同類靜默回 null 的 bug，排一次全面 sweep。
 - **Ops smell**：後端 Logback 測試設定硬編碼 `D:\temp\saveFile\log`，非 Windows/無 `D:` 環境擋 build（現以 `-Dlogging.*.path` 覆寫繞過）→ 外部化該路徑。
+- **Ops 追蹤（AUD-10 B008）**：legacy `EPROZ0_B008` DB/security log 歸檔（搬 `securityLog/yyyy`）新後端 UNFOUND → 確認是否改由 logrotate／平台／job scheduler 歸檔；非 app 碼缺、不擋撥貸。
+- **Tech-debt（AUD-10 附帶）**：`TB_EXCHANGE_RATE` 在新系統 **write-only**（inline `funcGetExchangeRate` 寫、無人讀）→ 鏡像舊行為、無害，惟可列日後 cleanup 候選。
 
 > 維護：本檔只列**待 owner 裁**項；裁決後回填對應 `triage`/`verification-handoff`，並把已決項從本檔移除或標 ✅。
