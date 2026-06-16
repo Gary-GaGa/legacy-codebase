@@ -137,7 +137,7 @@
 | ✅ **A-1 換匯 stub（+conformance PASS）** | **已實作＋碼驗（product `daae4c3`，06-16；mvn 綠）** | `funcGetExchangeRate` 補 return＋移尾端 throw → authorize 換匯總開關打通。**Codex 唯讀 conformance 4/4 PASS**：OQ-1 `IdNo=OVSLXLON01`(`:1181`)、OQ-3 非0000拋錯中止 authorize（碼＝專屬 `FAILED_E304`）、OQ-4 throw 勿回 null、兩表同 `@Transactional`。規格/recon 收 `done/` |
 | 🟡 B-1 `T24_COMPANY`（06-12 降級）| **前提推翻→RD 接值** | 新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存（OVSLXLON01/02 兩 schema，DDL 實查）；entity 補映射＋B8/C9 接值 |
 | 🔴 其餘 domain | 未決 | 換匯源 ID（已裁 01）、檢核嚴格度、KHR、欄寬、async 架構… |
-| 🟠 **批次層 B001–B008** | **碼驗部分回（06-16，AUD-10）** | ✅ B006 結果檔/B007 SFTP＝**FOUND**（撥貸下游交付不缺）；🔴 **B005 匯率排程＝app 碼缺**（新只有 inline 換匯 A-1；待 domain 判「inline 取代 vs 漏建」——查 `TB_EXCHANGE_RATE` 非-authorize 讀者）；⚪ B008 log 歸檔→ops；❓ B001–B004 待完整 findings。新批次重編號≠legacy 號 |
+| 🟢 **批次層 B001–B008** | **碼驗完整回（06-16，AUD-10；6/8 FOUND）** | ✅ **6 FOUND**（app 碼存在，新批次**重編號**≠legacy 號）：B001 branch→新B001、B002 emp→新B002、B003 自動結案→**新B007**、B004 暫存清理→**新B003**、B006 結果檔→新B006、B007 SFTP→**新B004**＋authorize inline 上傳。🔴 **B005 匯率排程＝唯一 app 碼缺**（新只有 inline 換匯 A-1；待 domain 判「inline 取代 vs 漏建」——查 `TB_EXCHANGE_RATE` 非-authorize 讀者）；⚪ **B008 log 歸檔 UNFOUND→ops**（logrotate/平台）|
 | 整合測確認點 | 待驗 | 〔A-1 spec-conformance ✅ PASS 06-16〕M7 facility fee 值、M9 district name join、撥貸端到端（含批次層）|
 > **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ✅ **A-1 stub 已實作（`daae4c3`）→ 機械修正不再 inert、authorize 可端到端跑**；剩撥貸真完成＝T24 正確性（domain-gated）＋批次層（F-OWN-1 待碼驗）＋A-1 spec-conformance 確認。
 
