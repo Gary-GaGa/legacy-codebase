@@ -123,18 +123,18 @@
 | # | 發現 | 性質 | 處置 |
 |---|---|---|---|
 | **RV-1** | **Search 頁開即 E999**：`getSearchOptions` `Required request body is missing`（GET 無 body＋BE `@RequestBody` 殘留，疑 sweep① `48e687f` 不完整 regression）| ✅ 已修 runtime bug（角色無關，AO 也噴）| `getSearchOptions` 改為 GET query/model binding；FE 改用 `?langType=`，不再送 GET body；見 `build-tasks/00600-search-options-fix.md` |
-| **RV-2** | **TODO List 空**（中文 UI）| 🔴 **坐實（F12 06-15）**：`zh_TW`→`totalCount:0`／`en_US`→`totalCount:92`，langType 砍資料確認 | **根因**：新版 SQL `VMainBorrowerInfoRepository:46` 多 `S.LOAN_TYPE_LANG_TYPE=:langType`，**舊版 initQuery 無此條件＝regression**（findings `82e8592`）。**Owner 裁示 06-15**：①語系只剩 `zh_TW`+`en_US` ②**語系只影響翻譯、不影響資料數量**＝修向定案。修＝langType 退出資料過濾（多語系 view→LEFT JOIN+fallback，非 INNER WHERE；不可無腦拿掉）→ 併入 `langtype-data-filter-sweep.md`（盤同型頁＋修，TODO 首例）|
+| **RV-2** | **TODO List 空**（中文 UI）| ✅ **已修（06-16）**：langType 退出資料過濾；**筆數一致驗證 `zh_TW`=`en_US`=91**（langType 不再砍資料）| 修＝langtype sweep (a) 移除 `VMainBorrowerInfoRepository` outer WHERE（product `bbbaa19`）；根因＝新版多 `LOAN_TYPE_LANG_TYPE=:langType`、舊 initQuery 無＝regression。Owner 裁示落實（語系只剩 zh_TW+en_US、只影響翻譯不影響資料）|
 
-### 6.2 橫向 sweep 盤點結果（2026-06-15，審過；＝「更動多少地方」的答案）
-> 兩份盤點 findings 審查 PASS（file:line 密、舊系統對照齊、UNFOUND 誠實標、附「正確用法不算候選」反向清單）。**僅盤點，未批量修**。
+### 6.2 橫向 sweep 結果（盤點 06-15 審過；**修 06-16 落地**）
+> 兩份盤點 findings 審查 PASS（file:line 密、舊系統對照齊、UNFOUND 誠實標、附「正確用法不算候選」反向清單）。
 
-**langType 當資料過濾（`langtype-data-filter-sweep-findings.md`）＝5 處**：
-- **(a) 純過濾、舊版無 langType 注入 → 移除 WHERE 條件（2）**：`/epl-list-todolist`（`VMainBorrowerInfoRepository:46`，RV-2 首例）、`/epl-list-casedistribution`（`:104`）。
-- **(b) 多語系 join 但 LANG_TYPE 誤放 outer WHERE → 改 join ON + fallback（en_US）（3）**：`/epl-list-caseapplication`（`TBLonSummaryInfoRepository:75`）、`/epl-list-deviation`（`:366`）、`/epl-list-cancelreport`（`:557`）。
+**langType 當資料過濾（5 處）＝✅ 全修（product `bbbaa19`+`7e1f0d2`，06-16；筆數一致驗證 `zh_TW`=`en_US` 五頁全通）**：
+- **(a) 移除 outer WHERE（2）✅**：`/epl-list-todolist`（91/91）、`/epl-list-casedistribution`（role405 5/5）。
+- **(b) 改 join ON + fallback en_US（3）✅**：`/epl-list-caseapplication`（569/569）、`/epl-list-deviation`（293/293）、`/epl-list-cancelreport`（10/10）。
 
-**GET 端配 request body（`get-body-contract-sweep-findings.md`）＝3 處**（FE 無直接 `apiGetRequestWithBody`，但有 2 處 `apiGetRequestForBlob` GET-body 等價）：
-- **#1/#2 scorecard export（pdf/excel）→ 兩邊改 POST body**：`ScorecardReportController:55/73` + FE `mis-report/scorecard-report`（export 帶多 filter、generated-file 不該 GET body）。
-- **⚠️ #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query → SRS `@PENDING RP9`**（`spec.md:111`；init-query method：PRD §6.1=GET vs 全站 RPC-POST vs as-is FE POST/BE GET；owner=RD/架構）。**證據盤點（06-15）傾向 GET query**：PRD §6.1=GET、舊 `EPROZ0_0800` 用 request param（GET 語意）、`00600` 已立 GET-query 樣板、execute(R10)已定 POST→「query=GET／mutation=POST」對稱。**唯一待坐實＝全站 `epl-*` method 慣例**（是否 RPC 一律 POST 凌駕個別 RESTful）→ grep 坐實後 RD/架構裁 RP9 → #3 修法隨之定（GET query 同 00600 ／ 或 POST 最小對齊 FE）。**不逕改**。
+**GET 端配 request body（3 處）**：
+- **#1/#2 scorecard export（pdf/excel）＝✅ 兩邊改 POST body（product `751f78f`，06-16）**：`ScorecardReportController:55/73` + FE `apiPostRequestForBlob`、`@RequestBody` 保留、query-list 未誤動。
+- **⏸ #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query → SRS `@PENDING RP9`**（待全站 `epl-*` method 慣例 grep 坐實→RD/架構裁；**不逕改**）。
 - 00600 已修為樣板（不算候選）。
 
 ---
