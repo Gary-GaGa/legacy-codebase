@@ -134,11 +134,11 @@
 | 區 | 狀態 | 內容 |
 |---|---|---|
 | 機械修正 M1–M10 | ✅ 全結案（master） | 尾欄/submit mail/RECEIVED_DATE/C20/fee key/E 位/H 段/A52/fee-delete-FN |
-| ✅ **A-1 換匯 stub** | **已實作（product `daae4c3`，06-16；mvn clean package 綠）** | `funcGetExchangeRate` 補 return＋移尾端 throw（依 a1-spec OQ-1~5 裁定）→ authorize 換匯總開關打通；附 3 測試修（CaseDistribution 8 參數、Scorecard POST、FileService @TempDir）。⚠️ **spec-conformance 確認點**（terse 回報未涵蓋，需碼驗/Phase V）：OQ-1 `IdNo=OVSLXLON01`、OQ-3 映射 `EPROIS0921_UI_RAET_FIND_ERROR`、OQ-4 catch throw 勿回 null、兩表同交易 |
+| ✅ **A-1 換匯 stub（+conformance PASS）** | **已實作＋碼驗（product `daae4c3`，06-16；mvn 綠）** | `funcGetExchangeRate` 補 return＋移尾端 throw → authorize 換匯總開關打通。**Codex 唯讀 conformance 4/4 PASS**：OQ-1 `IdNo=OVSLXLON01`(`:1181`)、OQ-3 非0000拋錯中止 authorize（碼＝專屬 `FAILED_E304`）、OQ-4 throw 勿回 null、兩表同 `@Transactional`。規格/recon 收 `done/` |
 | 🟡 B-1 `T24_COMPANY`（06-12 降級）| **前提推翻→RD 接值** | 新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存（OVSLXLON01/02 兩 schema，DDL 實查）；entity 補映射＋B8/C9 接值 |
 | 🔴 其餘 domain | 未決 | 換匯源 ID（已裁 01）、檢核嚴格度、KHR、欄寬、async 架構… |
 | 🔴 **批次層 B001–B008** | **未追蹤→待碼驗**（F-OWN-1，owner 盤點 reconcile）| 新系統批次等價物存否未知；B005 匯率/B006 async/B007 SFTP＝撥貸下游關鍵 |
-| 整合測確認點 | 待驗 | A-1 spec-conformance（OQ-1/3/4/交易）、M7 facility fee 值、M9 district name join |
+| 整合測確認點 | 待驗 | 〔A-1 spec-conformance ✅ PASS 06-16〕M7 facility fee 值、M9 district name join、撥貸端到端（含批次層）|
 > **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ✅ **A-1 stub 已實作（`daae4c3`）→ 機械修正不再 inert、authorize 可端到端跑**；剩撥貸真完成＝T24 正確性（domain-gated）＋批次層（F-OWN-1 待碼驗）＋A-1 spec-conformance 確認。
 
 ---
