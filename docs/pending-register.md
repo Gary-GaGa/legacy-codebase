@@ -7,7 +7,7 @@
 ## 🔴 擋主線（卡住才能往下走）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **A-1 OQ×4**（06-12：OQ-2 精度✅已關——舊庫 DDL 實查新舊一致）→ **06-15 改走舊系統對等 recon**（OQ 本質＝對等舊 `EPROIS_0922` 行為）：**OQ-3/4/5 舊系統可定**（錯誤碼/失敗 throw/T24 正確欄名）、**OQ-1 縮小**至 T24 確認 `01/02` 身份 key | 匯率源 ID（OVSLXLON01 vs 02——01=舊庫/02=新庫，新 stub 用 02 待 T24 蓋章）、錯誤碼、catch 回 null?、`EXCHANGR_RATE` 欄名（**新舊 DDL 皆無此欄→bug 機率大**）| 撥貸 authorize 端到端（換匯→T24→定案）；**撥貸上線關鍵路徑** | recon→T24/domain 確認 | 06-05 | `build-tasks/a1-funcGetExchangeRate-spec.md`＋`a1-oq-legacy-recon-findings.md`（派工中）|
+| **A-1 OQ**（OQ-2 精度✅關）→ **✅ 舊系統對等 recon 完成（06-16，審過）**：**OQ-3**（舊 throw `EPROIS0921_UI_RAET_FIND_ERROR`、勿用 FAILED_E303）/**OQ-4**（舊不吞錯往外拋、新 stub catch 回 null→NPE，建議明確 throw）/**OQ-5**（🔴 坐實 `EXCHANGR_RATE`=typo，G/H 應讀 `EX_RATE_BUY`）舊系統皆給對等建議；**OQ-1 縮小至 T24 一個確認**（舊固定 `OVSLXLON01`，新用 `02` 不可由舊碼裁）| owner 僅需確認「忠實對等 vs 刻意演進」＋OQ-1 T24 身份；之後撥貸 domain RD 照規格施工 | 撥貸 authorize 端到端；**撥貸上線關鍵路徑** | T24/domain 確認對等 | 06-05 | `a1-funcGetExchangeRate-spec.md` §7＋`a1-oq-legacy-recon-findings.md` |
 | **撥貸 domain group** | ~~`T24_COMPANY` 值源~~（**06-12 前提推翻→B-1 降級轉 RD 接值**，escalations B-1）、檢核嚴格度、`KHR`(演進勿改回)、欄寬、async、M6 完工日 DTO 缺源；~~精度~~（C-1 ✅已關）| 撥貸 0921/0922/T24 行為對等 | 撥貸 domain/T24/DBA | 06-05 | `disbursement-domain-escalations.md` |
 
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）

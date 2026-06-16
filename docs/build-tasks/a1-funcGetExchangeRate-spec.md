@@ -38,13 +38,14 @@
 - 🔴 **欄名不一致風險（連 M1/H8）**：T24 G/H 現碼讀 `EXCHANGR_RATE`（**注意拼字**），**不是本方法寫入的 `EX_RATE_BUY/SELL` 欄名** → 補完 stub 後 G/H 仍可能空值 → **見 OQ-5**。（M1 H8 還原時即沿用 `disburDate.EXCHANGR_RATE` 既有值邏輯。）
 
 ## 7. Open Questions（待裁）
-| # | 問題 | owner |
-|---|---|---|
-| OQ-1 | `IdNo` 應改回 `OVSLXLON01` 還是新系統刻意用 `OVSLXLON02`。**06-12 實證**：兩者＝新庫**並存的兩個 schema owner**（`TB_BRANCH_PROFILE` 等表兩處皆有）——裁定性質明朗化為「選用哪個 schema/key」 | domain / T24 API owner |
-| ~~OQ-2~~ ✅ 已關（06-12 舊庫 DDL 實查）| 舊庫 `TB_DISBUR_DATE.EX_RATE_*`＝`NUMBER(17,2)`、`TB_EXCHANGE_RATE.EX_RATE_*`＝`NUMBER(17,4)`——**與新庫完全一致，行為對等無精度落差**；若要更高精度屬新需求另議 | —（已關）|
-| OQ-3 | 非 `0000` 用 `FAILED_E303` 還是沿用舊錯誤語意（`EPROIS0921_UI_RAET_FIND_ERROR`）| backend / domain |
-| OQ-4 | `callApiKHBFTR37001` catch 後回 null 的路徑是否改明確 throw（避免 NPE 被包成泛用 Authorize Fail）| backend / domain |
-| OQ-5 | T24 G/H 讀 `EXCHANGR_RATE`（非本方法寫的欄名）→ 是否欄名 bug、補後仍空值。**06-12 實證**：舊庫 `TB_DISBUR_DATE` **亦無** `EXCHANGR_RATE` 欄（實欄＝`EX_RATE_BUY/SELL`）→ 欄名 bug 機率大增 | T24 / domain |
+> **✅ 舊系統對等 recon 完成（2026-06-16，審過，findings `a1-oq-legacy-recon-findings.md`）**：OQ-3/4/5 舊系統做法坐實＋對等建議（owner 僅需確認忠實對等 vs 刻意演進）；OQ-1 縮小至 T24 一個身份確認點。
+| # | 問題 | recon 結論（舊系統對等建議）| owner |
+|---|---|---|---|
+| OQ-1 | `IdNo` 用 `OVSLXLON01` 還新系統刻意 `OVSLXLON02` | **舊固定 `OVSLXLON01`**（`EPROIS_0922_mod:1063`、batch `EPROZ0_B005:82`、`EPRO_Z0Z009/010` 未改寫）；新 stub 用 `02`（`FunctionServiceImpl:1173`）。對等＝01；**新用 02 不可由舊碼裁定** | **留 T24 確認**：新環境 `KH-B-FTR37001` 認可 IdNo＝01 or 02 |
+| ~~OQ-2~~ ✅ 已關（06-12 DDL 實查）| 精度新舊一致（`(17,2)`/`(17,4)`）| — | —（已關）|
+| OQ-3 | 非 `0000` 錯誤碼 | **舊 throw `ErrorInputException("EPROIS0921_UI_RAET_FIND_ERROR")`**（`EPROIS_0922_mod:1074/1111`）；非 0000 中止 authorize。建議**勿用泛用 `FAILED_E303`**，映射等價語意（message text UNFOUND）| backend/domain（確認對等）|
+| OQ-4 | catch 回 null 路徑 | **舊不吞錯往外拋、authorize 中止**（`EPRO_Z0Z009/010` throws、trx `doAuthorize` catch 回錯）；新 stub catch 回 null→呼叫端直接 deref（NPE）。建議**catch 明確 throw、勿回 null** | backend/domain（確認對等）|
+| OQ-5 | T24 G/H 讀 `EXCHANGR_RATE` | **🔴 坐實 typo/parity bug**：`EXCHANGR_RATE` 舊/新 schema/entity/DB psv **全無**（實欄 `EX_RATE_BUY/SELL`）；舊 T24 G/H 讀 `EX_RATE_BUY`（`EPRO_IS0922:1063/1128`），新 G/H 卻讀 `EXCHANGR_RATE`（`SummaryServiceImpl:2221/2285`）。建議 G/H 改讀 `EX_RATE_BUY`（E 段已對）| T24/domain（確認）|
 
 ## 8. 結論
 > **方向（2026-06-15，使用者洞察）**：OQ 本質＝**對等舊 `EPROIS_0922` 換匯行為**（非政策發明）→ 走舊系統 recon 坐實舊做法＋附對等建議，owner 僅需確認「忠實對等 vs 刻意演進」。
