@@ -10,7 +10,7 @@
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **撥貸 domain 殘**（group 大縮）| ~~T24 欄值/格式/欄寬~~（✅ 06-16「T24 照舊規格」→ 執行 `build-tasks/t24-bgroup-legacy-parity-fix.md`）、~~async~~(AUD-10)、~~KHR~~(保留)；**殘＝A-4 檢核嚴格度、M6 完工日 DTO 來源**（較小）| 撥貸 0921 檢核/M6 正確性 | 撥貸 domain | 06-05 | `disbursement-domain-escalations.md` |
+| **撥貸 domain 殘**（group 大縮）| ~~T24 欄值/格式/欄寬~~（✅ 06-16「T24 照舊規格」→ 執行 `build-tasks/t24-bgroup-legacy-parity-fix.md`）、~~async~~(AUD-10)；**殘＝A-4 檢核嚴格度、M6 完工日 DTO 來源、KHR 幣別分支（疑在地化未證→坐実+domain）**（較小）| 撥貸 0921 檢核/M6/KHR 正確性 | 撥貸 domain | 06-05 | `disbursement-domain-escalations.md` |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤` |
