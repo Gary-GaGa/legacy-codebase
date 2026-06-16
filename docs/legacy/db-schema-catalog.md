@@ -34,9 +34,10 @@
 - 新表名 `TB_*`（無 `EPRO_`、Phase 1 三表 schema 為「-」即無 schema 限定）。
 
 ## 2. Phase 1 三表細節（Prompt B）✅ 已回填、entity 定稿於 `archive/phase1-eproz0_0700-spec.md` §2
+> ⚠️ **2026-06-16 校正（DB 通後重驗）**：entity 定稿改以 **DB DDL 為準＝`build-tasks/schema-diff-findings.md`（schema 事實 SSOT）**；`phase1 §2` 為早期 DB 未通（曾誤判 DB2）之推斷，其「`TB_BRANCH_PROFILE` 無 `T24_COMPANY`」**已被 DB 推翻**（見下）。完整三表逐欄重驗（deputy 頁已完成、低 priority）可選派 DB recon。
 - `TB_EMP_PROXY` — PK **`EMP_ID` 單鍵**（⚠️ 與舊 DAO 複合鍵不一致 → 一人一筆代理，待業務確認）；`EMP_ID`/`PROXY_ID`/`UPDATE_EMP_ID` VARCHAR2(10)、`STR_TIME` TIMESTAMP(6) **NOT NULL**、`END_TIME`/`UPDATE_DATE` TIMESTAMP(6)、`RETURN_CASE_TO_CA` VARCHAR2(1) default `'N'`。
 - `TB_EMP_PROFILE` — PK (`ROLE_ID`,`EMP_ID`)；`EMP_ID` VARCHAR2(5)、`EMP_NAME`(50)、`BRANCH_CODE`(8)、`E_MAIL`(100)、`DEPT_CODE`(8)、`STATUS`(10)。
-- `TB_BRANCH_PROFILE` — PK (`BRANCH_CODE`,`DEPT_CODE`)；`BRANCH_CODE`(5)、`BRANCH_NAME`(100)、`DEPT_CODE`(3)、`DEPT_NAME`(100)、`DATA_SEQ` NUMBER(3)、`DISPLAY`(1)、`T24_BRANCH_CODE`(5)、`T24_DEPT_CODE`(5)；**無 `T24_COMPANY`**。
+- `TB_BRANCH_PROFILE` — PK (`BRANCH_CODE`,`DEPT_CODE`)；`BRANCH_CODE`(5)、`BRANCH_NAME`(100)、`DEPT_CODE`(3)、`DEPT_NAME`(100)、`DATA_SEQ` NUMBER(3)、`DISPLAY`(1)、`T24_BRANCH_CODE`(5)、`T24_DEPT_CODE`(5)；⚠️ **有 `T24_COMPANY`**（2026-06-12 DDL 實證 `schema-diff-findings.md:246`，`OVSLXLON01`/`OVSLXLON02` 兩 schema 皆有；原記「無」係早期推斷之誤、已推翻——連動撥貸 **B-1**/A-1 **OQ-1**）；col-order：`T24_DEPT_CODE`/`T24_BRANCH_CODE` `column_id` 8↔9 互換（`schema-diff-findings.md:251`）。
 
 ### 全域學習（適用所有 entity）
 - 新 DB **無 schema 限定、無 `EPRO_` 前綴** → `@Table(name="TB_…")` 不加 `schema=`、SQL 不加前綴。
