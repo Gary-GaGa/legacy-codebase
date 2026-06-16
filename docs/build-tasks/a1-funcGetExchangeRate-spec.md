@@ -1,5 +1,7 @@
 # A-1 `funcGetExchangeRate` — 實作規格（交撥貸 domain）
 
+> ✅ **已實作（product `daae4c3`，2026-06-16，mvn clean package 綠）**：依本規格 OQ-1~5 裁定補 return＋移尾端 throw（附 3 測試修）。本檔保留為**規格＋spec-conformance 確認基準**（碼驗/Phase V 對下列逐項核：OQ-1 `IdNo=OVSLXLON01`、OQ-3 映射 `EPROIS0921_UI_RAET_FIND_ERROR`、OQ-4 catch throw 勿回 null、§5 兩表同交易）。撥貸端到端真完成另需 T24 正確性＋批次層（F-OWN-1）。
+
 > 來源：Phase D 唯讀調查（2026-06-06）。`funcGetExchangeRate` 是撥貸 authorize 總開關、金錢核心 → **由撥貸 domain 實作，非 Codex 逕補**。本檔＝可直接施工的規格 + 待裁 open questions。
 > 對應 `disbursement-domain-escalations.md` **A-1**。
 
