@@ -1,5 +1,7 @@
 # Build Task — `EPROZ00700` deputy entity vs DB 複合 PK 復驗（legacy-reverify 連動）
 
+> ✅ **完成（2026-06-16，審過＝無 bug）**：deputy **已對齊複合 PK**——`TBEmpProxyEntity` `@EmbeddedId`(EMP_ID+STR_TIME)、`doInsertDeputy` save 組複合 key（同人不同 STR_TIME 可共存、不按 EMP_ID 覆蓋）、delete 帶 `EMP_ID+STR_TIME` 單筆、query list/date-range oriented;4 問全 ✅、file:line 齊（findings `00700-deputy-pk-reverify-findings.md`）。**早期「單鍵」係文件假設錯、碼照 DB 寫對** → AUD-9 關。附帶觀察：EMP_ID 顯示 5 vs DB 10（非 PK gap、留日後）。
+
 > 載具：Codex（後端唯讀）。**來源**：`legacy-schema-db-reverify-findings.md`（2026-06-16 審過）坐實 **`TB_EMP_PROXY` DB PK ＝複合 `EMP_ID`+`STR_TIME`**（`legacy_schema_reverify_new02_pk.tsv:139-140`），**推翻**早期「`EMP_ID` 單鍵／一人一筆代理 upsert」假設。
 > ⚠️ **deputy（`EPROZ00700`）已完成歸檔**（`done/EPROZ00700-assign-substitute.md`）——但若 entity `@Id`／upsert 照**單鍵假設**寫,DB 複合 PK 下行為可能錯（一人**多筆**代理期間被誤覆蓋／查詢錯）。**已完成頁的潛在 runtime bug**。
 

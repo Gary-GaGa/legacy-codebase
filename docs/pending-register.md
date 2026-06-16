@@ -25,7 +25,7 @@
 | ~~**AUD-5**~~ ✅ 06-15 關 | BIBLE-GAP-1~5 舊源存在性驗證 | — | **recon 完成（`done/bible-gap-recon.md`+findings）：五項全收斂、審計總量不變**（00670→0181/TLOD；0180→z0 ToDo/Search；0182/0183/0184→0922）| 06-11→06-15 | `bible-gap-recon-findings.md` |
 | **AUD-6** 🔴（schema-diff）| `TB_FINANCIAL_EVALUATION_INFO` 6 金額欄精度縮減 `(28,2)→(20,2)`＋`FIX_RATE (10,6)→(4,2)`/`SOFR (4,2)`——利率 6 位小數→2 位疑掉精度 | 財評資料完整性（i0/c0 財評頁）| DBA/domain | 06-12 | `build-tasks/schema-diff-findings.md` |
 | **AUD-7**（schema-diff）| 舊 schema 54 表 new02 未帶——扣 `_BK/_TEST/TMP` 後的 reference/config 表（`TB_OCCUPATION`/`TB_COLL_TYPE` 系/`TB_MENU_TREE`/`TB_SCORE_CARD_PARAM_*` 等）刻意捨棄 or 漏建。**06-16 legacy-reverify 確認**：`TB_SCORE_CARD_PARAM_MAIN/SUB` 舊有新無（新僅 `_DETAIL`）、db-schema-catalog/module 已校正——餘 54 表去留仍待裁 | 下游功能缺表風險 | SA/DBA | 06-12 | 同＋`legacy-schema-db-reverify-findings.md` |
-| **AUD-9** 🟡（legacy-reverify 06-16）| `TB_EMP_PROXY` DB PK ＝複合 `EMP_ID`+`STR_TIME`（推翻早期「單鍵/一人一筆」假設）→ **deputy（`EPROZ00700`，已完成頁）entity/upsert/delete 是否對齊複合 PK 待驗**（潛在 runtime bug：一人多筆代理期間被誤覆蓋）| deputy 資料正確性 | RD（驗證→必要時修）| 06-16 | `build-tasks/00700-deputy-pk-reverify.md`＋findings |
+| ~~**AUD-9**~~ ✅ 關（06-16 同日開關）| `TB_EMP_PROXY` 複合 PK→deputy 驗證 | — | **deputy 已對齊複合 PK＝無 bug**（`TBEmpProxyEntity` `@EmbeddedId`(EMP_ID+STR_TIME)、`doInsertDeputy` save 組複合 key、delete 帶 EMP_ID+STR_TIME 單筆、query list-oriented；4 問全 ✅）；早期「單鍵」係**文件假設錯、碼照 DB 寫對**（findings `00700-deputy-pk-reverify-findings.md`）。附帶觀察：EMP_ID 顯示 5 vs DB 10，非 PK gap、留日後 | 06-16 | 同 |
 | **AUD-8**（schema-diff）| new02 獨有 `TB_PAGE_COLUMN_AUTH_CATEGORY/_DETAIL` 用途確認（R7 三表外的新權限機制？）| 權限模型完整性 | SA/ops | 06-12 | 同 |
 
 ## ⚪ 非阻擋 / 暫緩 / 待業務（可獨立排）

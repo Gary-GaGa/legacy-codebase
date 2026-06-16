@@ -126,7 +126,7 @@
 | EPROZ00640 | Scorecard Report | ✅ | ✅ | export 介面已對齊（sweep①）；BE PDF 改回 blob（`ResponseEntity<byte[]>`，openhtmltopdf/FileService），Excel 正常且未動；Phase V 待實測 PDF |
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅ F-12 已修（product `5a47038`，FE endpoint 改 CAD）→ 復稱 CR 範本；Phase V 實測查詢一條 |
-| EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；嚴謹可做 deputy↔0700 gap-check |
+| EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；**DB 複合 PK 已對齊**（06-16 reverify，`@EmbeddedId` EMP_ID+STR_TIME，AUD-9 關）|
 | EPROZ00800 | Revised Item | 🟡 | ✅ | FE 🟡＝RP9 method 殘；BE ✅（D1–D5 `88328f9`＋**F1–F9 `5580eb7`**）；仍開 RP8/RP9/RP11——**單一出處＝bundle spec.md §@PENDING**；Phase V 待測：QA-007/008/009a/b/012/024/025＋F6 ≠03 分支＋audit userId。**SRS bundle**＝`specs/srs/EPROZ00800/`（v0.9）|
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
 
