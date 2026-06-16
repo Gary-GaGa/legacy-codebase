@@ -13,7 +13,6 @@
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **RP9 / init-query method** | GET（PRD §6.1）vs 全站 RPC-POST vs as-is 不一致。**證據齊（06-16 method recon）**：全站 280/282 POST、query-like 132/133 POST，2 GET=reviseditem 自己+剛立 00600；**POST=全站一致(#3 最小修)vs GET=RESTful/PRD/舊系統**——雙向證據備齊,待架構取捨 | `00800` init-query 契約 method（連 get-body #3）| RD/架構 | 06-09 | `epl-method-convention-findings.md`＋handoff §6.2 |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤` |
@@ -23,9 +22,7 @@
 | **AUD-3**（F-2）| `SysNews` 公告/`BatchManager`/`cacheMonitor` 遷/不遷 | M9 admin 列定版 | PM/ops | 06-11 | 同（DIFF-016）|
 | **AUD-4**（F-3）| demo 頁（`DEMOA0_*`）正式不遷裁決 | M9 demo 列定版 | PM | 06-11 | 同（DIFF-016）|
 | ~~**AUD-5**~~ ✅ 06-15 關 | BIBLE-GAP-1~5 舊源存在性驗證 | — | **recon 完成（`done/bible-gap-recon.md`+findings）：五項全收斂、審計總量不變**（00670→0181/TLOD；0180→z0 ToDo/Search；0182/0183/0184→0922）| 06-11→06-15 | `bible-gap-recon-findings.md` |
-| **AUD-6** 🔴（schema-diff）| `TB_FINANCIAL_EVALUATION_INFO` 6 金額欄精度縮減 `(28,2)→(20,2)`＋`FIX_RATE (10,6)→(4,2)`/`SOFR (4,2)`——利率 6 位小數→2 位疑掉精度 | 財評資料完整性（i0/c0 財評頁）| DBA/domain | 06-12 | `build-tasks/schema-diff-findings.md` |
 | **AUD-7**（schema-diff）| 舊 schema 54 表 new02 未帶——扣 `_BK/_TEST/TMP` 後的 reference/config 表（`TB_OCCUPATION`/`TB_COLL_TYPE` 系/`TB_MENU_TREE`/`TB_SCORE_CARD_PARAM_*` 等）刻意捨棄 or 漏建。**06-16 legacy-reverify 確認**：`TB_SCORE_CARD_PARAM_MAIN/SUB` 舊有新無（新僅 `_DETAIL`）、db-schema-catalog/module 已校正——餘 54 表去留仍待裁 | 下游功能缺表風險 | SA/DBA | 06-12 | 同＋`legacy-schema-db-reverify-findings.md` |
-| ~~**AUD-9**~~ ✅ 關（06-16 同日開關）| `TB_EMP_PROXY` 複合 PK→deputy 驗證 | — | **deputy 已對齊複合 PK＝無 bug**（`TBEmpProxyEntity` `@EmbeddedId`(EMP_ID+STR_TIME)、`doInsertDeputy` save 組複合 key、delete 帶 EMP_ID+STR_TIME 單筆、query list-oriented；4 問全 ✅）；早期「單鍵」係**文件假設錯、碼照 DB 寫對**（findings `00700-deputy-pk-reverify-findings.md`）。附帶觀察：EMP_ID 顯示 5 vs DB 10，非 PK gap、留日後 | 06-16 | 同 |
 | **AUD-8**（schema-diff）| new02 獨有 `TB_PAGE_COLUMN_AUTH_CATEGORY/_DETAIL` 用途確認（R7 三表外的新權限機制？）| 權限模型完整性 | SA/ops | 06-12 | 同 |
 
 ## ⚪ 非阻擋 / 暫緩 / 待業務（可獨立排）
@@ -60,6 +57,9 @@
 | **TBD-007 / RP5** ✅ | 維持現狀（僅持久化、無側效）→ R13.7 定版 | 同 |
 | **TBD-002 / RP7** ✅ | `Finshed`→`Finished` 定版 | 同 |
 | **RP10** ✅（06-12）| checkpoint key＝`TB_CHECK_POINTS_{IS,IU,CS,CU}` 欄位（新 funcId 形，DDL 機械枚舉；R14 表名同步修正）→ R14 定版、殘差實作＝rimat F8 | 同 |
+| **RP9** ✅（06-16 RD/架構）| init-query＝GET（Follow PRD §6.1；method recon 全站 280/282 POST 仍依 PRD 走 RESTful）→ R2/Endpoints/openapi 定版、get-body #3 解鎖 | `00800 spec.md §@PENDING` |
+| **AUD-6** ✅（06-16 DBA/domain）| 接受財評精度縮減（`(28,2)→(20,2)`、利率 6→2 位；新 DB 為準不還原）⚠️ 利率 2 位 caveat | `schema-diff-findings.md` |
+| **AUD-9** ✅（06-16）| deputy 已對齊複合 PK（`@EmbeddedId` EMP_ID+STR_TIME）＝無 bug，早期單鍵係文件假設錯、碼對 | `00700-deputy-pk-reverify-findings.md` |
 | **TBD-001 / RP6** ✅（06-12）| ITEM1~14 名稱取數定版（舊庫 `TB_COMMON_FIELD_OPTIONS`+`TB_MULTI_LANG`，findings E1）→ 畫面顯示定版、順帶裁 RP4、RP2 原因補文 | 同 |
 | **TBD-005 / RP4** ✅（06-12）| **設計非缺陷**：ITEM1=Renew Loan Tenor ≠ ITEM10=ATC_Tenor → R13.4/13.5 定版、QA-009 拆 a/b、實作＝rimat F9 | 同 |
 
