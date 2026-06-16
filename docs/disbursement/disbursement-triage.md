@@ -27,7 +27,7 @@
 - **0921 檢核對等**：`CheckMainBorr`/`CheckCoBorr` 身分/sector/account/`DATA_SEQ` 順序/business-section；`info CO_CHECK` `='Y'` vs 舊 `!='N'`；Finished gate 未驗 `mbCheck`；law firm `IS_SHOW` 版本條件；address `UPD_DATE` 來源。
 - **0922-main 架構**：`t24DealResult`→批次 `EPROZ0B006`（async）；mail 改 scheduler 後送；`IS_AUTODIS=YC`。
 - **0922-t24**：行尾 `\r\n` vs `\n`（T24 可能敏感）；`C26` title-deed 全 join 到每筆 C row。
-- 🟢 **疑刻意演進（勿改回）**：`KHR` 換匯 + 在地化（舊僅 USD）。
+- ~~🟢 疑刻意演進~~ → **A-5 結（06-16 owner）＝幣別「收窄」keep**：**補規格＝撥貸有效幣別 USD+KHR only（柬埔寨）**；舊 non-USD 通吃、新只 USD/KHR（其他 fee→null/E21→0）＝**by-design-unreachable、非 bug**（非該幣別業務不發生），不對等修。坐実＝`khr-currency-handling-recon-findings.md`。
 
 ## 4. P3 — UNSURE / 舊 DDL 核對（**06-12 起舊庫可連（Oracle），DDL 自查即可、不必等 DBA**）
 - ~~金額 **precision**~~ ✅ 已關（06-12 DDL 實查：舊＝新，全金額 `(17,2)`、匯率表 `(17,4)`，無落差）。

@@ -6,8 +6,8 @@
 
 ## ⚠️ 裁定邊界（必讀，勿誤改）
 - **「照舊規格」適用於舊系統有 spec 之處**（欄位位置/來源/格式/截斷）。
-- **✅ 幣別分支坐実完成（06-16，`khr-currency-handling-recon-findings.md`）→ 升 domain（A-5）**：非「KHR 新增在地化」，而是**收窄**——舊 non-USD **通吃**（全換匯/`Math.round`），新只明確 USD/KHR、其他 non-USD → null（0921 fee）/輸出 0（E21）＝**regression risk**；E21 意圖 UNFOUND；G/H 幣別來源舊 `DISBURSEMENT_CURRENCY`→新 account `CURRENCY`。
-- **處置**：本 batch-fix **仍不碰幣別/換匯分支**（E21/G4/G10/H8、fee rounding 幣別分支）——待 **domain 答「撥貸有無 USD/KHR 以外有效幣別」**：有→**對等修**（照舊恢復 non-USD 通吃，＝owner「T24 照舊」自然修 regression）、無→keep+補規格；另 KHR rounding（`DOWN` vs 舊 round）、G/H 來源。其餘 T24 欄（非幣別分支）照舊照修。
+- **✅ 幣別分支＝A-5 已裁 keep（06-16 owner）**：坐実結果為「收窄」（舊 non-USD 通吃→新 USD/KHR only、其他 null/0），但 **owner 裁撥貸有效幣別＝USD+KHR only（柬埔寨）→ 收窄無害、keep**（non-USD-non-KHR path＝by-design-unreachable、非 bug、**不做對等修**）。
+- **處置**：E21/G4/G10/H8、fee rounding 幣別分支 **維持新（keep）、不照舊不對等修**；**補規格**＝撥貸有效幣別＝USD+KHR（見 triage）。殘小（非阻擋）：KHR rounding `DOWN`（keep）、G/H 幣別來源（USD/KHR 內 disbursement vs account 幣別差異→資料約束待 RD）。其餘 T24 欄（非幣別分支）照舊照修。
 
 ## 逐欄（照舊；先坐実舊 `file:line` 再改新）
 | 欄 | 項 | 照舊＝ | 坐実 + 改 |
