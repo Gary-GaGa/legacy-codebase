@@ -20,13 +20,20 @@
          本 funcId 未入 trace=advisory warn
   gateⓅ @PENDING↔pending-register 同步：spec 開著的待決未登錄 register=FAIL、
          已關的仍掛 register open 區=FAIL（spec 為來源、register 為 derived 視圖）
+  gateⒺ 錯誤碼承載：PRD Error Response 表（上游權威）的每個錯誤碼，下游 spec.md（Rn
+         錯誤規則）+ openapi responses 都應承載；PRD 列了但 spec/openapi 皆漏=warn
+         （漏承載，B-1 類）；PRD↔openapi 同碼 HTTP status 不一致=warn（B-2 status 面）。
+         皆 warn（disclaim 由人/reviewer 認）。**關鍵：解析前去 markdown 底線跳脫
+         `\\_`**（否則 PRD 表格的 `MSG\\_X` 漏抓＝SR-B1 當初的根因）。
+         （2026-06-16 批判輪3，源 00800 spec-review SR-B1/B2）
   [--all 附帶] doc-paths：全 repo markdown 內 backtick 引用的 root-anchored 路徑
          存在性（advisory；歷史檔 build-tasks/done/、archive/ 不掃）
 
 編號對照：gate①②⑤＝DoD 閘門牆（`docs/assets/ai-workflow.mmd`）①②⑤ 同位項在 SRS
 定稿階段的 pre-check（**同號同義、不同階段**）。gateⒷ/gateⓅ/gateⓈ/xfile/doc-paths＝**SRS
 階段專屬、DoD 牆無對應格**，故用字母標（Ⓑ=Bible、Ⓟ=Pending、Ⓢ=Status/Safety）而非接續
-⑥⑦——避免與牆上 ⑥Build/⑦LLM-advisory 撞號。完整對照表見 `docs/specs/srs/README.md`。
+⑥⑦——避免與牆上 ⑥Build/⑦LLM-advisory 撞號（Ⓑ=Bible、Ⓟ=Pending、Ⓢ=Status/Safety、
+Ⓔ=Error碼承載）。完整對照表見 `docs/specs/srs/README.md`。
 
 **分工**：語意正確性（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、
 NFR 量化）仍由 `.claude/agents/spec-reviewer.md`（人/LLM）審。兩層互補、不重疊。
@@ -490,6 +497,79 @@ def gate_bible_prd(bundle):
     return fails, warns, infos
 
 
+# ---------- gateⒺ 錯誤碼承載：PRD Error Response 表 → spec.md + openapi ---------
+def gate_error_carry(bundle):
+    """gateⒺ：PRD（上游權威）的每個錯誤碼，下游 spec.md（Rn 錯誤規則）+ openapi
+    responses 是否都承載。
+
+    - PRD 列了、但 spec.md 與 openapi **皆無** → warn（漏承載；B-1 類）。
+    - PRD↔openapi 同碼但 HTTP status 不一致 → warn（B-2 status 面）。
+    皆 warn：機械不判語意嚴重度（init-query 無分頁可 disclaim 等），由人/spec-reviewer 認。
+    **解析前先去 markdown 底線跳脫 `\\_`**（PRD 表格寫 `MSG\\_X`，literal `_` 比對會漏抓
+    ＝SR-B1 當初的根因）。無 PRD 快照（鏡像 i0 bundle）或 PRD 無 Error 表 → 跳過。
+    """
+    fails, warns, infos = [], [], []
+    funcid = os.path.basename(bundle.rstrip("/"))
+    sp = os.path.join(bundle, "spec.md")
+    if not os.path.isfile(sp):
+        return fails, warns, infos
+    snaps = sorted(glob.glob(os.path.join(PRD_ROOT, f"PRD-*{funcid}*.md")))
+    if not snaps:
+        return fails, warns, infos  # 鏡像 i0 bundle 無 PRD → 跳過
+    prd = read(snaps[-1]).replace("\\_", "_")  # 關鍵：去底線跳脫（SR-B1 漏抓根因）
+    prd_codes = {}  # code -> http status(str) or None；錯誤碼在表格 cell[0]、status 在 cell[1]
+    for ln in prd.splitlines():
+        s = ln.strip()
+        if not s.startswith("|"):
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        if len(cells) < 2:
+            continue
+        cm = CODE_RE.match(cells[0])
+        if not cm:
+            continue
+        st = re.search(r"\b([45]\d{2})\b", cells[1])
+        prd_codes[cm.group(0)] = st.group(1) if st else None
+    if not prd_codes:
+        return fails, warns, infos  # PRD 無 Error Response 表（或非表格形）→ 跳過
+    spec_codes = set(CODE_RE.findall(read(sp)))
+    op = os.path.join(bundle, "openapi.yaml")
+    op_raw = read(op) if os.path.isfile(op) else ""
+    op_codes = set(CODE_RE.findall(op_raw.replace("\\_", "_")))
+    # 承載：PRD 碼在 spec、openapi 皆無 → 漏承載（B-1）
+    missing = [c for c in prd_codes if c not in spec_codes and c not in op_codes]
+    for c in sorted(missing):
+        warns.append(
+            f"PRD 錯誤碼 `{c}`（{prd_codes[c] or 'status?'}）未承載進 spec.md 或 openapi——"
+            f"漏承載（補 Rn 錯誤規則 + openapi response，或明文 disclaim+owner；見檔頭 gateⒺ）")
+    # HTTP status 一致：PRD 碼在 openapi responses 但 status key 不符（B-2 status 面）
+    try:
+        import yaml
+        odoc = yaml.safe_load(op_raw) if op_raw else {}
+        code_status = {}  # code -> set(status)；從 paths→*→responses→<status>→description 取碼
+        if isinstance(odoc, dict):
+            for _p, methods in (odoc.get("paths") or {}).items():
+                if not isinstance(methods, dict):
+                    continue
+                for _m, opv in methods.items():
+                    if not isinstance(opv, dict):
+                        continue
+                    for status, body in (opv.get("responses") or {}).items():
+                        desc = str(body.get("description") or "") if isinstance(body, dict) else ""
+                        for c in CODE_RE.findall(desc.replace("\\_", "_")):
+                            code_status.setdefault(c, set()).add(str(status))
+        for c in sorted(code_status):
+            ps = prd_codes.get(c)
+            if ps and ps not in code_status[c]:
+                warns.append(
+                    f"錯誤碼 `{c}` HTTP status 不一致：PRD {ps} ↔ openapi {sorted(code_status[c])}"
+                    f"（gateⒺ；確認 to-be 改了 status 或漏對）")
+    except ImportError:
+        pass  # 無 pyyaml → 只做承載(文字)檢查，status 一致性略過
+    infos.append(f"PRD Error Response：{len(prd_codes)} 碼承載檢查（漏 {len(missing)}）")
+    return fails, warns, infos
+
+
 # ---------- gate ⑦ @PENDING ↔ pending-register 同步 ---------------------------
 REGISTER_PATH = "docs/pending-register.md"
 RP_CELL_RE = re.compile(r"^\*{0,2}(RP\d+)\b")
@@ -577,6 +657,7 @@ def check_bundle(bundle):
     gbf, gbw, gbi = gate_bible_prd(bundle)
     gpf, gpw, gpi = gate_pending_register(bundle)
     gsf, gsw = gate_status_safety(bundle)
+    gef, gew, gei = gate_error_carry(bundle)
     sections = [
         ("gate①openapi", g1f, g1w, []),
         ("gate②schema ", g2f, g2w, []),
@@ -585,6 +666,7 @@ def check_bundle(bundle):
         ("gateⒷbible↔prd", gbf, gbw, gbi),
         ("gateⓅpending同步", gpf, gpw, gpi),
         ("gateⓈstatus安全", gsf, gsw, []),
+        ("gateⒺ錯誤碼承載", gef, gew, gei),
     ]
     for name, fails, warns, infos in sections:
         status = "FAIL" if fails else "PASS"
