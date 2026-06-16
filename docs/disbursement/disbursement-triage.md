@@ -13,7 +13,7 @@
 ## 1. P0 — Blockers（撥貸根本不能動）
 | # | 項目 | 來源 | owner |
 |---|---|---|---|
-| P0-1 | `funcGetExchangeRate` throw-stub（寫資料後無條件丟、無 return）→ authorize 全斷 | 0922-main `FunctionServiceImpl:1221` | 撥貸開發 |
+| ~~P0-1~~ ✅ | `funcGetExchangeRate` throw-stub → authorize 全斷 | **已實作（product `daae4c3`，06-16，mvn 綠；依 a1-spec OQ-1~5）**；spec-conformance 待碼驗/Phase V | 撥貸開發 |
 | P0-2 | T24 結構壞：**H 段建了未 append**（不會輸出）、`E14–E23`+`E24-25` 位移、`H1–H8` 順序錯、`B9/C27/D8/G13` 各多尾端 `\n` 空欄 | 0922-t24 | 撥貸開發 + T24 整合 |
 | P0-3 | `T24_COMPANY` 死路：`B8`/`C9` 仍讀新 schema 已移除的欄 → 空值，**無替代來源** | 0922-t24（D8）| T24 整合 owner（需決定值來源）|
 

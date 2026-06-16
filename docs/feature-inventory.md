@@ -12,7 +12,7 @@
 - ⏸ **暫緩 track**（R2 報表服務 / 檔案 API / CBC R8——刻意延後、非遺漏）
 - ❓ **待 cross-check**（推定既有，未實證；開做前先唯讀盤點）
 
-**全局結論（zero-based audit 後更新 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列基線＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND；**06-15 校正後＝~133 碼在(80%)**（G1–G6＋修復落地）。真缺口剩**一個**——🔴 **撥貸核心**（A-1 換匯 stub + T24 + domain）。✅ **企金主流程 FE 後半段 Phase G 全收口（G1–G6，06-15）**＝0150/0160/0170/0171/0172/0173＋0261/0174/0175 三 popup（Phase V runtime 待測）。已收口：c0 評分 FE（Phase F）、i0 全模組（audit 22/22）。剩 UNFOUND 多為 M9 雜項群（AUD-3/4 待裁）＋0140/0240 家族（AUD-1）；另小修＋待裁 AUD-1~8。
+**全局結論（zero-based audit 後更新 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列基線＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND；**06-15 校正後＝~133 碼在(80%)**（G1–G6＋修復落地）。真缺口＝🟠 **撥貸**（**A-1 換匯 stub ✅ 已實作 `daae4c3` 06-16**；剩 T24 正確性 domain-gated + **批次層 B001–B008 待碼驗** F-OWN-1 + A-1 spec-conformance 確認）。✅ **企金主流程 FE 後半段 Phase G 全收口（G1–G6，06-15）**＝0150/0160/0170/0171/0172/0173＋0261/0174/0175 三 popup（Phase V runtime 待測）。已收口：c0 評分 FE（Phase F）、i0 全模組（audit 22/22）。剩 UNFOUND 多為 M9 雜項群（AUD-3/4 待裁）；0140/0240 家族 AUD-1 ✅已關（06-16 owner 盤點＝已無使用）；另待裁 AUD-2/3/4/7/8/10/11。
 
 **三層結構**（避免把「模組」當「單頁」）：① 模組流程（M1–M9）② 流程頁（外層 pageMap 頁籤）③ 頁內區塊（內層 tab）。遷移單位＝模組流程。
 
@@ -57,7 +57,7 @@
 | EPROISU0920 | IS 0920 | **Disbursement Process（頁框）** | ✅ | ✅ | audit 碼在（DIFF-004）；domain 風險見 §2F |
 | EPROISU0921 | IS 0921 | **Disbursement Data Input** | ✅ | ✅ | audit 碼在；行為分歧屬 triage 軌（§2F）|
 | EPROISU0922 | IS 0922 | **Disbursement Summary（authorize/T24）** | ✅ | 🟡 | **A-1 throw-stub（見 §2F）** |
-> 不開發：`EPROIS_0140`(Property Info) 已 drop。popup `0174/0175/0176`→`mat-dialog`（隨審批頁）。⚠️ audit：`EPROIS_0240`/`EPROIU_0140`/`EPROIU_0240` 未被裁決點名→**AUD-1 待裁**（`pending-register.md`）。
+> 不開發：`EPROIS_0140`(Property Info) 已 drop。popup `0174/0175/0176`→`mat-dialog`（隨審批頁）。audit：`EPROIS_0240`/`EPROIU_0140`/`EPROIU_0240`→**AUD-1 ✅已關（06-16 owner 權威盤點標「已無使用」＝確認不遷）**。
 
 ### 2B. 企金主流程 `EPROCSU*`（M4 cs + M5 cu 合併）
 | 新頁 | 合併舊 funcId | 名稱 | FE | BE | 剩餘 / 備註 |
@@ -134,11 +134,12 @@
 | 區 | 狀態 | 內容 |
 |---|---|---|
 | 機械修正 M1–M10 | ✅ 全結案（master） | 尾欄/submit mail/RECEIVED_DATE/C20/fee key/E 位/H 段/A52/fee-delete-FN |
-| 🔴 **A-1 換匯 stub** | **未做（總開關）** | `funcGetExchangeRate` throw-stub → authorize 全斷、從未端到端跑過 |
+| ✅ **A-1 換匯 stub** | **已實作（product `daae4c3`，06-16；mvn clean package 綠）** | `funcGetExchangeRate` 補 return＋移尾端 throw（依 a1-spec OQ-1~5 裁定）→ authorize 換匯總開關打通；附 3 測試修（CaseDistribution 8 參數、Scorecard POST、FileService @TempDir）。⚠️ **spec-conformance 確認點**（terse 回報未涵蓋，需碼驗/Phase V）：OQ-1 `IdNo=OVSLXLON01`、OQ-3 映射 `EPROIS0921_UI_RAET_FIND_ERROR`、OQ-4 catch throw 勿回 null、兩表同交易 |
 | 🟡 B-1 `T24_COMPANY`（06-12 降級）| **前提推翻→RD 接值** | 新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存（OVSLXLON01/02 兩 schema，DDL 實查）；entity 補映射＋B8/C9 接值 |
-| 🔴 其餘 domain | 未決 | 換匯源 ID、檢核嚴格度、KHR、欄寬、async 架構、精度… |
-| 整合測確認點 | 待驗 | M7 facility fee 值、M9 district name join |
-> **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ⚠️ 機械修正全 inert——A-1 未通,撥貸跑不起來。
+| 🔴 其餘 domain | 未決 | 換匯源 ID（已裁 01）、檢核嚴格度、KHR、欄寬、async 架構… |
+| 🔴 **批次層 B001–B008** | **未追蹤→待碼驗**（F-OWN-1，owner 盤點 reconcile）| 新系統批次等價物存否未知；B005 匯率/B006 async/B007 SFTP＝撥貸下游關鍵 |
+| 整合測確認點 | 待驗 | A-1 spec-conformance（OQ-1/3/4/交易）、M7 facility fee 值、M9 district name join |
+> **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ✅ **A-1 stub 已實作（`daae4c3`）→ 機械修正不再 inert、authorize 可端到端跑**；剩撥貸真完成＝T24 正確性（domain-gated）＋批次層（F-OWN-1 待碼驗）＋A-1 spec-conformance 確認。
 
 ---
 
@@ -203,7 +204,7 @@
 
 - 🟡 **命名 tech-debt（06-12 快檢記錄）**：`epl-comm-isu-update-total-amount`（+class/DTO）實為 case-type 無關（計算不落 DB；LDTC 副作用被 `LON_ATTRIBUTE='I'` gate 限定），corporate 沿用安全——rename 低優先、閒時清。
 
-**⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×5（`00660`/`00100`/`00119` `5a47038`/`2599752`/`6919da5`，06-11；**`00640` PDF `c1bda77`、`00300` FE 導回 `40d931c`，06-15**，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ **BIBLE-GAP recon 完成（AUD-5 關 06-15）**；待裁＝AUD-1~4/6/7/8。
+**⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×5（`00660`/`00100`/`00119` `5a47038`/`2599752`/`6919da5`，06-11；**`00640` PDF `c1bda77`、`00300` FE 導回 `40d931c`，06-15**，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ **BIBLE-GAP recon 完成（AUD-5 關 06-15）**；待裁＝AUD-2/3/4/7/8/10/11（AUD-1/5/6/9 已關）。
 
 ---
 
