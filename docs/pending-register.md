@@ -13,6 +13,7 @@
 | **撥貸 domain 殘**（group 大縮）| ~~T24 欄值/格式/欄寬~~（✅ 06-16「T24 照舊規格」→ 執行 `build-tasks/t24-bgroup-legacy-parity-fix.md`）、~~async~~(AUD-10)；**殘＝A-4 檢核嚴格度、M6 完工日 DTO 來源**（A-5 幣別已 06-16 owner 裁 keep＝只 USD/KHR、收窄無害）| 撥貸 0921 檢核/M6 | 撥貸 domain | 06-05 | `disbursement-domain-escalations.md` |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
+| **SR-B1/B2**（00800 spec-review，06-16 語意審）| B1：R15+openapi 漏承載 PRD §6.4 `MSG_OVER_COUNT_LIMIT`/`MSG_QUERY_FAIL`（REQ-007 未完整）；B2：R15 把查詢失敗 500 誤併入輸入錯誤 400 | `00800` R15+openapi 錯誤碼定版（**或折進重建**）；採納後再審一輪 | RD／SA | 06-16 | `build-tasks/00800-spec-review-findings.md`（已坐實）|
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤` |
 | **c0 escalation E2** | `crScoreCardCompleted` 整欄覆寫 `"NN"`（`:2890`） | 同上 | 信用決策 domain | 06-05 | 同 |
 | **AUD-2**（F-6）| `EPROC0_0211/0213`（展期限定 FinEvalTable/Scorecard）遷/不遷——是否由 00116-00120 涵蓋 | M7 兩列定版 | 信用評分 domain | 06-11 | 同（DIFF-007）|
