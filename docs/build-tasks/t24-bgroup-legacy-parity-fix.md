@@ -6,11 +6,8 @@
 
 ## ⚠️ 裁定邊界（必讀，勿誤改）
 - **「照舊規格」適用於舊系統有 spec 之處**（欄位位置/來源/格式/截斷）。
-- **⚠️ KHR 幣別分支＝未確認、先不動（勿假設保留、也勿自動 revert）**：
-  - 證據（坐実）：新系統 fee rounding 有 `KHR`+`RoundingMode.DOWN` 分支、E21 有 KHR 處理（`verification-handoff §2.1:54`、`§2.3:85`，Step-B 老↔新比對）。
-  - **但「刻意在地化」係推斷未確認**（A-5「🟢 **疑似**」、handoff「**多半**」）。
-  - **「舊僅 USD」只對 fee rounding 分支成立**：舊 `getExchangeRate` **仍以 `CcyCode=KHR` 查匯率**（`done/a1-oq-legacy-recon-findings.md:8`）→ 非「舊全無 KHR」。
-- **處置**：本 batch-fix **先不碰 KHR 換匯/fee 幣別分支**；**另派 Codex 坐実新舊幣別處理差異 + domain 確認**後再定該分支去留。其餘 T24 欄（非幣別分支）照舊照修。
+- **✅ 幣別分支坐実完成（06-16，`khr-currency-handling-recon-findings.md`）→ 升 domain（A-5）**：非「KHR 新增在地化」，而是**收窄**——舊 non-USD **通吃**（全換匯/`Math.round`），新只明確 USD/KHR、其他 non-USD → null（0921 fee）/輸出 0（E21）＝**regression risk**；E21 意圖 UNFOUND；G/H 幣別來源舊 `DISBURSEMENT_CURRENCY`→新 account `CURRENCY`。
+- **處置**：本 batch-fix **仍不碰幣別/換匯分支**（E21/G4/G10/H8、fee rounding 幣別分支）——待 **domain 答「撥貸有無 USD/KHR 以外有效幣別」**：有→**對等修**（照舊恢復 non-USD 通吃，＝owner「T24 照舊」自然修 regression）、無→keep+補規格；另 KHR rounding（`DOWN` vs 舊 round）、G/H 來源。其餘 T24 欄（非幣別分支）照舊照修。
 
 ## 逐欄（照舊；先坐実舊 `file:line` 再改新）
 | 欄 | 項 | 照舊＝ | 坐実 + 改 |
