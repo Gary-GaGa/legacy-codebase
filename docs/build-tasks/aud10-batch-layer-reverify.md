@@ -1,5 +1,7 @@
 # Build Task — 批次層 B001–B008 碼驗（AUD-10；owner 盤點 F-OWN-1）
 
+> 🔄 **碼驗部分回（2026-06-16）→ findings `aud10-batch-layer-reverify-findings.md`**：B006/B007 FOUND（撥貸下游不缺）、B005 匯率排程 app 碼缺（待 domain 判）、B008→ops、B001–B004 待完整 findings。**未結**（B005 判定 + B001-4 補完後收）。
+
 > **性質**：唯讀碼驗（Codex 母資料夾，新後端 + legacy 對照）。**只報不改**。
 > **背景**：owner 權威盤點表（`legacy/legacy-function-inventory.md`）列 **8 個批次 EPROZ0_B001–B008**，但我們 `feature-inventory`／`diff-vs-inventory` **從未當工作單位追蹤**（F-OWN-1，`refactor-audit/owner-inventory-reconcile.md`）。進度 % 因此漏掉整個批次層；其中 **B005/B006/B007 是撥貸端到端下游交付關鍵**（A-1 把換匯打通了，但「檔案真的送出去 T24」可能還缺批次等價物）。
 > **目的**：回答「**新系統有沒有這 8 個批次的等價物？**」——逐個 found/UNFOUND/partial + `file:line`，缺的開卡。
