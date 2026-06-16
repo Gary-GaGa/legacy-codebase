@@ -30,10 +30,10 @@
 | ② Schema：Hibernate `ddl-auto=validate` / migration | gate②：DDL 解析 + 欄長交叉 |
 | ③ 結構：`scripts/verify-c0.py --git` | —（不適用 SRS 階段）|
 | ④ QA 驗收：Testcontainers oracle-xe 跑 case（橋接 `../qa-to-test.md`）| —（寫法閘＝qa-cases **test-ready**）|
-| ⑤ 覆蓋率：ID 對表 | gate⑤：Rn↔QA covers / 懸空引用 |
+| ⑤ 覆蓋率：ID 對表 | gate⑤：Rn↔QA covers / 懸空引用 / **分支覆蓋自承不完整=warn**（2026-06-16）|
 | ⑥ Build 綠 | —（牆上 ⑥；腳本無同號項，撞號已消除）|
 | ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與牆上 ⑦ 混）|
-| —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、xfile 跨檔、doc-paths |
+| —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、**gateⓈ** Status↔安全（Approved+`BPn-PENDING`=warn，2026-06-16）、xfile 跨檔、doc-paths |
 
 ## 與 vision 的關係
 boundary bundle 是把閘門 ①/②/④/⑤ 從「文件 + 延後」升級成「迴圈內可跑」的路徑（`../../process/vision-pipeline.md` §8 漸進落地）——**不必一次到位**，先一頁跑通再放大。

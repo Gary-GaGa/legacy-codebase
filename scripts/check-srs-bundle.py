@@ -7,7 +7,12 @@
 其他文件一律「見腳本檔頭」，**勿在他處複寫此清單**——多份副本必漂移）：
   gate①  openapi：YAML 解析 / $ref 解得開 / required ⊆ properties
   gate②  schema：DDL 解析、欄位重複、括號平衡、欄長 ↔ openapi maxLength 交叉
-  gate⑤  covers：每個非-@PENDING `Rn` ≥1 QA covers；懸空 QA 引用
+  gate⑤  covers：每個非-@PENDING `Rn` ≥1 QA covers；懸空 QA 引用；
+         **分支覆蓋自承不完整**（Rn 雖 ≥1 但 qa 自承「僅…分支／未撰寫／RD 補／
+         不可當已覆蓋」）=warn（破「≥1 假綠」；2026-06-16 升級，源 00800 批判 #3）
+  gateⓈ Status↔安全：spec Status 含 Approved 但有未承載 Bible→PRD seam（BPn-PENDING）
+         =warn——**未承載 Bible 安全/災難條件不得 Approved**；機械無法判是否安全條件
+         →逼人確認（2026-06-16 升級，源 00800 批判 #5）
   xfile  跨檔完整性：endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi、強制點欄
   gateⒷ Bible↔PRD：covers-prd↔PRD 快照懸空=FAIL；trace 缺列 / Bible BR 點名
          本 funcId 未入 trace=advisory warn
@@ -17,9 +22,9 @@
          存在性（advisory；歷史檔 build-tasks/done/、archive/ 不掃）
 
 編號對照：gate①②⑤＝DoD 閘門牆（`docs/assets/ai-workflow.mmd`）①②⑤ 同位項在 SRS
-定稿階段的 pre-check（**同號同義、不同階段**）。gateⒷ/gateⓅ/xfile/doc-paths＝**SRS 階段
-專屬、DoD 牆無對應格**，故用字母標（Ⓑ=Bible、Ⓟ=Pending）而非接續 ⑥⑦——避免與牆上
-⑥Build/⑦LLM-advisory 撞號。完整對照表見 `docs/specs/srs/README.md`。
+定稿階段的 pre-check（**同號同義、不同階段**）。gateⒷ/gateⓅ/gateⓈ/xfile/doc-paths＝**SRS
+階段專屬、DoD 牆無對應格**，故用字母標（Ⓑ=Bible、Ⓟ=Pending、Ⓢ=Status/Safety）而非接續
+⑥⑦——避免與牆上 ⑥Build/⑦LLM-advisory 撞號。完整對照表見 `docs/specs/srs/README.md`。
 
 **分工**：語意正確性（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、
 NFR 量化）仍由 `.claude/agents/spec-reviewer.md`（人/LLM）審。兩層互補、不重疊。
@@ -306,7 +311,52 @@ def gate5_traceability(bundle):
             infos.append(f"{qid} 在 spec.md 被引用但 qa-cases.md 未定義（已標 placeholder，視為待補）")
         else:
             fails.append(f"{qid} 在 spec.md 被引用，但 qa-cases.md 無此 case（懸空引用；補 case 或標 placeholder）")
+
+    # 5) 分支覆蓋自承不完整（2026-06-16 升級，破「≥1 假綠」）：Rn 雖有非-pending case，
+    #    但 qa 在該 Rn 的覆蓋描述（`Rn：…` 至下個 ｜/換行的視窗）自承「僅…分支／未撰寫／
+    #    RD 補／不可當已覆蓋」→ warn（≥1 過但非全分支；補 happy/error/edge）。
+    qa_text = "\n".join(qa)
+    partial_re = re.compile(r"僅[^｜|\n]{0,20}分支|不可當已覆蓋|partial", re.IGNORECASE)
+    partial_rids = set()
+    for m in re.finditer(r"(R\d+(?:\.\d+)?)[：:]([^｜|\n]{0,80})", qa_text):
+        rid, tail = m.group(1), m.group(2)
+        if rid not in rules or not covers.get(rid) or is_pending(rid):
+            continue
+        if partial_re.search(tail) or PLACEHOLDER_RE.search(tail):
+            partial_rids.add(rid)
+    for rid in sorted(partial_rids, key=lambda r: (int(r[1:].split(".")[0]), r)):
+        warns.append(
+            f"`{rid}` 覆蓋自承不完整（分支未齊／case 未撰寫）→ gate⑤ ≥1 過但非全分支覆蓋；"
+            f"補 happy/error/edge case（破假綠，見檔頭 #3）"
+        )
     return fails, warns, infos
+
+
+# ---------- gateⓈ Status ↔ 未承載 Bible 安全 seam（2026-06-16 升級）----------
+BP_PENDING_RE = re.compile(r"BP\d+-PENDING")
+
+
+def gate_status_safety(bundle):
+    """gateⓈ：spec Status 含 Approved 但有未承載 Bible→PRD seam（BPn-PENDING）→ warn。
+    機械無法判 BP 是否為安全/災難條件 → 逼人確認（未承載安全條件不得 Approved）。"""
+    sp = os.path.join(bundle, "spec.md")
+    if not os.path.isfile(sp):
+        return [], []
+    spec = read(sp)
+    status_approved = any(
+        re.match(r"^\|\s*Status\s*\|", ln) and "Approved" in ln
+        for ln in spec.splitlines()
+    )
+    if not status_approved:
+        return [], []
+    bps = sorted(set(BP_PENDING_RE.findall(spec)))
+    if not bps:
+        return [], []
+    return [], [
+        f"Status 含 Approved，但有未承載 Bible→PRD seam（{', '.join(bps)}）——"
+        f"確認無安全/災難條件未承載方可 Approved（**未承載安全條件不得 Approved**；"
+        f"機械無法判是否安全條件→人確認，見檔頭 #5）"
+    ]
 
 
 # ---------- 跨檔完整性（endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi）----------
@@ -510,6 +560,7 @@ def check_bundle(bundle):
     gxf, gxw = gatex_crossfile(bundle)
     gbf, gbw, gbi = gate_bible_prd(bundle)
     gpf, gpw, gpi = gate_pending_register(bundle)
+    gsf, gsw = gate_status_safety(bundle)
     sections = [
         ("gate①openapi", g1f, g1w, []),
         ("gate②schema ", g2f, g2w, []),
@@ -517,6 +568,7 @@ def check_bundle(bundle):
         ("xfile 完整性 ", gxf, gxw, []),
         ("gateⒷbible↔prd", gbf, gbw, gbi),
         ("gateⓅpending同步", gpf, gpw, gpi),
+        ("gateⓈstatus安全", gsf, gsw, []),
     ]
     for name, fails, warns, infos in sections:
         status = "FAIL" if fails else "PASS"

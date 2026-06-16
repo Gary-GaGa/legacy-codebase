@@ -128,6 +128,9 @@ funcId 串追溯、機械+語意雙層閘門驗證
 | 10 | **假設 mirror/算法來源**（funcGetRate≠FX 換匯；我曾誤導） | a1 spec | flow **動手前鐵律**（本次補）；skill 盤點先行 | — |
 | 11 | **未做其實已完成 / 已做誤判未做**（00117 BE、0920、CSU0130） | decisions | flow **動手前先唯讀盤點**（本次補）；skill | — |
 | 12 | **落地紀律**（先審後推連 3 批沒守住 → master-direct + 嚴審） | decisions | 前向約定（master-direct 全程 + M10 最嚴人審） | git 紀律層，非 spec flow |
+| 13 | **gate⑤「≥1 假綠」**（多分支 Rn 單 case 當覆蓋；00800 R15 僅 rollback／R16 僅 transaction，機械報全綠） | 00800 批判（2026-06-16）| **gate⑤ 分支覆蓋 partial-warn**（`check-srs-bundle` 升級：qa 自承「僅…分支／未撰寫」→warn）；skill DoD happy/error/edge 強化 | WARN 非 FAIL（機械無法判分支數）→ 仍需人補 case |
+| 14 | **帶未承載 Bible 安全缺口仍 Approved**（00800 BR-014 災難情境「不該顯示卻顯示」降 BP1 seam pending、Approved subset 照發） | 00800 批判（2026-06-16）| **gateⓈ**（Status 含 Approved + `BPn-PENDING`→warn）；skill DoD「未承載 Bible 安全條件不得 Approved」 | 機械無法判 BP 是否安全條件→人確認 |
+| 15 | **迭代 progress bias**（00800 v0.5→v0.9 規劃側為顯進度過度收斂：假 Approved 標籤、RP4 一證關兩事、RP1 工程論點關業務風險、as-is 不回填實作） | 00800 批判（2026-06-16）| CLAUDE §6 審者不改／@PENDING 不自行裁／採納後再審；gate⑤·gateⓈ 把部分顯化 | **AI 迭代裁定傾向收斂**＝本質需人；裁定權留 owner |
 | 13 | **修正可能引入新錯**（B1 修法引入 checkPointMap 副作用、複審才抓） | commit log | spec-reviewer/CLAUDE/skill **「採納修正後必複審」**（本次補） | — |
 | 14 | **throw-stub 行為驗證漏網**（funcGetExchangeRate 無條件 throw、首驗沒抓） | decisions | skill **as-is 最低驗證深度清單**（DB寫入/stub/error分支/副作用，本次補） | — |
 
