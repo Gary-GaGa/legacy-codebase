@@ -19,7 +19,7 @@
 
 ## 2. P1 — 正確性 bug（資料錯 / 金錢 / 資料遺失；較高信心）
 - **0921**：collateral 完工日寫 `null`（資料遺失）；`dataReturn` fee cleanup `deleteByIdApplicationNo` 過度刪；fee 公式 alias 不符 → facility fee 可能 `null`；`RECEIVED_DATE` 在 Save 即寫。
-- **0922-main**：`EXCHANGE_RATE` 來源 ID `OVSLXLON01→02`（換錯匯率源）；`submit` mail 送空清單（checker 沒收到）；`submit` history `25→24`。
+- **0922-main**：`EXCHANGE_RATE` 來源 ID `OVSLXLON01→02`（**✅ 06-16 owner 裁定：先對齊舊 parity→改回 `01`**；同 A-1 OQ-1、escalations A-2）；`submit` mail 送空清單（checker 沒收到）；`submit` history `25→24`。
 - **0922-t24 來源欄**：`A52` 漏（`DISTRICT_NAME`）；`C12` `SUG_VAL` 讀錯表；`C13` `DECISION_DATE`→`CHECK_DATE`；`C20` 來源欄名錯（`INS_END_DATE` vs 同名直映 `INS_EXPIRY_DATE`）；`G4` currency 來源；`G10`/`H8` 換匯欄；`A31`/`G7` `AGREEMENT_NO` 截斷（舊取後 16 碼）；`E21` 非 USD 非 KHR 輸出 `0`（舊全換匯）；`G11–G12` fee remark mapping；`A15` 空值補 `N/A`；`A16` `NORMAL.LAON`→`LOAN`（⚠️ 舊可能是 T24 期望的 key、勿當錯字修）。
 
 ## 3. P2 — 需 domain / T24-spec 裁示（intended vs regression）
