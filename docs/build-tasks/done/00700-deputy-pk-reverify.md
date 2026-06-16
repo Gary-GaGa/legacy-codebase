@@ -17,6 +17,6 @@
 
 ## 回報
 - entity `@Id` 形式 + save/delete 邏輯 file:line;結論一句：**✅ 已對齊複合 PK** ／ **🔴 假設單鍵需修**（附 gap）。
-- findings 寫 `docs/build-tasks/00700-deputy-pk-reverify-findings.md`。
+- findings 寫 `docs/build-tasks/done/00700-deputy-pk-reverify-findings.md`。
 
 > 過了：🔴 → 開 deputy PK 修復卡（entity 改複合 + upsert/delete 對齊）;✅ → 結案、回填 inventory deputy 列「DB 複合 PK 已對齊」。

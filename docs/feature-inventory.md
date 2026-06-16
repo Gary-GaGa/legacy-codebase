@@ -185,7 +185,7 @@
 **④b 🟠 `00800` Revised Item（owner：RD 實作＋SA 取數）**
 - ✅ D1–D5 硬缺陷已修（`88328f9`，2026-06-09；prompt 歸檔 `done/00800-fix-step1-tbd-independent.md`；QA-013/014/016/017 過、QA-012 rollback deferred-to-DB）。
 - ✅ TBD-001~007 全裁（06-11，SRS v0.5）；✅ **RI-MAT 修復包 F1–F9 已落地**（product `5580eb7`，06-12 審過：isNotSame gate 移除、R13.1–13.3、R16 audit、R5 disabled、Finished、R14 checkpoint 對齊、R13.4/13.5 矩陣修正＋seqNo 括號 bug 加修；prompt 歸檔 `done/00800-rimat-fix.md`）。
-- 仍開：**只剩 RP8/RP9/RP11**（06-12 三連關：RP10 DDL 枚舉、RP6 取數、RP4 設計非缺陷 → R13.4/13.5+R14+ITEM 名稱全定版，rimat 擴至 F1–F9）——**裁定內容單一出處＝`specs/srs/EPROZ00800/spec.md` §@PENDING**（視圖＝`pending-register.md`）；取證證據＝`build-tasks/00800-pending-recon-findings.md`（原 recon 卡歸檔 done/）。
+- 仍開：**只剩 RP8/RP9/RP11**（06-12 三連關：RP10 DDL 枚舉、RP6 取數、RP4 設計非缺陷 → R13.4/13.5+R14+ITEM 名稱全定版，rimat 擴至 F1–F9）——**裁定內容單一出處＝`specs/srs/EPROZ00800/spec.md` §@PENDING**（視圖＝`pending-register.md`）；取證證據＝`build-tasks/done/00800-pending-recon-findings.md`（原 recon 卡歸檔 done/）。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 

@@ -1,6 +1,6 @@
 # Build Task — langType 當資料過濾 盤點＋修（Phase V 橫向 sweep；RV-2 起）
 
-> ✅ **完成（盤點 06-15＋修 06-16，審過）＝5 處全修**：(a) 移除 outer WHERE×2（todolist／casedistribution，product `bbbaa19`）、(b) join ON+fallback en_US×3（caseapplication／deviation／cancelreport，`7e1f0d2`）。**筆數一致驗證 `zh_TW`=`en_US` 五頁全通**（todolist 91/91、caseapplication 569/569、deviation 293/293、cancelreport 10/10、casedistribution role405 5/5）。RV-2 收口。findings＝`langtype-data-filter-sweep-findings.md`（留 live）。
+> ✅ **完成（盤點 06-15＋修 06-16，審過）＝5 處全修**：(a) 移除 outer WHERE×2（todolist／casedistribution，product `bbbaa19`）、(b) join ON+fallback en_US×3（caseapplication／deviation／cancelreport，`7e1f0d2`）。**筆數一致驗證 `zh_TW`=`en_US` 五頁全通**（todolist 91/91、caseapplication 569/569、deviation 293/293、cancelreport 10/10、casedistribution role405 5/5）。RV-2 收口。findings＝`langtype-data-filter-sweep-findings.md`（已隨卡歸檔 `done/`，2026-06-16 收納）。
 
 > 載具：Codex（母資料夾，FE+BE+legacy-epro 唯讀對照）。**性質＝橫向 sweep**：先盤點同型、再批量修。
 > **背景**：Phase V 本機坐實 TODO（`EPROZ00100`）查詢用 `S.LOAN_TYPE_LANG_TYPE = :langType` 當**資料過濾**（`zh_TW`→`totalCount:0`／`en_US`→`92`），**舊版 initQuery 無此條件＝regression**（`VMainBorrowerInfoRepository:46`；findings `00100-todo-empty-recon-findings.md`）。

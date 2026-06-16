@@ -122,7 +122,7 @@
 ### 6.1 runtime findings（2026-06-15 Phase V 本機，AO 70201／連 `OVSLXLON02`）
 | # | 發現 | 性質 | 處置 |
 |---|---|---|---|
-| **RV-1** | **Search 頁開即 E999**：`getSearchOptions` `Required request body is missing`（GET 無 body＋BE `@RequestBody` 殘留，疑 sweep① `48e687f` 不完整 regression）| ✅ 已修 runtime bug（角色無關，AO 也噴）| `getSearchOptions` 改為 GET query/model binding；FE 改用 `?langType=`，不再送 GET body；見 `build-tasks/00600-search-options-fix.md` |
+| **RV-1** | **Search 頁開即 E999**：`getSearchOptions` `Required request body is missing`（GET 無 body＋BE `@RequestBody` 殘留，疑 sweep① `48e687f` 不完整 regression）| ✅ 已修 runtime bug（角色無關，AO 也噴）| `getSearchOptions` 改為 GET query/model binding；FE 改用 `?langType=`，不再送 GET body；見 `build-tasks/done/00600-search-options-fix.md` |
 | **RV-2** | **TODO List 空**（中文 UI）| ✅ **已修（06-16）**：langType 退出資料過濾；**筆數一致驗證 `zh_TW`=`en_US`=91**（langType 不再砍資料）| 修＝langtype sweep (a) 移除 `VMainBorrowerInfoRepository` outer WHERE（product `bbbaa19`）；根因＝新版多 `LOAN_TYPE_LANG_TYPE=:langType`、舊 initQuery 無＝regression。Owner 裁示落實（語系只剩 zh_TW+en_US、只影響翻譯不影響資料）|
 
 ### 6.2 橫向 sweep 結果（盤點 06-15 審過；**修 06-16 落地**）
