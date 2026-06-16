@@ -10,9 +10,11 @@
   gate⑤  covers：每個非-@PENDING `Rn` ≥1 QA covers；懸空 QA 引用；
          **分支覆蓋自承不完整**（Rn 雖 ≥1 但 qa 自承「僅…分支／未撰寫／RD 補／
          不可當已覆蓋」）=warn（破「≥1 假綠」；2026-06-16 升級，源 00800 批判 #3）
-  gateⓈ Status↔安全：spec Status 含 Approved 但有未承載 Bible→PRD seam（BPn-PENDING）
-         =warn——**未承載 Bible 安全/災難條件不得 Approved**；機械無法判是否安全條件
-         →逼人確認（2026-06-16 升級，源 00800 批判 #5）
+  gateⓈ Status↔安全/雙軸：(a) spec Status 含 Approved 但有未承載 Bible→PRD seam
+         （BPn-PENDING）=warn——**未承載 Bible 安全/災難條件不得 Approved**；機械無法判是否
+         安全條件→逼人確認（2026-06-16 批判輪1 #5）；(b) Status 含 Approved 但未分
+         『規格定版 / 實作完成』兩軸=warn——破「Approved 混『規格定了』與『實作好了』」
+         （2026-06-16 批判輪2）
   xfile  跨檔完整性：endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi、強制點欄
   gateⒷ Bible↔PRD：covers-prd↔PRD 快照懸空=FAIL；trace 缺列 / Bible BR 點名
          本 funcId 未入 trace=advisory warn
@@ -337,26 +339,40 @@ BP_PENDING_RE = re.compile(r"BP\d+-PENDING")
 
 
 def gate_status_safety(bundle):
-    """gateⓈ：spec Status 含 Approved 但有未承載 Bible→PRD seam（BPn-PENDING）→ warn。
-    機械無法判 BP 是否為安全/災難條件 → 逼人確認（未承載安全條件不得 Approved）。"""
+    """gateⓈ：Status↔安全/雙軸（皆 warn）。
+    (a) Status 含 Approved 但有未承載 Bible→PRD seam（BPn-PENDING）——機械無法判 BP 是否安全/災難
+        → 逼人確認（未承載安全條件不得 Approved）。
+    (b) Status 含 Approved 但未分『規格定版 / 實作完成』兩軸——破「Approved 混『規格定了』與
+        『實作好了』」（2026-06-16 批判輪2）。"""
     sp = os.path.join(bundle, "spec.md")
     if not os.path.isfile(sp):
         return [], []
     spec = read(sp)
-    status_approved = any(
-        re.match(r"^\|\s*Status\s*\|", ln) and "Approved" in ln
-        for ln in spec.splitlines()
+    # header 容忍註記（如「Status（雙軸）」）→ `[^|]*` 吃到首個 pipe，免漏抓 Status 列致假綠
+    status_line = next(
+        (ln for ln in spec.splitlines()
+         if re.match(r"^\|\s*Status[^|]*\|", ln) and "Approved" in ln),
+        None,
     )
-    if not status_approved:
+    if status_line is None:
         return [], []
+    warns = []
+    # (a) Approved 帶未承載 Bible→PRD seam
     bps = sorted(set(BP_PENDING_RE.findall(spec)))
-    if not bps:
-        return [], []
-    return [], [
-        f"Status 含 Approved，但有未承載 Bible→PRD seam（{', '.join(bps)}）——"
-        f"確認無安全/災難條件未承載方可 Approved（**未承載安全條件不得 Approved**；"
-        f"機械無法判是否安全條件→人確認，見檔頭 #5）"
-    ]
+    if bps:
+        warns.append(
+            f"Status 含 Approved，但有未承載 Bible→PRD seam（{', '.join(bps)}）——"
+            f"確認無安全/災難條件未承載方可 Approved（**未承載安全條件不得 Approved**；"
+            f"機械無法判是否安全條件→人確認，見檔頭 gateⓈ(a)）"
+        )
+    # (b) Status 雙軸：規格定版 vs 實作完成 須分離
+    if not ("規格定版" in status_line and "實作完成" in status_line):
+        warns.append(
+            "Status 含 Approved 但未分『規格定版 / 實作完成』兩軸——單一 `Approved(subset)` "
+            "易混『規格定了』與『實作好了』；請拆兩軸（如 `規格定版: Approved(subset) ／ "
+            "實作完成: D1–D5`），見檔頭 gateⓈ(b)"
+        )
+    return [], warns
 
 
 # ---------- 跨檔完整性（endpoint↔openapi、spec 表↔schema、錯誤碼↔openapi）----------

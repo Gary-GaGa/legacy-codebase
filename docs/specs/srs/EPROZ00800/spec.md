@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 |---|---|
-| Status | **Approved (subset)** — D1–D5 已定稿+實作（`88328f9`）；06-11 裁定輪：RP1/RP2/RP3/RP5/RP7 已關；06-12：RP10/RP6/RP4 已關 → R13.4/13.5、R14 定版、ITEM 名稱定版；**06-16：RP9 已關（init-query＝GET，Follow PRD §6.1）**（**詳 §@PENDING＝單一出處**）；**仍 blocked**：RP8、RP11、BP1–4；正式 SA 簽核待 owner 指派。就緒/blocked 分界見文末 as-is→to-be 摘要 |
+| Status | **規格定版**: Approved (subset)——RP1/2/3/5/7（06-11）、RP10/6/4（06-12）、RP9（06-16 init-query=GET）已關；**仍 blocked**: RP8、RP11、**BP1–4**（⚠️ BP1＝顯示 gating＝Bible 災難情境「不該顯示卻顯示」**未承載**→ Approved 僅限已承載 subset、安全洞待 PM/SA）。**／實作完成**: **僅 D1–D5**（`88328f9`：transaction／execute→POST／maxlength 3000／pageMenuCondition／Y-N 驗證）；其餘（R11 移 gate、R13.1-5 還原修、R5 disabled、R14 欄對齊、R16 audit、get-body #3 GET）＝**已解鎖、未實作**。正式 SA 簽核待 owner。詳 §@PENDING（單一出處）＋文末 as-is→to-be 摘要 |
 | Owner | SA（待指派）|
 | Slug | `EPROZ00800`（＝funcId）|
 | 版本 | v0.9（06-12：**RP6/RP4 關閉輪**——ITEM1~14 名稱由舊庫 `TB_COMMON_FIELD_OPTIONS`+`TB_MULTI_LANG` 取數定版（findings `00800-pending-recon-findings.md` E1）；RP4 裁「設計非缺陷」（ITEM1=Renew Loan Tenor≠ITEM10=ATC_Tenor）→ R13.4/13.5 定版、QA-009 拆 a/b、RP2 原因補文；rimat 加 F9。前版 v0.8（06-12：**RP10 關閉輪**——checkpoint 實表/key 由新 schema DDL 機械枚舉定版（`OVSLXLON02`，64 欄）；R14 表名修正＋key 形式定版＋as-is 由 🔴 重判 ⚠️（S7 係以 `_0260` 為 to-be 之誤）；schema.sql/openapi/QA-011 同步。前版 v0.7（06-12：**EARS 複審輪**——補 v0.6 欠的「採納修正後再審一輪」：R14 修 v0.6 引入的時序歧義（拆兩拍：checkpoint 寫入在**交易內**→R10、`pageMenuCondition` 於成功完成時回傳）、R5 句型改 state-driven 與 R6/R7 一致；其餘 v0.6 句型經 diff 複審確認零漂移。前版 v0.6＝EARS 句型整訂（skill 鐵則 1b 回溯適用，owner 指示）；v0.5＝TBD 裁定輪——各 RP 裁定內容單一出處＝§@PENDING 表；QA 異動：QA-007/008 un-pend、QA-009 改掛 RP4、新增 QA-024/025；B2/B3/§5.6 契約待決正規化為 RP9–RP11）|

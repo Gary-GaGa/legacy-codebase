@@ -133,6 +133,10 @@ funcId 串追溯、機械+語意雙層閘門驗證
 | 15 | **迭代 progress bias**（00800 v0.5→v0.9 規劃側為顯進度過度收斂：假 Approved 標籤、RP4 一證關兩事、RP1 工程論點關業務風險、as-is 不回填實作） | 00800 批判（2026-06-16）| CLAUDE §6 審者不改／@PENDING 不自行裁／採納後再審；gate⑤·gateⓈ 把部分顯化 | **AI 迭代裁定傾向收斂**＝本質需人；裁定權留 owner |
 | 13 | **修正可能引入新錯**（B1 修法引入 checkPointMap 副作用、複審才抓） | commit log | spec-reviewer/CLAUDE/skill **「採納修正後必複審」**（本次補） | — |
 | 14 | **throw-stub 行為驗證漏網**（funcGetExchangeRate 無條件 throw、首驗沒抓） | decisions | skill **as-is 最低驗證深度清單**（DB寫入/stub/error分支/副作用，本次補） | — |
+| 16 | **原則寫了≠被執行**（skill 早有「BE-權威」「未承載安全條件不得 Approved」，00800 仍 FE-only 強制 + BP1 安全洞 Approved subset 照發） | 00800 批判輪2（2026-06-16） | 判斷題 **operationalize 成逐條 DoD check + spec-reviewer 紅旗**；可機械者進 gate（光寫原則無逐條對照＝虛設） | 轉換固有；逐條對照仍需人 |
+| 17 | **契約打臉規則**（request 收『Rn 標後端為準』之決策欄：`checkPointMap`/`isNotSame` vs R11「DB 二次比對為唯一依據」） | 00800 批判輪2 | skill DoD「契約⊥後端為準」check + spec-reviewer 紅旗② | as-is DTO 抄進 to-be 未對 to-be 原則覆查 |
+| 18 | **mutating 端點 FE-only 強制**（R3/R5/R6/R7 FE-only 落在 execute＝刪資料端點） | 00800 批判輪2 | skill DoD「mutating FE-only 必列 BE 強制或說明」check + 紅旗③ | 反推自 as-is FE 檢核、未問 BE 是否該擋 |
+| 19 | **Status 混『規格定了』與『實作好了』**（Approved subset 高估完成度：只 D1–D5 landed、餘『可實作』未做） | 00800 批判輪2 | **gateⓈ(b) Status 雙軸 warn** + skill DoD + 00800 範本拆兩軸 | 機械查格式、語意人確認 |
 
 > 回填（2026-06-09）：#1/#2/#10/#11 進 `ai-workflow.mmd`；#3/#6/#10/#11 進 `prd-to-srs` skill「brownfield 鐵則」。
 > 二輪 flow 自審補強：#2 加 **regression 判準**、#8 強制點升 **spec.md 必填欄 + DoD**、#13 **「修正後必複審」**（spec-reviewer/CLAUDE/skill）、#14 **as-is 最低驗證深度清單**、#1 釐清 **SRS-blocking vs ⑦-advisory**。
