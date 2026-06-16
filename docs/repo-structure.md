@@ -60,6 +60,7 @@
 | `archive/completion-ledger.md` | 🗄 已凍結（2026-06-11；內容併入 feature-inventory） |
 | `decisions.md` | 決策與事實流水帳（失敗教訓的原始紀錄；收斂表見 `spec-architecture.md §9`） |
 | `process/vision-pipeline.md` | flow 願景與原則 |
+| `process/orchestration-playbook.md` | Codex 多任務編排方法論（A/B/C 三類、依賴 DAG、完成定義、三軸驗證；orchestrator 停在等人審）|
 
 ## 5. 子域 / 階段專屬（已分資料夾，2026-06-10）
 - **[`disbursement/`](disbursement/)**：`disbursement-triage.md`（0921/0922/T24 triage）、`disbursement-domain-escalations.md`（待 domain/T24/DBA 裁決）；A-1＝`build-tasks/a1-funcGetExchangeRate-spec.md` + `phase-d-a1-exchange-stub-investigation.md`。
