@@ -10,7 +10,7 @@
 | ~~**A-2**~~ ✅（06-16 owner）| `EXCHANGE_RATE` 來源 ID `OVSLXLON01`→`02` | **裁定＝先對齊舊 parity→`OVSLXLON01`**（與 OQ-1 係同一分歧，同步取舊值）。⚠️ schema-diff 證據偏「02=新庫刻意」，故為「先固定」，唯一復驗點＝新環境 T24 拒收 `01` | 換錯匯率源·已裁 | §2 / §7 line71 |
 | **A-3** | `E21` 非 USD 非 KHR 輸出 `0`（舊全換匯） | 是否隨 KHR 在地化刻意改；非 USD/KHR 幣別該如何出 | T24 值錯·中 | §2 / §7 |
 | **A-4** | `0921` 檢核對等：`CheckMainBorr`/`CheckCoBorr`（身分/sector/account/`DATA_SEQ`/business-section）、`info CO_CHECK ='Y'` vs 舊 `!='N'`、Finished gate 未驗 `mbCheck`、law firm `IS_SHOW` 版本條件、address `UPD_DATE` 來源 | 逐項裁「嚴格度差異是 intended 還是 regression」 | 檢核漏放/誤擋·中 | §3 P2 |
-| **A-5** 🟢 | `KHR` 換匯 + 在地化（舊僅 USD） | **疑刻意演進——確認後標明「勿改回」**，避免後續被當 bug 還原 | 改回會破壞·高 | §3 / §7 |
+| **A-5** 🟢→坐実中 | `KHR` 換匯 + 在地化（**「舊僅 USD」只指 fee rounding 分支**；舊 `getExchangeRate` 仍 `CcyCode=KHR`）| **疑刻意演進、未確認** → 派 Codex 坐実新舊幣別差異（**新增 vs 改寫**）以定 keep/修：`build-tasks/khr-currency-handling-recon.md` | 改回恐破柬埔寨本幣·高 | §3 / §7 |
 | **A-6** | `0922 submit` history `25`→`24` | confirm 正確序號後再定 | 狀態序·低 | §7 line72 |
 
 ## B. T24 整合 owner / T24 spec
