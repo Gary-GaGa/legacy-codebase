@@ -702,12 +702,15 @@ def main(argv):
     if not args:
         print(__doc__)
         return 2
-    bundles = discover_all() if args[0] == "--all" else [a for a in args if os.path.isdir(a)]
-    if not bundles:
+    is_all = args[0] == "--all"
+    bundles = discover_all() if is_all else [a for a in args if os.path.isdir(a)]
+    if not bundles and not is_all:
         print("找不到 bundle（給 bundle 資料夾路徑，或 --all）")
         return 2
     total = sum(check_bundle(b) for b in bundles)
-    if args[0] == "--all":
+    if is_all:
+        if not bundles:
+            print("i 無 SRS bundle（specs/srs/ 下目前無 funcId bundle——spec 層重置/重產中屬正常）")
         pw = scan_doc_paths()
         print("\n[doc-paths（advisory）] " + ("PASS" if not pw else f"{len(pw)} 筆殘留"))
         for m in pw:

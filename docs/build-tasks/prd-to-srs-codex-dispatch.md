@@ -2,7 +2,7 @@
 
 > **用法**：在母資料夾（產品碼 + 規劃 repo 可讀 + 新版 Bible/PRD 放好）開 Codex，**一次一頁**貼下方 prompt（填 `<funcId>` / `<PRD 路徑>`）。產 SRS bundle → 過閘門 → 回填。
 > **依賴**：① 新版 PRD（必）+ Bible（有則接上游追溯）② 該頁產品碼（as-is）③ 規劃 repo 的 skill/SOP（prompt 已內聯關鍵，不可讀亦能跑）④ **對比輸入 md**（新舊 DB 差異/新 schema + 既有重構 spec，見 prompt 內 §5）。
-> **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24〕→ ④ `EPROZ00800` 重產（新版 PRD 取代 v0.9）→ ⑤ 主流程 ISU/i0/z0 增量。
+> **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24〕→ ④ `EPROZ00800` 重產（新版 PRD；v0.9 已封存）→ ⑤ 主流程 ISU/i0/z0 增量。
 
 ---
 
@@ -31,27 +31,32 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 4. 真實 endpoint = RPC `epl-{verb}-{scope}-{feature}`（非 PRD 理想化 /api/...）；
    mutate=POST。Oracle native query 未加引號 alias → label 大寫（大小寫對映注意）。
 5. 【對比輸入：多個 md 檔 — 必讀並 reconcile，把「更動後需求」一起納入 SRS】
-   A. 新舊 DB 差異 + 新 Table schema：
-      - `docs/build-tasks/schema-diff-findings.md`（old:OVSLXLON01→new:OVSLXLON02 的
-        table/欄 added/removed/type/precision/nullable + focus checklist）
-      - `docs/build-tasks/legacy-schema-db-reverify-findings.md`、`docs/legacy/db-schema-catalog.md`
-      - **新 schema 權威＝新 DB `OVSLXLON02` 實查 / entity**（以 DB 為準，AUD-6/schema-diff）；
-        Bible「核心 DB 驗收錨點」亦列已確認欄位（表/狀態碼/角色/API auth）。
-   B. 之前已重構的 Spec/決策（既有約束，勿 re-litigate）：
-      - `docs/feature-inventory.md`（該頁 FE/BE 狀態）
-      - `docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md`（該頁 disposition）
+   A. 新舊 DB 差異 + 新 Table schema＝**local `docs/db-schema/`**（owner 提供）：
+      - 內含新舊 DB 差異（add/remove/type/precision/nullable/rename）+ 新 table schema（DDL）。
+      - **新 schema 權威＝此資料夾 / 新 DB 實查 / entity**（以 DB 為準）。
+      - ⚠️ 結構（檔樹/差異形式/索引）**待 owner 回報後補「抽取細則」**——回報前 Codex 先讀該頁相關表的
+        差異 + 新 DDL（找不到該頁碰哪些表 → 標 UNFOUND、不臆造）。
+   B. 70% 當初依據的重構 spec＝**local `docs/refactor/`**（owner 提供）：
+      - 這是當初 RD 建構 70% 所依據的 baseline spec。**「更動後需求」＝新 PRD ⟷ 此 baseline 的 delta**。
+      - ⚠️ 結構（per-頁/模組、含哪些欄位/規則/狀態）**待 owner 回報後補「抽取細則」**。
+   C. 我方既有裁定/約束（repo，勿 re-litigate）：
       - `docs/decisions.md`（已裁：AUD-6 精度 keep-new、A-5 KHR 收窄、T24 照舊、頁合併 CS/CU→CSU…）
       - `docs/pending-register.md`（該頁開著的 @PENDING/escalation）
+      - `docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md`（該頁 disposition）
       - `docs/disbursement/disbursement-domain-escalations.md`+`disbursement-triage.md`（撥貸頁）
-      - `docs/specs/srs/EPROZ00800/`（既有 SRS 樣板）、parity findings（`done/*-findings.md`）
+      - `docs/process/legacy-parity-sop.md`（三判）、parity findings（`done/*-findings.md`）
+      〔00800 v0.9 SRS 已封存 `docs/archive/EPROZ00800-v0.9-superseded/`，重產時可參照其 RP/SR 裁定〕
    做法（更動後需求一律落 SRS，不得靜默遺漏）：
-   - **DB delta**：新 schema ≠ 舊（型別/精度/加欄/刪欄/改名）→ schema.sql 列「舊→新對照 +
-     change 類型 + 三判」；連動的 Rn 取數/驗證同步更新；若改動影響需求（如精度縮減影響計算）→
-     寫進該 Rn 或開 @PENDING。
-   - **既有決策 delta**：既有 spec/decisions 已改的需求（keep-new 精度、KHR 收窄、照舊、頁合併、
-     disposition）→ 當 SRS 約束帶入、**不重議**；PRD 與既有決策/DB 衝突 → 標 @PENDING（指回
-     decisions/pending 列）。
-   - 每條 delta 附來源（schema-diff 行 / decisions 列 / parity finding `file:line`）+ 三判 tag。
+   - **DB delta**（local `docs/db-schema/`）：新 schema ≠ 舊（型別/精度/加欄/刪欄/改名）→ schema.sql
+     列「舊→新對照 + change 類型 + 三判」；連動的 Rn 取數/驗證同步更新；若改動影響需求（如精度
+     縮減影響計算）→ 寫進該 Rn 或開 @PENDING。
+   - **refactor-spec delta**（新 PRD ⟷ local `docs/refactor/`）：新 PRD 與 70% 當初依據的 baseline
+     不同 → 該「更動後需求」明確寫進 Rn（標 to-be 新需求）或 @PENDING；baseline 有而新 PRD 漏的，
+     確認是刪除還是漏列。
+   - **既有決策 delta**（repo）：decisions 已改的需求（keep-new 精度、KHR 收窄、照舊、頁合併、
+     disposition）→ 當 SRS 約束帶入、**不重議**；PRD 與既有決策/DB/refactor-spec 衝突 → 標 @PENDING
+     （指回 decisions/pending）。
+   - 每條 delta 附來源（db-schema 檔行 / refactor spec 段 / decisions 列 / parity `file:line`）+ 三判 tag。
 
 【輸出 bundle → 規劃 repo `docs/specs/srs/<funcId>/`】
 - spec.md（Metadata header〔Status/Owner/Slug/版本/上游 PRD/as-is 來源〕、Scope+Non-Goals、
@@ -101,5 +106,5 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 ## 備註
 - **一次一頁**：別一次吞整批；T1 三頁各自跑、各自過閘門、各自人審。
 - **parity 與 SRS 互補**：企金線 18 頁 parity 卡（`c0-legacy-parity-recheck.md`）的 findings 餵 SRS 的 as-is 欄；兩者可並行，但同頁建議 parity 先（as-is 才實）。
-- **SRS 落點是規劃 repo**（`docs/specs/srs/`）：Codex 要能寫到規劃 repo；新版 Bible/PRD 建議也放 `docs/specs/bible`、`docs/specs/prd`（與 00800 同位）。
-- **00800 重產**：用新版 PRD 覆蓋現 v0.9（現版標「砍掉重建在即」）；SR-B1/B2 折進重建的 2 錯誤碼承載在此一併補。
+- **SRS 落點是規劃 repo**（`docs/specs/srs/`）：Codex 要能寫到規劃 repo；**Bible v1.1 已在 repo**（`docs/specs/bible/`），新版 PRD 放 `docs/specs/prd/`（舊 00800 PRD 已封存 `docs/archive/EPROZ00800-v0.9-superseded/`）。
+- **00800 重產**：v0.9 SRS 已封存（`docs/archive/EPROZ00800-v0.9-superseded/srs/`）；用新版 PRD 從新 Bible v1.1 **重產**——封存內 RP1-10 裁定 + SR-B1/B2（2 錯誤碼）+ RP8/RP11 為重產輸入，一併承載。
