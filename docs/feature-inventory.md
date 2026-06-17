@@ -136,11 +136,11 @@
 | 機械修正 M1–M10 | ✅ 全結案（master） | 尾欄/submit mail/RECEIVED_DATE/C20/fee key/E 位/H 段/A52/fee-delete-FN |
 | ✅ **A-1 換匯 stub（+conformance PASS）** | **已實作＋碼驗（product `daae4c3`，06-16；mvn 綠）** | `funcGetExchangeRate` 補 return＋移尾端 throw → authorize 換匯總開關打通。**Codex 唯讀 conformance 4/4 PASS**：OQ-1 `IdNo=OVSLXLON01`(`:1181`)、OQ-3 非0000拋錯中止 authorize（碼＝專屬 `FAILED_E304`）、OQ-4 throw 勿回 null、兩表同 `@Transactional`。規格/recon 收 `done/` |
 | 🟡 B-1 `T24_COMPANY`（06-12 降級）| **前提推翻→RD 接值** | 新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存（OVSLXLON01/02 兩 schema，DDL 實查）；entity 補映射＋B8/C9 接值 |
-| ✅ T24 B-group parity（06-17） | **code 已 commit/push（金錢/截斷欄人審過）；剩端到端/T24 接收驗證** | B-2、B-3 非幣別欄、B-4、B-5 已照舊；`E21`、`G4`/`G10`/`H8` 依 A-5 USD+KHR-only 邊界 keep。findings：`build-tasks/t24-bgroup-legacy-parity-fix-findings.md` |
+| ✅ T24 B-group parity（06-17） | **code 已 commit/push（`3d6f446`，origin/master，06-17 10:41；金錢/截斷欄人審過）；剩端到端/T24 接收驗證** | B-2、B-3 非幣別欄、B-4、B-5 已照舊；`E21`、`G4`/`G10`/`H8` 依 A-5 USD+KHR-only 邊界 keep。findings：`build-tasks/t24-bgroup-legacy-parity-fix-findings.md` |
 | 🔴 其餘 domain | 未決 | 檢核嚴格度、KHR 資料約束殘小、async 架構殘語意、M6 完工日 DTO… |
 | ✅ **批次層 B001–B008** | **AUD-10 結（06-16，app 層完整）** | ✅ **6 FOUND**（新批次**重編號**≠legacy 號）：B001→新B001、B002→新B002、B003 自動結案→**新B007**、B004 暫存清理→**新B003**、B006→新B006、B007 SFTP→**新B004**＋authorize inline 上傳；✅ **B005 銷案**（backend 無 `TB_EXCHANGE_RATE` read 點→inline 換匯取代每日批次；`TB_EXCHANGE_RATE` write-only vestigial）；⚪ **B008 log 歸檔＝ops**（非 app 碼，logrotate/平台確認）|
 | 整合測確認點 | 待驗 | 〔A-1 spec-conformance ✅ PASS 06-16〕M7 facility fee 值、M9 district name join、撥貸端到端（含批次層）|
-> **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ✅ **A-1 stub 已實作（`daae4c3`）→ 機械修正不再 inert、authorize 可端到端跑**；剩撥貸真完成＝B-1 接值、T24 B-group pre-push/端到端驗證、A-4/M6 domain、批次層實測。
+> **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ✅ **A-1 stub 已實作（`daae4c3`）→ 機械修正不再 inert、authorize 可端到端跑**；剩撥貸真完成＝B-1 接值、T24 B-group 端到端/T24 接收驗證（code 已 push `3d6f446`）、A-4/M6 domain、批次層實測。
 
 ---
 
@@ -178,7 +178,7 @@
 - z0 報表 00610/00620–00650 呈現。
 
 **③ 🟠→✅ 撥貸 domain（owner-decision 已全清空 06-17；剩執行+UAT）— 見 escalation doc**
-- ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；✅ B-1 `T24_COMPANY`→取 `OVSLXLON01`、RD 接值；✅ A-4 檢核嚴格度 / M6 完工日 / KHR G·H 來源 06-17 全裁「照舊系統處理」；✅ T24 B-group commit/push、批次層 AUD-10 結。**殘＝Codex 執行 + T24 UAT + E1/E2（信用決策 domain）**。
+- ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；✅ B-1 `T24_COMPANY`→取 `OVSLXLON01`、RD 接值；✅ A-4 檢核嚴格度 / M6 完工日 / KHR G·H 來源 06-17 全裁「照舊系統處理」；✅ T24 B-group commit/push（`3d6f446`）、批次層 AUD-10 結。**殘＝Codex 執行 + T24 UAT + E1/E2（信用決策 domain）**。
 
 **④ z0 半成品收尾（小修；owner：前後端）**
 - `00300` Document Checklist：✅ **recon 坐實＋FE 導回已修 06-15**（recon `done/00300-return-recon.md`；fix `40d931c`，卡歸檔 `done/00300-return-fix.md`）——BE 非缺陷、FE 導回 ToDo 已實作（共用 `goPreviousPage()`）；DIFF-011 收。Phase V 驗共用方法連帶呼叫端語意。
@@ -229,7 +229,7 @@
 4. z0 報表呈現；z0 半成品收尾（00300 return；✅ 00600 method 已修；00800 init-query method＝@PENDING 待 RD）。
 
 **Phase D — 撥貸解鎖（關鍵路徑，owner：撥貸 domain）**
-5. 🟠→✅ **撥貸解鎖**：A-1 換匯 ✅ 已實作+conformance PASS（`daae4c3`）、批次層 AUD-10 結、T24 照舊 commit/push、殘 domain 06-17 全裁照舊 → **剩端到端/T24 UAT**（非 coding；精度 C-1 已關＝舊=新無落差）。
+5. 🟠→✅ **撥貸解鎖**：A-1 換匯 ✅ 已實作+conformance PASS（`daae4c3`）、批次層 AUD-10 結、T24 照舊 commit/push（`3d6f446`）、殘 domain 06-17 全裁照舊 → **剩端到端/T24 UAT**（非 coding；精度 C-1 已關＝舊=新無落差）。
 
 **Phase E — c0 收尾 + 授權（owner：domain + DB/ops）**
 6. c0 E1/E2 escalation 裁示；新 c0 endpoint 授權列。

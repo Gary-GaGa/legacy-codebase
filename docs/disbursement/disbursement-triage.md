@@ -75,7 +75,7 @@
 
 **逐項閘門（每筆機械修正）**：① 屬上表某項 ② 引舊 spec `file:line` 證「舊明確正確且非移除依賴」 ③ 只動該 method、不外擴 ④ `mvn package` 綠 ⑤ 回報 diff + 依據供人審 → 過了才推產品 repo。
 
-**2026-06-17 B-group owner-fix 補記**：本批是依 06-16 owner「T24 都照舊系統規格」另行授權，非擴張一般 allowlist。證據與修正清單見 `build-tasks/t24-bgroup-legacy-parity-fix-findings.md`；金錢/截斷欄 pre-push 最嚴人審**已過 → code 已 commit/push（product repo，06-17）**；剩端到端/T24 接收驗證。
+**2026-06-17 B-group owner-fix 補記**：本批是依 06-16 owner「T24 都照舊系統規格」另行授權，非擴張一般 allowlist。證據與修正清單見 `build-tasks/t24-bgroup-legacy-parity-fix-findings.md`；金錢/截斷欄 pre-push 最嚴人審**已過 → code 已 commit/push（product repo，commit `3d6f446`，06-17 10:41，已在 origin/master）**；剩端到端/T24 接收驗證。
 
 ### 7.1 進度
 | 項 | 狀態 | 證據 |
