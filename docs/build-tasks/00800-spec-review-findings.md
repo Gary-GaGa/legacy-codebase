@@ -36,3 +36,5 @@
 
 ## 處置（owner/RD 裁）
 00800 標記「砍掉重建在即（Bible/PRD 待更新）」→ B-1/B-2 可 **(a)** 立即小修（R15 補 2 碼 + openapi query response + 拆 400/500，工小）、或 **(b)** 折進重建 backlog。**採納後須再審一輪**（改 R15 錯誤碼分支會牽動 openapi query response 與 QA-022 待補 case 範圍）。本檔不改 spec（§6 審者不改）。
+
+> **✅ owner 裁定（2026-06-17）＝(b) 折進重建 backlog**：不立即小修；SR-B1/B2 留作 00800 重建**必須承載**的輸入——重建時 R15 補 2 碼（`MSG_OVER_COUNT_LIMIT` 400／`MSG_QUERY_FAIL` 500）+ 拆「輸入錯誤 400／查詢失敗 500」+ openapi query endpoint 補 400/500 response。**安全網＝gateⒺ**：`check-srs-bundle` 每跑必 warn 這 2 碼未承載，重建不可能漏。回填 `pending-register`、`STATUS §五`、`decisions.md` 06-17 列。
