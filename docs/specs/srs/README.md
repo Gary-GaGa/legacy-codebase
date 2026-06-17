@@ -33,7 +33,7 @@
 | ⑤ 覆蓋率：ID 對表 | gate⑤：Rn↔QA covers / 懸空引用 / **分支覆蓋自承不完整=warn**（2026-06-16）|
 | ⑥ Build 綠 | —（牆上 ⑥；腳本無同號項，撞號已消除）|
 | ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與牆上 ⑦ 混）|
-| —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、**gateⓈ** Status↔安全/雙軸〔(a) Approved+`BPn-PENDING`=warn；(b) Status 未分「規格定版/實作完成」=warn——批判輪1/輪2 2026-06-16〕、xfile 跨檔、doc-paths |
+| —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、**gateⓈ** Status↔安全/雙軸〔(a) Approved+`BPn-PENDING`=warn；(b) Status 未分「規格定版/實作完成」=warn——批判輪1/輪2 2026-06-16〕、**gateⒺ** 錯誤碼承載〔PRD Error 表→spec/openapi 漏承載=warn、HTTP status 不一致=warn——批判輪3 2026-06-16，源 SR-B1/B2〕、xfile 跨檔、doc-paths |
 
 ## 與 vision 的關係
 boundary bundle 是把閘門 ①/②/④/⑤ 從「文件 + 延後」升級成「迴圈內可跑」的路徑（`../../process/vision-pipeline.md` §8 漸進落地）——**不必一次到位**，先一頁跑通再放大。

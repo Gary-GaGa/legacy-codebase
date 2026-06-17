@@ -137,6 +137,7 @@ funcId 串追溯、機械+語意雙層閘門驗證
 | 17 | **契約打臉規則**（request 收『Rn 標後端為準』之決策欄：`checkPointMap`/`isNotSame` vs R11「DB 二次比對為唯一依據」） | 00800 批判輪2 | skill DoD「契約⊥後端為準」check + spec-reviewer 紅旗② | as-is DTO 抄進 to-be 未對 to-be 原則覆查 |
 | 18 | **mutating 端點 FE-only 強制**（R3/R5/R6/R7 FE-only 落在 execute＝刪資料端點） | 00800 批判輪2 | skill DoD「mutating FE-only 必列 BE 強制或說明」check + 紅旗③ | 反推自 as-is FE 檢核、未問 BE 是否該擋 |
 | 19 | **Status 混『規格定了』與『實作好了』**（Approved subset 高估完成度：只 D1–D5 landed、餘『可實作』未做） | 00800 批判輪2 | **gateⓈ(b) Status 雙軸 warn** + skill DoD + 00800 範本拆兩軸 | 機械查格式、語意人確認 |
+| 20 | **PRD 錯誤碼漏承載進 SRS/openapi**（PRD §6.4 `MSG_OVER_COUNT_LIMIT`/`MSG_QUERY_FAIL` 未進 R15+openapi、REQ-007 未完整；R15 把「查詢失敗 500」誤併入「輸入錯誤 400」）；**機械盲區**＝既有 xfile 只查 spec→openapi，抓不到「PRD 有、spec/openapi **皆**漏」 | 00800 批判輪3（2026-06-16，spec-review SR-B1/B2） | **gateⒺ 錯誤碼承載**（PRD Error 表→spec/openapi 漏承載=warn、HTTP status 不一致=warn；解析去 `\_` 跳脫）+ skill DoD check + spec-reviewer 紅旗④ | 機械查承載/status，disclaim 是否合理（如 init-query 無分頁）仍需人 |
 
 > 回填（2026-06-09）：#1/#2/#10/#11 進 `ai-workflow.mmd`；#3/#6/#10/#11 進 `prd-to-srs` skill「brownfield 鐵則」。
 > 二輪 flow 自審補強：#2 加 **regression 判準**、#8 強制點升 **spec.md 必填欄 + DoD**、#13 **「修正後必複審」**（spec-reviewer/CLAUDE/skill）、#14 **as-is 最低驗證深度清單**、#1 釐清 **SRS-blocking vs ⑦-advisory**。
