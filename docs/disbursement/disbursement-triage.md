@@ -21,12 +21,12 @@
 ## 2. P1 — 正確性 bug（資料錯 / 金錢 / 資料遺失；較高信心）
 - **0921**：collateral 完工日寫 `null`（資料遺失）；`dataReturn` fee cleanup `deleteByIdApplicationNo` 過度刪；fee 公式 alias 不符 → facility fee 可能 `null`；`RECEIVED_DATE` 在 Save 即寫。
 - **0922-main**：`EXCHANGE_RATE` 來源 ID `OVSLXLON01→02`（**✅ 06-16 owner 裁定：先對齊舊 parity→改回 `01`**；同 A-1 OQ-1、escalations A-2）；`submit` mail 送空清單（checker 沒收到）；`submit` history `25→24`。
-- **0922-t24 來源欄**：`A52` 漏（`DISTRICT_NAME`）；`C12` `SUG_VAL` 讀錯表；`C13` `DECISION_DATE`→`CHECK_DATE`；`C20` 來源欄名錯（`INS_END_DATE` vs 同名直映 `INS_EXPIRY_DATE`）；`G4` currency 來源；`G10`/`H8` 換匯欄；`A31`/`G7` `AGREEMENT_NO` 截斷（舊取後 16 碼）；`E21` 非 USD 非 KHR 輸出 `0`（舊全換匯）；`G11–G12` fee remark mapping；`A15` 空值補 `N/A`；`A16` `NORMAL.LAON`→`LOAN`（⚠️ 舊可能是 T24 期望的 key、勿當錯字修）。
+- **0922-t24 來源欄**：`A52` 漏（`DISTRICT_NAME`）；`C12` `SUG_VAL` 讀錯表；`C13` `DECISION_DATE`→`CHECK_DATE`；`C20` 來源欄名錯（`INS_END_DATE` vs 同名直映 `INS_EXPIRY_DATE`）；`G4` currency 來源；`G10`/`H8` 換匯欄；`A31`/`G7` `AGREEMENT_NO` 截斷（舊取後 16 碼）；`E21` 非 USD 非 KHR 輸出 `0`（舊全換匯）；`G11–G12` fee remark mapping；`A15` 空值補 `N/A`；`A16` `NORMAL.LAON`→`LOAN`（⚠️ 舊可能是 T24 期望的 key、勿當錯字修）。**2026-06-17 B-group batch-fix**：`C12`/`C13`/`A31`/`G7`/`G11–G12`/`A15`/`A16` 已照舊修正；`E21`、`G4`/`G10`/`H8` 依 A-5 USD+KHR-only 邊界 keep，不在本批。
 
 ## 3. P2 — 需 domain / T24-spec 裁示（intended vs regression）
 - **0921 檢核對等**：`CheckMainBorr`/`CheckCoBorr` 身分/sector/account/`DATA_SEQ` 順序/business-section；`info CO_CHECK` `='Y'` vs 舊 `!='N'`；Finished gate 未驗 `mbCheck`；law firm `IS_SHOW` 版本條件；address `UPD_DATE` 來源。
 - **0922-main 架構**：`t24DealResult`→批次 `EPROZ0B006`（async）；mail 改 scheduler 後送；`IS_AUTODIS=YC`。
-- **0922-t24**：行尾 `\r\n` vs `\n`（T24 可能敏感）；`C26` title-deed 全 join 到每筆 C row。
+- **0922-t24**：行尾 `\r\n` vs `\n`（T24 可能敏感）；`C26` title-deed 全 join 到每筆 C row。**2026-06-17 B-group batch-fix**：已改 CRLF record join，`C26` 依當前 `COLL_DATA_SEQ` 過濾 title deed；仍待 T24 接收/端到端驗證。
 - ~~🟢 疑刻意演進~~ → **A-5 結（06-16 owner）＝幣別「收窄」keep**：**補規格＝撥貸有效幣別 USD+KHR only（柬埔寨）**；舊 non-USD 通吃、新只 USD/KHR（其他 fee→null/E21→0）＝**by-design-unreachable、非 bug**（非該幣別業務不發生），不對等修。坐実＝`khr-currency-handling-recon-findings.md`。
 
 ## 4. P3 — UNSURE / 舊 DDL 核對（**06-12 起舊庫可連（Oracle），DDL 自查即可、不必等 DBA**）
@@ -73,6 +73,8 @@
 - 全部 P2（檢核嚴格度、批次化、async mail、行尾 `\r\n`、KHR）、全部 P3（精度、`IS_CONTR`…）、`0922 submit` history `25/24`（confirm 後再定）。
 
 **逐項閘門（每筆機械修正）**：① 屬上表某項 ② 引舊 spec `file:line` 證「舊明確正確且非移除依賴」 ③ 只動該 method、不外擴 ④ `mvn package` 綠 ⑤ 回報 diff + 依據供人審 → 過了才推產品 repo。
+
+**2026-06-17 B-group owner-fix 補記**：本批是依 06-16 owner「T24 都照舊系統規格」另行授權，非擴張一般 allowlist。證據與修正清單見 `build-tasks/t24-bgroup-legacy-parity-fix-findings.md`；金錢/截斷欄仍需 pre-push 最嚴人審。
 
 ### 7.1 進度
 | 項 | 狀態 | 證據 |
