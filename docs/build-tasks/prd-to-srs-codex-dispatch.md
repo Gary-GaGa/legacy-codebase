@@ -1,7 +1,7 @@
 # PRD → SRS dispatch prompt（給 Codex；新版 Bible/PRD 用）
 
 > **用法**：在母資料夾（產品碼 + 規劃 repo 可讀 + 新版 Bible/PRD 放好）開 Codex，**一次一頁**貼下方 prompt（填 `<funcId>` / `<PRD 路徑>`）。產 SRS bundle → 過閘門 → 回填。
-> **依賴**：① 新版 PRD（必）+ Bible（有則接上游追溯）② 該頁產品碼（as-is）③ 規劃 repo 的 skill/SOP（prompt 已內聯關鍵，不可讀亦能跑）。
+> **依賴**：① 新版 PRD（必）+ Bible（有則接上游追溯）② 該頁產品碼（as-is）③ 規劃 repo 的 skill/SOP（prompt 已內聯關鍵，不可讀亦能跑）④ **對比輸入 md**（新舊 DB 差異/新 schema + 既有重構 spec，見 prompt 內 §5）。
 > **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24〕→ ④ `EPROZ00800` 重產（新版 PRD 取代 v0.9）→ ⑤ 主流程 ISU/i0/z0 增量。
 
 ---
@@ -30,13 +30,38 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
    ② 每個 stub/TODO/throw-Unsupported ③ 每條 error/分支 path ④ 跨頁副作用。
 4. 真實 endpoint = RPC `epl-{verb}-{scope}-{feature}`（非 PRD 理想化 /api/...）；
    mutate=POST。Oracle native query 未加引號 alias → label 大寫（大小寫對映注意）。
+5. 【對比輸入：多個 md 檔 — 必讀並 reconcile，把「更動後需求」一起納入 SRS】
+   A. 新舊 DB 差異 + 新 Table schema：
+      - `docs/build-tasks/schema-diff-findings.md`（old:OVSLXLON01→new:OVSLXLON02 的
+        table/欄 added/removed/type/precision/nullable + focus checklist）
+      - `docs/build-tasks/legacy-schema-db-reverify-findings.md`、`docs/legacy/db-schema-catalog.md`
+      - **新 schema 權威＝新 DB `OVSLXLON02` 實查 / entity**（以 DB 為準，AUD-6/schema-diff）；
+        Bible「核心 DB 驗收錨點」亦列已確認欄位（表/狀態碼/角色/API auth）。
+   B. 之前已重構的 Spec/決策（既有約束，勿 re-litigate）：
+      - `docs/feature-inventory.md`（該頁 FE/BE 狀態）
+      - `docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md`（該頁 disposition）
+      - `docs/decisions.md`（已裁：AUD-6 精度 keep-new、A-5 KHR 收窄、T24 照舊、頁合併 CS/CU→CSU…）
+      - `docs/pending-register.md`（該頁開著的 @PENDING/escalation）
+      - `docs/disbursement/disbursement-domain-escalations.md`+`disbursement-triage.md`（撥貸頁）
+      - `docs/specs/srs/EPROZ00800/`（既有 SRS 樣板）、parity findings（`done/*-findings.md`）
+   做法（更動後需求一律落 SRS，不得靜默遺漏）：
+   - **DB delta**：新 schema ≠ 舊（型別/精度/加欄/刪欄/改名）→ schema.sql 列「舊→新對照 +
+     change 類型 + 三判」；連動的 Rn 取數/驗證同步更新；若改動影響需求（如精度縮減影響計算）→
+     寫進該 Rn 或開 @PENDING。
+   - **既有決策 delta**：既有 spec/decisions 已改的需求（keep-new 精度、KHR 收窄、照舊、頁合併、
+     disposition）→ 當 SRS 約束帶入、**不重議**；PRD 與既有決策/DB 衝突 → 標 @PENDING（指回
+     decisions/pending 列）。
+   - 每條 delta 附來源（schema-diff 行 / decisions 列 / parity finding `file:line`）+ 三判 tag。
 
 【輸出 bundle → 規劃 repo `docs/specs/srs/<funcId>/`】
 - spec.md（Metadata header〔Status/Owner/Slug/版本/上游 PRD/as-is 來源〕、Scope+Non-Goals、
   Assumptions/Deps、Endpoints〔epl-*〕、業務規則 Rn〔每條 covers-prd: + 強制點 FE/BE/both +
-  as-is✅⚠️🔴/to-be〕、NFR、Trade-offs、@PENDING、Traceability Matrix、硬界線 + as-is/to-be 摘要）
+  as-is✅⚠️🔴/to-be〕、NFR、Trade-offs、**新舊 DB 對照 + 更動 delta 清單**〔每條：來源
+  〔DB-diff/decision/parity〕→ 影響 Rn → 三判 → carried(Rn)/@PENDING〕、@PENDING、
+  Traceability Matrix、硬界線 + as-is/to-be 摘要）
 - openapi.yaml（真實 epl-* request/response）
-- schema.sql（涉及表/欄 DDL：型別/長度/PK/nullable）
+- schema.sql（涉及表/欄 DDL：型別/長度/PK/nullable；**+ 新舊對照**：舊欄→新欄、change 類型
+  〔add/remove/type/precision/nullable/rename〕、三判 tag、來源 schema-diff 行）
 - qa-cases.md（每條 covers: Rn；test-ready：Given 可 seed、When 對 epl-*+method、
   Then 有 DB 驗證點〔表/欄/期望值〕；多分支 Rn 的 happy/error/edge 各 ≥1 case）
 
@@ -58,6 +83,9 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 - mutating 端點（execute/POST）若強制點 FE-only → 必列對應 BE 強制 Rn 或記「為何 FE-only 足夠」。
 - 標「後端為準/不信前端」的 Rn → 檢查 request 契約不得讓 client 送該決策欄。
 - Status 雙軸（規格定版 vs 實作完成），勿單一 Approved(subset) 混用。
+- **新舊 DB + 既有 spec reconcile**：SRS 已對 schema-diff（新舊 DB 差異/新 schema）+
+  feature-inventory/matrix/decisions/pending/escalations（既有重構 spec）；**更動後需求以
+  Rn/@PENDING 顯式承載、附來源+三判，未遺漏**；既有決策（AUD-6/A-5/T24/頁合併…）當約束不重議。
 
 【過閘門（兩層，先機械再語意）】
 1. 機械：`python scripts/check-srs-bundle.py docs/specs/srs/<funcId>` 必 exit 0。
