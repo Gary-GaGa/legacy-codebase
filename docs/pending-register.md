@@ -5,12 +5,12 @@
 > **06-11 裁定輪**：`00800` TBD-001~007 七條全裁（五關二改追蹤），見文末 §✅ 已關。
 
 ## 🔴 擋主線（卡住才能往下走）
-> **（目前無）**——2026-06-16 owner「**T24 都照舊系統規格**」後，撥貸 domain group **大縮移 🟡**；A-1（換匯 stub+conformance）、批次層 AUD-10 全結 → **無 owner 決策擋主線**，撥貸剩**執行**（Codex T24 B-group batch-fix）+ 小 domain。
+> **（目前無）**——2026-06-16 owner「**T24 都照舊系統規格**」後，撥貸 domain group **大縮移 🟡**；A-1（換匯 stub+conformance）、批次層 AUD-10 全結 → **無 owner 決策擋主線**，撥貸剩**執行**（Codex T24 B-group batch-fix＋殘 domain A-4/M6/B-1/G·H〔06-17 全裁照舊〕的 Codex 收尾）+ T24 UAT。
 
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
-| **撥貸 domain 殘**（group 大縮）| ~~T24 欄值/格式/欄寬~~（✅ 06-16「T24 照舊規格」→ 執行 `build-tasks/t24-bgroup-legacy-parity-fix.md`）、~~async~~(AUD-10)；**殘＝A-4 檢核嚴格度、M6 完工日 DTO 來源**（A-5 幣別已 06-16 owner 裁 keep＝只 USD/KHR、收窄無害）| 撥貸 0921 檢核/M6 | 撥貸 domain | 06-05 | `disbursement-domain-escalations.md` |
+| ~~**撥貸 domain 殘**~~ ✅ **06-17 全關（照舊）**| ~~T24 欄值/格式/欄寬~~（✅ 06-16「T24 照舊規格」）、~~async~~(AUD-10)、~~A-4 檢核嚴格度~~/~~M6 完工日 DTO~~/~~B-1 `T24_COMPANY`~~/~~KHR-G·H 來源~~ → **06-17 owner 全裁＝照舊系統處理**（A-4 對齊舊判據、M6 照舊來源接回、B-1 取 `OVSLXLON01`、G·H 坐實舊 `DISBURSEMENT_CURRENCY`；A-5 收窄/rounding keep 不變）→ 轉 Codex 執行 | —（已裁，剩執行）| 撥貸 domain | 06-05→06-17 | `disbursement-domain-escalations.md` A-4/D-1/B-1/B-3＋`decisions.md` 06-17 列 |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | 同 |
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | 同 |
 | **SR-B1/B2**（00800 spec-review，06-16 語意審）| B1：R15+openapi 漏承載 PRD §6.4 `MSG_OVER_COUNT_LIMIT`/`MSG_QUERY_FAIL`（REQ-007 未完整）；B2：R15 把查詢失敗 500 誤併入輸入錯誤 400 | `00800` R15+openapi 錯誤碼定版（**或折進重建**）；採納後再審一輪 | RD／SA | 06-16 | `build-tasks/00800-spec-review-findings.md`（已坐實）|
@@ -68,4 +68,4 @@
 ---
 > 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。**裁定內容只寫來源檔（spec §@PENDING）**，本表只留 id/狀態/owner/指回——本表＝derived 視圖。
 > **機械同步**：SRS 來源列（RPn/BP-n）由 `scripts/check-srs-bundle.py` gateⓅ 對 spec §@PENDING 表自動 diff（漏登記/失步=FAIL）；非 SRS 來源列（A-1 OQ、撥貸 group、E1/E2…）仍靠人工。
-> 用途：站會/交接看這張就知道「等誰、等什麼」；**🔴 擋主線 owner 決策＝目前無**（2026-06-16 T24 全裁「照舊規格」後清空）——撥貸 A-1/批次層/T24 全裁，殘 owner-decision＝🟡 A-4 檢核/M6（較小）+ T24 轉 Codex 執行。
+> 用途：站會/交接看這張就知道「等誰、等什麼」；**🔴 擋主線 owner 決策＝目前無**（2026-06-16 T24 全裁「照舊規格」後清空）——撥貸 A-1/批次層/T24/殘 domain（A-4/M6/B-1/G·H）全裁（06-17 全照舊）→ owner-decision **全清空**、剩 Codex 執行 + T24 UAT。
