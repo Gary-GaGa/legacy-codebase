@@ -210,7 +210,7 @@
 ---
 
 ## 5. 建議排程（依依賴與風險）— cross-check 後更新
-> 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策。
+> 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策（spec 層 PRD→SRS 重產＝前置就緒、owner local 並行）。
 > **✅ DB 連線已打通（2026-06-12）**——Phase V 全隊列解鎖。**解鎖順序**：① ✅ SQL 全就緒（含 00117 三列，見 ⑥）→**剩 ops 簽核＋以 `OVSLXLON02` 套用**（未套打 c0 endpoint 全 403）② ✅ RP6 取數完（14 名齊；RP4 順帶裁定=設計非缺陷，均已關 06-12）③ ✅ A-1 DB 端實查完（01=舊/02=新坐實、`EXCHANGR_RATE` 欄兩庫 DDL 皆無——OQ-1/OQ-5 證據入 `pending-register.md`，剩 owner 蓋章）④ Phase V 開跑（`verification-execution.md` 分階段；deferred-to-DB QA-007/008/009a/b/012/024/025、00119 三條必驗、00660 實測、map-key runtime 複測、M7/M9 確認點）——**只等 ① 的 ops 套用**。agent 自主驗 DB 時用**唯讀帳號**、帳密走環境變數不進 repo（CLAUDE.md §7）。
 
 **Phase 0 — 坐實缺口（c0 FE ✅ 已坐實）**
@@ -237,7 +237,10 @@
 **Phase R — 暫緩 track（待拍板，可獨立排）**
 7. R2 報表服務 → 0181/i0·c0 PDF/z0 PDF；檔案上傳 API；FE/BE method-mismatch sweep；map-key sweep；Logback 外部化。
 
-**關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。
+**Phase S — spec 層（PRD→SRS 重產；owner：PM/SA + Codex local；並行 track）**
+8. 🟡 **前置就緒→待重產**：轉換層硬化（批判輪2/3 gate：gateⓈ/Ⓔ＋DoD＋`spec-reviewer` 紅旗）✅、Bible v1.1 已入 repo ✅、local 對比輸入（`docs/db-schema/`＋`docs/refactor/`）盤點＋抽取細則定稿 ✅、dispatch 卡 `build-tasks/prd-to-srs-codex-dispatch.md` 備齊 ✅。**SRS bundle 覆蓋 0/67**（00800 v0.9 已封存 disposition=REBUILD；覆蓋數字 SSOT＝`refactor-audit/per-page-reinventory-matrix.md`）→ owner local 用 Codex 跑 `prd-to-srs`，**risk-tier：企金線/撥貸/00800 重產先**；SRS 落 `docs/specs/srs/`。
+
+**關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。**spec 層（PRD→SRS 重產，Phase S）= 前置就緒、owner local 並行 track，不擋當前里程碑，但為 00800/企金線 rebuild 的上游**。
 
 ---
 > 維護：本檔為**對應/排程主表**；逐項狀態變動回填本檔 + 對應細節 doc（`verification-handoff` 驗證、`disbursement-*` 撥貸；`completion-ledger` 已凍結）。❓ 項一經唯讀盤點即升 ✅/🔴。
