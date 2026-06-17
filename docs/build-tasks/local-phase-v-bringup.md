@@ -39,7 +39,7 @@
 | c0/csu 評分頁 00110–00120 | ✅（需先套授權列）| 否則 403（gate §1）|
 | 契約對齊 FE↔BE DTO | ✅ | 真資料/真授權跑一次（handoff §5）|
 | 角色權限分支顯示、businessType G/F 切換 | ⚠️ 受限 | 需真 JWT + 真案件資料 |
-| 撥貸 authorize（T24）| 🚫 本機測不到 | T24/SFTP 外部整合起不來；且 authorize 核心仍 throw-stub（A-1，handoff §2.2）|
+| 撥貸 authorize（T24）| 🚫 本機測不到 | T24/SFTP 外部整合起不來（authorize 核心 A-1 換匯 stub **已實作＋conformance PASS**，`daae4c3` 06-16；但 T24 端到端仍需外部整合，見 handoff §2.2 更正）|
 | R2 報表 PDF（0181/00640 PDF…）| 🚫 | R2 報表服務未建 |
 | 檔案上傳 API | 🚫 | 暫緩 track |
 

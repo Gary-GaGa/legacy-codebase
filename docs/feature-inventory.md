@@ -56,7 +56,7 @@
 | EPROISU0913 | IS 0913 | Closed Info | ✅ | ✅ | cross-check ✅ |
 | EPROISU0920 | IS 0920 | **Disbursement Process（頁框）** | ✅ | ✅ | audit 碼在（DIFF-004）；domain 風險見 §2F |
 | EPROISU0921 | IS 0921 | **Disbursement Data Input** | ✅ | ✅ | audit 碼在；行為分歧屬 triage 軌（§2F）|
-| EPROISU0922 | IS 0922 | **Disbursement Summary（authorize/T24）** | ✅ | 🟡 | **A-1 throw-stub（見 §2F）** |
+| EPROISU0922 | IS 0922 | **Disbursement Summary（authorize/T24）** | ✅ | 🟡 | **A-1 換匯 stub ✅ 已實作（§2F `daae4c3` 06-16）；殘＝T24 端到端·B-1 接值** |
 > 不開發：`EPROIS_0140`(Property Info) 已 drop。popup `0174/0175/0176`→`mat-dialog`（隨審批頁）。audit：`EPROIS_0240`/`EPROIU_0140`/`EPROIU_0240`→**AUD-1 ✅已關（06-16 owner 權威盤點標「已無使用」＝確認不遷）**。
 
 ### 2B. 企金主流程 `EPROCSU*`（M4 cs + M5 cu 合併）

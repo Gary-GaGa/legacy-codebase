@@ -69,7 +69,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 | `adr/` | 架構決策紀錄（ADR-0001 雙軌 spec workflow…） |
 
 ## 🛠 任務單 [`build-tasks/`](build-tasks/)（flow 第 ④ 層）
-> **逐卡 live/done 清單不在此複寫（避免 drift）**——進度／卡況看：① [`../STATUS.md`](../STATUS.md) §六（進行中/待派）② [`repo-structure.md`](repo-structure.md) §6（檔案×flow 生命週期）③ [`build-tasks/`](build-tasks/) 與 `build-tasks/done/`（卡本身）。
+> **逐卡 live/done 清單不在此複寫（避免 drift）**——進度／卡況看：① [`STATUS.md`](STATUS.md) §六（進行中/待派）② [`repo-structure.md`](repo-structure.md) §6（檔案×flow 生命週期）③ [`build-tasks/`](build-tasks/) 與 `build-tasks/done/`（卡本身）。
 - **命名（2026-06-11 起）**：`<funcId>-<type>.md`；`done/` 歷史檔名不回溯改。
 - **生命週期**：完成→`git mv` 到 `done/`、狀態回填 `feature-inventory.md`；`done/`·`archive/` 平時不刪（audit trail）、里程碑後批次清（刪前逐檔查引用）。
 - **大卡 checklist（SDD，2026-06-12 訂）**：多頁/多步卡內含 checkbox tasks 段＋斷點欄——session 中斷從斷點續、不靠 compact 記憶；單頁小修卡免。
