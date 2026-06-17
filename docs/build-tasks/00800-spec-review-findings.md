@@ -1,5 +1,7 @@
 # EPROZ00800 SRS bundle — spec-reviewer 語意審查 findings（2026-06-16）
 
+> **⚠️ 2026-06-17：所審 bundle 已封存** `docs/archive/EPROZ00800-v0.9-superseded/srs/`（00800 disposition=REBUILD）→ 本檔內所有 `spec.md:nn`/`openapi.yaml:nn`/`schema.sql`/`qa-cases.md` 行號對應該**封存快照**；SR-B1/B2 為 00800 重產的輸入（折進重建、gateⒺ 安全網）。
+
 > **怎麼來的**：機械閘門 `check-srs-bundle.py` PASS（exit 0）後，依 CLAUDE.md §4「先機械、再語意」跑 `spec-reviewer`（唯讀 agent）審 `docs/specs/srs/EPROZ00800/`。**§6 紀律：審者不改、只報；裁定權在 owner/RD。本檔＝記帳，主流程改前須 owner 拍板。**
 > **驗證註記**：B-1/B-2 的 PRD 依據我已 spot-check 坐實（見下）。⚠️ **一個坑**：PRD §6.4 是 markdown 表格、底線跳脫成 `MSG\_OVER\_COUNT\_LIMIT`——用 literal `_` grep 會誤判「PRD 無此碼」。**讀 rendered 內容才準**（我第一次 grep 差點誤判 reviewer confabulate，實為 reviewer 對、我的 grep 漏跳脫）。
 

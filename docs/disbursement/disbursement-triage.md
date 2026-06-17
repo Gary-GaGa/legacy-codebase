@@ -2,11 +2,11 @@
 
 > **舊系統比對（Step A/A2/B）完成後的綜合裁決**（2026-06-05）。逐項證據表（含 T24 段位、舊業務規則、`file:line`）存本機 `legacy-extract/*-compare.md`（gitignore）；本檔只到**主題 / 嚴重度 / owner / 信心**。
 > 配 `verification-handoff.md` §2.1/§2.2/§2.3。
-> ⚠️ **重大裁定更新（2026-06-16）**：① **A-1 換匯 stub 已實作＋conformance PASS**（`daae4c3`，P0-1 結）② **批次層 AUD-10 結**（6/8 FOUND + B005 inline-取代銷案）③ **owner「T24 都照舊系統規格」** → §2/§3 所有 T24 欄值/來源/格式/截斷 **全收編＝照舊 parity、轉執行**（卡 `build-tasks/t24-bgroup-legacy-parity-fix.md`；邊界＝KHR 無舊 spec→維持新）。**下文 §6「需真 T24 spec/domain」對 T24 欄部分已被此裁定 supersede**；殘 domain＝A-4 檢核嚴格度、M6 完工日 DTO。
+> ⚠️ **重大裁定更新（2026-06-16）**：① **A-1 換匯 stub 已實作＋conformance PASS**（`daae4c3`，P0-1 結）② **批次層 AUD-10 結**（6/8 FOUND + B005 inline-取代銷案）③ **owner「T24 都照舊系統規格」** → §2/§3 所有 T24 欄值/來源/格式/截斷 **全收編＝照舊 parity、轉執行**（卡 `build-tasks/t24-bgroup-legacy-parity-fix.md`）。**下文 §0/P0-3/§6 對 A-1「未完成」、T24_COMPANY「死路」、KHR「維持新」之描述均已被後續裁定 supersede**——殘 domain（A-4 檢核 / M6 完工日 / B-1 T24_COMPANY / KHR G·H）**06-17 全裁「照舊系統處理」**（B-1 取 `OVSLXLON01`、KHR G·H 來源照舊坐實舊 `DISBURSEMENT_CURRENCY`；A-5 USD/KHR 收窄 keep 不變）。
 
 ## 0. 總結論（里程碑更正）
 **新撥貸後端（`0921 DataInput` + `0922 Summary` + T24 組檔）＝結構搭好、但功能未完成且與舊系統實質分歧。**
-- **目前無法端到端授權**：`funcGetExchangeRate` 是 throw-stub。
+- ~~目前無法端到端授權：`funcGetExchangeRate` 是 throw-stub~~ → **✅ A-1 已實作＋conformance PASS（`daae4c3` 06-16）**，authorize 可端到端跑。
 - **即使補完 stub，T24 檔仍會錯**：段位錯位、多/漏欄、漏段、來源欄錯 → 產出**無效或錯誤的 T24 檔**。
 - → **「`0920` 認列既有＝30% 結構到位」正式更正為「撥貸需實作 + 修正 + T24 格式符合性驗證」**，是 work-in-progress，非完成。
 - **信心分層**：🔴 結構類（stub、漏段、多欄、位移）＝**高信心**（新碼確定行為）；來源欄類＝中高（倚賴舊 spec）；「是否刻意」類＝需 domain。
@@ -16,7 +16,7 @@
 |---|---|---|---|
 | ~~P0-1~~ ✅ | `funcGetExchangeRate` throw-stub → authorize 全斷 | **已實作＋conformance PASS（product `daae4c3`，06-16，mvn 綠；OQ-1~5 碼驗 4/4，錯誤碼 `FAILED_E304`）** | 撥貸開發 |
 | P0-2 | T24 結構壞：**H 段建了未 append**（不會輸出）、`E14–E23`+`E24-25` 位移、`H1–H8` 順序錯、`B9/C27/D8/G13` 各多尾端 `\n` 空欄 | 0922-t24 | 撥貸開發 + T24 整合 |
-| P0-3 | `T24_COMPANY` 死路：`B8`/`C9` 仍讀新 schema 已移除的欄 → 空值，**無替代來源** | 0922-t24（D8）| T24 整合 owner（需決定值來源）|
+| ~~P0-3~~ ✅ | ~~`T24_COMPANY` 死路（讀已移除欄→空）~~ → **新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存**（B-1 前提推翻 06-12）；06-17 裁取 `OVSLXLON01`、RD 補映射接 `B8/C9` | 0922-t24（D8）| ✅ 已裁→RD 執行 |
 
 ## 2. P1 — 正確性 bug（資料錯 / 金錢 / 資料遺失；較高信心）
 - **0921**：collateral 完工日寫 `null`（資料遺失）；`dataReturn` fee cleanup `deleteByIdApplicationNo` 過度刪；fee 公式 alias 不符 → facility fee 可能 `null`；`RECEIVED_DATE` 在 Save 即寫。
@@ -38,7 +38,7 @@
 **非「修幾個 bug」**：＝ 補 1 個 stub ＋ **重做 T24 組檔**（結構 + ~12 處來源欄）＋ 修 ~7 個 0921/0922-main bug ＋ ~10 項 domain 裁示 ＋ 1 輪 DDL/DBA 精度。金錢核心、且**從未端到端跑過**。
 
 ## 6. 建議路徑（為什麼不讓 Codex 無腦「改回舊版」）
-- T24 格式符合性、`T24_COMPANY` 值來源、檢核嚴格度、架構變更、精度——**都需要真 T24 spec / domain 決策**，非 Codex 可單方裁定；且部分分歧是刻意演進（KHR），改回舊版會破壞。
+- ~~T24 格式符合性、`T24_COMPANY` 值來源、檢核嚴格度、架構變更、精度——都需要真 T24 spec / domain 決策~~ → **06-17 已全裁「照舊系統處理」**（T24 欄照舊、`T24_COMPANY` 取 `OVSLXLON01`、檢核照舊、精度 C-1 已關＝舊=新）；KHR＝A-5 收窄 keep + G·H 來源照舊（非「改回舊版破壞」）。
 - Codex 可協助的是**機械、無歧義**的修正（append H、移除多餘 `\n` 欄、改正來源欄名），但須 gated review，且只限「舊行為明確正確且非移除依賴」者。
 - → **決策點（見對話）**：撥貸返工怎麼驅動。
 
@@ -56,7 +56,7 @@
 | # | 修正 | 舊正確行為 | 確認點 |
 |---|---|---|---|
 | M1 | T24 **`H` 段整修＝append + `H1–H8` 位置對齊 + 輸出條件改「FEE 非 null 且非 0」三者同修** | 舊 H（`FT.LOAN.EIR`）有段、欄序固定、`FEE_1/FEE_5` 非 null 且非 0 才出 | ⚠️ **只 append 不修順序/條件會出錯位 H row** → 三者必須一起 |
-| M8 | T24 `E14–E23` **位置對齊舊段位**（`MR_RATE_IDX`/`RATE_MRG` 放回原位） | 舊段位順序為 T24 格式 | 逐位置對 `EPROIS_0922-t24.md`；非單純平移即升級 |
+| M8 | T24 `E14–E23` **位置對齊舊段位**（`MR_RATE_IDX`/`RATE_MRG` 放回原位） | 舊段位順序為 T24 格式 | 逐位置對舊 T24 比對表（本機 `legacy-extract/`，gitignore）；非單純平移即升級 |
 | M5 | T24 `C20` 來源欄 `INS_END_DATE`→`INS_EXPIRY_DATE` | schema-map 標同名直映 | entity 有 `INS_EXPIRY_DATE` |
 | M6 | `0921` collateral 完工日寫 `EST_COM_DATE`/`OTHER_EST_COM_DATE`（非 null） | 舊保存兩欄 | request/entity 有值可寫 |
 | M7 | `0921` fee 公式 loan-amount alias 修正（facility fee 不為 null） | 舊 `loan amount × FEE_1` | alias/讀 key 對齊後值正確 |

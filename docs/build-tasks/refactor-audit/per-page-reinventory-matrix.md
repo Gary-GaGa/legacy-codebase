@@ -37,10 +37,10 @@
 | EPROC00115 Group Exposure | c0 0115 | ✅/✅ | ❓ | **❓** | ⟳需產 |
 | EPROC00116 FinStmt GI | c0 0116 | ✅/✅ | ❓(有 calc) | **❓** | ⟳需產 |
 | EPROC00117 FinEval GI | c0 0117 | ✅/✅ | 🔶(business-only 對舊驗畢·決策B) | **KEEP/FIX** | ⟳需產 |
-| **EPROC00118 Corporate Scorecard** | c0 0118 | ✅/✅ | 🔴(E1/E2 既有 Csu* 疑點) | **❓**(T1·E1/E2 合流) | ⟳需產 |
+| **EPROC00118 Corporate Scorecard** | c0 0118 | ✅/✅ | ❓(對舊未驗；E1/E2＝既有 Csu* 行為待裁、非本頁缺陷) | **❓**(T1·E1/E2 合流) | ⟳需產 |
 | EPROC00119 FinStmt FI | c0 0119 | ✅/✅ | ❓(F-8 修過) | **❓** | ⟳需產 |
 | **EPROC00120 FinEval FI** | c0 0120 | ✅/✅ | 🔶(business-only·金錢欄) | **❓**(T1) | ⟳需產 |
-> 全線 **❓ parity-gated**（卡 `c0-legacy-parity-recheck.md`，risk-tier 00118/00120 先）；00117/00120 已部分對舊（決策 B）較穩。
+> 全線 **❓ parity-gated**（卡 `c0-legacy-parity-recheck.md`，risk-tier 00118/00120/CSU0170 先）；00117/00120 已部分對舊（決策 B）較穩。
 
 ### 00800 + deputy
 | 頁 | 舊對應 | FE/BE | parity vs 舊 | disposition | SRS |
@@ -113,8 +113,8 @@
 ---
 
 ## PRD→SRS backlog（接「新版 Bible/PRD 跑 to SRS」）
-> 現 repo spec 覆蓋＝**1/67**（僅 `EPROZ00800` 全鏈；Bible 僅 `bible-eproposal`）。owner 有**新版 Bible/PRD** → 跑 `prd-to-srs` 產 SRS。
-> **⚠️ 需 owner 把新版 Bible/PRD 放進 `docs/specs/`**（或提供）才跑得了——目前 repo 內只有舊版。
+> 現 repo spec 覆蓋＝**0/67**（00800 v0.9 已封存待重產；Bible v1.1 已在 repo）。owner 有**新版 PRD** → 跑 `prd-to-srs` 產 SRS。
+> **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-schema/`+`docs/refactor/`。
 > **risk-tier 產 SRS 順序**（= rebuild/fix 最需規格者先）：
 > 1. **企金線**（CSU 主流程 + c0 評分，~18 頁）—— parity 回來若判 rebuild，立即需 SRS。
 > 2. **撥貸**（0920/0921/0922 + T24 + 批次）—— 金錢核心，目前只有 escalations/triage、無 SRS。

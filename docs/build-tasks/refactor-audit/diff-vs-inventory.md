@@ -1,6 +1,6 @@
 # Diff Vs Feature Inventory
 
-Status: S-final complete on 2026-06-11. BIBLE-GAP recon completed on 2026-06-15; no audit row total changed.
+Status: **SUPERSEDED by 2026-06-17 drift re-check**（見 `drift-recheck-2026-06-17.md`）——06-11 的 code-state 快照已過期（Phase G/06-16 後 13/16 DIFF 已解）。**勿照本檔 §4 的 `[ ]` 回填**（會把 Phase G 成果反砍成 regression）。原：S-final complete on 2026-06-11；BIBLE-GAP recon 2026-06-15.
 
 Input note: required QC memo `docs/build-tasks/refactor-audit-qc.md` is not present in the workspace and is not tracked by `git ls-files`; searches for `F-1` through `F-5` under `docs/` returned no QC log. This report maps the one QC item named in the task prompt, `F-1 企金 FE 缺口`, to DIFF-001 and marks `F-2` through `F-5` as `QC-INPUT-UNFOUND` instead of guessing.
 
