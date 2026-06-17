@@ -38,6 +38,7 @@
 > **成因**：`CDC-EPRO-0001` 由 legacy code 反推（PRD §1.1），非由 Bible 下推 → 邊界是 code 形狀（ITEM/RI-MAT/checkpoint），Bible 的**旅程形狀**業務邊界（何時顯示/案件類型/下游頁）漏在 Bible→PRD 之間，未進 PRD REQ/TBD，故也未進 SRS。來源：`specs/bible/bible-eproposal.md`、`specs/prd/PRD-CDC-EPRO-0001-v1.1-EPROZ00800.md`、`specs/srs/EPROZ00800/spec.md`。
 >
 > 嚴重度：🟡 擋 `00800` 完整定版（機械閘門已綠、屬語意/上游缺口）。
+> **✅ 2026-06-17 Bible v1.1 更新**：BP-1~5 之 **Bible 側已承載**（BR-014~017 案件類型 gating/影響 0150/顯示 0173、SC-002~005、災難情境「EPROZ00800 不該顯示卻顯示」、型三軸 `LON_ATTRIBUTE`/`LON_TYPE_CODE`/`SECURE_ATTRIBUTE`）→ BP-1~5 由「Bible 有但落空」轉「**待 PRD/SRS 下推**」（00800 重產 + 新 PRD→SRS 時承載；非 Bible 缺口）。
 
 | ID | 待決（Bible 有、PRD/SRS 落空） | 卡住什麼 | owner | 開立 |
 |---|---|---|---|---|
