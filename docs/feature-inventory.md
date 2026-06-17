@@ -12,7 +12,7 @@
 - ⏸ **暫緩 track**（R2 報表服務 / 檔案 API / CBC R8——刻意延後、非遺漏）
 - ❓ **待 cross-check**（推定既有，未實證；開做前先唯讀盤點）
 
-**全局結論（zero-based audit 後更新 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列基線＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND；**06-15 校正後＝~133 碼在(80%)**（G1–G6＋修復落地）。真缺口＝🟠 **撥貸**（**A-1 換匯 stub ✅ 已實作 `daae4c3` 06-16**；剩 T24 正確性 domain-gated + **批次層 B001–B008 待碼驗** F-OWN-1 + A-1 spec-conformance 確認）。✅ **企金主流程 FE 後半段 Phase G 全收口（G1–G6，06-15）**＝0150/0160/0170/0171/0172/0173＋0261/0174/0175 三 popup（Phase V runtime 待測）。已收口：c0 評分 FE（Phase F）、i0 全模組（audit 22/22）。剩 UNFOUND 多為 M9 雜項群（AUD-3/4 待裁）；0140/0240 家族 AUD-1 ✅已關（06-16 owner 盤點＝已無使用）；另待裁 AUD-2/3/4/7/8/10/11。
+**全局結論（zero-based audit 後更新 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列基線＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND；**06-15 校正後＝~133 碼在(80%)**（G1–G6＋修復落地）。真缺口＝🟠 **撥貸**（**A-1 換匯 stub ✅ 已實作 `daae4c3` 06-16**；剩 T24 正確性 domain-gated + **批次層 B001–B008 待碼驗** F-OWN-1 + A-1 spec-conformance 確認）。✅ **企金主流程 FE 後半段 Phase G 全收口（G1–G6，06-15）**＝0150/0160/0170/0171/0172/0173＋0261/0174/0175 三 popup（Phase V runtime 待測）。已收口：c0 評分 FE（Phase F）、i0 全模組（audit 22/22）。剩 UNFOUND 多為 M9 雜項群（AUD-3/4 待裁）；0140/0240 家族 AUD-1 ✅已關（06-16 owner 盤點＝已無使用）；批次層 AUD-10 ✅已關（06-16，§2F）；另待裁 AUD-2/3/4/7/8/11。
 
 **三層結構**（避免把「模組」當「單頁」）：① 模組流程（M1–M9）② 流程頁（外層 pageMap 頁籤）③ 頁內區塊（內層 tab）。遷移單位＝模組流程。
 
@@ -205,7 +205,7 @@
 
 - 🟡 **命名 tech-debt（06-12 快檢記錄）**：`epl-comm-isu-update-total-amount`（+class/DTO）實為 case-type 無關（計算不落 DB；LDTC 副作用被 `LON_ATTRIBUTE='I'` gate 限定），corporate 沿用安全——rename 低優先、閒時清。
 
-**⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×5（`00660`/`00100`/`00119` `5a47038`/`2599752`/`6919da5`，06-11；**`00640` PDF `c1bda77`、`00300` FE 導回 `40d931c`，06-15**，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ **BIBLE-GAP recon 完成（AUD-5 關 06-15）**；待裁＝AUD-2/3/4/7/8/10/11（AUD-1/5/6/9 已關）。
+**⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×5（`00660`/`00100`/`00119` `5a47038`/`2599752`/`6919da5`，06-11；**`00640` PDF `c1bda77`、`00300` FE 導回 `40d931c`，06-15**，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ **BIBLE-GAP recon 完成（AUD-5 關 06-15）**；待裁＝AUD-2/3/4/7/8/11（AUD-1/5/6/9/**10** 已關，AUD-10 批次層 06-16 結＝§2F）。
 
 ---
 
