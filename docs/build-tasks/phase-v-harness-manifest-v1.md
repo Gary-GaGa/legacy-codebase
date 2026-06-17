@@ -3,7 +3,7 @@
 > **段索引**：v1 讀型守門目前 **2 段**——**段① langType 五頁筆數一致**（§1–§6）、**段② `EPROZ00800` init-query 讀型**（§7）。兩段皆 grounded、零臆測。其餘讀型列（`00600` search-options、`00100` checklist 等）待各頁 `qa-cases.md` 落地再增量補（本 repo 目前只有 `EPROZ00800` 一份 qa-cases）。
 > **這是什麼**：`phase-v-api-selfverify-harness.md` 卡標「**v1 必含 langType 五頁筆數一致斷言**」+ 讀型 API↔DB 一致那部分、寫成 manifest 約定（schema + grounded 列）。
 > **分工（卡鐵則）**：runnable manifest（YAML/JSON）+ harness 腳本**落產品 repo／母資料夾 `tools/`**，由 Codex 在你本機**materialize + 跑**（規劃 repo 的 remote agent 打不到 localhost＝產不跑）。**規劃 repo 只留本約定**——schema、grounded 的列、斷言語意、provenance。
-> **grounding**：段① endpoint/handler/repository `file:line`＝`build-tasks/done/langtype-data-filter-sweep-findings.md`、筆數基準＝`verification/verification-handoff.md §6.2`（product `bbbaa19`+`7e1f0d2`，OVSLXLON02 實測）；段②＝`specs/srs/EPROZ00800/qa-cases.md`（QA-001/002）。**全列 grounded、零臆測**。
+> **grounding**：段① endpoint/handler/repository `file:line`＝`build-tasks/done/langtype-data-filter-sweep-findings.md`、筆數基準＝`verification/verification-handoff.md §6.2`（product `bbbaa19`+`7e1f0d2`，OVSLXLON02 實測）；段②＝`archive/EPROZ00800-v0.9-superseded/srs/qa-cases.md`（QA-001/002；**v0.9 封存**）。**全列 grounded、零臆測**。
 
 ## 1. manifest 列 schema（卡定義：endpoint / method / params / 等價唯讀 SQL / 斷言）
 | 欄 | 意義 |
@@ -47,7 +47,7 @@ RV-2 修復（langType 退出資料過濾）目前靠人工筆數比對確認；
 - 跑：人起服務（`local-phase-v-bringup.md`）+ 拿 JWT → harness 逐列打 endpoint（`langType=zh_TW`/`en_US` 各一）+ 唯讀 SELECT → 出 PASS/FAIL 表 → 回填 `verification-handoff.md §6`。
 
 ## 7. 段②：`EPROZ00800` init-query reviseditem 讀型（QA-001/002）
-> 來源＝`specs/srs/EPROZ00800/qa-cases.md`（repo 內唯一一份 qa-cases）。只取**讀型 init-query** 兩條（QA-001/002）；其餘 QA（save/execute/FE 行為）屬寫入（v3）或 FE 層、**非 v1 唯讀**。
+> 來源＝`archive/EPROZ00800-v0.9-superseded/srs/qa-cases.md`（v0.9 封存）。只取**讀型 init-query** 兩條（QA-001/002）；其餘 QA（save/execute/FE 行為）屬寫入（v3）或 FE 層、**非 v1 唯讀**。⚠️ 00800 disposition=REBUILD：段② 待 00800 重產後以新 qa-cases 重定（langType 段① 不受影響）。
 > ⚠️ **依賴順序**：init-query endpoint＝`epl-case-query-reviseditem`（`RevisedItemController:38`）＝get-body #3、RP9 ✅關＝**GET query by `applicationNo`**。**本段須在 get-body #3 落地後跑**（之前是壞的 GET-body，會 E999）；harness 卡已標此順序（get-body #3 → harness）。
 > ⚠️ **需已知唯讀 fixture 案號**：不同於段① langType 差分（用現有資料即可），這兩條各需一個「**有** revised item」與「**無** revised item」的**已知 `applicationNo`**——可先用 `equiv_sql` 從 DB 撈符合條件者當 fixture（唯讀 SELECT、不建不刪資料）。
 

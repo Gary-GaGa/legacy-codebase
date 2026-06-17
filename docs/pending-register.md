@@ -11,8 +11,8 @@
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
 | ~~**撥貸 domain 殘**~~ ✅ **06-17 全關（照舊）**| ~~T24 欄值/格式/欄寬~~（✅ 06-16「T24 照舊規格」）、~~async~~(AUD-10)、~~A-4 檢核嚴格度~~/~~M6 完工日 DTO~~/~~B-1 `T24_COMPANY`~~/~~KHR-G·H 來源~~ → **06-17 owner 全裁＝照舊系統處理**（A-4 對齊舊判據、M6 照舊來源接回、B-1 取 `OVSLXLON01`、G·H 坐實舊 `DISBURSEMENT_CURRENCY`；A-5 收窄/rounding keep 不變）→ 轉 Codex 執行 | —（已裁，剩執行）| 撥貸 domain | 06-05→06-17 | `disbursement-domain-escalations.md` A-4/D-1/B-1/B-3＋`decisions.md` 06-17 列 |
-| **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | `specs/srs/EPROZ00800/spec.md §@PENDING`＋**派工卡 `build-tasks/00800-rp8-rp11-rd-closeout.md`** |
-| **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | `specs/srs/EPROZ00800/spec.md §@PENDING`＋**派工卡 `build-tasks/00800-rp8-rp11-rd-closeout.md`** |
+| **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | `archive/EPROZ00800-v0.9-superseded/srs/spec.md §@PENDING`（v0.9 封存·待重產）＋**派工卡 `build-tasks/00800-rp8-rp11-rd-closeout.md`** |
+| **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | `archive/EPROZ00800-v0.9-superseded/srs/spec.md §@PENDING`（v0.9 封存·待重產）＋**派工卡 `build-tasks/00800-rp8-rp11-rd-closeout.md`** |
 | ~~**SR-B1/B2**~~ ✅ **06-17 裁＝折進重建**（00800 spec-review）| B1：R15+openapi 漏承載 PRD §6.4 `MSG_OVER_COUNT_LIMIT`/`MSG_QUERY_FAIL`（REQ-007 未完整）；B2：R15 把查詢失敗 500 誤併入輸入錯誤 400 → **owner 06-17 裁不立即小修、折進 00800 重建**（重建時 R15 補 2 碼+拆 400/500+openapi query 400/500；**gateⒺ 持續 warn＝安全網**）| —（決策定，重建承載）| RD／SA | 06-16→06-17 | `build-tasks/00800-spec-review-findings.md` |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤`＋**派工卡 `build-tasks/c0-crediteval-e1-e2-escalation.md`** |
 | **c0 escalation E2** | `crScoreCardCompleted` 整欄覆寫 `"NN"`（`:2890`） | 同上 | 信用決策 domain | 06-05 | `verification-handoff §1`＋派工卡（同上）|
@@ -35,7 +35,7 @@
 | npm 預設 registry | 預設指 `npm-all` 是否採用 | 架構/ops | `decisions.md §三` |
 
 ## 🧩 Bible→PRD seam（跨層邊界落差；`EPROZ00800` 定版前 reconcile）
-> **成因**：`CDC-EPRO-0001` 由 legacy code 反推（PRD §1.1），非由 Bible 下推 → 邊界是 code 形狀（ITEM/RI-MAT/checkpoint），Bible 的**旅程形狀**業務邊界（何時顯示/案件類型/下游頁）漏在 Bible→PRD 之間，未進 PRD REQ/TBD，故也未進 SRS。來源：`specs/bible/bible-eproposal.md`、`specs/prd/PRD-CDC-EPRO-0001-v1.1-EPROZ00800.md`、`specs/srs/EPROZ00800/spec.md`。
+> **成因**：`CDC-EPRO-0001` 由 legacy code 反推（PRD §1.1），非由 Bible 下推 → 邊界是 code 形狀（ITEM/RI-MAT/checkpoint），Bible 的**旅程形狀**業務邊界（何時顯示/案件類型/下游頁）漏在 Bible→PRD 之間，未進 PRD REQ/TBD，故也未進 SRS。來源：`specs/bible/bible-eproposal.md`（v1.1）、`archive/EPROZ00800-v0.9-superseded/`（舊 PRD+v0.9 SRS 已封存 2026-06-17，待重產）。
 >
 > 嚴重度：🟡 擋 `00800` 完整定版（機械閘門已綠、屬語意/上游缺口）。
 > **✅ 2026-06-17 Bible v1.1 更新**：BP-1~5 之 **Bible 側已承載**（BR-014~017 案件類型 gating/影響 0150/顯示 0173、SC-002~005、災難情境「EPROZ00800 不該顯示卻顯示」、型三軸 `LON_ATTRIBUTE`/`LON_TYPE_CODE`/`SECURE_ATTRIBUTE`）→ BP-1~5 由「Bible 有但落空」轉「**待 PRD/SRS 下推**」（00800 重產 + 新 PRD→SRS 時承載；非 Bible 缺口）。
