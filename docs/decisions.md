@@ -61,7 +61,7 @@
 | PRD→SRS 轉換層硬化＝批判輪3（2026-06-16, owner「硬化閘門」）| 機械閘門綠（`check-srs-bundle.py` exit 0）後依 CLAUDE.md §4「先機械、再語意」跑 `spec-reviewer` 審 00800 worked example → 抓 **2 個未登記 Blocker**（已坐實）：**SR-B1** PRD §6.4 `MSG_OVER_COUNT_LIMIT`(400)/`MSG_QUERY_FAIL`(500) 未承載進 R15+openapi、REQ-007 未完整；**SR-B2** R15 把「查詢失敗 500」誤併入「輸入錯誤 400」。**機械盲區坐實**：既有 xfile#3 只查 spec→openapi（spec 有、openapi 漏），結構上抓不到「PRD 有、spec/openapi **皆**漏」。**owner 裁「硬化閘門」**→ 加 **gateⒺ 錯誤碼承載**：PRD Error Response 表（上游權威）→ spec.md Rn 錯誤規則 + openapi responses，漏承載=warn、PRD↔openapi 同碼 HTTP status 不一致=warn（皆 warn，disclaim 由人/reviewer 認）。**關鍵實作＝解析前去 markdown 底線跳脫 `\_`**（PRD 表格寫 `MSG\_X`，literal `_` 比對會漏抓＝SR-B1 根因；我自己 spot-check 時也踩過此坑、當場由「疑 reviewer confabulate」修正為「reviewer 對、我的 grep 漏跳脫」）。重跑 00800：gateⒺ 顯式 2 warn（漏 2/7 碼）、exit 0（warn 級不破綠）＝**機械重現 SR-B1**。檔頭 canonical 清單 + `specs/srs/README.md` gate 對照同步（Ⓔ=Error碼承載）。**判斷層**（`prd-to-srs` DoD / `spec-reviewer` 紅旗 / `spec-architecture §9`）propagation＝待 owner 核 follow-up（同批判輪2 全層模式，本輪 owner 僅授權機械閘門）。findings＝`build-tasks/00800-spec-review-findings.md`；SR-B1/B2 登 pending-register。 |
 | 批判輪3 判斷層 propagation 落地（2026-06-16, owner 續授權）| 承上批判輪3（gateⒺ 機械層）：owner 續授權後補**判斷層**（同批判輪2 全層模式）→ `prd-to-srs` DoD 加「PRD 錯誤碼逐碼承載」check、`spec-reviewer` 紅旗②③④ 升為 ①–⑤（加 ⑤ 漏承載=🔴／status conflation=🔴🟡）、`spec-architecture §9` 加教訓 20。**機械(gateⒺ)+判斷(DoD/reviewer/教訓)三層齊**——SR-B1/B2 類（PRD→SRS 漏承載/混 status 錯誤碼）守在「機械 warn + DoD 逐條 + reviewer 紅旗」三層。三層皆內建「PRD 表格去 `\_` 跳脫」提醒（SR-B1 根因）。supersede 上列「判斷層待 follow-up」。 |
 
-## 二、待確認項目（用 Copilot 在實際專案查證後回填）
+## 二、待確認項目（用 Codex 在實際專案查證後回填）
 
 ### 環境 / 版本
 - [ ] 後端 Spring Boot 確切版本（BOM/parent 版本）— prompt A1
@@ -91,9 +91,9 @@
 - [x] 一個完整 CRUD 頁面（黃金樣板）— C4 已驗證（僅結構/命名，**不含 source**）：見 `docs/golden-template/README.md`
 
 ### 指令檔（已起草，含 TODO）
-- [x] `AGENTS.md`（完整規範）+ `.github/copilot-instructions.md`（精簡版）已起草，自包含可複製到實際 repo
+- [x] `AGENTS.md`（完整規範，階層式 root/backend/frontend）已起草，自包含可複製到實際 repo〔原並列的 `.github/copilot-instructions.md` 精簡版已隨 GitHub Copilot 第三軌移除（2026-06-16，見 §一 Copilot 移除列）→ 回歸 Claude↔Codex 雙軌〕
 - [x] `AGENTS.md` TODO 已全部填補（B2/B3/C2/版本/認證皆補入）；CORS 收斂與 OpenAPI 導入列為「正式環境/實作建議」
-- [x] repo 結構：**monorepo**（`backend/` + `frontend/`）→ 指令檔採階層式：root `AGENTS.md`(共用) + `backend/AGENTS.md` + `frontend/AGENTS.md`；Copilot repo-wide `.github/copilot-instructions.md` + `.github/instructions/{backend,frontend}.instructions.md`（`applyTo` 依資料夾自動套用）。若實際資料夾名非 backend/frontend，改 `applyTo` glob 與連結即可。
+- [x] repo 結構：**monorepo**（`backend/` + `frontend/`）→ 指令檔採階層式：root `AGENTS.md`(共用) + `backend/AGENTS.md` + `frontend/AGENTS.md`（Codex 依資料夾階層式自動套用；Claude 側＝`CLAUDE.md`）。〔Copilot repo-wide `.github/copilot-instructions.md` + `.github/instructions/*` 已隨第三軌移除，2026-06-16，見 §一 Copilot 移除列〕
 
 ### 舊專案 JSP
 - [x] JSP 清單、共用版型機制、JSTL/EL/自訂 tag、前端 JS — **D1 完成**，見 `migration-backlog.md`
