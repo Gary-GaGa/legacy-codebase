@@ -3,6 +3,7 @@
 > **性質**：Codex 唯讀碼驗（帶 source：新 backend c0 + **舊企金 c0** `EPROCS_*/EPROCU_*` + i0 twin 對照）。**只報不改**。risk-tier、分批。
 > **為何 reopen**：c0 評分線（00114–00120）當初**只對 i0 鏡像 audit、未對舊企金 c0 行為比**（`decisions.md` 0921 列：「c0 頁 00115–00120 當初只對 i0 audit、未對舊系統行為比 → **撥貸收斂後評估是否補比**」）。**撥貸已於 2026-06-17 收斂** → 補比到期。**E1/E2**（`CsuCreditEvalAndCreditDecisionServiceImpl:2985/:2890`）即此缺口的先聲；本卡涵蓋更廣。
 > **判準＝`docs/process/legacy-parity-sop.md`**（舊系統為主 + 三判）。
+> **範圍擴充（06-17 per-page 矩陣）**：企金線整體＝c0 評分 9 **+ CSU 主流程 9 ＝18 頁**皆「鏡像個金 i0/ISU twin、未對舊企金 cs/cu 驗」→ 本卡 parity 補比**併涵 CSU 主流程**（risk-tier 00118/00120/0170 先）；逐頁 disposition 回填 `refactor-audit/per-page-reinventory-matrix.md`。
 
 ## 目的
 回答每頁：「**新 c0 行為（檢核/欄位/側效/checkpoint/計分）與舊企金 c0 是否對等？差異屬 regression / 刻意演進·縮編 / DB 結構差？**」——非「對 i0 像不像」（那已做過），而是「**對舊企金系統忠不忠實**」。
