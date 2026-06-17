@@ -127,7 +127,7 @@
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅ F-12 已修（product `5a47038`，FE endpoint 改 CAD）→ 復稱 CR 範本；Phase V 實測查詢一條 |
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；**DB 複合 PK 已對齊**（06-16 reverify，`@EmbeddedId` EMP_ID+STR_TIME，AUD-9 關）|
-| EPROZ00800 | Revised Item | 🟡 | ✅ | FE 🟡＝RP9 method 殘；BE ✅（D1–D5 `88328f9`＋**F1–F9 `5580eb7`**）；仍開 RP8/RP9/RP11——**單一出處＝bundle spec.md §@PENDING**；Phase V 待測：QA-007/008/009a/b/012/024/025＋F6 ≠03 分支＋audit userId。**SRS bundle**＝`specs/srs/EPROZ00800/`（v0.9）|
+| EPROZ00800 | Revised Item | 🟡 | ✅ | 既有 BE ✅（D1–D5 `88328f9`＋F1–F9 `5580eb7`）；**SRS v0.9 已封存 `archive/EPROZ00800-v0.9-superseded/`（2026-06-17）→ disposition=REBUILD，待新 PRD（Bible v1.1）重產**；殘 RP8/RP11（RD as-is，派工卡 `00800-rp8-rp11-rd-closeout`）+ SR-B1/B2（折進重建）為重產輸入；Phase V 待測沿用既有 BE |
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
 
 ### 2F. 撥貸 `EPROISU0920/0921/0922` + T24（🔴 唯一真未完成區塊）
@@ -187,7 +187,7 @@
 **④b 🟠 `00800` Revised Item（owner：RD 實作＋SA 取數）**
 - ✅ D1–D5 硬缺陷已修（`88328f9`，2026-06-09；prompt 歸檔 `done/00800-fix-step1-tbd-independent.md`；QA-013/014/016/017 過、QA-012 rollback deferred-to-DB）。
 - ✅ TBD-001~007 全裁（06-11，SRS v0.5）；✅ **RI-MAT 修復包 F1–F9 已落地**（product `5580eb7`，06-12 審過：isNotSame gate 移除、R13.1–13.3、R16 audit、R5 disabled、Finished、R14 checkpoint 對齊、R13.4/13.5 矩陣修正＋seqNo 括號 bug 加修；prompt 歸檔 `done/00800-rimat-fix.md`）。
-- 仍開：**只剩 RP8/RP9/RP11**（06-12 三連關：RP10 DDL 枚舉、RP6 取數、RP4 設計非缺陷 → R13.4/13.5+R14+ITEM 名稱全定版，rimat 擴至 F1–F9）——**裁定內容單一出處＝`specs/srs/EPROZ00800/spec.md` §@PENDING**（視圖＝`pending-register.md`）；取證證據＝`build-tasks/done/00800-pending-recon-findings.md`（原 recon 卡歸檔 done/）。
+- 仍開：**RP8/RP11**（RP9 已 06-16 關＝GET）——**裁定原文在封存 `archive/EPROZ00800-v0.9-superseded/srs/spec.md` §@PENDING**（v0.9，待重產；RD 派工卡 `00800-rp8-rp11-rd-closeout`）；取證證據＝`build-tasks/done/00800-pending-recon-findings.md`。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 

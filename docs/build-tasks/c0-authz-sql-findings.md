@@ -21,7 +21,7 @@ Status: DB SELECT-only precheck completed; INSERT SQL not executed
 - Runtime API auth compares `ROLE LIKE %:role%` and exact `API_ID`: `backend/src/main/java/khd/svc/epro/repository/TBApiAuthRepository.java:14`.
 - Runtime API id is slash-stripped by `request.getRequestURI().replace("/","")`: `backend/src/main/java/khd/svc/epro/config/security/APIAuthorizationFilter.java:40`.
 - Existing seed/migration search: `git grep -n -i "insert.*TB_API_AUTH\|insert.*TB_ROLE_TASK" -- .` returned no matches, so no repo-local data row template was found.
-- Existing SQL file search found only `docs/specs/srs/EPROZ00800/schema.sql`; no product seed/migration SQL directory was found, so this DB-free artifact is placed under `docs/build-tasks/` with the task card.
+- Existing SQL file search found only the 00800 SRS `schema.sql` (now archived at `docs/archive/EPROZ00800-v0.9-superseded/srs/schema.sql`); no product seed/migration SQL directory was found, so this DB-free artifact is placed under `docs/build-tasks/` with the task card.
 
 ## Template Basis
 

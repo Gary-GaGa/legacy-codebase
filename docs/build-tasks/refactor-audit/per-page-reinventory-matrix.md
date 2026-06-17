@@ -45,7 +45,7 @@
 ### 00800 + deputy
 | 頁 | 舊對應 | FE/BE | parity vs 舊 | disposition | SRS |
 |---|---|---|---|---|---|
-| **EPROZ00800 Revised Item** | z0 0800 | 🟡/✅ | 🔶(RP8/9/11) | **REBUILD**(砍掉重建·Bible/PRD 更新中) | ✅v0.9→重產 |
+| **EPROZ00800 Revised Item** | z0 0800 | 🟡/✅ | 🔶(RP8/11) | **REBUILD**(v0.9 SRS 已封存 `archive/EPROZ00800-v0.9-superseded/`、待新 PRD 重產) | v0.9 封存→待重產 |
 | EPROZ00700 Assign Substitute | z0 0700 | ✅/✅ | ✅(PK reverify·AUD-9) | **KEEP**(=golden `deputy`) | N/A |
 
 ---
