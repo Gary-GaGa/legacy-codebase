@@ -59,6 +59,7 @@
 **✅ PASS（7）**：endpoint 對應、撥貸日（`CASE_PROGRESS=24`）寫入、`MB_CHECK`、save 重建表 + `EPORIS_0921` flag、CO placeholder、`dataReturn` summary 狀態、**`0921` 無 checkpoint（佐證 D5）**
 
 ### 2.2 撥貸 `0922` Step B（main）比對結果（2026-06-05；舊 spec ↔ 新 `SummaryServiceImpl`）
+> **⚠️ 2026-06-17 更正（§2.1–2.3 為 06-05 快照，下列已解決，勿照舊判讀）**：① A-1 `funcGetExchangeRate` throw-stub **已實作＋conformance 4/4 PASS**（product `daae4c3`，06-16）→ 下方 🔴🔴 SHOWSTOPPER 已解。② `EXCHANGE_RATE` 來源 ID 已裁**回 `OVSLXLON01`**（A-2 舊 parity，非 bug；下方 `:67` 方向過時）。③ 金額精度 **C-1 已關**（06-12 DDL：舊=新 `(17,2)`、匯率 `(17,4)`，無落差）→ §2.3「需 DDL/DBA」過時。④ `T24_COMPANY` **非死路**（新庫實存→取 `OVSLXLON01`、RD 接值，B-1）。⑤ KHR rounding 實為**收窄**（非「新增在地化」；舊 non-USD 通吃、新只 USD/KHR，06-17 G/H 來源照舊）。現況權威＝`disbursement/disbursement-domain-escalations.md`＋`decisions.md`。
 > 詳細表本機 gitignore；此處主題/嚴重度。T24 A–H 逐欄留 B-0922-t24。
 >
 > **🔴🔴 SHOWSTOPPER（已複驗確認 2026-06-05）**：`authorize`（`caseIsuSummaryAuth`）換匯 `funcGetExchangeRate` 在 `0000` 成功分支**寫完 `TB_DISBUR_DATE`/`TB_EXCHANGE_RATE` 後無條件丟** IDE 自動產生的 `UnsupportedOperationException("Unimplemented method 'funcGetExchangeRate'")`（`FunctionServiceImpl:1221`）——**全方法無 return 路徑**、呼叫端無繞過 → **T24/SFTP/record/狀態（26）全部到不了**。**確認＝撥貸 authorize 核心未完成（半成品：DB 寫入已寫、缺 return、留 IDE stub throw）**，非僅行為分歧 → **「`0920` 認列既有＝結構到位」更正為「authorize 核心未完成」**。範圍：此為兩檔內**唯一** stub（`:614` 是 catch 包裝、非 stub）→ 修點侷限此方法尾段，但 **authorize 從未端到端跑過**，且同路徑另有下列真 bug；另有 **partial-write 風險**（寫後拋，依交易邊界可能留半更新）。

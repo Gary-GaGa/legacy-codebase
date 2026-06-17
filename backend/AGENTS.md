@@ -35,7 +35,7 @@
 - **OpenAPI（契約優先）**：README 要求但**實作未落地**（pom 無 `springdoc`、無 `@OpenAPIDefinition`/`@Operation`）→ **建議導入 `springdoc-openapi`（從 Nexus 取）** 補上合約。
 
 ## 6. c0 評分頁鏡像 i0 — 自走硬規則（goal-mode 必讀）
-> 補完剩餘 30%（企金評分 c0 controller + 撥貸 0920）的強制規則。違反任一條 = 該頁**不算完成**。亦見 `docs/archive/runbook-30pct.md`（順序/閘門/煞車；🗄 已凍結——30% 結案，狀態以 `docs/feature-inventory.md` 為準）。
+> 補完剩餘 30%（企金評分 c0 controller + 撥貸 0920）的強制規則。違反任一條 = 該頁**不算完成**。〔原 `runbook-30pct.md` 順序/閘門/煞車心法**已刪 2026-06-16**，30% 結案〕狀態以 `docs/feature-inventory.md` 為準。
 
 ### 6.1 鏡像原則（自足，不耦合 i0）
 - 每個 c0 頁 = **新增一套自足 feature**（controller + service(+interface) + DTO package），鏡像對應 i0。

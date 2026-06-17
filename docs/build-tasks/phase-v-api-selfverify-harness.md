@@ -5,7 +5,7 @@
 > **長程序鐵則不變**：起服務（`spring-boot:run`/`ng serve`）仍人/腳本（`local-phase-v-bringup.md`）；本 harness ＝**啟動後的短命呼叫**（curl + 唯讀 SELECT），不持有程序 → 可自動連跑。
 
 ## v1 範圍：唯讀「API ↔ DB 一致性」自驗（零寫入、零護欄負擔）
-> 核心斷言：**read/list/init-query endpoint 的回應，應與等價唯讀 SQL 結果一致**（筆數/關鍵欄）。不一致＝FAIL——**RV-2 正是此類**（TODO init-query 回 0、DB 有 92）。**全程唯讀**（唯讀帳號 SELECT + GET/查詢呼叫），不寫 DB → **不需測試案件號段/teardown/快照**。
+> 核心斷言：**read/list/init-query endpoint 的回應，應與等價唯讀 SQL 結果一致**（筆數/關鍵欄）。不一致＝FAIL——**RV-2 正是此類**（TODO init-query 回 0、DB 應有資料；修後筆數一致 `zh_TW`=`en_US`=**91**，見 `phase-v-harness-manifest-v1.md` LT-1）。**全程唯讀**（唯讀帳號 SELECT + GET/查詢呼叫），不寫 DB → **不需測試案件號段/teardown/快照**。
 - **納入**：主流程 **i0 / z0** 的讀型 endpoint——如 `00600` search-options、`00100` todolist、`00300` checklist、`00800` init-query（reviseditem GET）、`00400` casedistribution、列表/選項類。
 - **暫不納**：① **c0/csu** endpoint（未套 `c0-authz-sql` 前全 403——待 ops 套 `OVSLXLON02` 後納 v2）② **寫入**（save/submit／RI-MAT 側效——待 v3，帶 `local-phase-v-bringup §0.1` 護欄＋teardown）③ **FE 畫面 render/dialog**（瀏覽器層，需 Playwright 類＝另案，非 API 自驗）。
 

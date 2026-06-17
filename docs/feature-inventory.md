@@ -153,7 +153,7 @@
 | R4 | 後端 action→REST 重寫 | ✅ 進行 pattern | 全後端 |
 | R5 | 自訂 taglib 語意 | 低 | 元件對應 |
 | R6 | shell 重用（避免 4–8x 重工）| ✅ 已定 | 主流程 |
-| R7 | **權限三表遷移**（`TB_FUNCTION_AUTH`/`TB_API_AUTH`/`TB_ROLE_TASK`）| 🟡 進行 | **新 c0 endpoint 授權列待建**（見 §4）|
+| R7 | **權限三表遷移**（`TB_FUNCTION_AUTH`/`TB_API_AUTH`/`TB_ROLE_TASK`）| 🟡 進行 | c0 endpoint 授權列 **SQL 已備齊**（`c0-authz-sql`）、**剩 ops 套 `OVSLXLON02`**（見 §4⑥）|
 | R8 | CBC 聯徵資料接入 | 🟢 **釐清：非獨立 adapter** | CBC = 頁內 banking relationship（i0 已做；c0 FE 缺）；**無外部 adapter track** |
 | — | **檔案上傳/下載 API** | ⏸ **待設計** | collateral 0150、審批 0170/0171/0173 上傳 |
 | — | **FE/BE HTTP method 不一致** | ✅ sweep 收齊 | `48e687f`：00600/00640 對齊；00600 Phase V 補修 GET body regression；00800 init-query 列 @PENDING 待裁定 |
@@ -177,8 +177,8 @@
 - 主流程（is/iu/cs/cu 0110–0173）+ 契約頁（0910–0913）+ i0 全頁 FE↔BE `epl-*` DTO/授權各跑一次。
 - z0 報表 00610/00620–00650 呈現。
 
-**③ 🔴 撥貸 domain（owner：撥貸 domain + T24 + DBA）— 見 escalation doc**
-- A-1 換匯 stub（**撥貸總開關、最優先**；OQ-2 精度✅已關 06-12）、B-1 `T24_COMPANY`（✅前提推翻→RD 接值）、換匯源 ID（=新庫兩 schema 選一）、檢核嚴格度、KHR、欄寬、async、M6 完工日 DTO 缺源。
+**③ 🟠→✅ 撥貸 domain（owner-decision 已全清空 06-17；剩執行+UAT）— 見 escalation doc**
+- ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；✅ B-1 `T24_COMPANY`→取 `OVSLXLON01`、RD 接值；✅ A-4 檢核嚴格度 / M6 完工日 / KHR G·H 來源 06-17 全裁「照舊系統處理」；✅ T24 B-group commit/push、批次層 AUD-10 結。**殘＝Codex 執行 + T24 UAT + E1/E2（信用決策 domain）**。
 
 **④ z0 半成品收尾（小修；owner：前後端）**
 - `00300` Document Checklist：✅ **recon 坐實＋FE 導回已修 06-15**（recon `done/00300-return-recon.md`；fix `40d931c`，卡歸檔 `done/00300-return-fix.md`）——BE 非缺陷、FE 導回 ToDo 已實作（共用 `goPreviousPage()`）；DIFF-011 收。Phase V 驗共用方法連帶呼叫端語意。
@@ -229,7 +229,7 @@
 4. z0 報表呈現；z0 半成品收尾（00300 return；✅ 00600 method 已修；00800 init-query method＝@PENDING 待 RD）。
 
 **Phase D — 撥貸解鎖（關鍵路徑，owner：撥貸 domain）**
-5. 🔴 **A-1 換匯 stub**（先「實作前調查」：匯率來源 API/表、舊取法、回傳結構）→ 端到端 → 驗 D1–D8 → B-1/T24 來源 → 精度（舊 DDL/DBA）。
+5. 🟠→✅ **撥貸解鎖**：A-1 換匯 ✅ 已實作+conformance PASS（`daae4c3`）、批次層 AUD-10 結、T24 照舊 commit/push、殘 domain 06-17 全裁照舊 → **剩端到端/T24 UAT**（非 coding；精度 C-1 已關＝舊=新無落差）。
 
 **Phase E — c0 收尾 + 授權（owner：domain + DB/ops）**
 6. c0 E1/E2 escalation 裁示；新 c0 endpoint 授權列。

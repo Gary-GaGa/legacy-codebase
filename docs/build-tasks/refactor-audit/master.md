@@ -1,6 +1,6 @@
 # Full Refactor Audit Master
 
-Status: S-final completed on 2026-06-11.
+Status: **SUPERSEDED by 2026-06-17 drift re-check**（`drift-recheck-2026-06-17.md`；06-11 code-state 已過期）。原：S-final completed on 2026-06-11.
 
 ## Rules
 

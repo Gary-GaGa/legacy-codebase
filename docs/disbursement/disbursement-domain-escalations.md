@@ -57,6 +57,6 @@
 - **Tech-debt sweep**（工程、非 domain）：codebase native-query map-key **大小寫混用**（`loanAmount` vs `LOANAMOUNT`）→ 可能藏同類靜默回 null 的 bug，排一次全面 sweep。
 - **Ops smell**：後端 Logback 測試設定硬編碼 `D:\temp\saveFile\log`，非 Windows/無 `D:` 環境擋 build（現以 `-Dlogging.*.path` 覆寫繞過）→ 外部化該路徑。
 - **Ops 追蹤（AUD-10 B008）**：legacy `EPROZ0_B008` DB/security log 歸檔（搬 `securityLog/yyyy`）新後端 UNFOUND → 確認是否改由 logrotate／平台／job scheduler 歸檔；非 app 碼缺、不擋撥貸。
-- **Tech-debt（AUD-10 附帶）**：`TB_EXCHANGE_RATE` 在新系統 **write-only**（inline `funcGetExchangeRate` 寫、無人讀）→ 鏡像舊行為、無害，惟可列日後 cleanup 候選。
+- **AUD-10 B005 銷案 + tech-debt**：`TB_EXCHANGE_RATE` 在新系統 **write-only**（inline `funcGetExchangeRate` 寫、無人讀）→ 證 **B005 每日匯率批次已由 inline 換匯取代（銷案、非漏建）**；鏡像舊行為、無害，可列日後 cleanup 候選。
 
 > 維護：本檔只列**待 owner 裁**項；裁決後回填對應 `triage`/`verification-handoff`，並把已決項從本檔移除或標 ✅。

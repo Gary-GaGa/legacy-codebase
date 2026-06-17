@@ -7,7 +7,7 @@
 反推 Bible 用 skill `.claude/skills/legacy-to-bible/`（Codex：`docs/env/codex/prompts/legacy-to-bible.md`）——證據接地、敘事非契約。
 
 ## 現況：專案級 Bible 已建檔
-- ✅ **[`bible-eproposal.md`](bible-eproposal.md)** — 專案級 Bible（全端到端旅程：起案→審核→核定→LC→結案→撥貸），使用者提供 `v1.0`（2026-06-10）快照。含北極星/決策準則/黃金旅程/角色/E2E×8/BR-001~021/SC-001~018。
+- ✅ **[`bible-eproposal.md`](bible-eproposal.md)** — 專案級 Bible（全端到端旅程：起案→審核→核定→LC→結案→撥貸），**v1.1-draft**（2026-06-17 ingest，取代 v1.0；v1.0 見 git history）。含北極星/決策準則/黃金旅程/角色/E2E×8/災難情境/**BR-001~030 / SC-001~031** ＋ DB 驗收錨點（OVSLXLON02：狀態碼字典 `TB_PROCESS_CODE`/角色 `TB_ROLE_DEFINE`/`TB_API_AUTH`）。
 - 域級深掘（如 `bible-disbursement.md`）日後依需要再拆。
 - ⚠️ 本版證據主以 `[HUMAN]`/`[CODE-TBD]` 標記，`file:line` 待 source 驗證階段回填。
 

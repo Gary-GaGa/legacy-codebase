@@ -76,6 +76,7 @@ Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) 
 
 ## 🗄 [`archive/`](archive/)（已消化、留存備查）
 - `review-c0-prompt.md`（c0 後端審查 prompt）、`phase1-eproz0_0700-spec.md`（Phase 1 切片，已完成）。
+- `EPROZ00800-v0.9-superseded/`（0800 v0.9 SRS bundle + 舊 PRD/trace，2026-06-17 封存；EPROZ00800 頁待重產）。
 - `completion-ledger.md`（30% 總盤點；內容併入 feature-inventory，2026-06-11 凍結）。〔`runbook-30pct.md` 已刪 2026-06-16：內容被 `build-tasks/`+`STATUS.md` 取代、引用失效〕
 
 ---
