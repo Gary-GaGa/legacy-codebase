@@ -1,7 +1,7 @@
 # 待決登記表（Pending Register）
 
 > **單一視圖**：把散落在各 SRS `@PENDING`、escalation、A-1 OQ、架構待議的**開著的決策**聚一處——「**誰欠我們裁定、卡什麼、開了多久**」。
-> 來源仍各自為準（改在來源檔、這裡同步）。**最後更新＝2026-06-17**。狀態：🔴 擋主線 ／ 🟡 擋單頁/子集 ／ ⚪ 非阻擋/暫緩。
+> 來源仍各自為準（改在來源檔、這裡同步）。**最後更新＝2026-06-18**。狀態：🔴 擋主線 ／ 🟡 擋單頁/子集 ／ ⚪ 非阻擋/暫緩。
 > **06-11 裁定輪**：`00800` TBD-001~007 七條全裁（五關二改追蹤），見文末 §✅ 已關。
 
 ## 🔴 擋主線（卡住才能往下走）
@@ -24,6 +24,7 @@
 | **AUD-8**（schema-diff）| new02 獨有 `TB_PAGE_COLUMN_AUTH_CATEGORY/_DETAIL` 用途確認（R7 三表外的新權限機制？）| 權限模型完整性 | SA/ops | 06-12 | 同 |
 | **AUD-11**（F-OWN-4）| `EPROCU0160` typo vs 真分歧——**Codex 碼驗 06-17＝UNFOUND（先不關）**：新 source **無獨立 `EPROCU0160`**（FE pageCode/route/API + BE controller 全 → `EPROCSU0160`/`epl-*-csu-*`＝傾向 typo/已併），**但** ① checkout 無 `TB_PAGE_MENU` row data → 無法證 CU×0160 routing 實指 CSU0160 ② `CsuLoanConditionServiceImpl:597` 讀 `EPROISU0160`（CS/CU checkpoint 欄＝`EPROCSU0160`）→ CU 分流正確性存疑 | 待 ① 唯讀 SQL 查 `TB_PAGE_MENU` 無擔×0160 routing ② `:597` ISU0160 是否 CU 誤接 bug | DBA(SQL)＋RD(`:597`) | 06-16 | F-OWN-4＋`done/aud11-cu0160-page-reverify-findings.md`（push `8c376f7`）＋**派工卡 `build-tasks/aud11-closeout-dba-rd.md`** |
 | **企金線 老系統 parity 補比**（reopen 06-17，**18 頁**）| 企金線（c0 評分 9 + CSU 主流程 9）由鏡像個金 i0/ISU twin 建、**未對舊企金 cs/cu 行為比**（0921「撥貸收斂後評估補比」）→ 撥貸已收斂、補比到期；E1/E2（00118）、AUD-11（CSU0160）合流 | 企金線各頁老系統 parity 維度定版（risk-tier 00118/00120/0170 先）| 信用決策 domain＋RD/Codex（碼驗）| 06-17 | `decisions.md` 0921＋reopen 列＋**派工卡 `build-tasks/c0-legacy-parity-recheck.md`**（18 頁批次，套 `process/legacy-parity-sop.md`）|
+| **EPROZ00100 TBD-001~008**（新 SRS v0.2）| 8 PRD TBD（①角色名/權限 ②redistribution 去留+method ③CASE_PROGRESS 語意 ④CAD docNo/NO mapping ⑤六月限制 BE 強制 ⑥download 安全/檔案 ⑦reason code table 值 ⑧session→route 遷移）| `00100` SRS 升 Approved（**blocking: TBD-002/004/006**）| PM/SA(001/002/003/007)・RD(004/006/008)・SA/RD(005) | 06-18 | **單一出處＝`specs/srs/EPROZ00100/spec.md §@PENDING`**（機械閘門 PASS、spec-reviewer round-1/2 無 Blocker）|
 
 ## ⚪ 非阻擋 / 暫緩 / 待業務（可獨立排）
 | ID | 待決 | owner | 來源 |

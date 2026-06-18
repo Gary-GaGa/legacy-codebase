@@ -5,7 +5,7 @@
 openapi: 3.0.3
 info:
   title: EPROZ00100 TO DO LIST / Work-list Dashboard
-  version: 0.1.0-draft
+  version: 0.2.0-draft
   description: >
     PRD CDC-EPRO-0001 v1.1。TBD 裁定狀態詳 spec.md §@PENDING（單一出處；blocking: TBD-002/004/006）。
     method/欄位以 spec.md Rn 為準。as-is 主清單端點＝epl-list-todolist（POST，合併 initQuery+queryCAD role 分支）。

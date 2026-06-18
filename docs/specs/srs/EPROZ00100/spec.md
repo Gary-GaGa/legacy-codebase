@@ -71,7 +71,7 @@
 **當** execute（刪除）時，系統應 ① AO role `003` **不得**刪除（REQ-005-01；**BE 強制、非僅 FE 隱藏鈕**，→R14 安全）② 要求 `APPLICATION_NO` 與**至少一個 reason**，否則回 `MISSING_APPLICATION_NO`/`MISSING_REASON`（REQ-005-02）③ 選 `D99` 時 other reason 必填、`maxlength 100`，否則 `MISSING_OTHER_REASON`（REQ-005-03）④ 於**單一 `@Transactional`** 寫 `TB_DEL_REASON`（`REASON_CODE` 分號串接＋`DEL_DATE`＋`OTH_REASON`）＋`TB_APP_HISTORY`，並更新 `TB_LON_SUMMARY_INFO.CASE_PROGRESS=D1`（REQ-005-04）；任一步失敗整批 rollback ⑤ 代理人處理時 history 記 `PROCESS_AGENT_CODE`/`NAME`（REQ-005-05）。**as-is ⚠️**：待 RD 核對（mutating 端點 → BE 權威必驗）。
 
 ### R10 — CAD 結案（必填／單一交易／狀態轉換）　`covers-prd: REQ-006`　**強制點：FE+BE**
-**當** executeclose（CAD 結案）時，系統應 ① 要求 `APPLICATION_NO` 與至少一個 close reason（REQ-006-01）② 選 `C99` 時 other reason 必填、`maxlength 100`（REQ-006-02）③ 於**單一 `@Transactional`** 寫 `TB_CLO_REASON`＋`TB_APP_HISTORY`，更新 `TB_LON_SUMMARY_INFO.CASE_PROGRESS=C1`（REQ-006-03）④ 結案後 `CURRENT_USER_ID` 清空（REQ-006-04）⑤ `IS_AUTODIS=M`→`MC`、`IS_AUTODIS=Y`→`YC`（REQ-006-05）。**as-is ⚠️**：待 RD 核對。
+**當** executeclose（CAD 結案）時，系統應 ① 要求 `APPLICATION_NO` 與至少一個 close reason（REQ-006-01）② 選 `C99` 時 other reason 必填、`maxlength 100`，否則回 `MISSING_OTHER_REASON`(400)（REQ-006-02）③ 於**單一 `@Transactional`** 寫 `TB_CLO_REASON`＋`TB_APP_HISTORY`，更新 `TB_LON_SUMMARY_INFO.CASE_PROGRESS=C1`（REQ-006-03）④ 結案後 `CURRENT_USER_ID` 清空（REQ-006-04）⑤ `IS_AUTODIS=M`→`MC`、`IS_AUTODIS=Y`→`YC`（REQ-006-05）。**as-is ⚠️**：待 RD 核對。
 
 ### R11 — proposal download（依 TYPE dispatch）　`covers-prd: REQ-007`　**強制點：FE+BE**　`@PENDING(TBD-006)`
 **當** CA download 時，系統應依 `TYPE` dispatch 對應 `printProposal`（CS→`EPRO_CS0180`、CU→`EPRO_CU0180`、IS→`EPRO_IS0180`、IU→`EPRO_IU0180`），產製失敗回 `DOWNLOAD_FAILED`（500），且**不得異動業務資料**（→R14 audit）。**@PENDING(TBD-006)**：as-is 回傳 `encryptTempFileFullPath`（暴露可重複使用本機路徑）→ 新系統安全/檔案處理（建議 download token、授權、有效期限）＝RD 待補。**as-is ⚠️**：前端走 `goPath()` stub、非報表服務（F-9）→ 掛 R2 報表服務/檔案 API ⏸ track。
@@ -115,7 +115,7 @@
 | REQ-003 | R6, R7 | QA-007, QA-008, QA-009, QA-021 |
 | REQ-004 | R8 | QA-010 |
 | REQ-005 | R9, R13 | QA-011, QA-012, QA-014, QA-016, QA-020 |
-| REQ-006 | R10 | QA-015 |
+| REQ-006 | R10 | QA-015, QA-022 |
 | REQ-007 | R11 `@PENDING TBD-006` | QA-017（`@PENDING TBD-006`）|
 | §7 NFR | R14 | QA-018, QA-019 |
 

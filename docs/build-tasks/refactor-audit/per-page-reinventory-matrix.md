@@ -79,7 +79,7 @@
 ## T3 — z0 共用 / 查詢 / 報表
 | 頁 | parity vs 舊 | disposition | SRS | 備註 |
 |---|---|---|---|---|
-| EPROZ00100 TODO(+101/102) | 🔶(RV-2/langType 修+筆數驗) | **FIX done/KEEP** | ⟳需產 | langType 回歸守門 |
+| EPROZ00100 TODO(+101/102) | 🔶(RV-2/langType 修+筆數驗) | **FIX done/KEEP** | ✅ SRS v0.2(In Review) | langType 回歸守門；SRS `specs/srs/EPROZ00100/` |
 | EPROZ00200 New Case | 🟡 | KEEP/FIX | ⟳需產 | 案號序列未深入 |
 | EPROZ00300 Doc Checklist | 🔶(導回修 06-15) | FIX done/KEEP | ⟳需產 | Phase V 驗 goPreviousPage |
 | EPROZ00400/00410/00500 | 🟡(cross-check ✅) | KEEP | ⟳需產 | |
@@ -113,7 +113,7 @@
 ---
 
 ## PRD→SRS backlog（接「新版 Bible/PRD 跑 to SRS」）
-> 現 repo spec 覆蓋＝**0/67**（00800 v0.9 已封存待重產；Bible v1.1 已在 repo）。owner 有**新版 PRD** → 跑 `prd-to-srs` 產 SRS。
+> 現 repo spec 覆蓋＝**1/67**（**EPROZ00100 SRS v0.2-draft 已產**：`prd-to-srs`、機械閘門 PASS、spec-reviewer round-1 修畢、Status=In Review/待 8 TBD；00800 v0.9 已封存待重產；Bible v1.1 已在 repo）。owner 提供 PRD → 續跑 `prd-to-srs` 產 SRS。
 > **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-schema/`+`docs/refactor/`。
 > **risk-tier 產 SRS 順序**（= rebuild/fix 最需規格者先）：
 > 1. **企金線**（CSU 主流程 + c0 評分，~18 頁）—— parity 回來若判 rebuild，立即需 SRS。

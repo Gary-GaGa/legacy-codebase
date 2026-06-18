@@ -113,7 +113,7 @@
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
 |---|---|:--:|:--:|---|
-| EPROZ00100 | TO DO LIST（+00101/00102 popup）| ✅ | ✅ | ✅ F-10 已修（`2599752`，popup reason 回 API 來源）；F-9＝`@PENDING` 掛 R2（呈報書下載走 goPath）/檔案 API（upload stub）兩 ⏸ track |
+| EPROZ00100 | TO DO LIST（+00101/00102 popup）| ✅ | ✅ | ✅ F-10 已修（`2599752`，popup reason 回 API 來源）；F-9＝`@PENDING` 掛 R2（呈報書下載走 goPath）/檔案 API（upload stub）兩 ⏸ track；**SRS v0.2-draft 已產（`specs/srs/EPROZ00100/`，prd-to-srs、機械閘門 PASS、In Review/待 8 TBD）** |
 | EPROZ00200 | New Case Application（進件入口）| ✅ | ✅ | ✅；案號序列細節未深入 |
 | EPROZ00300 | Document Checklist | ✅ | ✅ | **FE 導回已修 06-15**（`40d931c`；實作共用 `goPreviousPage()`＝`addContentOnly('/to-do-list')`+navigate、backend 零改）；BE return 早坐實非缺陷。⚠️ **Phase V 驗**：共用方法由 no-op→一律回 ToDo，連帶 Related Party/Revised Item 三呼叫端，語意確認（日後要回原入口再加 originPage 分流）。次要待裁：APP_HISTORY=98/branch-vs-dept/權限·錯誤訊息等價（UNFOUND）|
 | EPROZ00400 | Case Distribution | ✅ | ✅ | cross-check ✅ |
@@ -238,7 +238,7 @@
 7. R2 報表服務 → 0181/i0·c0 PDF/z0 PDF；檔案上傳 API；FE/BE method-mismatch sweep；map-key sweep；Logback 外部化。
 
 **Phase S — spec 層（PRD→SRS 重產；owner：PM/SA + Codex local；並行 track）**
-8. 🟡 **前置就緒→待重產**：轉換層硬化（批判輪2/3 gate：gateⓈ/Ⓔ＋DoD＋`spec-reviewer` 紅旗）✅、Bible v1.1 已入 repo ✅、local 對比輸入（`docs/db-schema/`＋`docs/refactor/`）盤點＋抽取細則定稿 ✅、dispatch 卡 `build-tasks/prd-to-srs-codex-dispatch.md` 備齊 ✅。**SRS bundle 覆蓋 0/67**（00800 v0.9 已封存 disposition=REBUILD；覆蓋數字 SSOT＝`refactor-audit/per-page-reinventory-matrix.md`）→ owner local 用 Codex 跑 `prd-to-srs`，**risk-tier：企金線/撥貸/00800 重產先**；SRS 落 `docs/specs/srs/`。
+8. 🟡 **前置就緒→待重產**：轉換層硬化（批判輪2/3 gate：gateⓈ/Ⓔ＋DoD＋`spec-reviewer` 紅旗）✅、Bible v1.1 已入 repo ✅、local 對比輸入（`docs/db-schema/`＋`docs/refactor/`）盤點＋抽取細則定稿 ✅、dispatch 卡 `build-tasks/prd-to-srs-codex-dispatch.md` 備齊 ✅。**SRS bundle 覆蓋 1/67**（**EPROZ00100 v0.2-draft 已產、In Review**；00800 v0.9 封存=REBUILD；覆蓋數字 SSOT＝`refactor-audit/per-page-reinventory-matrix.md`）→ owner local 用 Codex 續跑 `prd-to-srs`，**risk-tier：企金線/撥貸/00800 重產先**；SRS 落 `docs/specs/srs/`。
 
 **關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。**spec 層（PRD→SRS 重產，Phase S）= 前置就緒、owner local 並行 track，不擋當前里程碑，但為 00800/企金線 rebuild 的上游**。
 
