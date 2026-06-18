@@ -4,6 +4,27 @@
 > **依賴**：① 新版 PRD（必）+ Bible（有則接上游追溯）② 該頁產品碼（as-is）③ 規劃 repo 的 skill/SOP（prompt 已內聯關鍵，不可讀亦能跑）④ **對比輸入 md**（新舊 DB 差異/新 schema + 既有重構 spec，見 prompt 內 §5）。
 > **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24〕→ ④ `EPROZ00800` 重產（新版 PRD；v0.9 已封存）→ ⑤ 主流程 ISU/i0/z0 增量。
 
+## PRD 放置與對應（PM 貼給 Codex 前；2026-06-18 EPROZ00100 首跑實測歸納）
+> **對應鍵＝funcId**（如 `EPROZ00100`）。PRD 檔名含 funcId → SRS 自動產到 `srs/<funcId>/`、db-schema 用 table_name、refactor 用 funcId 反查、trace 配同 funcId。**一頁一 PRD、funcId 不重複**（同 funcId 多版會被 gateⒷ glob 同時命中、取字典序最後一個 → **只留最新一份在資料夾**）。
+
+| 檔案 | 放哪 | 由誰 |
+|---|---|---|
+| Bible v1.1 | `docs/specs/bible/bible-eproposal.md` | 已在 repo |
+| **PRD 快照** | `docs/specs/prd/`（**扁平放、可一次 bulk**），名 `PRD-*<funcId>*.md`（rename 腳本 `scripts/rename-prd.ps1`）| **PM 放** |
+| trace | `docs/specs/prd/trace-*<funcId>*.md` | **prd-to-srs 產**（PM 不放）|
+| **SRS bundle** | `docs/specs/srs/<funcId>/`（spec.md/openapi.yaml/schema.sql/qa-cases.md）| **prd-to-srs 產**（PM 不放、目錄名＝funcId）|
+| 新 DB schema | local `docs/db-schema/`（**留母資料夾、不進規劃 repo**）| owner（dev host）|
+| 70% baseline | local `docs/refactor/`（**留母資料夾**）| owner（dev host）|
+
+**PRD 內容格式預檢**（讓閘門接得上；涵蓋範圍以 `scripts/check-srs-bundle.py` 檔頭為準）：
+1. **檔名** `PRD-*<funcId>*.md`（`PRD-` 開頭＋含 funcId）；不符 → gateⒷ/gateⒺ 找不到快照、覆蓋驗證**靜默略過**。
+2. **錯誤碼** Error Response 表用 `MSG_*`/`COMMON_MSG_*` 前綴 → 機械 gateⒺ 才逐碼守承載；**裸名（`MISSING_X`）gateⒺ 抓不到**（實測 0 碼納入）→ 只剩 spec-reviewer 守（該輪語意審不可省）。
+3. **join key（更動範圍入口）** §DB 影響矩陣**明列實表名 `TB_*`**（→ db-schema by table_name）＋給 funcId/端點（→ refactor by funcId/`epl-*`）；delta 由本 prompt §5 在母資料夾算、**PRD 只需給鍵、不自算**。
+4. **REQ id** 用 `REQ-NNN`（三位數）token（gateⒷ 上行追溯鍵）；每 REQ 後續對得到 ≥1 規則。
+5. **TBD** 寫表格列、每條附 owner ＋ 影響範圍（→ SRS @PENDING；**不自裁**）。
+6. **maxlength/必要** PRD 能給就給（餵 openapi↔schema 交叉比對 + refactor delta 佐證）。
+7. **既有頁 as-is** 附該頁 verification findings 路徑（`build-tasks/done/<page>-*-findings.md`），bundle 的 as-is 才實。
+
 ---
 
 ## ⬇️ 複製以下給 Codex（一次一頁）
