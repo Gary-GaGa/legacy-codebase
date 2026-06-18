@@ -14,7 +14,7 @@
 | QA-004 | R4 | 同一案件集 / 以 `langType=zh_TW` 與 `en_US` 各 POST `epl-list-todolist` 一次 / 兩次 `totalCount` 相同 | 兩語系筆數一致（langType 不進資料 WHERE；regression 已修 `bbbaa19`）|
 | QA-005 | R5 | 案件 `APPLICATION_DATE=01/01/1900` 且有 `IS_Y=Y` related party / 查清單 / 該列日期顯示空白、`showRelated=Y` | `TB_RELATED_PARTY_INFO` `IS_Y=Y`；列 `applicationDate` 空白、`showRelated=Y` |
 | QA-006 | R5 | 案件有多筆 USD+KHR loan condition detail / 查清單 / `amount` 為 USD/KHR 加總 | `TB_LOAN_CONDITION_DETAIL` 加總值與列 `amount` 一致 |
-| QA-007 | R6 | CAD role `404`、提供 `applicationNo`、登入者有 active proxy / POST `epl-list-todolist`（CAD 分支）/ 範圍含本人＋active proxy、僅 `LON_TYPE_CODE∈{01,02,03,04}` | 結果命中 `TB_EMP_PROXY` active proxy 之案件（as-is proxy 疑缺→此為 to-be 斷言、RD 修點）；無 `LON_TYPE_CODE∉01-04` |
+| QA-007 | R6 | CAD role `404`、提供 `applicationNo`、登入者有 active proxy / POST `epl-list-todolist`（CAD 分支）/ 範圍含本人＋active proxy、僅 `LON_TYPE_CODE∈{01,02,03,04}` | 結果命中 `TB_EMP_PROXY` active proxy 之案件（**as-is proxy 未實作→此 case 在現碼預期 fail＝regression-fix 驗收點、非新引入 bug；S2**）；無 `LON_TYPE_CODE∉01-04` |
 | QA-008 | R6 | 企金案件 / CAD 查詢 / `docNo1` = `REGISTER_NO`（企金）| 企金列 `docNo1`=`REGISTER_NO`；個金列為文件欄位轉換結果 |
 | QA-009 | R7 | CAD role 查詢未給任何有效條件 / POST `epl-list-todolist`（CAD 分支）/ 回 `INVALID_CAD_QUERY_CONDITION`(400)、不執行全量查詢 | BE 擋下、無清單回傳（FE 與 BE 皆拒空查詢）|
 | QA-010 | R8 | CAD Maker、案件 `CASE_PROGRESS=21` / 由清單點選導頁 / `page`=`EPROIS_0910` | 回傳列 `page`=`EPROIS_0910`（CAD Maker 21/22→0910）|
@@ -26,10 +26,12 @@
 | QA-016 | R13 | 開刪除 popup / GET `epl-sele-todolist-delreason` / 回 reason `dataMap`（來自 API、非硬編碼 D01–D99）| `dataMap` 來自 reason code table（F-10 已移除硬編碼覆蓋）|
 | QA-017 `@PENDING TBD-006` | R11 | （placeholder，TBD-006 裁定 download 安全/檔案處理後撰寫）CA download `TYPE=IS` / `epl-file-todolist-download` / 回安全 file reference、不異動業務資料 | 無業務 DB 異動；audit log 有 print/download（檔案回傳形式待 TBD-006）|
 | QA-018 | R14 | 未授權 role 嘗試結案 / 呼叫 `epl-save-todolist-close` / 回 403 `FORBIDDEN_ACTION`（BE 擋、非僅 FE 隱藏鈕）| 無 `TB_CLO_REASON`/`TB_APP_HISTORY` 新增 |
-| QA-019 | R14 | role `001` delete 成功完成 / 完成後檢視 audit / audit 含 `applicationNo`/role/processor/reason/old-new `CASE_PROGRESS` | `TB_APP_HISTORY` `PROCESSOR_CODE`/`APP_PROCESS_CODE` 有值；audit log 含異動欄位 |
+| QA-019 | R14 | role `001` delete 成功完成 / 完成後檢視 audit / audit 可觀察 processor 與狀態轉換（跨動作 audit 於應用層 log）| `TB_APP_HISTORY` `PROCESSOR_CODE`/`APP_PROCESS_CODE` 有值；summary `CASE_PROGRESS` 前值→`D1`（前後查證）；跨動作 audit 落應用層 log（非業務表，S5）|
+| QA-020 | R9 | 以代理人身份（登入者≠案件 owner、具 `TB_EMP_PROXY` proxy 關係）、delete 選 reason / POST `epl-save-todolist-delete` / 刪除成功且 history 記代理人 | `TB_APP_HISTORY.PROCESS_AGENT_CODE`/`PROCESS_AGENT_NAME` 有值；`CASE_PROGRESS=D1`（代理人路徑驗收，B3）|
+| QA-021 | R7 | CAD 查詢只給 `startDecisionDate`、未給 `endDecisionDate` / POST `epl-list-todolist`（CAD 分支）/ 回 `INVALID_CAD_QUERY_CONDITION`(400) | BE 擋下、不執行查詢（date range 須成對，S3）|
 
 ## 覆蓋率（gate⑤）
-- R1：QA-001｜R3：QA-003｜R4：QA-004｜R5：QA-005/006｜R6：QA-007/008｜R7：QA-009｜R8：QA-010｜R9：QA-011/012/014（perm/happy/error 三面）｜R10：QA-015｜R13：QA-016｜R14：QA-018（安全）/QA-019（audit）。
+- R1：QA-001｜R3：QA-003｜R4：QA-004｜R5：QA-005/006｜R6：QA-007/008｜R7：QA-009/021（拒空＋日期成對）｜R8：QA-010｜R9：QA-011/012/014/020（perm/happy/error/代理人）｜R10：QA-015｜R13：QA-016｜R14：QA-018（安全）/QA-019（audit）。
 - 每個非-@PENDING `Rn` 至少 1 case ✅。
 - @PENDING（不計 gate⑤，TBD 關後解 pending）：R2＝QA-002（TBD-002）、R11＝QA-017（TBD-006）、R12＝QA-013（TBD-008）。
 - 待整合測補深度（happy/error/edge 擴充，非阻擋定稿）：R5 金額加總多幣別組合、R8 全 routing 條件矩陣、R14 效能/log 量化 case。

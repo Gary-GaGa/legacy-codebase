@@ -20,7 +20,7 @@ CREATE TABLE TB_LON_SUMMARY_INFO (
 -- 插入表（R9 delete reason）---------------------------------------------------
 CREATE TABLE TB_DEL_REASON (
   APPLICATION_NO  VARCHAR2(30)  NOT NULL,           -- ↔ openapi applicationNo 30
-  REASON_CODE     VARCHAR2(200),                    -- R9：多 reason 分號串接
+  REASON_CODE     VARCHAR2(200),                    -- R9：多 reason 分號串接（200 是否容得下 D01–D99 全選串接待 RD 核；N2）
   DEL_DATE        DATE,
   OTH_REASON      VARCHAR2(100)                     -- R9：D99 other reason；↔ openapi othReason maxLength 100
 );

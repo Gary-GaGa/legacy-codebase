@@ -71,7 +71,7 @@ components:
       properties:
         langType: { $ref: '#/components/schemas/LangType' }
         page: { type: integer, minimum: 1 }
-        size: { type: integer, minimum: 1 }
+        size: { type: integer, minimum: 1, maximum: 200, description: 'R14②：上限 200（避免無限制大量回傳；SA 預設可調）' }
         applicationNo: { type: string, maxLength: 30, description: '選填 filter' }
         docNo: { type: string, maxLength: 30, description: 'CAD 查詢（@PENDING TBD-004：DOC_NO vs module 讀 NO mapping）' }
         mainBorrowerName: { type: string, maxLength: 30, description: 'trim/upper-case like' }
