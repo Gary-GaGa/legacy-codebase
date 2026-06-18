@@ -114,7 +114,7 @@
 
 ## PRD→SRS backlog（接「新版 Bible/PRD 跑 to SRS」）
 > 現 repo spec 覆蓋＝**0/67**（**owner 2026-06-18 全清 00100/00118 重跑**：00118＝SRS bundle+PRD 快照+trace 全砍待重放；**00100＝SRS bundle+trace 砍、PRD 留作 regen input**〔ledger=prd-ready；留 PRD 修正 `decisions` 全清列的 rm-PRD 意圖〕，待在母資料夾用最終硬化 pipeline〔gateⓇ reconcile／N 軸 A–G／gateⒷ FR／xfile〕重產；00800 v0.9 已封存待重產；Bible v1.1 已在 repo）。owner 放 PRD → 跑 `prd-to-srs` 產 SRS。**覆蓋計數方法＝下方「PRD→SRS 佇列 + ledger」表註（單一出處）。**
-> **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-schema/`+`docs/refactor/`。
+> **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-diff/`+`docs/refactor-spec/`。
 > **risk-tier 產 SRS 順序**（= rebuild/fix 最需規格者先）：
 > 1. **企金線**（CSU 主流程 + c0 評分，~18 頁）—— parity 回來若判 rebuild，立即需 SRS。
 > 2. **撥貸**（0920/0921/0922 + T24 + 批次）—— 金錢核心，目前只有 escalations/triage、無 SRS。

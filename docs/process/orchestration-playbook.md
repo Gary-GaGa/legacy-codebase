@@ -41,7 +41,7 @@
 | **B. as-is parity** | to-be 有無把 legacy 當已核准需求；as-is ✅⚠️🔴 引 `file:line`；throw-stub「結構在≠行為對」；regression vs 刻意演進三判（`legacy-parity-sop`）；**PRD 帶的 legacy 細節（checkpoint key 名/現行 method/欄寬）有無原樣抄進 openapi/schema 契約（B1 教訓）** | ⑥ throw-stub、⑤ regression、③ checkpoint key/欄寬抄進契約 |
 | **C. 錯誤碼承載** | PRD Error 表逐碼（**含裸名碼**，補機械 gateⒺ 盲區）→ Rn＋openapi＋對的 HTTP status；勿 400/500 conflation | ① 裸名碼繞 gateⒺ |
 | **D. 安全·授權** | Bible BR/SC/災難情境＋`TB_API_AUTH`/`SECURE_ATTRIBUTE` 逐條 carried/disclaimed；mutating 端點 FE-only 須有 BE 強制 Rn | 安全/災難未承載 |
-| **E. DB reconcile** | spec 有無「新舊 DB/更動 delta」段（`gateⓇ` 已 warn 段缺，本軸查**內容**）；每條附來源＋三判；`schema.sql` 真帶 change-hint 還是只寫「待 RD」| ④ db-schema/refactor reconcile 漏 |
+| **E. DB reconcile** | spec 有無「新舊 DB/更動 delta」段（`gateⓇ` 已 warn 段缺，本軸查**內容**）；每條附來源＋三判；`schema.sql` 真帶 change-hint 還是只寫「待 RD」| ④ db-diff/refactor-spec reconcile 漏 |
 | **F. 金錢·精度·截斷** | 精度/rounding/maxlength/截斷欄逐欄（**現流程最空白、風險最高**）；金錢欄 BE 權威＋交易一致 | ② 金錢/截斷/精度欄 |
 | **G. 可測試性** | 每 Rn 的 QA 真測到精神（非掛名）；多分支 happy/error/edge 齊（補 gate⑤「≥1」假綠）| QA 充數 |
 - **真獨立**：各軸獨立 session、不同指示、最好跨模型；同質多個＝theater、不算 N 軸 PASS。
