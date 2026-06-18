@@ -39,6 +39,7 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 
 ## 4. 品質門檻（`Status: Approved` 前必過）— DoD
 見 `prd-to-srs` skill §DoD。核心：Non-Goals 有；每個 PRD `REQ`≥1 `Rn`；每 `Rn` 有 acceptance + ≥1 QA `covers` + **強制點 FE/BE/both**；happy/error/edge；每個 `TBD` 一條 `@PENDING`+owner+blocking；Traceability Matrix 完整；endpoints 真實 `epl-*`；頁已存在則 as-is/to-be 清楚；模糊詞量化；**SRS N 軸（axis A=`spec-reviewer`，全軸 A–G 見 `docs/process/orchestration-playbook.md §4b`）過、無 Blocker**。
+> **來源優先序（SoT precedence）**：PRD+舊系統+db-schema+refactor 多源合成 SRS，衝突依 `docs/spec-architecture.md §5b` 的**來源優先序**梯裁——refactor 限本層贏（留 `REF-Dn` delta）、不蓋 DB 物理/Bible-PRD 意圖；**DB-resolvable fact 不留 Pending**（要 provenance）；命中升級觸發（Bible/PRD 衝突·regression·高風險面·同層無 upstream）→ C 類 `@PENDING` 待裁。決策＝`docs/adr/ADR-0002-srs-sot-precedence.md`。
 > **blocking vs advisory**：SRS 定稿的 `spec-reviewer`＝**blocking**（無 Blocker 才 Approved）；ai-workflow 圖上 ⑦ LLM review＝code 階段 **advisory**。兩者別混。**採納 reviewer 修正後要再審一輪**（修正可能引入新錯）。
 > **兩層驗證**：①機械層 `python scripts/check-srs-bundle.py <bundle>` 必須 exit 0（**涵蓋範圍以腳本檔頭 canonical 清單為準，勿在此或他處複寫**；編號對照見 `docs/specs/srs/README.md`）；②語意層 **SRS N 軸驗證**（`spec-reviewer`＝軸 A，全軸 A–G 見 `docs/process/orchestration-playbook.md §4b`）無 Blocker。先跑機械、再跑語意——機械綠了 N 軸才不會浪費在形式錯上。
 

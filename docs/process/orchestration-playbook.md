@@ -11,6 +11,8 @@
 | **B 半自動→等裁** | SRS 產初稿後的 `@PENDING` | 標出＋彙總成表→**停「等 owner 裁」** |
 | **C 停止點（人/owner）** | 風險取捨（RP1）、架構（RP9）、domain（A-1）、AUD/BP | **只整理證據「備到蓋章即可」**，不裁 |
 
+> **B vs C 由來源優先序定**（`docs/spec-architecture.md §5b`）：可由新 DB 判定的 **fact**＝A 類自解（含 provenance）、不再列 B；**升級觸發**（Bible/PRD 衝突·regression·高風險面·同層無 upstream）命中＝**C 類**待裁；refactor vs legacy 純本層契約取捨＝可自決 refactor-wins（留 `REF-Dn` delta）。
+
 ## 2. 依賴 DAG（餵 orchestrator，禁盲目並行）
 - 輸入＝`STATUS.md §六`（進行中/待派）+ `pending-register.md`（依賴/owner）。
 - 硬依賴例：`get-body #3` ← `RP9` ← `epl-* method 慣例 recon`；`A-1 施工` ← `T24 OQ-1`；c0/csu Phase V ← ops 套授權列。
