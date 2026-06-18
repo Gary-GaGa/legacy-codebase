@@ -37,7 +37,7 @@
 | EPROC00115 Group Exposure | c0 0115 | ✅/✅ | ❓ | **❓** | ⟳需產 |
 | EPROC00116 FinStmt GI | c0 0116 | ✅/✅ | ❓(有 calc) | **❓** | ⟳需產 |
 | EPROC00117 FinEval GI | c0 0117 | ✅/✅ | 🔶(business-only 對舊驗畢·決策B) | **KEEP/FIX** | ⟳需產 |
-| **EPROC00118 Corporate Scorecard** | c0 0118 | ✅/✅ | ❓(對舊未驗；E1/E2＝既有 Csu* 行為待裁、非本頁缺陷) | **❓**(T1·E1/E2 合流) | ✅ SRS v0.1(In Review) |
+| **EPROC00118 Corporate Scorecard** | c0 0118 | ✅/✅ | ❓(對舊未驗；E1/E2＝既有 Csu* 行為待裁、非本頁缺陷) | **❓**(T1·E1/E2 合流) | ⟳需產(全清重跑) |
 | EPROC00119 FinStmt FI | c0 0119 | ✅/✅ | ❓(F-8 修過) | **❓** | ⟳需產 |
 | **EPROC00120 FinEval FI** | c0 0120 | ✅/✅ | 🔶(business-only·金錢欄) | **❓**(T1) | ⟳需產 |
 > 全線 **❓ parity-gated**（卡 `c0-legacy-parity-recheck.md`，risk-tier 00118/00120/CSU0170 先）；00117/00120 已部分對舊（決策 B）較穩。
@@ -79,7 +79,7 @@
 ## T3 — z0 共用 / 查詢 / 報表
 | 頁 | parity vs 舊 | disposition | SRS | 備註 |
 |---|---|---|---|---|
-| EPROZ00100 TODO(+101/102) | 🔶(RV-2/langType 修+筆數驗) | **FIX done/KEEP** | ✅ SRS v0.2(In Review) | langType 回歸守門；SRS `specs/srs/EPROZ00100/` |
+| EPROZ00100 TODO(+101/102) | 🔶(RV-2/langType 修+筆數驗) | **FIX done/KEEP** | ⟳需產(全清重跑) | langType 回歸守門 |
 | EPROZ00200 New Case | 🟡 | KEEP/FIX | ⟳需產 | 案號序列未深入 |
 | EPROZ00300 Doc Checklist | 🔶(導回修 06-15) | FIX done/KEEP | ⟳需產 | Phase V 驗 goPreviousPage |
 | EPROZ00400/00410/00500 | 🟡(cross-check ✅) | KEEP | ⟳需產 | |
@@ -113,7 +113,7 @@
 ---
 
 ## PRD→SRS backlog（接「新版 Bible/PRD 跑 to SRS」）
-> 現 repo spec 覆蓋＝**2/67**（**EPROZ00100** v0.2 + **EPROC00118** v0.1〔T1 企金線首頁、pilot 跑通〕，皆 SRS 已產、機械閘門 PASS、Status=In Review/待 TBD；00800 v0.9 已封存待重產；Bible v1.1 已在 repo）。owner 提供 PRD → 續跑 `prd-to-srs` 產 SRS。**覆蓋計數方法＝下方「PRD→SRS 佇列 + ledger」表註（單一出處）。**
+> 現 repo spec 覆蓋＝**0/67**（**owner 2026-06-18 全清 00100/00118 重跑**：兩頁 SRS bundle+PRD 快照+trace 已砍，待在母資料夾用最終硬化 pipeline〔gateⓇ reconcile／N 軸 A–G／gateⒷ FR／xfile〕重產；00800 v0.9 已封存待重產；Bible v1.1 已在 repo）。owner 放 PRD → 跑 `prd-to-srs` 產 SRS。**覆蓋計數方法＝下方「PRD→SRS 佇列 + ledger」表註（單一出處）。**
 > **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-schema/`+`docs/refactor/`。
 > **risk-tier 產 SRS 順序**（= rebuild/fix 最需規格者先）：
 > 1. **企金線**（CSU 主流程 + c0 評分，~18 頁）—— parity 回來若判 rebuild，立即需 SRS。
@@ -128,8 +128,8 @@
 
 | funcId | risk | prd（`docs/specs/prd/`）| status | srs（`docs/specs/srs/`）|
 |---|---|---|---|---|
-| `EPROZ00100` | z0/示範 | `PRD-CDC-EPRO-0001-EPROZ00100-v1.1.md` | **in-review**（v0.2、待 8 TBD）| `EPROZ00100/` |
-| `EPROC00118` | T1 企金線 | `PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` | in-review | `EPROC00118/` |
+| `EPROZ00100` | z0/示範 | —（全清重跑、待重放）| not-started | — |
+| `EPROC00118` | T1 企金線 | —（全清重跑、待重放）| not-started | — |
 | `EPROC00120` | T1 企金線 | — | not-started | — |
 | `EPROCSU0170` | T1 企金線 | — | not-started | — |
 | 企金線 T2/T3 餘頁 | T2/T3 企金線 | — | not-started（佔位·待拆列）| 頁列舉見 `c0-legacy-parity-recheck.md` |

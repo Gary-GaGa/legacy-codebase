@@ -2,7 +2,7 @@
 
 > flow 第 ③ 層（分層見 [`../README.md`](../README.md)、方法論見 [`../../spec-architecture.md`](../../spec-architecture.md)）。
 > **一個 story/page = 一束 artifacts**，全靠同一個 ID（funcId，如 `EPROZ00800`）串起來，讓 RD agent 能**機器證明**自己通過 SA/QA 邊界。
-> Worked example：**`EPROZ00100/`**（v0.2：機械閘門綠、spec-reviewer 無 Blocker、In Review＝現成可照抄的活範本）；~~`EPROZ00800/`~~ **v0.9 已封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)，待新 Bible v1.1＋新 PRD 重產）。結構/閘門對照見下，流程見 [`../../build-tasks/prd-to-srs-codex-dispatch.md`](../../build-tasks/prd-to-srs-codex-dispatch.md)。
+> Worked example：**重產中**（00100/00118 已全清〔2026-06-18〕、待母資料夾用最終 pipeline 重產）；~~`EPROZ00800/`~~ **v0.9 已封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)，待重產）。結構/閘門對照見下，流程見 [`../../build-tasks/prd-to-srs-codex-dispatch.md`](../../build-tasks/prd-to-srs-codex-dispatch.md)。
 
 ## 結構
 ```
@@ -14,7 +14,7 @@
 ```
 
 ## 兩種來源
-- **PRD（主路）**：叫 `/prd-to-srs`（帶 PRD）自動產 bundle（範本＝`EPROZ00100/`〔現成活範本〕；流程見 `../../build-tasks/prd-to-srs-codex-dispatch.md`）——規則追溯 PRD REQ-id、TBD→`@PENDING`、endpoint 寫真實 `epl-*`、頁已存在則標 as-is/to-be。
+- **PRD（主路）**：叫 `/prd-to-srs`（帶 PRD）自動產 bundle（範本：00100/00118 重產中、待母資料夾；流程見 `../../build-tasks/prd-to-srs-codex-dispatch.md`）——規則追溯 PRD `REQ-`/`FR-` id、TBD→`@PENDING`、endpoint 寫真實 `epl-*`、頁已存在則標 as-is/to-be。
 - **鏡像 i0（無 PRD）**：`cp -r ../../archive/EPROZ00800-v0.9-superseded/srs <新FUNC_ID>` 換 ID/endpoint/表名，再：
   1. **openapi.yaml**：對既有 i0 controller 的 DTO 填**確切**欄位 + `@JsonProperty`（前端契約不可變）。
   2. **schema.sql**：列**本頁真的會讀寫**的表 + 欄位（JIT 從 `../../legacy/db-schema-catalog.md` 抽，不要全表貼）。
