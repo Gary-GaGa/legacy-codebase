@@ -33,14 +33,14 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 | PRD | PM 寫 what | `/write-spec`(官方 plugin) | 同 |
 | **SRS** | SA 轉 how | **`/prd-to-srs`** | **`/prd-to-srs`** |
 | 架構決策 | 重大取捨 | 寫 `docs/adr/ADR-NNNN-<funcId>.md` | 同 |
-| **審核** | 定稿前必跑 | **`spec-reviewer`** + `/code-review` | **`spec-reviewer.toml`** |
+| **審核** | 定稿前必跑 | **`spec-reviewer`**〔=SRS N 軸 axis A，§4b〕 + `/code-review` | **`spec-reviewer.toml`**〔N 軸 axis A〕 |
 | 定稿 | 過門檻 | spec.md `Status: Approved` | 同 |
 | **盤點/校正** | 里程碑後重對 inventory（drift 校正回路，非主線一站）| **`/refactor-audit`** | **`/refactor-audit`** |
 
 ## 4. 品質門檻（`Status: Approved` 前必過）— DoD
-見 `prd-to-srs` skill §DoD。核心：Non-Goals 有；每個 PRD `REQ`≥1 `Rn`；每 `Rn` 有 acceptance + ≥1 QA `covers` + **強制點 FE/BE/both**；happy/error/edge；每個 `TBD` 一條 `@PENDING`+owner+blocking；Traceability Matrix 完整；endpoints 真實 `epl-*`；頁已存在則 as-is/to-be 清楚；模糊詞量化；**`spec-reviewer` 過、無 Blocker**。
+見 `prd-to-srs` skill §DoD。核心：Non-Goals 有；每個 PRD `REQ`≥1 `Rn`；每 `Rn` 有 acceptance + ≥1 QA `covers` + **強制點 FE/BE/both**；happy/error/edge；每個 `TBD` 一條 `@PENDING`+owner+blocking；Traceability Matrix 完整；endpoints 真實 `epl-*`；頁已存在則 as-is/to-be 清楚；模糊詞量化；**SRS N 軸（axis A=`spec-reviewer`，全軸 A–G 見 `docs/process/orchestration-playbook.md §4b`）過、無 Blocker**。
 > **blocking vs advisory**：SRS 定稿的 `spec-reviewer`＝**blocking**（無 Blocker 才 Approved）；ai-workflow 圖上 ⑦ LLM review＝code 階段 **advisory**。兩者別混。**採納 reviewer 修正後要再審一輪**（修正可能引入新錯）。
-> **兩層驗證**：①機械層 `python scripts/check-srs-bundle.py <bundle>` 必須 exit 0（**涵蓋範圍以腳本檔頭 canonical 清單為準，勿在此或他處複寫**；編號對照見 `docs/specs/srs/README.md`）；②語意層 `spec-reviewer` 無 Blocker。先跑機械、再跑語意——機械綠了 reviewer 才不會浪費在形式錯上。
+> **兩層驗證**：①機械層 `python scripts/check-srs-bundle.py <bundle>` 必須 exit 0（**涵蓋範圍以腳本檔頭 canonical 清單為準，勿在此或他處複寫**；編號對照見 `docs/specs/srs/README.md`）；②語意層 **SRS N 軸驗證**（`spec-reviewer`＝軸 A，全軸 A–G 見 `docs/process/orchestration-playbook.md §4b`）無 Blocker。先跑機械、再跑語意——機械綠了 N 軸才不會浪費在形式錯上。
 
 ## 5. 語言 / 格式
 繁中（台灣）+ 英文技術術語；識別字/表名/endpoint/config key 一律英文。模糊詞量化（`p95<200ms`、`maxlength 3000`）。

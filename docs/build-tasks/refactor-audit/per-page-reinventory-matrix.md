@@ -37,7 +37,7 @@
 | EPROC00115 Group Exposure | c0 0115 | ✅/✅ | ❓ | **❓** | ⟳需產 |
 | EPROC00116 FinStmt GI | c0 0116 | ✅/✅ | ❓(有 calc) | **❓** | ⟳需產 |
 | EPROC00117 FinEval GI | c0 0117 | ✅/✅ | 🔶(business-only 對舊驗畢·決策B) | **KEEP/FIX** | ⟳需產 |
-| **EPROC00118 Corporate Scorecard** | c0 0118 | ✅/✅ | ❓(對舊未驗；E1/E2＝既有 Csu* 行為待裁、非本頁缺陷) | **❓**(T1·E1/E2 合流) | ⟳需產 |
+| **EPROC00118 Corporate Scorecard** | c0 0118 | ✅/✅ | ❓(對舊未驗；E1/E2＝既有 Csu* 行為待裁、非本頁缺陷) | **❓**(T1·E1/E2 合流) | ⟳需產(全清重跑) |
 | EPROC00119 FinStmt FI | c0 0119 | ✅/✅ | ❓(F-8 修過) | **❓** | ⟳需產 |
 | **EPROC00120 FinEval FI** | c0 0120 | ✅/✅ | 🔶(business-only·金錢欄) | **❓**(T1) | ⟳需產 |
 > 全線 **❓ parity-gated**（卡 `c0-legacy-parity-recheck.md`，risk-tier 00118/00120/CSU0170 先）；00117/00120 已部分對舊（決策 B）較穩。
@@ -79,7 +79,7 @@
 ## T3 — z0 共用 / 查詢 / 報表
 | 頁 | parity vs 舊 | disposition | SRS | 備註 |
 |---|---|---|---|---|
-| EPROZ00100 TODO(+101/102) | 🔶(RV-2/langType 修+筆數驗) | **FIX done/KEEP** | ⟳需產 | langType 回歸守門 |
+| EPROZ00100 TODO(+101/102) | 🔶(RV-2/langType 修+筆數驗) | **FIX done/KEEP** | ⟳需產(全清重跑) | langType 回歸守門 |
 | EPROZ00200 New Case | 🟡 | KEEP/FIX | ⟳需產 | 案號序列未深入 |
 | EPROZ00300 Doc Checklist | 🔶(導回修 06-15) | FIX done/KEEP | ⟳需產 | Phase V 驗 goPreviousPage |
 | EPROZ00400/00410/00500 | 🟡(cross-check ✅) | KEEP | ⟳需產 | |
@@ -113,19 +113,35 @@
 ---
 
 ## PRD→SRS backlog（接「新版 Bible/PRD 跑 to SRS」）
-> 現 repo spec 覆蓋＝**0/67**（00800 v0.9 已封存待重產；Bible v1.1 已在 repo）。owner 有**新版 PRD** → 跑 `prd-to-srs` 產 SRS。
+> 現 repo spec 覆蓋＝**0/67**（**owner 2026-06-18 全清 00100/00118 重跑**：兩頁 SRS bundle+PRD 快照+trace 已砍，待在母資料夾用最終硬化 pipeline〔gateⓇ reconcile／N 軸 A–G／gateⒷ FR／xfile〕重產；00800 v0.9 已封存待重產；Bible v1.1 已在 repo）。owner 放 PRD → 跑 `prd-to-srs` 產 SRS。**覆蓋計數方法＝下方「PRD→SRS 佇列 + ledger」表註（單一出處）。**
 > **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-schema/`+`docs/refactor/`。
 > **risk-tier 產 SRS 順序**（= rebuild/fix 最需規格者先）：
 > 1. **企金線**（CSU 主流程 + c0 評分，~18 頁）—— parity 回來若判 rebuild，立即需 SRS。
 > 2. **撥貸**（0920/0921/0922 + T24 + 批次）—— 金錢核心，目前只有 escalations/triage、無 SRS。
 > 3. **00800 重產**（用新版 PRD 取代 v0.9）。
 > 4. 主流程 ISU / i0 / z0 —— 多 KEEP/FIX，SRS 可隨 parity 結果增量補。
-> 每產一份過 `check-srs-bundle` + `spec-reviewer`（DoD）。
+> 每產一份過 `check-srs-bundle`（含 gateⓇ）+ **SRS N 軸驗證**（`orchestration-playbook §4b`）（DoD）。
+
+### PRD→SRS 佇列 + ledger（orchestrator 機械迭代來源；2026-06-18）
+> **orchestrator 的 enumerable 來源 + 完成 ledger**（SRS 軌迴圈＝`orchestration-playbook §5b/§6b`，非 `STATUS §六`＝code 板）：依 risk 排序、取最前 `status=prd-ready` 者產 SRS；**每產一份→回填本表 `status`/`srs`（＝防重複/防漏）**。**覆蓋計數**：分子＝本表 `status∈{in-review,approved}` 列**所涵蓋的頁數**（bundle/佔位列展開計頁、**非列數**）；分母 **67＝`docs/legacy/legacy-function-inventory.md` 權威盤點**（非由本表衍生）；上方 §覆蓋「x/67」＝此計數的人類快照、改動時與本表同步（**單一出處＝本表**）。同 risk tier 內 tie-break＝**表序由上而下**（已照 dispatch:5 / `c0-legacy-parity-recheck` T1 序）；`approved` 由人審/裁 TBD 後回填（orchestrator 只到 `in-review`）。
+> status：`not-started`｜`prd-ready`（PRD 快照已放 `docs/specs/prd/`、檔名 `PRD-*<funcId>*.md`）｜`in-review`（SRS 產出＋機械 gate＋N 軸 PASS、待人審/裁 TBD）｜`approved`（TBD 全關、N 軸無 Blocker）。
+
+| funcId | risk | prd（`docs/specs/prd/`）| status | srs（`docs/specs/srs/`）|
+|---|---|---|---|---|
+| `EPROZ00100` | z0/示範 | —（全清重跑、待重放）| not-started | — |
+| `EPROC00118` | T1 企金線 | —（全清重跑、待重放）| not-started | — |
+| `EPROC00120` | T1 企金線 | — | not-started | — |
+| `EPROCSU0170` | T1 企金線 | — | not-started | — |
+| 企金線 T2/T3 餘頁 | T2/T3 企金線 | — | not-started（佔位·待拆列）| 頁列舉見 `c0-legacy-parity-recheck.md` |
+| `EPROISU0920/0921/0922`＋T24 | 撥貸 | — | not-started（佔位·待拆列）| 現只 escalations/triage |
+| `EPROZ00800` | 00800 重產 | —（v0.9 PRD 已封存、待新版）| not-started | v0.9 SRS 封存 `archive/` |
+| 主流程 ISU/i0/z0 增量 | 增量 | — | not-started（佔位·待拆列）| — |
+> ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**多頁列（T2/T3 餘頁、撥貸群、ISU/i0/z0 增量）＝佔位、非派工單位**，PRD 進場須先**拆成一 funcId 一列**才可 `prd-ready`（orchestrator 不可直接 pick 佔位列）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`（本表先列 risk-tier 前段，餘隨 PRD 進場補列）。
 
 ## 派工（填實本矩陣）
 - **企金線對舊 parity**（Codex 帶 source）：擴 `c0-legacy-parity-recheck.md` 涵蓋範圍 → c0 評分 **+ CSU 主流程**；risk-tier 00118/00120/0170 先。
 - **M4/M5/M7 重 grep**（drift-recheck §4）：順帶填 CSU/c0 的 parity 欄。
-- **新版 Bible/PRD → SRS**：owner 提供後，按上方 risk-tier 跑 `prd-to-srs`。
+- **新版 Bible/PRD → SRS**：owner 提供後，按上方 risk-tier 跑 `prd-to-srs`（**規模化前先跑 pilot＝`prd-to-srs-orchestrator-pilot.md` 一頁**，過了再批量；orchestrator 迴圈見 `orchestration-playbook §5b/§6b`）。
 - 結果回填本矩陣 `parity vs 舊` + `disposition` 兩欄 → 逐頁定 keep/fix/rebuild。
 
 > 過了：每頁有了「對舊 parity + disposition + 需不需 SRS」三件事 → **rebuild 變逐頁證據結果**，wholesale 與否由矩陣統計自然回答。

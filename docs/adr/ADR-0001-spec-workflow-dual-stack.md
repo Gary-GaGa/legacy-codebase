@@ -5,7 +5,7 @@
 | Status | **Accepted** |
 | 日期 | 2026-06-09 |
 | Slug | spec-workflow |
-| 相關 | `CLAUDE.md`、`AGENTS.md` §Spec workflow、`docs/assets/ai-workflow.mmd`、`.claude/skills/prd-to-srs`、`docs/specs/srs/EPROZ00800/`（原 `golden-template/boundary-bundle/`，2026-06-09 移） |
+| 相關 | `CLAUDE.md`、`AGENTS.md` §Spec workflow、`docs/assets/ai-workflow.mmd`、`.claude/skills/prd-to-srs`、`docs/archive/EPROZ00800-v0.9-superseded/`（v0.9 SRS bundle，2026-06-17 封存；路徑沿革 `golden-template/boundary-bundle/`→`specs/srs/EPROZ00800/`→archive） |
 
 ## Context
 - AI workflow（Bible→PRD→SRS→QA→RD）需要把「SA+AI→SRS」這步固化、可重複、跨人一致。

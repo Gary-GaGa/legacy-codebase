@@ -2,7 +2,7 @@
 
 > flow 第 ③ 層（分層見 [`../README.md`](../README.md)、方法論見 [`../../spec-architecture.md`](../../spec-architecture.md)）。
 > **一個 story/page = 一束 artifacts**，全靠同一個 ID（funcId，如 `EPROZ00800`）串起來，讓 RD agent 能**機器證明**自己通過 SA/QA 邊界。
-> Worked example：~~`EPROZ00800/`~~ —— **v0.9 已封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)）；spec 層重置，待新 Bible v1.1 + 新版 PRD **重產**。新 bundle 產出前範本暫缺；結構/閘門對照見下，流程見 [`../../build-tasks/prd-to-srs-codex-dispatch.md`](../../build-tasks/prd-to-srs-codex-dispatch.md)。
+> Worked example：**重產中**（00100/00118 已全清〔2026-06-18〕、待母資料夾用最終 pipeline 重產）；~~`EPROZ00800/`~~ **v0.9 已封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)，待重產）。結構/閘門對照見下，流程見 [`../../build-tasks/prd-to-srs-codex-dispatch.md`](../../build-tasks/prd-to-srs-codex-dispatch.md)。
 
 ## 結構
 ```
@@ -14,7 +14,7 @@
 ```
 
 ## 兩種來源
-- **PRD（主路）**：叫 `/prd-to-srs`（帶 PRD）自動產 bundle（範本 v0.9 已封存→`../../archive/EPROZ00800-v0.9-superseded/srs/`；流程見 `../../build-tasks/prd-to-srs-codex-dispatch.md`）——規則追溯 PRD REQ-id、TBD→`@PENDING`、endpoint 寫真實 `epl-*`、頁已存在則標 as-is/to-be。
+- **PRD（主路）**：叫 `/prd-to-srs`（帶 PRD）自動產 bundle（範本：00100/00118 重產中、待母資料夾；流程見 `../../build-tasks/prd-to-srs-codex-dispatch.md`）——規則追溯 PRD `REQ-`/`FR-` id、TBD→`@PENDING`、endpoint 寫真實 `epl-*`、頁已存在則標 as-is/to-be。
 - **鏡像 i0（無 PRD）**：`cp -r ../../archive/EPROZ00800-v0.9-superseded/srs <新FUNC_ID>` 換 ID/endpoint/表名，再：
   1. **openapi.yaml**：對既有 i0 controller 的 DTO 填**確切**欄位 + `@JsonProperty`（前端契約不可變）。
   2. **schema.sql**：列**本頁真的會讀寫**的表 + 欄位（JIT 從 `../../legacy/db-schema-catalog.md` 抽，不要全表貼）。
@@ -32,8 +32,8 @@
 | ④ QA 驗收：Testcontainers oracle-xe 跑 case（橋接 `../qa-to-test.md`）| —（寫法閘＝qa-cases **test-ready**）|
 | ⑤ 覆蓋率：ID 對表 | gate⑤：Rn↔QA covers / 懸空引用 / **分支覆蓋自承不完整=warn**（2026-06-16）|
 | ⑥ Build 綠 | —（牆上 ⑥；腳本無同號項，撞號已消除）|
-| ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與牆上 ⑦ 混）|
-| —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、**gateⓈ** Status↔安全/雙軸〔(a) Approved+`BPn-PENDING`=warn；(b) Status 未分「規格定版/實作完成」=warn——批判輪1/輪2 2026-06-16〕、**gateⒺ** 錯誤碼承載〔PRD Error 表→spec/openapi 漏承載=warn、HTTP status 不一致=warn——批判輪3 2026-06-16，源 SR-B1/B2〕、xfile 跨檔、doc-paths |
+| ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與牆上 ⑦ 混）＝**N 軸 axis A**；全軸 A–G 見 `../../process/orchestration-playbook.md §4b` |
+| —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、**gateⓈ** Status↔安全/雙軸〔(a) Approved+`BPn-PENDING`=warn；(b) Status 未分「規格定版/實作完成」=warn——批判輪1/輪2 2026-06-16〕、**gateⒺ** 錯誤碼承載〔PRD Error 表→spec/openapi 漏承載=warn、HTTP status 不一致=warn——批判輪3 2026-06-16，源 SR-B1/B2〕、**gateⓇ** reconcile 承載〔spec.md 須有『新舊 DB 對照/更動 delta』段否則 warn——防規模化靜默跳過 db-schema/refactor reconcile，2026-06-18；段內容真確＝spec-reviewer 紅旗⑥〕、xfile 跨檔、doc-paths |
 
 ## 與 vision 的關係
 boundary bundle 是把閘門 ①/②/④/⑤ 從「文件 + 延後」升級成「迴圈內可跑」的路徑（`../../process/vision-pipeline.md` §8 漸進落地）——**不必一次到位**，先一頁跑通再放大。

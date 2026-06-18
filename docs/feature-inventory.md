@@ -12,7 +12,7 @@
 - ⏸ **暫緩 track**（R2 報表服務 / 檔案 API / CBC R8——刻意延後、非遺漏）
 - ❓ **待 cross-check**（推定既有，未實證；開做前先唯讀盤點）
 
-**全局結論（zero-based audit 後更新 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列基線＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND；**06-15 校正後＝~133 碼在(80%)**（G1–G6＋修復落地）。真缺口＝🟠 **撥貸**（**A-1 換匯 stub ✅ 已實作 `daae4c3` 06-16**；剩 T24 正確性 domain-gated + **批次層 B001–B008 待碼驗** F-OWN-1 + A-1 spec-conformance 確認）。✅ **企金主流程 FE 後半段 Phase G 全收口（G1–G6，06-15）**＝0150/0160/0170/0171/0172/0173＋0261/0174/0175 三 popup（Phase V runtime 待測）。已收口：c0 評分 FE（Phase F）、i0 全模組（audit 22/22）。剩 UNFOUND 多為 M9 雜項群（AUD-3/4 待裁）；0140/0240 家族 AUD-1 ✅已關（06-16 owner 盤點＝已無使用）；批次層 AUD-10 ✅已關（06-16，§2F）；另待裁 AUD-2/3/4/7/8/11。
+**全局結論（zero-based audit 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列基線＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND → **06-15 校正後 ~133 碼在(80%)**（Phase F/G＋修復落地）。**已收口**：企金主流程 FE 後半段（Phase G G1–G6，§2B）、c0 評分 FE（Phase F，§2D）、i0 全模組（audit 22/22）。**真缺口＝🟠 撥貸**（A-1 換匯 stub ✅ 已實作；剩 T24 正確性 domain-gated＋批次層碼驗＋conformance，詳 §2F）。**待裁＝AUD-2/3/4/7/8/11**（AUD-1/5/6/9/10 已關）；UNFOUND 多為 M9 雜項（AUD-3/4）。
 
 **三層結構**（避免把「模組」當「單頁」）：① 模組流程（M1–M9）② 流程頁（外層 pageMap 頁籤）③ 頁內區塊（內層 tab）。遷移單位＝模組流程。
 
@@ -56,7 +56,7 @@
 | EPROISU0913 | IS 0913 | Closed Info | ✅ | ✅ | cross-check ✅ |
 | EPROISU0920 | IS 0920 | **Disbursement Process（頁框）** | ✅ | ✅ | audit 碼在（DIFF-004）；domain 風險見 §2F |
 | EPROISU0921 | IS 0921 | **Disbursement Data Input** | ✅ | ✅ | audit 碼在；行為分歧屬 triage 軌（§2F）|
-| EPROISU0922 | IS 0922 | **Disbursement Summary（authorize/T24）** | ✅ | 🟡 | **A-1 throw-stub（見 §2F）** |
+| EPROISU0922 | IS 0922 | **Disbursement Summary（authorize/T24）** | ✅ | 🟡 | **A-1 換匯 stub ✅ 已實作（§2F `daae4c3` 06-16）；殘＝T24 端到端·B-1 接值** |
 > 不開發：`EPROIS_0140`(Property Info) 已 drop。popup `0174/0175/0176`→`mat-dialog`（隨審批頁）。audit：`EPROIS_0240`/`EPROIU_0140`/`EPROIU_0240`→**AUD-1 ✅已關（06-16 owner 權威盤點標「已無使用」＝確認不遷）**。
 
 ### 2B. 企金主流程 `EPROCSU*`（M4 cs + M5 cu 合併）
@@ -65,12 +65,12 @@
 | EPROCSU0110 | CS/CU 0110+0210 | Main Borrower（單 tab）| ✅ | ✅ | 🟡 驗證 |
 | EPROCSU0120 | 0120+0220 | Co-Borrower | ✅ | ✅ | 🟡 驗證 |
 | EPROCSU0130 | 0130+0230 | Guarantor | ✅ | ✅ | **✅ 2026-06-05 收尾（ng build 綠）** |
-| EPROCSU0150 | 0150+0250 | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| ✅ | ✅ | **FE 補建 G2 ✅ 06-12**（`14b254e`，三 mat-tab 照舊 cs 結構）；⏸ 檔案 API（上傳區守現狀）；Phase V 待測 |
-| EPROCSU0160 | 0160+0260 | Loan Condition（+0261 popup）| ✅ | ✅ | **FE 補建 G1 ✅ 06-12**（`809d25d`，pilot；0261 CSU popup 變體、ISU 零修改）；Phase V 待測 |
-| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | **FE 補建 G3 ✅ 06-12**（`646e178`；return dialog `endpointConfig` 參數化＋cancel CSU 變體、ISU 零 diff、build 綠）；Phase V 待測（含 ❓ 審批段細節(B1)、CSU download route 無）|
-| EPROCSU0171 | 0171 | Loan Committee Conclusion | ✅ | ✅ | **FE 補建 G4 ✅ 06-15**（`8badefc`；接 `epl-sele/info/save-csu-loan-committee`＋CSU save mapper、build 綠）；Phase V 待測（檔案 upload/download 無 CSU route＝現狀）|
-| EPROCSU0172 | 0172 | Approved Loan Condition | ✅ | ✅ | **FE 補建 G5 ✅ 06-15**（`0ff2140`；接 `epl-info-csu-app-loan-cond`、列印/下載鏡像 ISU 現狀）；⏸ 列印 R2；Phase V 待測 |
-| EPROCSU0173 | 0173 | Credit Evaluation Old | ✅ | ✅ | **FE 補建 G6 ✅ 06-15**（`4429551`；接 `epl-info-csu-cr-eval-old`、build 綠）；Phase V 待測 |
+| EPROCSU0150 | 0150+0250 | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| ✅ | ✅ | ✅ FE 補建 G2（`14b254e`）；⏸ 檔案 API；Phase V 待測 |
+| EPROCSU0160 | 0160+0260 | Loan Condition（+0261 popup）| ✅ | ✅ | ✅ FE 補建 G1（`809d25d`，pilot；+0261 popup）；Phase V 待測 |
+| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | ✅ FE 補建 G3（`646e178`；+0174/0175 popup）；Phase V 待測（❓ 審批段細節 B1、CSU download route 無）|
+| EPROCSU0171 | 0171 | Loan Committee Conclusion | ✅ | ✅ | ✅ FE 補建 G4（`8badefc`）；Phase V 待測（檔案 upload/download 無 CSU route）|
+| EPROCSU0172 | 0172 | Approved Loan Condition | ✅ | ✅ | ✅ FE 補建 G5（`0ff2140`）；⏸ 列印 R2；Phase V 待測 |
+| EPROCSU0173 | 0173 | Credit Evaluation Old | ✅ | ✅ | ✅ FE 補建 G6（`4429551`）；Phase V 待測 |
 | ~~CS 0240~~ | CS 0240 | 公司核心資料（舊 cs 0200 端）| — | — | **不開發**：2026-06-06 owner 確認新系統無使用（舊有、未遷移）|
 | CAD 報表 | CS/CU 0181 | TLOD(CAD)→ 共用 `EPROISU0181` | ⏸ | ⏸ | ⏸ R2 |
 > 不開發：`EPROCS_0240` 公司核心資料（✅ 2026-06-06 確認新系統無使用、舊有未遷移）、`EPROIS_0140` Property Info；待確認 `EPROC0_0211/0213`（流程無對應頁籤）。
@@ -102,18 +102,18 @@
 | EPROC00115 | Borrower Group Exposure | ✅ | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`（Step 1 BGE pilot）；授權列 |
 | EPROC00116 | Financial Statement GI | ✅ | ✅ | `epl-*-c0-financial-statement-comments`（`524d8dc`；calc 保留、export POST-blob 兩邊一致、無 00640 式不符）；授權列；export 模板沿用 i0？|
 | EPROC00117 | Financial Evaluation GI | ✅ | ✅ | **business-only ✅**（`b14ae05`，決策 B）：接 `epl-sele-c0-financial-list`、`epl-info/save-c0-financial-business`（info 保留 BE 要的 isQuery、save 不帶）；**未接 `-financial-staff`/funcIsStaffLoan**（cleanup）；guard scan/BOM 過。授權列 |
-| EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`（`39e95dd`；**calc 保留接上**）；授權列；🚩 2 escalation |
+| EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`（`39e95dd`；**calc 保留接上**）；授權列；🚩 2 escalation；**SRS 全清重跑中（待母資料夾重產）** |
 | EPROC00119 | Financial Statement FI | ✅ | ✅ | ✅ F-8 已修（`6919da5`，options 接 `epl-sele-c0-financial-statement-comments`）；**Phase V 必驗**：下拉有值+save 帶值+GI-sele 對 FI（businessType F）無分支影響；授權列；export 模板沿用 i0？|
 | EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`（info 留 isQuery、save 送 applicationNo/isFinish/financialList + cetOne/totalCapitalRatio）；i0 FI 有 list 但頁不消費 options → `getMenu()`回`of({})`不接；**未接 `-staff-fi`/funcIsStaffLoan**（cleanup）；BOM/build 過。授權列 |
-> **範本＝i0 `individual/credit-investigation`**：容器 component 動態載 tab（`epl-*-i0-credit-investigation-tab`、`creditInvestigationNav()` config、`CreditInvestigationPageCode` enum）、各子頁 `components/<name>/{component,services}`。c0 照此鏡像、改 `-c0-` endpoint + corporate DTO。
+> **範本＝i0 `individual/credit-investigation`**（容器動態載 tab、各子頁 `components/<name>/{component,services}`；c0 鏡像、改 `-c0-` endpoint + corporate DTO）。
 > ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。
 > ⚠️ audit（06-11）：舊源有 `EPROC0_0211/0213`（展期限定 FinEvalTable/Scorecard），新系統 FE/BE 全無→**AUD-2 待裁**（是否由 00116-00120 涵蓋；`refactor-audit/M7a-c0-00110-00115.md`）。
-> **進度**：✅ Step 1 容器 + 00115 pilot；✅ Step 2 八子頁齊（**Phase F 收工 2026-06-09**；各頁 commit/calc 註記見上表列、過程見 `build-tasks/done/phase-f-*`）。✅ `00117`/`00120`＝business-only（**決策 B**，對舊 source 驗畢、非 regression——證據/裁決全文見 `decisions.md`；staff 端點 cleanup 已清 `dcd9602`）。⚠️ **watch（Phase V）**：① calc 逐頁不同——00118/00116/00119 有 calc 要保留接上、00112/00114 無（已隱），勿誤套 ② 真元件就緒後實跑 G/F 切換 ③ 整合測確認 00112 totals / 00114 rating 唯讀語意與 BE 一致。
+> **進度**：✅ Phase F 收工（容器+8 子頁，2026-06-09；過程 `build-tasks/done/phase-f-*`）；✅ `00117`/`00120`＝business-only（決策 B，證據見 `archive/decisions-2026H1-c0-audit.md`）。⚠️ **watch（Phase V）**：① calc 逐頁不同（00118/00116/00119 有、00112/00114 無已隱，勿誤套）② 實跑 G/F 切換 ③ 00112 totals / 00114 rating 唯讀語意對 BE。
 
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
 |---|---|:--:|:--:|---|
-| EPROZ00100 | TO DO LIST（+00101/00102 popup）| ✅ | ✅ | ✅ F-10 已修（`2599752`，popup reason 回 API 來源）；F-9＝`@PENDING` 掛 R2（呈報書下載走 goPath）/檔案 API（upload stub）兩 ⏸ track |
+| EPROZ00100 | TO DO LIST（+00101/00102 popup）| ✅ | ✅ | ✅ F-10 已修（`2599752`，popup reason 回 API 來源）；F-9＝`@PENDING` 掛 R2（呈報書下載走 goPath）/檔案 API（upload stub）兩 ⏸ track；**SRS 全清重跑中（待母資料夾重產）** |
 | EPROZ00200 | New Case Application（進件入口）| ✅ | ✅ | ✅；案號序列細節未深入 |
 | EPROZ00300 | Document Checklist | ✅ | ✅ | **FE 導回已修 06-15**（`40d931c`；實作共用 `goPreviousPage()`＝`addContentOnly('/to-do-list')`+navigate、backend 零改）；BE return 早坐實非缺陷。⚠️ **Phase V 驗**：共用方法由 no-op→一律回 ToDo，連帶 Related Party/Revised Item 三呼叫端，語意確認（日後要回原入口再加 originPage 分流）。次要待裁：APP_HISTORY=98/branch-vs-dept/權限·錯誤訊息等價（UNFOUND）|
 | EPROZ00400 | Case Distribution | ✅ | ✅ | cross-check ✅ |
@@ -134,13 +134,13 @@
 | 區 | 狀態 | 內容 |
 |---|---|---|
 | 機械修正 M1–M10 | ✅ 全結案（master） | 尾欄/submit mail/RECEIVED_DATE/C20/fee key/E 位/H 段/A52/fee-delete-FN |
-| ✅ **A-1 換匯 stub（+conformance PASS）** | **已實作＋碼驗（product `daae4c3`，06-16；mvn 綠）** | `funcGetExchangeRate` 補 return＋移尾端 throw → authorize 換匯總開關打通。**Codex 唯讀 conformance 4/4 PASS**：OQ-1 `IdNo=OVSLXLON01`(`:1181`)、OQ-3 非0000拋錯中止 authorize（碼＝專屬 `FAILED_E304`）、OQ-4 throw 勿回 null、兩表同 `@Transactional`。規格/recon 收 `done/` |
+| ✅ **A-1 換匯 stub（+conformance PASS）** | **已實作＋碼驗（product `daae4c3`，06-16；mvn 綠）** | `funcGetExchangeRate` 補 return → authorize 換匯打通；**Codex conformance 4/4 PASS**（OQ-1 `OVSLXLON01`／OQ-3 `FAILED_E304` 中止／OQ-4 throw／兩表同交易）；規格/recon `done/` |
 | 🟡 B-1 `T24_COMPANY`（06-12 降級）| **前提推翻→RD 接值** | 新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存（OVSLXLON01/02 兩 schema，DDL 實查）；entity 補映射＋B8/C9 接值 |
-| ✅ T24 B-group parity（06-17） | **code 已 commit/push（金錢/截斷欄人審過）；剩端到端/T24 接收驗證** | B-2、B-3 非幣別欄、B-4、B-5 已照舊；`E21`、`G4`/`G10`/`H8` 依 A-5 USD+KHR-only 邊界 keep。findings：`build-tasks/t24-bgroup-legacy-parity-fix-findings.md` |
+| ✅ T24 B-group parity（06-17） | **code 已 commit/push（`3d6f446`，origin/master，06-17 10:41；金錢/截斷欄人審過）；剩端到端/T24 接收驗證** | B-2、B-3 非幣別欄、B-4、B-5 已照舊；`E21`、`G4`/`G10`/`H8` 依 A-5 USD+KHR-only 邊界 keep。findings：`build-tasks/t24-bgroup-legacy-parity-fix-findings.md` |
 | 🔴 其餘 domain | 未決 | 檢核嚴格度、KHR 資料約束殘小、async 架構殘語意、M6 完工日 DTO… |
-| ✅ **批次層 B001–B008** | **AUD-10 結（06-16，app 層完整）** | ✅ **6 FOUND**（新批次**重編號**≠legacy 號）：B001→新B001、B002→新B002、B003 自動結案→**新B007**、B004 暫存清理→**新B003**、B006→新B006、B007 SFTP→**新B004**＋authorize inline 上傳；✅ **B005 銷案**（backend 無 `TB_EXCHANGE_RATE` read 點→inline 換匯取代每日批次；`TB_EXCHANGE_RATE` write-only vestigial）；⚪ **B008 log 歸檔＝ops**（非 app 碼，logrotate/平台確認）|
+| ✅ **批次層 B001–B008** | **AUD-10 結（06-16，app 層完整）** | ✅ **6 FOUND**（新批次**重編號**≠legacy；B001-B007 對映見 findings）；✅ **B005 銷案**（inline 換匯取代每日批次、`TB_EXCHANGE_RATE` write-only）；⚪ **B008 log＝ops**。詳 `done/aud10-batch-layer-reverify-findings.md` |
 | 整合測確認點 | 待驗 | 〔A-1 spec-conformance ✅ PASS 06-16〕M7 facility fee 值、M9 district name join、撥貸端到端（含批次層）|
-> **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ✅ **A-1 stub 已實作（`daae4c3`）→ 機械修正不再 inert、authorize 可端到端跑**；剩撥貸真完成＝B-1 接值、T24 B-group pre-push/端到端驗證、A-4/M6 domain、批次層實測。
+> **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ✅ **A-1 stub 已實作（`daae4c3`）→ 機械修正不再 inert、authorize 可端到端跑**；剩撥貸真完成＝B-1 接值、T24 B-group 端到端/T24 接收驗證（code 已 push `3d6f446`）、A-4/M6 domain、批次層實測。
 
 ---
 
@@ -170,7 +170,7 @@
 - **剩（非 coding）**：納入 Phase V 整合驗證 + c0 新 endpoint 授權列（見 ⑥）；staff 端點 cleanup（見 ⑨）。
 
 **①b ✅ 企金主流程 FE 後半段（Phase G 全收口 06-15；audit F-1/DIFF-001；owner：前端）**
-- 原況：六頁＋3 popup（0174/0175/0261）FE 全缺；BE `Csu*Controller` 全在。**G1（0160+0261，`809d25d`）/G2（0150 三 tab，`14b254e`）/G3（0170+0174/0175，`646e178`）/G4（0171，`8badefc`）/G5（0172，`0ff2140`）/G6（0173，`4429551`）全 ✅、審過、build 綠、BE 零改。**
+- 原況：六頁＋3 popup（0174/0175/0261）FE 全缺、BE `Csu*Controller` 全在 → **G1–G6 全 ✅**（0160+0261/0150/0170+popup/0171/0172/0173；審過、build 綠、BE 零改；各 commit 見 §2B 各列）。
 - 卡已歸檔 `build-tasks/done/phase-g-csu-mainflow-fe.md`。**殘留＝Phase V runtime 待測**（見 `verification-handoff §6` V-2／本卡 §2B 各列）＋檔案 upload/download 無 CSU route（暫緩 track）＋XD 設計走查共通項。
 
 **② 整合驗證（owner：dev/uat 整合測試）— 量大、非補碼**
@@ -178,7 +178,7 @@
 - z0 報表 00610/00620–00650 呈現。
 
 **③ 🟠→✅ 撥貸 domain（owner-decision 已全清空 06-17；剩執行+UAT）— 見 escalation doc**
-- ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；✅ B-1 `T24_COMPANY`→取 `OVSLXLON01`、RD 接值；✅ A-4 檢核嚴格度 / M6 完工日 / KHR G·H 來源 06-17 全裁「照舊系統處理」；✅ T24 B-group commit/push、批次層 AUD-10 結。**殘＝Codex 執行 + T24 UAT + E1/E2（信用決策 domain）**。
+- ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；✅ B-1 `T24_COMPANY`→取 `OVSLXLON01`、RD 接值；✅ A-4 檢核嚴格度 / M6 完工日 / KHR G·H 來源 06-17 全裁「照舊系統處理」；✅ T24 B-group commit/push（`3d6f446`）、批次層 AUD-10 結。**殘＝Codex 執行 + T24 UAT + E1/E2（信用決策 domain）**。
 
 **④ z0 半成品收尾（小修；owner：前後端）**
 - `00300` Document Checklist：✅ **recon 坐實＋FE 導回已修 06-15**（recon `done/00300-return-recon.md`；fix `40d931c`，卡歸檔 `done/00300-return-fix.md`）——BE 非缺陷、FE 導回 ToDo 已實作（共用 `goPreviousPage()`）；DIFF-011 收。Phase V 驗共用方法連帶呼叫端語意。
@@ -198,19 +198,19 @@
 **⑧ 已裁**：`CS 0240` → **不開發**（2026-06-06 確認新系統無使用）。
 
 **⑨ Tech-debt / ops**（✅ 靜態 sweep 三批已收齊，2026-06-09；prompt 全歸檔 `done/`）
-- ✅ **FE/BE HTTP method 不一致 sweep**（`48e687f`）：00600 search-options、00640 export PDF/Excel FE→GET 對齊 BE；00600 Phase V 已補修為 GET query 無 body；00800 init-query 列 B 待裁定（按 SRS @PENDING 不動）。
-- ✅ **map-key 大小寫 sweep**（`709f65c`）：A＝quote alias / 讀端對齊大寫（loan summary/collateral/guarantor/T24/loan-condition 等）；B/UNSURE＝SELECT * Map、無法靜態綁定者不猜。⚠️ **A 修正屬 runtime-silent 類 → Phase V 必複測**（compile 抓不到）。
+- ✅ **FE/BE method sweep**（`48e687f`）：00600/00640 FE→GET 對齊 BE；00600 Phase V 已補 GET query 無 body；00800 init-query＝@PENDING 待裁。
+- ✅ **map-key 大小寫 sweep**（`709f65c`）：讀端對齊大寫；SELECT * Map 不靜態猜。⚠️ **A 修正 runtime-silent → Phase V 必複測**（compile 抓不到）。
 - ✅ **Logback `D:\temp` 外部化**（`bbc4492`）：改 `${LOG_API_PATH:${LOG_PATH:logs}}` 等跨平台預設，appender/pattern/level 未動；連帶解掉 full `mvn clean package` 卡 D:\temp。
-- ✅ **c0 staff 端點 cleanup 已完成**（`dcd9602`，2026-06-09；prompt 已歸檔 `done/c0-staff-endpoints-cleanup.md`）：刪 `epl-info/save-c0-financial-staff` + `CsuFinancialEvaluationStaffFiController` 整檔（+ staff DTO/serviceImpl、staff option/funcIsStaffLoan 依賴）；**保留** `CsuFinancialStaffController` 的 sele(list)/business method（00117 在用）、table-fi（00120）；i0 未碰；mvn + npm build 綠。
+- ✅ **c0 staff 端點 cleanup**（`dcd9602`）：刪 staff controller/DTO/serviceImpl；**保留** 00117 用的 sele/business、00120 table-fi；i0 未碰。詳 `done/c0-staff-endpoints-cleanup.md`。
 
 - 🟡 **命名 tech-debt（06-12 快檢記錄）**：`epl-comm-isu-update-total-amount`（+class/DTO）實為 case-type 無關（計算不落 DB；LDTC 副作用被 `LON_ATTRIBUTE='I'` gate 限定），corporate 沿用安全——rename 低優先、閒時清。
 
-**⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×5（`00660`/`00100`/`00119` `5a47038`/`2599752`/`6919da5`，06-11；**`00640` PDF `c1bda77`、`00300` FE 導回 `40d931c`，06-15**，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ **BIBLE-GAP recon 完成（AUD-5 關 06-15）**；待裁＝AUD-2/3/4/7/8/11（AUD-1/5/6/9/**10** 已關，AUD-10 批次層 06-16 結＝§2F）。
+**⑩ audit 修復包（2026-06-11）**：✅ 已修×5（00660/00100/00119/00640/00300，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ BIBLE-GAP recon（AUD-5 關 06-15）；**待裁＝AUD-2/3/4/7/8/11**（AUD-1/5/6/9/10 已關）。
 
 ---
 
 ## 5. 建議排程（依依賴與風險）— cross-check 後更新
-> 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策。
+> 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策（spec 層 PRD→SRS 重產＝前置就緒、owner local 並行）。
 > **✅ DB 連線已打通（2026-06-12）**——Phase V 全隊列解鎖。**解鎖順序**：① ✅ SQL 全就緒（含 00117 三列，見 ⑥）→**剩 ops 簽核＋以 `OVSLXLON02` 套用**（未套打 c0 endpoint 全 403）② ✅ RP6 取數完（14 名齊；RP4 順帶裁定=設計非缺陷，均已關 06-12）③ ✅ A-1 DB 端實查完（01=舊/02=新坐實、`EXCHANGR_RATE` 欄兩庫 DDL 皆無——OQ-1/OQ-5 證據入 `pending-register.md`，剩 owner 蓋章）④ Phase V 開跑（`verification-execution.md` 分階段；deferred-to-DB QA-007/008/009a/b/012/024/025、00119 三條必驗、00660 實測、map-key runtime 複測、M7/M9 確認點）——**只等 ① 的 ops 套用**。agent 自主驗 DB 時用**唯讀帳號**、帳密走環境變數不進 repo（CLAUDE.md §7）。
 
 **Phase 0 — 坐實缺口（c0 FE ✅ 已坐實）**
@@ -229,7 +229,7 @@
 4. z0 報表呈現；z0 半成品收尾（00300 return；✅ 00600 method 已修；00800 init-query method＝@PENDING 待 RD）。
 
 **Phase D — 撥貸解鎖（關鍵路徑，owner：撥貸 domain）**
-5. 🟠→✅ **撥貸解鎖**：A-1 換匯 ✅ 已實作+conformance PASS（`daae4c3`）、批次層 AUD-10 結、T24 照舊 commit/push、殘 domain 06-17 全裁照舊 → **剩端到端/T24 UAT**（非 coding；精度 C-1 已關＝舊=新無落差）。
+5. 🟠→✅ **撥貸解鎖**：A-1 換匯 ✅ 已實作+conformance PASS（`daae4c3`）、批次層 AUD-10 結、T24 照舊 commit/push（`3d6f446`）、殘 domain 06-17 全裁照舊 → **剩端到端/T24 UAT**（非 coding；精度 C-1 已關＝舊=新無落差）。
 
 **Phase E — c0 收尾 + 授權（owner：domain + DB/ops）**
 6. c0 E1/E2 escalation 裁示；新 c0 endpoint 授權列。
@@ -237,7 +237,10 @@
 **Phase R — 暫緩 track（待拍板，可獨立排）**
 7. R2 報表服務 → 0181/i0·c0 PDF/z0 PDF；檔案上傳 API；FE/BE method-mismatch sweep；map-key sweep；Logback 外部化。
 
-**關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。
+**Phase S — spec 層（PRD→SRS 重產；owner：PM/SA + Codex local；並行 track）**
+8. 🟡 **前置就緒→待重產**：轉換層硬化（批判輪2/3 gate：gateⓈ/Ⓔ＋DoD＋`spec-reviewer` 紅旗）✅、Bible v1.1 已入 repo ✅、local 對比輸入（`docs/db-schema/`＋`docs/refactor/`）盤點＋抽取細則定稿 ✅、dispatch 卡 `build-tasks/prd-to-srs-codex-dispatch.md` 備齊 ✅。**SRS bundle 覆蓋 0/67**（00100/00118 owner **全清重跑中**：待母資料夾用最終硬化 pipeline 重產；00800 v0.9 封存=REBUILD；覆蓋數字 SSOT＝`refactor-audit/per-page-reinventory-matrix.md`）→ owner local 用 Codex 重產 `prd-to-srs`，**risk-tier：企金線/撥貸/00800 重產先**；SRS 落 `docs/specs/srs/`。
+
+**關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。**spec 層（PRD→SRS 重產，Phase S）= 前置就緒、owner local 並行 track，不擋當前里程碑，但為 00800/企金線 rebuild 的上游**。
 
 ---
 > 維護：本檔為**對應/排程主表**；逐項狀態變動回填本檔 + 對應細節 doc（`verification-handoff` 驗證、`disbursement-*` 撥貸；`completion-ledger` 已凍結）。❓ 項一經唯讀盤點即升 ✅/🔴。

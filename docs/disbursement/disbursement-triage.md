@@ -36,6 +36,7 @@
 
 ## 5. 工作量級別（誠實）
 **非「修幾個 bug」**：＝ 補 1 個 stub ＋ **重做 T24 組檔**（結構 + ~12 處來源欄）＋ 修 ~7 個 0921/0922-main bug ＋ ~10 項 domain 裁示 ＋ 1 輪 DDL/DBA 精度。金錢核心、且**從未端到端跑過**。
+> **〔2026-06-17 更新（上段為原始工作量快照）〕**：A-1 stub ✅ 已實作（`daae4c3` 06-16）、精度 1 輪 ✅ C-1 已關（§3，舊=新）、~10 項 domain 06-17 全裁照舊（§6）→ **殘工作量＝T24 組檔重做（Codex §7 allowlist）＋ B-1 接值＋ T24 UAT**。「從未端到端跑過」＝A-1 前狀態，今 authorize 可端到端、待 UAT 實跑。
 
 ## 6. 建議路徑（為什麼不讓 Codex 無腦「改回舊版」）
 - ~~T24 格式符合性、`T24_COMPANY` 值來源、檢核嚴格度、架構變更、精度——都需要真 T24 spec / domain 決策~~ → **06-17 已全裁「照舊系統處理」**（T24 欄照舊、`T24_COMPANY` 取 `OVSLXLON01`、檢核照舊、精度 C-1 已關＝舊=新）；KHR＝A-5 收窄 keep + G·H 來源照舊（非「改回舊版破壞」）。
@@ -74,7 +75,7 @@
 
 **逐項閘門（每筆機械修正）**：① 屬上表某項 ② 引舊 spec `file:line` 證「舊明確正確且非移除依賴」 ③ 只動該 method、不外擴 ④ `mvn package` 綠 ⑤ 回報 diff + 依據供人審 → 過了才推產品 repo。
 
-**2026-06-17 B-group owner-fix 補記**：本批是依 06-16 owner「T24 都照舊系統規格」另行授權，非擴張一般 allowlist。證據與修正清單見 `build-tasks/t24-bgroup-legacy-parity-fix-findings.md`；金錢/截斷欄 pre-push 最嚴人審**已過 → code 已 commit/push（product repo，06-17）**；剩端到端/T24 接收驗證。
+**2026-06-17 B-group owner-fix 補記**：本批是依 06-16 owner「T24 都照舊系統規格」另行授權，非擴張一般 allowlist。證據與修正清單見 `build-tasks/t24-bgroup-legacy-parity-fix-findings.md`；金錢/截斷欄 pre-push 最嚴人審**已過 → code 已 commit/push（product repo，commit `3d6f446`，06-17 10:41，已在 origin/master）**；剩端到端/T24 接收驗證。
 
 ### 7.1 進度
 | 項 | 狀態 | 證據 |

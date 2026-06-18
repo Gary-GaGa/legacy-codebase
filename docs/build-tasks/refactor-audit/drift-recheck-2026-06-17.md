@@ -32,8 +32,8 @@
 **小結**：16 項中 **13 已解（Phase G / 修復包 / AUD 關）**、2 仍開但**已追蹤**（DIFF-007=AUD-2、DIFF-016 admin/demo=AUD-3/4）、1 裁定+派工中（DIFF-015=RP9+get-body#3）。**無遺落、無新隱藏缺口。**
 
 ## 3. feature-inventory 內部不一致（1 項，建議回填；本報告不改）
-- [ ] **AUD-10 狀態自相矛盾**：`§2F:140` 已記 **AUD-10 結（06-16，app 層完整 6 FOUND + B005 銷案 + B008 ops）**，但 `§1:15` 與 `§4⑩:207` 的「待裁」清單**仍列 AUD-10**。
-  - **回填**：`§1:15` 與 `§4⑩:207` 把 `AUD-10` 從「待裁 AUD-2/3/4/7/8/10/11」移到「已關（AUD-1/5/6/9/**10** 已關）」。依據＝`§2F:140` + `pending-register`（AUD-10 ✅）+ `decisions.md`（AUD-10 碼驗回）。
+- [x] **AUD-10 狀態自相矛盾** → ✅ **2026-06-17 已回填**：`§1:15` 與 `§4⑩` 現已將 AUD-10 列入「已關（AUD-1/5/6/9/**10** 已關）」、待裁清單收斂為 `AUD-2/3/4/7/8/11`（無 10）→ feature-inventory 三處一致。
+  - 〔原狀（保留 audit trail）：`§2F:140` 已記 AUD-10 結（06-16，app 層 6 FOUND + B005 銷案 + B008 ops），但 `§1:15`/`§4⑩` 待裁清單一度仍列 AUD-10；依據＝`§2F:140` + `pending-register`（AUD-10 ✅）+ `archive/decisions-2026H1-disbursement.md`（AUD-10 碼驗回）。〕
 
 ## 4. 需 source 才能做的（交 Codex，本 repo 做不到）
 docs 層校正只能對「狀態表 ↔ 裁定」一致性，**無法重驗碼**。下列模組自 06-11 後有增量改動（inventory `audit 驗證` 欄已 stale）、需 **Codex 帶 source 重 grep** 才能更新 audit 列：

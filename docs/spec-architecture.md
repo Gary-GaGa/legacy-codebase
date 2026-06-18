@@ -82,7 +82,7 @@ flowchart LR
 - **追溯鏈（縱）**：`funcId` → PRD `REQ-nnn` →（`covers-prd`）→ SRS `Rn` →（`covers`）→ QA case → code/test。↑可追溯、↓可驗證。
 - **驗證鏈（DoD）**：
   - **機械層**（deterministic）＝`scripts/check-srs-bundle.py`：**涵蓋範圍以腳本檔頭 canonical 清單為準（勿在此複寫）**——大類＝契約/schema/covers/跨檔/Bible↔PRD（治 BP-7）/@PENDING↔register 同步；編號對照見 `specs/srs/README.md`。
-  - **語意層**：`spec-reviewer`（唯讀、不改檔）審完整性/一致性/可測性/把 legacy 當需求等。
+  - **語意層**：`spec-reviewer`（唯讀、不改檔）審完整性/一致性/可測性/把 legacy 當需求等（＝SRS **N 軸 axis A**；規模化另跑 B–G 軸〔as-is parity/錯誤碼/安全/reconcile/金錢欄/可測試性〕，見 `process/orchestration-playbook.md §4b`）。
   - **鏡像層**（c0）：`verify-c0` 形式硬閘門。
   - **設計層**：人審 / 視覺回歸（非機械）。
 
@@ -90,7 +90,7 @@ flowchart LR
 
 | 概念 | 檔案 |
 |---|---|
-| SRS bundle（範本/實例） | ~~`docs/specs/srs/EPROZ00800/`~~ **v0.9 已封存**（`docs/archive/EPROZ00800-v0.9-superseded/srs/{spec,openapi,schema,qa-cases}`，2026-06-17；範本暫缺待重產）。分層資料夾＝`docs/specs/`：bible→prd→srs |
+| SRS bundle（範本/實例） | **重產中**（00100/00118 已全清〔2026-06-18〕、待母資料夾重產）；~~`EPROZ00800/`~~ **v0.9 已封存**（`docs/archive/EPROZ00800-v0.9-superseded/srs/{spec,openapi,schema,qa-cases}`，2026-06-17，待重產）。分層資料夾＝`docs/specs/`：bible→prd→srs |
 | 設計規格慣例 | `frontend/AGENTS.md §5`（Adobe XD） |
 | 機械閘門 | `scripts/check-srs-bundle.py`（①②⑤）、`scripts/verify-c0.py` |
 | 語意審查 | `.claude/agents/spec-reviewer.md`（Codex：`docs/env/codex/spec-reviewer.toml`） |

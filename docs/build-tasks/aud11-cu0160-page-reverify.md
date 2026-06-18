@@ -12,7 +12,7 @@
    - FE：`EPROCU0160` / `EPROCSU0160` component/module/route、`0160` page code、`csu*LoanCondition*`；列存在的頁與其檔 `file:line`。
    - BE：`0160` 相關 controller/endpoint（`epl-*`）、checkpoint key（`TB_CHECK_POINTS_CU` vs `_CS`）；列 `file:line`。
 2. **routing 對映（關鍵證據）**：查 `TB_PAGE_MENU`/pageMap（`formatCS/CU`）——**無擔（`LON_ATTRIBUTE`）× `0160`** 的 `PAGE_CODE` 指向 `CSU0160` 共用頁、還是一個**獨立 page code**？這是「併 vs 分」的決定性證據。
-3. **CS/CU 分流檢查**：`EPROCSU0160` 是否如其他 CSU 頁，以容器 `businessType`/`secureAttribute` 同時服務 CS（有擔）與 CU（無擔）？無擔走進來時欄位/檢核/checkpoint 有無被正確分流（對照既有 CSU 頁慣例，見 `decisions.md` CSU0130 裁決：案件編輯子頁鏡像 twin、CS/CU 由容器判定）。
+3. **CS/CU 分流檢查**：`EPROCSU0160` 是否如其他 CSU 頁，以容器 `businessType`/`secureAttribute` 同時服務 CS（有擔）與 CU（無擔）？無擔走進來時欄位/檢核/checkpoint 有無被正確分流（對照既有 CSU 頁慣例，見 `archive/decisions-2026H1-c0-audit.md` CSU0130 裁決：案件編輯子頁鏡像 twin、CS/CU 由容器判定）。
 4. **legacy 對照**：舊 `EPROCU_0160` 與 `EPROCS_0160` 是否同構（twin）、還是無擔有真正不同的欄位/邏輯到不能共用？附舊 `file:line`。
 
 ## 判性質（三選一，**每結論附 `file:line`**）

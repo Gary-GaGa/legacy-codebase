@@ -51,8 +51,8 @@
 ## Spec workflow（PRD→SRS，雙軌 Claude/Codex）
 AI workflow＝`Bible→PRD→SRS→QA→RD`（見 `docs/assets/ai-workflow.mmd`）；funcId＝追溯 slug。**Codex 側工具**（部署 `docs/env/codex/` 範本到本機/專案 `.codex/`）：
 - **Legacy→Bible**：custom prompt `.codex/prompts/legacy-to-bible.md`（範本 `docs/env/codex/prompts/legacy-to-bible.md`）→ `/legacy-to-bible <domain>`。反推業務 Bible（敘事、證據接地）到 `docs/specs/bible/bible-<domain>.md`。
-- **PRD→SRS**：custom prompt `.codex/prompts/prd-to-srs.md`（範本 `docs/env/codex/prompts/prd-to-srs.md`）→ 互動介面 `/prd-to-srs <PRD|funcId>`。產 SRS bundle 到 `docs/specs/srs/<funcId>/`（worked example＝`EPROZ00800/`；規格分層 bible→prd→srs 見 `docs/specs/README.md`）。
-- **spec 審查（唯讀）**：subagent `.codex/agents/spec-reviewer.toml`（範本 `docs/env/codex/spec-reviewer.toml`）；定稿（`Status: Approved`）前必跑。
+- **PRD→SRS**：custom prompt `.codex/prompts/prd-to-srs.md`（範本 `docs/env/codex/prompts/prd-to-srs.md`）→ 互動介面 `/prd-to-srs <PRD|funcId>`。產 SRS bundle 到 `docs/specs/srs/<funcId>/`（worked example 重產中〔00100/00118 已全清 2026-06-18、待重產〕；00800 v0.9 已封存；規格分層 bible→prd→srs 見 `docs/specs/README.md`）。
+- **spec 審查（唯讀）**：subagent `.codex/agents/spec-reviewer.toml`（範本 `docs/env/codex/spec-reviewer.toml`）；定稿（`Status: Approved`）前必跑（＝SRS **N 軸 axis A**，全軸 A–G 見 `docs/process/orchestration-playbook.md §4b`）。
 - **進度盤點（zero-based）**：custom prompt `.codex/prompts/refactor-audit.md`（範本 `docs/env/codex/prompts/refactor-audit.md`）→ `/refactor-audit <module|all>`。唯讀重推重構總量、對 `feature-inventory.md` 做 diff（只報不改）；inventory drift 的定期校正回路。
 - **權限/安全**：`.codex/config.toml`（sandbox/approval；範本 `docs/env/codex/config-permissions.md`）+ `.codex/hooks.json`（`verify-c0` + `check-srs-bundle` 形式閘門；SRS 機械閘門涵蓋範圍以 `scripts/check-srs-bundle.py` 檔頭為準）。
 - **多任務編排（orchestration，Codex 側）**：方法論＝`docs/process/orchestration-playbook.md`（三類任務 A/B/C＋依賴 DAG＋完成定義＋三軸正交驗證；orchestrator **自動到 checkpoint、停交人審**）。三軸 read-only 驗證 agent 範本＝`docs/env/codex/verifier-{contract,scope,regression}.toml`（部署 `.codex/agents/`，建議跨模型降 correlated blindness）。**硬強制＝機械 gate**（hooks 掛 `verify-c0`+`check-srs-bundle`）；「≥3 獨立 agent」靠 playbook 規範＋完工報告列名/結論（hook 驗不了數量）。**天花板＝自動到等審、非上線**（內容權威＝playbook，本條薄殼指標）。

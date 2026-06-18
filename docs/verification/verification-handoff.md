@@ -1,6 +1,6 @@
 # 30% 補完 — 驗證交付清單（Verification Handoff）
 
-> **程式/build 結構性（2026-06-05；2026-06-06 修）**：c0 評分 `00115–00120` **後端** ✅（**前端原缺、Phase F 補建中**，見 `feature-inventory.md` §2D）、其餘前端（主流程/i0/契約/z0/`CSU0130`）✅；⚠️ **撥貸後端 `0921/0922` 端點在但核心未完成**——舊系統比對發現 `0922 authorize` 換匯為 throw-stub（執行核心未跑過）+ `0921` 多項分歧，詳 §2.1/§2.2，triage 進行中。
+> **程式/build 結構性（2026-06-05；2026-06-06 修）**：c0 評分 `00115–00120` **後端** ✅（**前端原缺、Phase F 補建中**，見 `feature-inventory.md` §2D）、其餘前端（主流程/i0/契約/z0/`CSU0130`）✅；⚠️ **撥貸後端 `0921/0922` 端點在但核心未完成**——舊系統比對發現 `0922 authorize` 換匯為 throw-stub（執行核心未跑過）+ `0921` 多項分歧，詳 §2.1/§2.2。**〔2026-06-17 更正：A-1 換匯 stub 已實作（`daae4c3` 06-16）、authorize 可端到端跑；撥貸殘 domain 06-17 全裁照舊，triage 收斂至剩 T24 UAT——見 §2.2 banner〕**
 > 本檔彙整**所有殘留「驗證」項**，交 **dev/uat 整合測試 + 各 domain owner**。**非 build 阻擋項**——build 階段不擋，集中於有真資料/真授權時跑。
 > 來源：`page-mapping.md` §2B、`decisions.md`、`build-tasks/EPROC00118-*`、boundary bundle `EPROC00118/`。
 
@@ -37,6 +37,7 @@
 > 詳細逐項表（含舊業務規則、`file:line` 證據）存本機 `legacy-extract/EPROIS_0921-compare.md`（gitignore）；此處只記主題/嚴重度/裁決方向。皆為**待裁決分歧**（部分倚賴舊 spec 的 UNKNOWN），非已坐實 bug。
 >
 > **結論：`0921`「結構在、行為不對等」— 7 PASS / 15 FAIL / 5 UNSURE。** 撥貸後端雖存在，正確性須逐項裁決——**不可一律「改回舊版」**（部分分歧是刻意演進）。
+> **⚠️ 2026-06-17 更正**：本節為 06-05 快照，§2.2 banner 已更正下列——🟢 KHR rounding＝**收窄**（非「新增在地化」）、🟡 金額精度 **C-1 已關**（舊=新 `(17,2)`，非「需 DDL」）；跳讀勿照舊判讀。
 > **裁決（2026-06-05）：先跑完 `0922`（Summary + T24）再整體 triage，避免 piecemeal；本 `0921` 清單暫不動碼。**
 
 **🔴 資料完整性（疑似 regression，最高、較高信心）**
@@ -65,7 +66,7 @@
 > **🔴🔴 SHOWSTOPPER（已複驗確認 2026-06-05）**：`authorize`（`caseIsuSummaryAuth`）換匯 `funcGetExchangeRate` 在 `0000` 成功分支**寫完 `TB_DISBUR_DATE`/`TB_EXCHANGE_RATE` 後無條件丟** IDE 自動產生的 `UnsupportedOperationException("Unimplemented method 'funcGetExchangeRate'")`（`FunctionServiceImpl:1221`）——**全方法無 return 路徑**、呼叫端無繞過 → **T24/SFTP/record/狀態（26）全部到不了**。**確認＝撥貸 authorize 核心未完成（半成品：DB 寫入已寫、缺 return、留 IDE stub throw）**，非僅行為分歧 → **「`0920` 認列既有＝結構到位」更正為「authorize 核心未完成」**。範圍：此為兩檔內**唯一** stub（`:614` 是 catch 包裝、非 stub）→ 修點侷限此方法尾段，但 **authorize 從未端到端跑過**，且同路徑另有下列真 bug；另有 **partial-write 風險**（寫後拋，依交易邊界可能留半更新）。
 
 **🔴 其他真 bug**
-- `EXCHANGE_RATE` 來源 ID `OVSLXLON01`→`OVSLXLON02`（換錯匯率源，money；即使被 stub 擋住仍 latent）
+- ~~`EXCHANGE_RATE` 來源 ID `OVSLXLON01`→`OVSLXLON02`（換錯匯率源，money）~~ → **2026-06-17 更正：已裁回 `OVSLXLON01`＝A-2 舊 parity、非 bug**（§2.2 banner ②）
 - `submit` mail 建了 `MailList` 但未加入 → 送空清單，**checker 從未收到通知**
 - `submit` app history `APP_PROCESS_CODE` 舊 `25` → 新 `24`（process code 錯）
 
@@ -81,6 +82,7 @@
 
 ### 2.3 撥貸 `0922` Step B（T24 組檔）+ 整體 triage（2026-06-05）
 > B-0922-t24（舊 `createTransferA–H` ↔ 新 `funcIsuT24Authorize`，碼層）：**即使補完 stub，T24 仍 FAIL**。
+> **⚠️ 2026-06-17 更正**：本節為 06-05 快照，§2.2 banner 已更正下列——🔴 `T24_COMPANY` **非死路**（新庫 `OVSLXLON01` 實存→B-1 RD 接值）、🟡 金額精度 **C-1 已關**（舊=新 `(17,2)`，非「需 DDL/DBA」）；跳讀勿照舊判讀。
 > **🔴 結構（高信心）**：`H` 段建了**未 append**（不輸出）、`E14–E23`/`E24-25` 位移、`H1–H8` 順序錯、`B9/C27/D8/G13` 各多尾端 `\n` 空欄 → 整檔欄位錯位。
 > **🔴 值來源**：`B8/C9` `T24_COMPANY` 死路（讀已移除欄→空）；`A52` 漏、`C12/C13/C20/G4/G10/H8` 來源欄錯、`A31/G7` `AGREEMENT_NO` 截斷、`E21` 非 USD 非 KHR 輸出 0。
 > **✅ 大段 PASS**：A1-14/17-30/32-51、B1-7、C 多段、D1-7、E1-13、G 多段；E21 KHR rounding 未誤用 DOWN。

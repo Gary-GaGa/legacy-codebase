@@ -3,10 +3,11 @@
 > **狀態**：standing SOP，owner 立 2026-06-17。**重構期遇「新≠舊」一律照本準則處置。**
 > **怎麼來的**：owner 與團隊比對「已完成項」發現落差，成因＝①畫面/模組縮編②以舊為基礎+調整（如 T24）③新 DB 變動。owner 定調「**直接以舊系統為主，遇 DB 不同先按頁登記、再判調整需求、再確定樣板**」；本 SOP ＝該方針 + 本 repo 既有教訓的防呆。
 > **單一出處**：方針權威＝本檔；個案裁定＝`decisions.md`（append-only）；待決登記＝`pending-register.md`/`escalations`；頁狀態＝`feature-inventory.md`。
+> **結案即歸檔（standing）**：一束 saga 決策全結案（剩執行/UAT）後，把已結案決策列 verbatim 凍結到 `archive/decisions-YYYYHn-<topic>.md`、`decisions.md` 留一列 🗄 指標——免流水帳無限長吃 context（凍結＝搬遷非改寫；細則見 `decisions.md` header）。
 
 ## 0. 核心防呆（讀這段就好）
 **以舊系統為主，但「舊系統 ≠ 絕對正確」**——每個差異**必分三類**，預設「照舊」只適用第 (a) 類。
-不分類就無腦照舊 ＝ 會把**刻意的演進/縮編改回去**＝反向 regression（本 repo 已踩過：A-5/KHR 舊「通吃」、新刻意收窄；`decisions.md` 0921「KHR rounding 等屬刻意在地化演進，不可一律改回舊版」）。
+不分類就無腦照舊 ＝ 會把**刻意的演進/縮編改回去**＝反向 regression（本 repo 已踩過：A-5/KHR 舊「通吃」、新刻意收窄；`archive/decisions-2026H1-disbursement.md` 0921「KHR rounding 等屬刻意在地化演進，不可一律改回舊版」）。
 
 ## 1. 差異三判
 | 類 | 判據 | 處置 |

@@ -9,6 +9,7 @@ model: opus
 對象＝本 repo 的 SRS bundle（`docs/specs/srs/<funcId>/`：`spec.md` + `openapi.yaml` + `schema.sql` + `qa-cases.md`）與其上游 PRD（`docs/specs/prd/` 快照或對話提供）。
 
 > **分工（先機械、後語意）**：機械/形式錯交給 deterministic 閘門 `scripts/check-srs-bundle.py`（**涵蓋範圍見腳本檔頭 canonical 清單**）。**你專注「機械驗不出的語意判斷」**，下面逐檔 checklist 即語意層。若你發現的是純機械錯（如 `$ref` 解不開），標一句「跑 `check-srs-bundle.py` 會擋」即可，不必細列——避免與腳本重工。
+> **本 agent＝`orchestration-playbook §4b` SRS N 軸的「軸 A（綜合/完整性）」**；規模化驗證時另有 B–G 軸（as-is parity／錯誤碼承載〔含裸名〕／安全·授權／DB reconcile／金錢·精度·截斷／可測試性）各自獨立 spawn（最好跨模型）——**本 agent 非唯一驗證角度**（owner「多角度再驗」）。你照本檔審即可，B–G 由 orchestrator 另派。
 
 ## 審查維度
 1. **完整性** — 每個 PRD `REQ-xxx` 是否都有 ≥1 條 `Rn` 對上（或明確標非本期）；缺漏 edge/error；有沒有 Non-Goals/Scope；每個 PRD `TBD` 是否都有一條 `@PENDING` 規則 + owner。
@@ -34,7 +35,7 @@ model: opus
 - error response 對到 PRD 錯誤碼（400/404/500 ↔ `COMMON_MSG_*`）；enum 是否窮盡（`ItemFlag` Y/N、init 可 blank）。
 
 **`schema.sql`**
-- 型別/長度**符業務規則語意**（如 `REASON_MEMO` 長度＝PRD/`Rn` 的 maxlength，不是隨手填）；PK/nullable/default 合理。
+- 型別/長度**符業務規則語意**（**maxlength 量化源＝refactor API 欄位表**〔`docs/refactor/`，見 dispatch §5 B.〕；PRD 缺欄寬時不得隨手填、亦不得只標『待 RD』；如 `REASON_MEMO` 長度對 `Rn`）；PK/nullable/default 合理。
 - 「受側效影響表」（R13 類）有標註、範圍受對應 `@PENDING` 控制；CHECK/constraint 政策有決定或標 RD 待定。
 - 命名慣例（`TB_*`、欄位大寫）一致；本頁主寫入表 vs 唯讀表分清。
 
@@ -49,6 +50,7 @@ model: opus
 - **③ mutating 端點 FE-only 強制**：強制點＝FE-only 的規則落在會 mutate/刪資料的端點（execute/POST），**無對應 BE 強制 `Rn`** 且無「為何 FE-only 足夠」說明＝🟡（源 00800 R3/R5/R6/R7 FE-only on execute）。
 - **④ Status 雙軸**：Status 未分『規格定版／實作完成』、用單一 `Approved(subset)` 混『規格定了』與『實作好了』＝🟡（gateⓈ(b) 已 warn，你確認語意）。
 - **⑤（批判輪3）PRD 錯誤碼漏承載 / status conflation**：PRD Error Response 表逐碼 → SRS 有無對應 `Rn` 錯誤規則 **且** openapi response？**PRD 列了、spec/openapi 皆漏且無 disclaim＝🔴 Blocker**（源 00800 SR-B1 `MSG_OVER_COUNT_LIMIT`/`MSG_QUERY_FAIL`）。**把不同 HTTP status 的錯誤併成一碼**（如查詢失敗 500 併進輸入錯誤 400）＝🔴/🟡（源 SR-B2）。gateⒺ 已機械 warn 漏承載/status 不一致，你確認 disclaim 是否合理（如 init-query 無分頁→count-limit 可不適用）。⚠️ 機械 gate 對 PRD 表格已去 `\_` 跳脫；你人讀時也別被 `MSG\_X` 跳脫騙過。
+- **⑥（2026-06-18）reconcile 缺漏 / 推給下游**：SRS 是否有「新舊 DB 對照 / 更動 delta」段（`gateⓇ` 已機械 warn『段缺』，你查**內容真確**）——每條 delta 是否附**來源**（`docs/db-schema/` 行 / `docs/refactor/` 段 / `decisions` 列 / parity `file:line`）+ **三判 tag**（`legacy-parity-sop`）？`schema.sql` 是否真帶 change-hint（重構新增/別名/已棄用）還是**只寫『待 RD 核對』把 db-schema/refactor reconcile 整段 defer 給下游**＝🟡（plan③『必到 db-schema/refactor』在規模化最易疏漏；源 EPROZ00100 首跑 schema.sql 全 defer、兩閘門皆放行）。**例外**：規劃 repo 產出搆不到 local 兩夾 → 須**顯式 disclaim『待母資料夾複核』+ 列已知 delta**（非靜默留白即放行）。
 
 ## 輸出（依嚴重度，每項標 **檔名:行號 + 具體修法**）
 - **🔴 Blocker** — 定稿前必修（缺需求、矛盾、無法驗證的 criteria、endpoint 用理想化 REST、TBD 沒掛 @PENDING）。
