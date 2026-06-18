@@ -23,7 +23,7 @@
 1. 取 risk-tier 最前、status=prd-ready 的「一頁」（同 risk 依表序）。**bundle/佔位列（多 funcId）不可直接 pick** → 回報「需先拆列」並停。記下該 funcId 與其 PRD 路徑。
 
 【產 SRS】
-2. spawn 獨立 sub-agent，照 docs/build-tasks/prd-to-srs-codex-dispatch.md 的 prompt（填該 funcId / PRD 路徑）產 SRS bundle 到 docs/specs/srs/<funcId>/。**含 §5 reconcile：必到 local docs/db-diff/（by table_name）+ docs/refactor-spec/（by funcId/epl-*）對應新 DB + 寫「新舊 DB / 更動 delta」段（每條附來源+三判）**——不得只寫「待 RD」。
+2. spawn 獨立 sub-agent，照 docs/build-tasks/prd-to-srs-codex-dispatch.md 的 prompt（填該 funcId / PRD 路徑）產 SRS bundle 到 docs/specs/srs/<funcId>/。**含 §5 reconcile：必到 local docs/db-diff/（by table_name）+ docs/refactor-spec/（by module_code/artifact_id）對應新 DB + 寫「新舊 DB / 更動 delta」段（每條附來源+三判）**——不得只寫「待 RD」。
 
 【機械 gate】
 3. python scripts/check-srs-bundle.py docs/specs/srs/<funcId> 必 exit 0；逐 warn 確認（gateⓇ 段缺=補 delta 段；gateⒺ 漏碼=補承載；@PENDING/xfile 屬已知者註明）。
