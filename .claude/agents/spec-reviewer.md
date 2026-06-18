@@ -34,7 +34,7 @@ model: opus
 - error response 對到 PRD 錯誤碼（400/404/500 ↔ `COMMON_MSG_*`）；enum 是否窮盡（`ItemFlag` Y/N、init 可 blank）。
 
 **`schema.sql`**
-- 型別/長度**符業務規則語意**（**maxlength 量化源＝refactor API 欄位表**〔`docs/refactor/`，見 dispatch §5B〕；PRD 缺欄寬時不得隨手填、亦不得只標『待 RD』；如 `REASON_MEMO` 長度對 `Rn`）；PK/nullable/default 合理。
+- 型別/長度**符業務規則語意**（**maxlength 量化源＝refactor API 欄位表**〔`docs/refactor/`，見 dispatch §5 B.〕；PRD 缺欄寬時不得隨手填、亦不得只標『待 RD』；如 `REASON_MEMO` 長度對 `Rn`）；PK/nullable/default 合理。
 - 「受側效影響表」（R13 類）有標註、範圍受對應 `@PENDING` 控制；CHECK/constraint 政策有決定或標 RD 待定。
 - 命名慣例（`TB_*`、欄位大寫）一致；本頁主寫入表 vs 唯讀表分清。
 

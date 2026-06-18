@@ -14,7 +14,7 @@
 ```
 
 ## 兩種來源
-- **PRD（主路）**：叫 `/prd-to-srs`（帶 PRD）自動產 bundle（範本 v0.9 已封存→`../../archive/EPROZ00800-v0.9-superseded/srs/`；流程見 `../../build-tasks/prd-to-srs-codex-dispatch.md`）——規則追溯 PRD REQ-id、TBD→`@PENDING`、endpoint 寫真實 `epl-*`、頁已存在則標 as-is/to-be。
+- **PRD（主路）**：叫 `/prd-to-srs`（帶 PRD）自動產 bundle（範本＝`EPROZ00100/`〔現成活範本〕；流程見 `../../build-tasks/prd-to-srs-codex-dispatch.md`）——規則追溯 PRD REQ-id、TBD→`@PENDING`、endpoint 寫真實 `epl-*`、頁已存在則標 as-is/to-be。
 - **鏡像 i0（無 PRD）**：`cp -r ../../archive/EPROZ00800-v0.9-superseded/srs <新FUNC_ID>` 換 ID/endpoint/表名，再：
   1. **openapi.yaml**：對既有 i0 controller 的 DTO 填**確切**欄位 + `@JsonProperty`（前端契約不可變）。
   2. **schema.sql**：列**本頁真的會讀寫**的表 + 欄位（JIT 從 `../../legacy/db-schema-catalog.md` 抽，不要全表貼）。
