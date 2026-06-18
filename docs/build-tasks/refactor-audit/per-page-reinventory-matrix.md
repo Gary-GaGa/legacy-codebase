@@ -141,7 +141,7 @@
 ## 派工（填實本矩陣）
 - **企金線對舊 parity**（Codex 帶 source）：擴 `c0-legacy-parity-recheck.md` 涵蓋範圍 → c0 評分 **+ CSU 主流程**；risk-tier 00118/00120/0170 先。
 - **M4/M5/M7 重 grep**（drift-recheck §4）：順帶填 CSU/c0 的 parity 欄。
-- **新版 Bible/PRD → SRS**：owner 提供後，按上方 risk-tier 跑 `prd-to-srs`。
+- **新版 Bible/PRD → SRS**：owner 提供後，按上方 risk-tier 跑 `prd-to-srs`（**規模化前先跑 pilot＝`prd-to-srs-orchestrator-pilot.md` 一頁**，過了再批量；orchestrator 迴圈見 `orchestration-playbook §5b/§6b`）。
 - 結果回填本矩陣 `parity vs 舊` + `disposition` 兩欄 → 逐頁定 keep/fix/rebuild。
 
 > 過了：每頁有了「對舊 parity + disposition + 需不需 SRS」三件事 → **rebuild 變逐頁證據結果**，wholesale 與否由矩陣統計自然回答。

@@ -87,6 +87,7 @@
 ```
 
 ## 6b. SRS orchestrator prompt 骨架（PRD→SRS 規模化；可直接 pilot）
+> **pilot 派工卡（一頁、含前置/對帳/拆列/N 軸/回填）＝`build-tasks/prd-to-srs-orchestrator-pilot.md`**——規模化前先用它跑通一頁。
 ```
 你是 SRS orchestrator。任務板＝docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md 的「PRD→SRS 佇列 + ledger」表。
 1. 取 risk-tier 最前、status=prd-ready（PRD 快照已在 docs/specs/prd/、檔名 PRD-*<funcId>*.md）的一頁；status=not-started 且 prd 欄空＝PRD 未放→跳過、回報「待 owner 放 PRD」。不一次吞整批。
@@ -107,4 +108,4 @@
 - `AGENTS.md §Spec workflow`：orchestration 鐵則指標（薄殼，內容權威＝本檔）。
 
 ## 8. 天花板（誠實標）
-orchestration 省的是「派工打字＋貼 prompt」，**省不掉審查＋裁定**。天花板＝「自動到等審」，非「自動到上線」。pilot 建議：先用 `epl-* method 慣例 recon` + `0922-t24-exchrate-colname-fix`（兩個 A 類、互不相依）跑一輪,確認「停在等審、不自宣 done、不碰 C 類、三軸真獨立」四條守得住,再放大到批量 PRD→SRS。
+orchestration 省的是「派工打字＋貼 prompt」，**省不掉審查＋裁定**。天花板＝「自動到等審」，非「自動到上線」。pilot 建議：先用 `epl-* method 慣例 recon` + `0922-t24-exchrate-colname-fix`（兩個 A 類、互不相依）跑一輪,確認「停在等審、不自宣 done、不碰 C 類、三軸真獨立」四條守得住,再放大到批量 PRD→SRS（SRS 軌 pilot＝`build-tasks/prd-to-srs-orchestrator-pilot.md`，跑通一頁再批量）。
