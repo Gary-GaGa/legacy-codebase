@@ -5,7 +5,7 @@
 > **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24〕→ ④ `EPROZ00800` 重產（新版 PRD；v0.9 已封存）→ ⑤ 主流程 ISU/i0/z0 增量。
 
 ## PRD 放置與對應（PM 貼給 Codex 前；2026-06-18 EPROZ00100 首跑實測歸納）
-> **對應鍵＝funcId**（如 `EPROZ00100`）。PRD 檔名含 funcId → SRS 自動產到 `srs/<funcId>/`、db-schema 用 table_name、refactor 用 funcId 反查、trace 配同 funcId。**一頁一 PRD、funcId 不重複**（同 funcId 多版會被 gateⒷ glob 同時命中、取字典序最後一個 → **只留最新一份在資料夾**）。
+> **對應鍵＝funcId**（如 `EPROZ00100`）。PRD 檔名含 funcId → SRS 自動產到 `srs/<funcId>/`、db-diff 用 table_name、refactor-spec 用 funcId 反查、trace 配同 funcId。**一頁一 PRD、funcId 不重複**（同 funcId 多版會被 gateⒷ glob 同時命中、取字典序最後一個 → **只留最新一份在資料夾**）。
 
 | 檔案 | 放哪 | 由誰 |
 |---|---|---|
@@ -13,13 +13,13 @@
 | **PRD 快照** | `docs/specs/prd/`（**扁平放、可一次 bulk**），名 `PRD-*<funcId>*.md`（rename 腳本 `scripts/rename-prd.ps1`）| **PM 放** |
 | trace | `docs/specs/prd/trace-*<funcId>*.md` | **prd-to-srs 產**（PM 不放）|
 | **SRS bundle** | `docs/specs/srs/<funcId>/`（spec.md/openapi.yaml/schema.sql/qa-cases.md）| **prd-to-srs 產**（PM 不放、目錄名＝funcId）|
-| 新 DB schema | local `docs/db-schema/`（**留母資料夾、不進規劃 repo**）| owner（dev host）|
-| 70% baseline | local `docs/refactor/`（**留母資料夾**）| owner（dev host）|
+| 新 DB schema | local `docs/db-diff/`（**留母資料夾、不進規劃 repo**）| owner（dev host）|
+| 70% baseline | local `docs/refactor-spec/`（**留母資料夾**）| owner（dev host）|
 
 **PRD 內容格式預檢**（讓閘門接得上；涵蓋範圍以 `scripts/check-srs-bundle.py` 檔頭為準）：
 1. **檔名** `PRD-*<funcId>*.md`（`PRD-` 開頭＋含 funcId）；不符 → gateⒷ/gateⒺ 找不到快照、覆蓋驗證**靜默略過**。
 2. **錯誤碼** Error Response 表用 `MSG_*`/`COMMON_MSG_*` 前綴 → 機械 gateⒺ 才逐碼守承載；**裸名（`MISSING_X`）gateⒺ 抓不到**（實測 0 碼納入）→ 只剩 spec-reviewer 守（該輪語意審不可省）。
-3. **join key（更動範圍入口）** §DB 影響矩陣**明列實表名 `TB_*`**（→ db-schema by table_name）＋給 funcId/端點（→ refactor by funcId/`epl-*`）；delta 由本 prompt §5 在母資料夾算、**PRD 只需給鍵、不自算**。
+3. **join key（更動範圍入口）** §DB 影響矩陣**明列實表名 `TB_*`**（→ db-diff by table_name）＋給 funcId/端點（→ refactor-spec by funcId/`epl-*`）；delta 由本 prompt §5 在母資料夾算、**PRD 只需給鍵、不自算**。
 4. **REQ id** 用 `REQ-NNN`（三位數）token（gateⒷ 上行追溯鍵）；每 REQ 後續對得到 ≥1 規則。
 5. **TBD** 寫表格列、每條附 owner ＋ 影響範圍（→ SRS @PENDING；**不自裁**）。
 6. **maxlength/必要** PRD 能給就給（餵 openapi↔schema 交叉比對 + refactor delta 佐證）。
@@ -52,7 +52,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 4. 真實 endpoint = RPC `epl-{verb}-{scope}-{feature}`（非 PRD 理想化 /api/...）；
    mutate=POST。Oracle native query 未加引號 alias → label 大寫（大小寫對映注意）。
 5. 【對比輸入：多個 md 檔 — 必讀並 reconcile，把「更動後需求」一起納入 SRS】
-   A. 新 Table schema（新側 snapshot）＝**local `docs/db-schema/`**（owner 提供；結構已盤點 2026-06-17）：
+   A. 新 Table schema（新側 snapshot）＝**local `docs/db-diff/`**（owner 提供；結構已盤點 2026-06-17）：
       - 佈局：`02_tables/TB_<NAME>.md`（156 表，一檔一表）、索引 `00_HOME.md`（Table Map）、`01_groups/group-xx.md`。
         **索引鍵＝`table_name`**（非 funcId；table→funcId 反查多半缺）。
       - schema 形式＝**markdown 欄位表**（`| no | pk | fk | column_name | comments | data_type | nullable | data_default | note |`），
@@ -65,7 +65,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
         內以 funcId 命名的 checkpoint 欄 ③Bible v1.1 DB 錨點（`TB_LON_SUMMARY_INFO`…）④`legacy/db-schema-catalog.md`
         推出 table set，逐表查 `02_tables/`（找不到→標 UNFOUND、不臆造）。
       - ⚠️ `OVSLXLON01/02`＝runtime 資料來源（A-2/B-1 escalations 已裁），**與此 schema 結構正交**、勿混。
-   B. 70% baseline 重構 spec＝**local `docs/refactor/`**（owner 提供；結構已盤點 2026-06-17）：
+   B. 70% baseline 重構 spec＝**local `docs/refactor-spec/`**（owner 提供；結構已盤點 2026-06-17）：
       - 佈局：`02_specs/{be-spec|fe-spec}/{category}/{module_code}/<title>--<hash>.md`（834 檔）、索引 `00_HOME.md`（Source Map）、
         共用規則 `03_rules/`（`api_contract.md`/`field_definition.md`/`open_issue.md`/`rules_index.md`）、`04_assets/`（畫面/圖）。
       - **索引鍵＝module_code/funcId；API 子鍵＝program_code/`epl-*`；版本鍵＝version/date/doc_status（多版並存）**。
@@ -88,17 +88,17 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
       - `docs/process/legacy-parity-sop.md`（三判）、parity findings（`done/*-findings.md`）
       〔00800 v0.9 SRS 已封存 `docs/archive/EPROZ00800-v0.9-superseded/`，重產時可參照其 RP/SR 裁定〕
    做法（更動後需求一律落 SRS，不得靜默遺漏）：
-   - **DB delta**（local `docs/db-schema/`）：schema.sql 以新側 snapshot 為權威；change-hint（per-column `note`/`transpose_method`、
+   - **DB delta**（local `docs/db-diff/`）：schema.sql 以新側 snapshot 為權威；change-hint（per-column `note`/`transpose_method`、
      per-table `usage_status`/`match_status`）標「重構新增/別名/已棄用」+ 三判；連動的 Rn 取數/驗證同步更新；
      若 hint 顯示結構縮減/改型可能影響需求（如精度）→ 寫進該 Rn 或開 @PENDING。**完整 row-level 舊→新 diff 此資料夾無
      → 需對舊行為者回 `legacy-parity-sop`**。
-   - **refactor-spec delta**（新 PRD ⟷ local `docs/refactor/`）：新 PRD 與 70% 當初依據的 baseline
+   - **refactor-spec delta**（新 PRD ⟷ local `docs/refactor-spec/`）：新 PRD 與 70% 當初依據的 baseline
      不同 → 該「更動後需求」明確寫進 Rn（標 to-be 新需求）或 @PENDING；baseline 有而新 PRD 漏的，
      確認是刪除還是漏列。
    - **既有決策 delta**（repo）：decisions 已改的需求（keep-new 精度、KHR 收窄、照舊、頁合併、
      disposition）→ 當 SRS 約束帶入、**不重議**；PRD 與既有決策/DB/refactor-spec 衝突 → 標 @PENDING
      （指回 decisions/pending）。
-   - 每條 delta 附來源（db-schema 檔行 / refactor spec 段 / decisions 列 / parity `file:line`）+ 三判 tag。
+   - 每條 delta 附來源（db-diff 檔行 / refactor-spec 段 / decisions 列 / parity `file:line`）+ 三判 tag。
 
 【輸出 bundle → 規劃 repo `docs/specs/srs/<funcId>/`】
 - spec.md（Metadata header〔Status/Owner/Slug/版本/上游 PRD/as-is 來源〕、Scope+Non-Goals、

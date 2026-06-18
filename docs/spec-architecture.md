@@ -79,7 +79,7 @@ flowchart LR
 
 ## 5b. 來源優先序（SoT precedence）與升級觸發（延伸 §5、聚焦多來源裁準）
 
-> SRS 現由 **PRD + 舊系統 + db-schema snapshot + refactor spec** 多來源合成。來源**不一致**時，靠下表定「誰是該問題的權威」，不靠臆測；可由新 DB 判定的 **fact** 不再列人工 `@PENDING`。**內容權威＝本節**（`CLAUDE.md §4` / `AGENTS.md` / `prd-to-srs` DoD / `orchestration-playbook §1` 皆指回此；決策＝`docs/adr/ADR-0002-srs-sot-precedence.md`）。
+> SRS 現由 **PRD + 舊系統 + db-diff + refactor-spec** 多來源合成。來源**不一致**時，靠下表定「誰是該問題的權威」，不靠臆測；可由新 DB 判定的 **fact** 不再列人工 `@PENDING`。**內容權威＝本節**（`CLAUDE.md §4` / `AGENTS.md` / `prd-to-srs` DoD / `orchestration-playbook §1` 皆指回此；決策＝`docs/adr/ADR-0002-srs-sot-precedence.md`）。
 
 ### 優先序梯（依「問的是什麼」選權威）
 | 問的是什麼 | 權威（高→低） | 偏離怎麼處理 |
@@ -87,25 +87,25 @@ flowchart LR
 | 業務意圖 / invariant（為什麼、該不該） | **Bible > PRD** | refactor/DB **不可** silently 蓋；衝突→升級（C 類） |
 | 需求驗收（REQ acceptance、本期範圍） | **PRD** | refactor 可調整、但偏離記 delta；偏離 acceptance 本身→升級 |
 | API/FE 行為與契約（長相/互動/欄位/method） | **refactor(latest) > legacy** | **先過 `legacy-parity-sop` 三判**、判為 (b) 刻意演進才 refactor 贏；非 (b)→升級。留 `REF-Dn` + legacy delta 註（不可 silent drop） |
-| 物理資料結構（表/欄/型別/長度/enum domain/PK） | **new DB snapshot（`docs/db-schema/`）> refactor doc > legacy DDL** | DB＝物理真相；refactor 文件講不到物理就不蓋；snapshot≠`schema.sql`＝真 drift→先校 schema |
+| 物理資料結構（表/欄/型別/長度/enum domain/PK） | **new DB snapshot（`docs/db-diff/`）> refactor-spec doc > legacy DDL** | DB＝物理真相；refactor 文件講不到物理就不蓋；snapshot≠`schema.sql`＝真 drift→先校 schema |
 | 既有資料/字典/授權現況（fact，可查） | **new DB query（snapshot rows）** | 直接撈、**不列 `@PENDING`**；要 provenance（見 Rule 1）；與 PRD/Bible 矛盾→升級 |
 
 > **層界對齊**：本梯＝§3 層界契約（FE—openapi—BE—schema—DB）的「來源版」，每層各有 SoT。**跨層同名 ≠ 同欄位**（gate② 活例：openapi `role`(3) 對 `TB_ROLE_DEFINE.ROLE_ID`、**非** `TB_API_AUTH.ROLE`(100)；別把跨層差異當「對齊數字」去硬改）。
 
 ### Rule 1 — DB-resolvable fact 不留人工 Pending
-- **適用**：答案是 DB 可判定的 **fact**——code→name 字典、enum domain、欄寬/型別、既有授權列（當 **legacy-state** 讀）→ 由 `docs/db-schema/` 撈出寫進 SRS，**不佔 `@PENDING`**（TBD-001 即此：`TB_ROLE_DEFINE`/`TB_API_AUTH` 可解，原不該列人工待裁）。
+- **適用**：答案是 DB 可判定的 **fact**——code→name 字典、enum domain、欄寬/型別、既有授權列（當 **legacy-state** 讀）→ 由 `docs/db-diff/` 撈出寫進 SRS，**不佔 `@PENDING`**（TBD-001 即此：`TB_ROLE_DEFINE`/`TB_API_AUTH` 可解，原不該列人工待裁）。
 - **三道護欄（缺一不可）**：
   1. **只解 fact、不解 policy**。DB 只說「現況/legacy 是什麼」，不說「新系統*應該*怎樣」；「role `003` 新系統還能不能 delete」＝policy→仍升級。為省一條 Pending 把 policy 偽裝成 fact＝偷渡業務決策。
   2. **強制 provenance（非 silent fill）**：source 表 + **snapshot as-of date** + 一列 decision（`REF-Dn`/`DB-Dn` 樣板）。否則日後無法回查、擋不住 DB 漂移（drift 由 `refactor-audit` 回路抓）。
   3. **DB 值與 PRD/Bible 矛盾→不鏡像、升級**（DB 自身可能帶髒資料/legacy bug，盲鏡像＝把資料缺陷寫進規格）。
 - **高風險 fact（authZ/金額/精度）特例**：`TB_API_AUTH` 授權列、金額/精度欄這類 fact **僅作 legacy-state 證據撈入**，須標明「to-be 是否沿用待 PRD/升級裁」——**不得**因「DB 查得到」就默認寫成 to-be 契約（守 §9#3/#7「既有碼行為≠新契約」；authZ/金額本身即升級觸發 #3 高風險面）。
 - **DB snapshot 缺欄 ≠ 純 fact**：snapshot 少一欄可能是「漏建 vs 刻意捨棄」（policy，AUD-7 活例）→ 不自決、升級。
-- **操作前提**：轉換得**讀得到** `docs/db-schema/` snapshot；讀不到（如僅母資料夾有）＝退回 `@PENDING` 標「待母資料夾撈」、不臆造。
+- **操作前提**：轉換得**讀得到** `docs/db-diff/` snapshot；讀不到（如僅母資料夾有）＝退回 `@PENDING` 標「待母資料夾撈」、不臆造。
 - **定位**：目標是 **right-size** Pending（砍掉本就非人類決策的），不是 minimize——Pending 的價值正是逼出「人**必須**裁」的事。
 
 ### Rule 2 — refactor 優先（限本層）；踩線才升級
 - **預設**：legacy vs refactor 在 **FE/API 行為與契約層** 衝突→**refactor 贏**（最新意圖版；承 `REF-D2` keep-latest、`DB-D6` win-by-layer）+ 留 `REF-Dn` delta 註。
-- **不得越層**：refactor **不蓋** db-schema snapshot（物理真相）、**不蓋** Bible/PRD（業務意圖）。blanket「refactor 贏」會讓一份 FE 文件改物理 schema＝危險。
+- **不得越層**：refactor **不蓋** db-diff（物理真相）、**不蓋** Bible/PRD（業務意圖）。blanket「refactor 贏」會讓一份 FE 文件改物理 schema＝危險。
 - **先過 `legacy-parity-sop` 三判（本梯＝其「來源版細化」，非平行制度）**：refactor-wins ⊆ 三判 **(b) 刻意演進**（須有依據）、win-by-layer ⊆ **(c)**。**refactor 移除/縮編 legacy 行為時不得預設「刻意」**——先判，**判不出 (b) 依據＝命中升級觸發 #2（regression）、升級**（不自決）。即「refactor 贏」只適用「差異已過三判、非 (a) regression」者；無論贏否都留 `REF-Dn` delta。
 
 ### 升級觸發 → C 類 `@PENDING`（不分層，命中即停交人裁）
@@ -147,7 +147,7 @@ SRS 一份、以 Rn 行為為主、每條標強制點(FE/BE/both)
 契約(openapi/schema)當邊界 → 防 FE/BE 漂移
 長相留 XD（人審/視覺回歸）→ 不塞進 SRS
 funcId 串追溯、機械+語意雙層閘門驗證
-多源合成(PRD+舊系統+db-schema+refactor) → 來源優先序梯裁(§5b)：fact 直解、衝突分層、踩線升級
+多源合成(PRD+舊系統+db-diff+refactor-spec) → 來源優先序梯裁(§5b)：fact 直解、衝突分層、踩線升級
 ```
 
 ## 9. 失敗教訓 → 控制點（回填狀態）

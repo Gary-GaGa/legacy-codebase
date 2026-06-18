@@ -2,7 +2,7 @@
 
 > **取代** `EPROZ00100-source-fixpack.md`（patch 路線作廢）。決策：**不 patch 既有 bundle，砍掉 + 用最終 pipeline 重產**，並當作 `docs/spec-architecture.md §5b`「來源優先序」新規則的 **Option-1 試點**（fact-only 不留 Pending、靠強化 N 軸 + 可 grep provenance、先驗一頁再全面）。
 > **為何重產不 patch**：既有 `ERPOZ00100/` bundle ＝ typo 命名 + gate② false-positive + 產於 SoT 規則之前；逐項 patch 不如走最終 pipeline 一次產對（`CLAUDE.md`/`spec-architecture §7` 早記「00100 已全清、待母資料夾重產」）。
-> **分工**：① 砍掉既有 bundle ＝本 repo 已做（見本 commit）；② 重產需 `docs/db-schema/` snapshot（**母資料夾**、本 repo 無）→ 母資料夾跑 `prd-to-srs`；③ 落地後 verify + backfill ＝我。
+> **分工**：① 砍掉既有 bundle ＝本 repo 已做（見本 commit）；② 重產需 `docs/db-diff/` snapshot（**母資料夾**、本 repo 無）→ 母資料夾跑 `prd-to-srs`；③ 落地後 verify + backfill ＝我。
 
 ## 1. 砍掉（已於本 commit 做）
 `git rm -r docs/specs/srs/ERPOZ00100/`（typo bundle）。重產出來的新 bundle 直接正名 `docs/specs/srs/EPROZ00100/`。funcId 引用（feature-inventory/traceability）保留、status＝「重產中」。
@@ -11,8 +11,8 @@
 | input | 位置 | 角色 |
 |---|---|---|
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md`（本 repo 有）| what |
-| db-schema snapshot | `docs/db-schema/02_tables/`（**母資料夾**）| 物理真相 + TBD-001 fact 來源 |
-| refactor spec | `docs/refactor/.../EPROZ00100/`（母資料夾）| FE/API 契約 latest |
+| db-diff | `docs/db-diff/02_tables/`（**母資料夾**）| 物理真相 + TBD-001 fact 來源 |
+| refactor-spec | `docs/refactor-spec/.../EPROZ00100/`（母資料夾）| FE/API 契約 latest |
 | 既有裁定 | `decisions`/`pending-register`/`per-page-reinventory-matrix` | 約束、不重議 |
 
 ## 3. 重產時吃進的新規則（pilot 重點）
