@@ -2,6 +2,7 @@
 
 > 本檔＝**append-only 決策/事實流水帳**（每列自帶日期、不回溯改寫；被推翻的列由後列/ADR supersede 並互相標註——2026-06-11 健檢定位，取代原「最後更新」header，過期 header 本身曾是失步源）。
 > 作為產出 `AGENTS.md` 與各樣板的依據；「決策」類另逐則 ADR（`docs/adr/`），本檔保留 log。
+> **結案即歸檔（standing，2026-06-18 立）**：一束 saga（如撥貸/T24、c0 audit）**決策全結案**後（owner-decision 清空、剩執行/UAT）→ 把該束**已結案決策列 verbatim 凍結**到 `archive/decisions-YYYYHn-<topic>.md`、主表留一列 🗄 指標（含現行結論＋現狀 SSOT 指向），免本檔無限長吃 context。**凍結＝搬遷非改寫**（append-only 不破，同 `completion-ledger`/`archive/` 慣例）；**活躍/未結案 saga 不動**；新決策仍 append 本檔。首批＝2026-06-18 撥貸（16 列）+ c0 audit（6 列）。
 
 ## 一、已確認事實
 
