@@ -129,7 +129,7 @@
 | funcId | risk | prd（`docs/specs/prd/`）| status | srs（`docs/specs/srs/`）|
 |---|---|---|---|---|
 | `EPROZ00100` | z0/示範 | `PRD-CDC-EPRO-0001-EPROZ00100-v1.1.md` | **in-review**（v0.2、待 8 TBD）| `EPROZ00100/` |
-| `EPROC00118` | T1 企金線 | — | not-started | — |
+| `EPROC00118` | T1 企金線 | `PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` | in-review | `EPROC00118/` |
 | `EPROC00120` | T1 企金線 | — | not-started | — |
 | `EPROCSU0170` | T1 企金線 | — | not-started | — |
 | 企金線 T2/T3 餘頁 | T2/T3 企金線 | — | not-started（佔位·待拆列）| 頁列舉見 `c0-legacy-parity-recheck.md` |

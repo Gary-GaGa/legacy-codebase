@@ -1,0 +1,185 @@
+-- DB schema - EPROC00118 Corporate Scorecard
+-- Trace source:
+-- - PRD: docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md
+-- - New DB snapshot: docs/db-schema/02_tables/TB_CORP_SCRCARD.md,
+--   TB_SCORE_CARD_PARAM_DETAIL.md, TB_LON_SUMMARY_INFO.md,
+--   TB_CHECK_POINTS_CS.md, TB_CHECK_POINTS_CU.md
+-- - Refactor baseline: docs/refactor/02_specs/fe-spec/corporate/EPROC00118/*.md
+--
+-- This file is a traceable boundary DDL sketch, not an instruction to recreate
+-- existing production tables. It keeps table/column hints needed by SRS gate 2.
+
+CREATE TABLE TB_CORP_SCRCARD (
+  APPLICATION_NO             VARCHAR2(30) NOT NULL,
+  AO_DEFAULT_DAY_FLG         VARCHAR2(2),
+  AO_AGE_CODE                VARCHAR2(2),
+  AO_AGE_SCR                 NUMBER(3,0),
+  AO_GUAR_AGE_CODE           VARCHAR2(2),
+  AO_GUAR_AGE_SCR            NUMBER(3,0),
+  AO_COMP_TYPE_CODE          VARCHAR2(2),
+  AO_COMP_TYPE_SCR           NUMBER(3,0),
+  AO_INDUSTRY_CODE           VARCHAR2(2),
+  AO_INDUSTRY_SCR            NUMBER(3,0),
+  AO_YEAR_OP_CODE            VARCHAR2(2),
+  AO_YEAR_OP_SCR             NUMBER(3,0),
+  AO_LOAN_PURPOSE_CODE       VARCHAR2(2),
+  AO_LOAN_PURPOSE_SCR        NUMBER(3,0),
+  AO_REPAYMENT_S_CODE        VARCHAR2(2),
+  AO_REPAYMENT_S_SCR         NUMBER(3,0),
+  AO_K_SCORE_CODE            VARCHAR2(2),
+  AO_K_SCORE_SCR             NUMBER(3,0),
+  AO_MAX_OVERDUE_CODE        VARCHAR2(2),
+  AO_MAX_OVERDUE_SCR         NUMBER(3,0),
+  AO_TRANS_12MON_CODE        VARCHAR2(2),
+  AO_TRANS_12MON_SCR         NUMBER(3,0),
+  AO_SUBS_REPAYMENT_S_CODE   VARCHAR2(2),
+  AO_SUBS_REPAYMENT_S_SCR    NUMBER(3,0),
+  AO_COMP_POSITIVE_CODE      VARCHAR2(2),
+  AO_COMP_POSITIVE_SCR       NUMBER(3,0),
+  AO_GROWTH_RATIO_CODE       VARCHAR2(2),
+  AO_GROWTH_RATIO_SCR        NUMBER(3,0),
+  AO_PM_GROWTH_RATIO_CODE    VARCHAR2(2),
+  AO_PM_GROWTH_RATIO_SCR     NUMBER(3,0),
+  AO_CUR_RATIO               NUMBER(3,2),       -- UI percent / 100; db-schema line 139
+  AO_CUR_RATIO_CODE          VARCHAR2(2),
+  AO_CUR_RATIO_SCR           NUMBER(3,0),
+  AO_DE_RATIO                NUMBER(9,2),
+  AO_DE_RATIO_CODE           VARCHAR2(2),
+  AO_DE_RATIO_SCR            NUMBER(3,0),
+  AO_AP_CODE                 VARCHAR2(2),
+  AO_AP_SCR                  NUMBER(3,0),
+  AO_AR_CODE                 VARCHAR2(2),
+  AO_AR_SCR                  NUMBER(3,0),       -- PRD TBD-005: legacy AO copy gap
+  AO_INVENTORY_CODE          VARCHAR2(2),
+  AO_INVENTORY_SCR           NUMBER(3,0),       -- PRD TBD-005: legacy AO copy gap
+  AO_CMP_TOT_ASSET           NUMBER(19,2),
+  AO_CMP_TOT_ASSET_CODE      VARCHAR2(2),
+  AO_CMP_TOT_ASSET_SCR       NUMBER(3,0),
+  AO_TOTAL_LOAN_AMT          NUMBER(19,2),
+  AO_TOTAL_LOAN_AMT_CODE     VARCHAR2(2),
+  AO_TOTAL_LOAN_AMT_SCR      NUMBER(3,0),
+  AO_DEBT_RATIO              NUMBER(6,2),
+  AO_DEBT_RATIO_CODE         VARCHAR2(2),
+  AO_DEBT_RATIO_SCR          NUMBER(3,0),
+  AO_RISK_LEVEL              VARCHAR2(7),
+  AO_SCORE                   NUMBER(7,2),
+  AO_DATE                    TIMESTAMP(6),
+  AO_CODE                    VARCHAR2(20),
+  AO_NAME                    VARCHAR2(60),
+  CR_DEFAULT_DAY_FLG         VARCHAR2(2),
+  CR_AGE_CODE                VARCHAR2(2),
+  CR_AGE_SCR                 NUMBER(3,0),
+  CR_GUAR_AGE_CODE           VARCHAR2(2),
+  CR_GUAR_AGE_SCR            NUMBER(3,0),
+  CR_COMP_TYPE_CODE          VARCHAR2(2),
+  CR_COMP_TYPE_SCR           NUMBER(3,0),
+  CR_INDUSTRY_CODE           VARCHAR2(2),
+  CR_INDUSTRY_SCR            NUMBER(3,0),
+  CR_YEAR_OP_CODE            VARCHAR2(2),
+  CR_YEAR_OP_SCR             NUMBER(3,0),
+  CR_LOAN_PURPOSE_CODE       VARCHAR2(2),
+  CR_LOAN_PURPOSE_SCR        NUMBER(3,0),
+  CR_REPAYMENT_S_CODE        VARCHAR2(2),
+  CR_REPAYMENT_S_SCR         NUMBER(3,0),
+  CR_K_SCORE_CODE            VARCHAR2(2),
+  CR_K_SCORE_SCR             NUMBER(3,0),
+  CR_MAX_OVERDUE_CODE        VARCHAR2(2),
+  CR_MAX_OVERDUE_SCR         NUMBER(3,0),
+  CR_TRANS_12MON_CODE        VARCHAR2(2),
+  CR_TRANS_12MON_SCR         NUMBER(3,0),
+  CR_SUBS_REPAYMENT_S_CODE   VARCHAR2(2),
+  CR_SUBS_REPAYMENT_S_SCR    NUMBER(3,0),
+  CR_COMP_POSITIVE_CODE      VARCHAR2(2),
+  CR_COMP_POSITIVE_SCR       NUMBER(3,0),
+  CR_GROWTH_RATIO_CODE       VARCHAR2(2),
+  CR_GROWTH_RATIO_SCR        NUMBER(3,0),
+  CR_PM_GROWTH_RATIO_CODE    VARCHAR2(2),
+  CR_PM_GROWTH_RATIO_SCR     NUMBER(3,0),
+  CR_CUR_RATIO               NUMBER(3,2),
+  CR_CUR_RATIO_CODE          VARCHAR2(2),
+  CR_CUR_RATIO_SCR           NUMBER(3,0),
+  CR_DE_RATIO                NUMBER(9,2),
+  CR_DE_RATIO_CODE           VARCHAR2(2),
+  CR_DE_RATIO_SCR            NUMBER(3,0),
+  CR_AP_CODE                 VARCHAR2(2),
+  CR_AP_SCR                  NUMBER(3,0),
+  CR_AR_CODE                 VARCHAR2(2),
+  CR_AR_SCR                  NUMBER(3,0),
+  CR_INVENTORY_CODE          VARCHAR2(2),
+  CR_INVENTORY_SCR           NUMBER(3,0),
+  CR_CMP_TOT_ASSET           NUMBER(19,2),
+  CR_CMP_TOT_ASSET_CODE      VARCHAR2(2),
+  CR_CMP_TOT_ASSET_SCR       NUMBER(3,0),
+  CR_TOTAL_LOAN_AMT          NUMBER(19,2),
+  CR_TOTAL_LOAN_AMT_CODE     VARCHAR2(2),
+  CR_TOTAL_LOAN_AMT_SCR      NUMBER(3,0),
+  CR_DEBT_RATIO              NUMBER(6,2),
+  CR_DEBT_RATIO_CODE         VARCHAR2(2),
+  CR_DEBT_RATIO_SCR          NUMBER(3,0),
+  CR_RISK_LEVEL              VARCHAR2(7),
+  CR_SCORE                   NUMBER(7,2),
+  CR_DATE                    TIMESTAMP(6),
+  CR_CODE                    VARCHAR2(20),
+  CR_NAME                    VARCHAR2(60),
+  CR_COMMENT                 VARCHAR2(3000),
+  CR_COMMENT_DATE            TIMESTAMP(6),
+  CONSTRAINT PK_TB_CORP_SCRCARD PRIMARY KEY (APPLICATION_NO)
+);
+
+CREATE TABLE TB_SCORE_CARD_PARAM_DETAIL (
+  DOC_ID      VARCHAR2(20) NOT NULL,
+  VAR_NAME    VARCHAR2(30) NOT NULL,
+  VAR_CODE    VARCHAR2(3) NOT NULL,
+  LOW_RANGE   NUMBER(11,2),
+  UP_RANGE    NUMBER(12,2),
+  SCORE       VARCHAR2(10),
+  VAR_DESC    VARCHAR2(100),
+  VAR_ORDER   NUMBER(3,0),
+  ST_DATE     DATE,
+  END_DATE    DATE
+);
+
+CREATE TABLE TB_LON_SUMMARY_INFO (
+  APPLICATION_NO            VARCHAR2(30) NOT NULL,
+  APPLICATION_DATE          TIMESTAMP(6),
+  LON_ATTRIBUTE             VARCHAR2(2),
+  SECURE_ATTRIBUTE          VARCHAR2(2),
+  CR_SCORE_CARD_COMPLETED   VARCHAR2(2),
+  CONSTRAINT PK_TB_LON_SUMMARY_INFO PRIMARY KEY (APPLICATION_NO)
+);
+
+CREATE TABLE TB_CHECK_POINTS_CS (
+  APPLICATION_NO  VARCHAR2(30) NOT NULL,
+  EPROC00118      VARCHAR2(2) DEFAULT 'N',
+  CONSTRAINT PK_TB_CHECK_POINTS_CS PRIMARY KEY (APPLICATION_NO)
+);
+
+CREATE TABLE TB_CHECK_POINTS_CU (
+  APPLICATION_NO  VARCHAR2(30) NOT NULL,
+  EPROC00118      VARCHAR2(2) DEFAULT 'N',
+  CONSTRAINT PK_TB_CHECK_POINTS_CU PRIMARY KEY (APPLICATION_NO)
+);
+
+CREATE TABLE TB_API_AUTH (
+  API_ID            VARCHAR2(100) NOT NULL,
+  ROLE              VARCHAR2(100) NOT NULL,
+  REF_FUNCTION_ID   VARCHAR2(100),
+  UPDATE_USER       VARCHAR2(10),
+  UPDATE_DATE       DATE,
+  CONSTRAINT PK_TB_API_AUTH PRIMARY KEY (API_ID)
+);
+
+CREATE TABLE TB_ROLE_TASK (
+  PAGE_CODE   VARCHAR2(20) NOT NULL,
+  ROLE        VARCHAR2(300),
+  FUNCTION    VARCHAR2(20) NOT NULL,
+  PAGE_NAME   VARCHAR2(200),
+  CONSTRAINT PK_TB_ROLE_TASK PRIMARY KEY (PAGE_CODE, FUNCTION)
+);
+
+-- Deprecated legacy naming observed in PRD: EPROC0_0118/EPROC0_0218 and
+-- TB_CHECK_POINT_CORP/CU/RC_CORP/RC_CU. New DB snapshot carries
+-- TB_CHECK_POINTS_CS/CU.EPROC00118 instead. See spec.md DB delta.
+-- Deployment seed still needs TB_API_AUTH/TB_ROLE_TASK rows for the four epl-* endpoints:
+-- epl-sele-c0-corporateScorecard-list, epl-info-c0-corporateScorecard,
+-- epl-calc-c0-corporateScorecard, epl-save-c0-corporateScorecard.
