@@ -21,7 +21,7 @@
 - task「done」**只認**：機械 gate 綠（`verify-c0` / `check-srs-bundle` / `mvn` / `ng build` exit 0）**＋** 三軸驗證 PASS（**SRS 軌＝§4b N 軸 PASS**）**＋** 狀態標「等人審」。
 - **orchestrator 不得自宣 done / 不得跳過 gate / 不得把假綠當完成**。終點是「等審」，不是「上線」。
 
-## 4. 三軸正交驗證（≥3 sub-agent，但**必須真獨立**）
+## 4. 三軸正交驗證（code 階段；≥3 sub-agent，但**必須真獨立**）
 > 「3 個 PASS」≠ 3 倍信心——同模型/同 context/同指示會 correlated blindness（3 個一起漏同一個，Phase V 即此）。故定**三個正交視角**（最好跨模型，至少不同指示），各 read-only：
 | 軸 | agent | 只看 |
 |---|---|---|
@@ -36,13 +36,14 @@
 | 軸 | 只看 | 對應易疏漏陷阱 |
 |---|---|---|
 | **A. 綜合/完整性** | `spec-reviewer.md` 7 維（REQ↔Rn↔QA、Non-Goals、TBD→@PENDING、Traceability、批判輪紅旗）| 缺需求／追溯斷裂 |
-| **B. as-is parity** | to-be 有無把 legacy 當已核准需求；as-is ✅⚠️🔴 引 `file:line`；throw-stub「結構在≠行為對」；regression vs 刻意演進三判（`legacy-parity-sop`）| ⑥ throw-stub、⑤ regression 誤判 |
+| **B. as-is parity** | to-be 有無把 legacy 當已核准需求；as-is ✅⚠️🔴 引 `file:line`；throw-stub「結構在≠行為對」；regression vs 刻意演進三判（`legacy-parity-sop`）；**PRD 帶的 legacy 細節（checkpoint key 名/現行 method/欄寬）有無原樣抄進 openapi/schema 契約（B1 教訓）** | ⑥ throw-stub、⑤ regression、③ checkpoint key/欄寬抄進契約 |
 | **C. 錯誤碼承載** | PRD Error 表逐碼（**含裸名碼**，補機械 gateⒺ 盲區）→ Rn＋openapi＋對的 HTTP status；勿 400/500 conflation | ① 裸名碼繞 gateⒺ |
 | **D. 安全·授權** | Bible BR/SC/災難情境＋`TB_API_AUTH`/`SECURE_ATTRIBUTE` 逐條 carried/disclaimed；mutating 端點 FE-only 須有 BE 強制 Rn | 安全/災難未承載 |
 | **E. DB reconcile** | spec 有無「新舊 DB/更動 delta」段（`gateⓇ` 已 warn 段缺，本軸查**內容**）；每條附來源＋三判；`schema.sql` 真帶 change-hint 還是只寫「待 RD」| ④ db-schema/refactor reconcile 漏 |
 | **F. 金錢·精度·截斷** | 精度/rounding/maxlength/截斷欄逐欄（**現流程最空白、風險最高**）；金錢欄 BE 權威＋交易一致 | ② 金錢/截斷/精度欄 |
 | **G. 可測試性** | 每 Rn 的 QA 真測到精神（非掛名）；多分支 happy/error/edge 齊（補 gate⑤「≥1」假綠）| QA 充數 |
 - **真獨立**：各軸獨立 session、不同指示、最好跨模型；同質多個＝theater、不算 N 軸 PASS。
+- **A 廣度兜底、C–G 深度窮舉**：A（含 spec-reviewer 6 紅旗）與 C/D/E 在錯誤碼/安全/reconcile 上**刻意重疊＝雙保險**（跨模型反 correlated-blindness），非互推皮球；專軸逐項窮舉、A 顧整體一致——**跑了 A 不替代專軸**。
 - **規模調配**：低風險頁（z0 KEEP）可只跑 A＋E＋G；**risk-tier T1（金錢/計分/checkpoint/授權）或 refactor 覆蓋缺頁，A–G 全跑**（owner「易疏漏處多開 sub-agent」）。
 - **仍 ≠ 人審**：N 軸是強化自驗，orchestration 仍停在等人審／等裁 TBD。
 - **落地**：Claude 主 session 用 Agent 工具各 spawn 一軸；Codex 同（部署見 §7；**briefs 權威＝本表**）。axis A＝既有 `spec-reviewer`。
@@ -71,6 +72,8 @@
 ```
 - **一次一頁**（dispatch 鐵則）：別一次吞整批；每頁各自過 gate＋N 軸＋人審。
 - **不急著轉完**：佇列無期限，risk-tier 前段先；owner 未放 PRD 的頁＝blocked、不臆造。
+- **bundle/佔位列不可直接 pick**：佇列表的多頁列（企金線 T2/T3、撥貸群、ISU/i0/z0 增量）＝佔位、非派工單位；PRD 進場須先**拆成一 funcId 一列**才可 `prd-ready`（守「一頁一列、一次一頁」）。同 risk tier 內 tie-break＝**表序由上而下**。
+- **起手對帳（防漏）**：每輪先列 `docs/specs/prd/PRD-*.md` 實檔 ⟷ 佇列 `prd` 欄；**實檔有而表列仍 not-started＝回報 owner「PRD 已放、待標 prd-ready（或拆列）」、不靜默漏**（補 plan①「不漏」）。
 
 ## 6. orchestrator prompt 骨架（可直接 pilot）
 ```
@@ -87,6 +90,7 @@
 ```
 你是 SRS orchestrator。任務板＝docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md 的「PRD→SRS 佇列 + ledger」表。
 1. 取 risk-tier 最前、status=prd-ready（PRD 快照已在 docs/specs/prd/、檔名 PRD-*<funcId>*.md）的一頁；status=not-started 且 prd 欄空＝PRD 未放→跳過、回報「待 owner 放 PRD」。不一次吞整批。
+   起手先對帳 docs/specs/prd/ 實檔 ⟷ 佇列 prd 欄：實檔有但表列 not-started→回報「PRD 已放、待標 prd-ready」；bundle/佔位列（多 funcId）不可直接 pick，須先拆成一 funcId 一列；同 risk 依表序。
 2. spawn 獨立 sub-agent 跑 prd-to-srs（用 build-tasks/prd-to-srs-codex-dispatch.md 的 prompt，填該 funcId/PRD 路徑）→ 產 bundle 到 docs/specs/srs/<funcId>/。
 3. 機械 gate：python scripts/check-srs-bundle.py docs/specs/srs/<funcId> 必 exit 0（含 gateⓇ reconcile）。
 4. SRS N 軸驗證：依 playbook §4b 各 spawn 一 read-only sub-agent 跑 A–G 軸（各獨立 session、不同指示、最好跨模型；非單一 spec-reviewer；低風險頁可 A+E+G、risk-tier T1 全 A–G）→ 採納修正後再審一輪。
