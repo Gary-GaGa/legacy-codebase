@@ -5,7 +5,7 @@
 > **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24〕→ ④ `EPROZ00800` 重產（新版 PRD；v0.9 已封存）→ ⑤ 主流程 ISU/i0/z0 增量。
 
 ## PRD 放置與對應（PM 貼給 Codex 前；2026-06-18 EPROZ00100 首跑實測歸納）
-> **對應鍵＝funcId**（如 `EPROZ00100`）。PRD 檔名含 funcId → SRS 自動產到 `srs/<funcId>/`、db-diff 用 table_name、refactor-spec 用 funcId 反查、trace 配同 funcId。**一頁一 PRD、funcId 不重複**（同 funcId 多版會被 gateⒷ glob 同時命中、取字典序最後一個 → **只留最新一份在資料夾**）。
+> **對應鍵＝funcId**（如 `EPROZ00100`）。PRD 檔名含 funcId → SRS 自動產到 `srs/<funcId>/`、db-diff 用 table_name、refactor-spec 用 module_code（EPRO* 碼、≈funcId）反查、trace 配同 funcId。**一頁一 PRD、funcId 不重複**（同 funcId 多版會被 gateⒷ glob 同時命中、取字典序最後一個 → **只留最新一份在資料夾**）。
 
 | 檔案 | 放哪 | 由誰 |
 |---|---|---|
@@ -19,7 +19,7 @@
 **PRD 內容格式預檢**（讓閘門接得上；涵蓋範圍以 `scripts/check-srs-bundle.py` 檔頭為準）：
 1. **檔名** `PRD-*<funcId>*.md`（`PRD-` 開頭＋含 funcId）；不符 → gateⒷ/gateⒺ 找不到快照、覆蓋驗證**靜默略過**。
 2. **錯誤碼** Error Response 表用 `MSG_*`/`COMMON_MSG_*` 前綴 → 機械 gateⒺ 才逐碼守承載；**裸名（`MISSING_X`）gateⒺ 抓不到**（實測 0 碼納入）→ 只剩 spec-reviewer 守（該輪語意審不可省）。
-3. **join key（更動範圍入口）** §DB 影響矩陣**明列實表名 `TB_*`**（→ db-diff by table_name）＋給 funcId/端點（→ refactor-spec by funcId/`epl-*`）；delta 由本 prompt §5 在母資料夾算、**PRD 只需給鍵、不自算**。
+3. **join key（更動範圍入口）** §DB 影響矩陣**明列實表名 `TB_*`**（→ db-diff by table_name）＋給 module_code/端點（→ refactor-spec by module_code/artifact_id）；delta 由本 prompt §5 在母資料夾算、**PRD 只需給鍵、不自算**。
 4. **REQ id** 用 `REQ-NNN`（三位數）token（gateⒷ 上行追溯鍵）；每 REQ 後續對得到 ≥1 規則。
 5. **TBD** 寫表格列、每條附 owner ＋ 影響範圍（→ SRS @PENDING；**不自裁**）。
 6. **maxlength/必要** PRD 能給就給（餵 openapi↔schema 交叉比對 + refactor delta 佐證）。
@@ -52,7 +52,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 4. 真實 endpoint = RPC `epl-{verb}-{scope}-{feature}`（非 PRD 理想化 /api/...）；
    mutate=POST。Oracle native query 未加引號 alias → label 大寫（大小寫對映注意）。
 5. 【對比輸入：多個 md 檔 — 必讀並 reconcile，把「更動後需求」一起納入 SRS】
-   A. 新 Table schema（新側 snapshot）＝**local `docs/db-diff/`**（owner 提供；結構已盤點 2026-06-17）：
+   A. 新 Table schema（新側 snapshot）＝**local `docs/db-diff/`**（owner 提供；結構已盤點 2026-06-17，**2026-06-18 改名 db-diff 後重掃確認：187 檔/156 表/snapshot+change-hint 不變、非完整 diff**）：
       - 佈局：`02_tables/TB_<NAME>.md`（156 表，一檔一表）、索引 `00_HOME.md`（Table Map）、`01_groups/group-xx.md`。
         **索引鍵＝`table_name`**（非 funcId；table→funcId 反查多半缺）。
       - schema 形式＝**markdown 欄位表**（`| no | pk | fk | column_name | comments | data_type | nullable | data_default | note |`），
@@ -65,21 +65,18 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
         內以 funcId 命名的 checkpoint 欄 ③Bible v1.1 DB 錨點（`TB_LON_SUMMARY_INFO`…）④`legacy/db-schema-catalog.md`
         推出 table set，逐表查 `02_tables/`（找不到→標 UNFOUND、不臆造）。
       - ⚠️ `OVSLXLON01/02`＝runtime 資料來源（A-2/B-1 escalations 已裁），**與此 schema 結構正交**、勿混。
-   B. 70% baseline 重構 spec＝**local `docs/refactor-spec/`**（owner 提供；結構已盤點 2026-06-17）：
-      - 佈局：`02_specs/{be-spec|fe-spec}/{category}/{module_code}/<title>--<hash>.md`（834 檔）、索引 `00_HOME.md`（Source Map）、
-        共用規則 `03_rules/`（`api_contract.md`/`field_definition.md`/`open_issue.md`/`rules_index.md`）、`04_assets/`（畫面/圖）。
-      - **索引鍵＝module_code/funcId；API 子鍵＝program_code/`epl-*`；版本鍵＝version/date/doc_status（多版並存）**。
-        **一頁多檔**（FE 規格書＋field auth＋BE API spec＋old/latest/archive）→ 撈該 funcId **全部檔、取 latest**
-        （doc_status/version/date 最新；跳 archive/old）。
-      - 當 **as-is baseline**（70% 已建）取用：① API Header 欄位表 `LVL|欄位名稱|資料型態|最大長度|必要|說明`
-        ＝**maxlength/必填量化來源**（解 D5 FE/BE split-brain）② `epl-*`（~285）＋request/response body＝endpoint/DTO 契約 grounding
-        ③ Extracted Rule Signals（`rule_type|label|source_detail`）＋`03_rules/rules_index.md` validation_rule（894）＝**驗證點素材**
-        （**非正式 QA → SRS QA 仍新撰**）。⚠️ refactor **無正式 Rn/REQ** → Rn 由新 PRD 合成、refactor 供 as-is 佐證。
-      - **「更動後需求」＝新 PRD ⟷ refactor latest 的 delta**；as-built 狀態/開放項用 `doc_status`/`修訂紀錄`（修訂時間/記錄/版本/者）/
-        `03_rules/open_issue.md`/`待確認項目` 判讀。
-      - **覆蓋先查**：refactor 缺該頁→無 baseline 可 reconcile→走 i0-mirror＋`legacy-parity-sop`（標 parity 風險、不臆造 baseline）。
-        已知缺＝**`EPROC00119`/`EPROC00120`**（與企金線 T1 風險一致；⚠️ risk-tier T1 先跑頁是 `EPROC00118`，與此 refactor 缺頁 `EPROC00119` **只差一碼、不同維度，勿混**）；額外有＝`EPROCSU0140`/`EPROZ00420`/**`EPROZ0B001-0B007`（批次，
-        撥貸批次層 AUD-10 B001-B008 可取為 as-is）**/COMMON/FUNCTION。
+   B. refactor-spec＝**latest-only spec index/artifact map ＋ legacy reference outputs**＝**local `docs/refactor-spec/`**（owner 提供；**2026-06-18 改名後重掃、結構已重排**）：
+      - 佈局（737 檔；733 .md＋`manifest.json`＋tools）：**latest＝`03_artifacts/**/*.md`（466，已挑 selected latest artifact；一 module 可多 artifact、68 module 多 artifact）**、**legacy 多版＝`02_specs/`（146，含 `doc_status`/`修訂紀錄`/`待確認項目`；舊版在 `manifest.json.excluded_versions`）**、module 彙整 `02_modules/`（77）、索引 `00_HOME.md`/`README.md`（Source Map）、共用規則 `03_rules/`（7）＋`04_rules/`（8，含 `field_rule.md`/`validation.md`）、`04_assets/`（18，畫面/圖）、`01_groups/`（7）、issues `99_issues.md`。
+      - **索引鍵＝`module_code`（EPRO* 頁碼、≈funcId）→ `artifact_id`（區分 API/FE/asset）；無 literal `funcId` 欄**。
+        **latest 規則＝highest parsed version → newest filename date → non-old path**（跳 archive/old；見 `refactor-spec/README.md:26`）；一 module 可多 latest artifact → 撈齊該 module 全部 latest。
+      - 當 **as-is baseline** 取用：① API Header 欄位表 `LVL|欄位名稱|資料型態|最大長度|必要|說明`
+        ＝**maxlength/必填量化來源**（解 D5 FE/BE split-brain；latest 抽到 `04_rules/field_rule.md`）② `epl-*`（~270）＋request/response body＝endpoint/DTO 契約 grounding
+        ③ validation signals（`04_rules/validation.md`，713；**literal `validation_rule`=0**）＝**驗證點素材**
+        （**非正式 QA → SRS QA 仍新撰**）。⚠️ refactor-spec **無正式 Rn/REQ** → Rn 由新 PRD 合成、refactor-spec 供 as-is 佐證。
+      - **「更動後需求」＝新 PRD ⟷ refactor-spec latest 的 delta**；as-built 狀態/開放項用 legacy `02_specs/` 的 `doc_status`/`修訂紀錄`/`待確認項目`
+        ＋ latest map 的 `version`/`date`/`old_path`/`99_issues.md` 判讀（**`open_issue` 已無**）。
+      - **覆蓋先查**：refactor-spec 缺該頁→無 baseline 可 reconcile→走 i0-mirror＋`legacy-parity-sop`（標 parity 風險、不臆造 baseline）。
+        已知缺＝**`EPROC00119`/`EPROC00120`**（無獨立 module/artifact、只在 `EPROC00110` 規則被引；相近 `EPROI00119`/`EPROI00120` 存在——⚠️ 勿混；risk-tier T1 先跑頁 `EPROC00118` 與此只差一碼、不同維度）；其餘額外覆蓋（如 `EPROZ0B001-0B007` 批次）依 latest map 實查。
    C. 我方既有裁定/約束（repo，勿 re-litigate）：
       - `docs/decisions.md`＋`docs/archive/decisions-2026H1-disbursement.md`（已裁：AUD-6 精度 keep-new〔decisions〕、A-5 KHR 收窄/T24 照舊〔disbursement archive〕、頁合併 CS/CU→CSU…）
       - `docs/pending-register.md`（該頁開著的 @PENDING/escalation）
