@@ -2,10 +2,10 @@
 
 > **載具**：Codex（母資料夾：產品碼 + 規劃 repo 可讀 + Bible v1.1 + 新版 PRD + local `docs/db-schema/`/`docs/refactor/`）。
 > **目的**：用 SRS orchestrator 跑通 **1 頁**（**非批量**），確認「取佇列 → 產 SRS → 機械 gate（含 gateⓇ）→ N 軸驗證 → 回填 ledger → 停等審」整條順、四條守則守得住，**再放大到 67 頁**。
-> **權威**（prompt 已內聯關鍵，不可讀亦能跑）：流程＝`docs/process/orchestration-playbook.md §4b（N 軸）/§5b（SRS 迴圈）/§6b（prompt 骨架）`；產 SRS＝`docs/build-tasks/prd-to-srs-codex-dispatch.md`；機械閘門＝`scripts/check-srs-bundle.py`（含 **gateⓇ** reconcile）。
+> **權威**（prompt 已內聯關鍵，不可讀亦能跑）：流程＝`docs/process/orchestration-playbook.md §4b（N 軸）/§5b（SRS 迴圈）/§6b（prompt 骨架）`；產 SRS＝`docs/build-tasks/prd-to-srs-codex-dispatch.md`；機械閘門＝`scripts/check-srs-bundle.py`（含 **gateⓇ** reconcile）；pilot 頁 risk-tier/舊對應＝`docs/build-tasks/c0-legacy-parity-recheck.md`。
 
 ## 0. 前置（owner 先做，缺一不可）
-1. **選 pilot 頁**：建議 risk-tier T1 最前＝**`EPROC00118`**（有 refactor baseline、可實際操練 reconcile 軸 E；`00119/00120` 才是 refactor 缺頁、勿混）。或你手邊已有 PRD 的任一頁。
+1. **選 pilot 頁**：建議 risk-tier T1 最前＝**`EPROC00118`**（有 refactor baseline、可實際操練 reconcile 軸 E；`00119/00120` 才是 refactor 缺頁、勿混——**`00120` 雖也在 T1 佇列，但屬 refactor 缺頁→走 i0-mirror、不選為 pilot**）。或你手邊已有 PRD 的任一頁（seed 後 orchestrator 仍依佇列 risk 序取，非繞過）。
 2. **PRD 放好**：`docs/specs/prd/`，檔名 **`PRD-*<funcId>*.md`**（不符 gateⒷ/Ⓔ 找不到；rename 腳本 `scripts/rename-prd.ps1`；格式 7 點預檢見 dispatch 卡「PRD 放置與對應」）。
 3. **佇列回填**：`build-tasks/refactor-audit/per-page-reinventory-matrix.md` 的「PRD→SRS 佇列 + ledger」表，把該頁 `status=prd-ready`＋填 `prd` 欄。**若該頁是 bundle/佔位列（多 funcId）→ 先拆成一 funcId 一列**。
 

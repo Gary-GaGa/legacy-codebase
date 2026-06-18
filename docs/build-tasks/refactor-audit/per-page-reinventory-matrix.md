@@ -123,7 +123,7 @@
 > 每產一份過 `check-srs-bundle`（含 gateⓇ）+ **SRS N 軸驗證**（`orchestration-playbook §4b`）（DoD）。
 
 ### PRD→SRS 佇列 + ledger（orchestrator 機械迭代來源；2026-06-18）
-> **orchestrator 的 enumerable 來源 + 完成 ledger**（SRS 軌迴圈＝`orchestration-playbook §5b/§6b`，非 `STATUS §六`＝code 板）：依 risk 排序、取最前 `status=prd-ready` 者產 SRS；**每產一份→回填本表 `status`/`srs`（＝防重複/防漏）**。**覆蓋計數**：分子＝本表 `status∈{in-review,approved}` 列**所涵蓋的頁數**（bundle/佔位列展開計頁、**非列數**）；分母 **67＝`legacy/legacy-function-inventory.md` 權威盤點**（非由本表衍生）；上方 §覆蓋「x/67」＝此計數的人類快照、改動時與本表同步（**單一出處＝本表**）。同 risk tier 內 tie-break＝**表序由上而下**（已照 dispatch:5 / `c0-legacy-parity-recheck` T1 序）；`approved` 由人審/裁 TBD 後回填（orchestrator 只到 `in-review`）。
+> **orchestrator 的 enumerable 來源 + 完成 ledger**（SRS 軌迴圈＝`orchestration-playbook §5b/§6b`，非 `STATUS §六`＝code 板）：依 risk 排序、取最前 `status=prd-ready` 者產 SRS；**每產一份→回填本表 `status`/`srs`（＝防重複/防漏）**。**覆蓋計數**：分子＝本表 `status∈{in-review,approved}` 列**所涵蓋的頁數**（bundle/佔位列展開計頁、**非列數**）；分母 **67＝`docs/legacy/legacy-function-inventory.md` 權威盤點**（非由本表衍生）；上方 §覆蓋「x/67」＝此計數的人類快照、改動時與本表同步（**單一出處＝本表**）。同 risk tier 內 tie-break＝**表序由上而下**（已照 dispatch:5 / `c0-legacy-parity-recheck` T1 序）；`approved` 由人審/裁 TBD 後回填（orchestrator 只到 `in-review`）。
 > status：`not-started`｜`prd-ready`（PRD 快照已放 `docs/specs/prd/`、檔名 `PRD-*<funcId>*.md`）｜`in-review`（SRS 產出＋機械 gate＋N 軸 PASS、待人審/裁 TBD）｜`approved`（TBD 全關、N 軸無 Blocker）。
 
 | funcId | risk | prd（`docs/specs/prd/`）| status | srs（`docs/specs/srs/`）|
@@ -136,7 +136,7 @@
 | `EPROISU0920/0921/0922`＋T24 | 撥貸 | — | not-started（佔位·待拆列）| 現只 escalations/triage |
 | `EPROZ00800` | 00800 重產 | —（v0.9 PRD 已封存、待新版）| not-started | v0.9 SRS 封存 `archive/` |
 | 主流程 ISU/i0/z0 增量 | 增量 | — | not-started（佔位·待拆列）| — |
-> ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**多頁列（T2/T3 餘頁、撥貸群、ISU/i0/z0 增量）＝佔位、非派工單位**，PRD 進場須先**拆成一 funcId 一列**才可 `prd-ready`（orchestrator 不可直接 pick 佔位列）。完整 67 頁清單＝owner 權威盤點 `legacy/legacy-function-inventory.md`（本表先列 risk-tier 前段，餘隨 PRD 進場補列）。
+> ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**多頁列（T2/T3 餘頁、撥貸群、ISU/i0/z0 增量）＝佔位、非派工單位**，PRD 進場須先**拆成一 funcId 一列**才可 `prd-ready`（orchestrator 不可直接 pick 佔位列）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`（本表先列 risk-tier 前段，餘隨 PRD 進場補列）。
 
 ## 派工（填實本矩陣）
 - **企金線對舊 parity**（Codex 帶 source）：擴 `c0-legacy-parity-recheck.md` 涵蓋範圍 → c0 評分 **+ CSU 主流程**；risk-tier 00118/00120/0170 先。

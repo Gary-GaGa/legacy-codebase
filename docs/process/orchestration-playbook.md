@@ -32,7 +32,7 @@
 - 仍 ≠ 人審：三軸是**強化自驗**，orchestration 仍停在等人審。
 
 ## 4b. SRS 階段 N 軸驗證（PRD→SRS 專用；§4 code 三軸不適用）
-> SRS 是「**還沒 code**」的文件——§4 三軸（git diff／FE↔BE DTO／build／runtime）對一份 `spec.md` 幾乎無話可說。SRS 階段的「多角度」改用下列 **≥6 正交軸**，各 read-only、獨立 session、**最好跨模型**（同 §4 反 correlated-blindness）。**一份 SRS 完成＝這 N 軸全無 Blocker**＝owner「每份 SRS 完成後多開 sub-agent 不同角度再驗」的落地（取代「單一 spec-reviewer」）。
+> SRS 是「**還沒 code**」的文件——§4 三軸（git diff／FE↔BE DTO／build／runtime）對一份 `spec.md` 幾乎無話可說。SRS 階段的「多角度」改用下列 **七正交軸（A–G）**，各 read-only、獨立 session、**最好跨模型**（同 §4 反 correlated-blindness）。**一份 SRS 完成＝這 N 軸全無 Blocker**＝owner「每份 SRS 完成後多開 sub-agent 不同角度再驗」的落地（取代「單一 spec-reviewer」）。
 | 軸 | 只看 | 對應易疏漏陷阱 |
 |---|---|---|
 | **A. 綜合/完整性** | `spec-reviewer.md` 7 維（REQ↔Rn↔QA、Non-Goals、TBD→@PENDING、Traceability、批判輪紅旗）| 缺需求／追溯斷裂 |
@@ -66,7 +66,7 @@
  → 取 risk-tier 最前、status=prd-ready 的一頁（status=not-started 但 prd 欄空＝PRD 未放→跳過、回報「待 owner 放 PRD」）
  → spawn 獨立 sub-agent 跑 prd-to-srs（dispatch 卡 prompt，填 funcId/PRD 路徑）→ 產 bundle 到 docs/specs/srs/<funcId>/
  → 機械 gate：check-srs-bundle.py exit 0（含 gateⓇ reconcile）
- → SRS N 軸驗證（§4b 的 A–G，≥6 正交、跨模型）→ 採納修正後再審一輪
+ → SRS N 軸驗證（§4b 的 A–G 七正交、跨模型）→ 採納修正後再審一輪
  → 達標 → 佇列表該頁 status=in-review、填 srs 路徑（＝ledger 回填，防重複/防漏；覆蓋計數由此衍生）
  → 停 checkpoint 等人審/裁 TBD；下一輪取佇列下一頁
 ```
