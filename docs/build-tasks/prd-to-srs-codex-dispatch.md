@@ -78,7 +78,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
       - **「更動後需求」＝新 PRD ⟷ refactor latest 的 delta**；as-built 狀態/開放項用 `doc_status`/`修訂紀錄`（修訂時間/記錄/版本/者）/
         `03_rules/open_issue.md`/`待確認項目` 判讀。
       - **覆蓋先查**：refactor 缺該頁→無 baseline 可 reconcile→走 i0-mirror＋`legacy-parity-sop`（標 parity 風險、不臆造 baseline）。
-        已知缺＝**`EPROC00119`/`EPROC00120`**（與企金線 T1 風險一致）；額外有＝`EPROCSU0140`/`EPROZ00420`/**`EPROZ0B001-0B007`（批次，
+        已知缺＝**`EPROC00119`/`EPROC00120`**（與企金線 T1 風險一致；⚠️ risk-tier T1 先跑頁是 `EPROC00118`，與此 refactor 缺頁 `EPROC00119` **只差一碼、不同維度，勿混**）；額外有＝`EPROCSU0140`/`EPROZ00420`/**`EPROZ0B001-0B007`（批次，
         撥貸批次層 AUD-10 B001-B008 可取為 as-is）**/COMMON/FUNCTION。
    C. 我方既有裁定/約束（repo，勿 re-litigate）：
       - `docs/decisions.md`（已裁：AUD-6 精度 keep-new、A-5 KHR 收窄、T24 照舊、頁合併 CS/CU→CSU…）
@@ -121,7 +121,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 
 【DoD（Approved 前必過，含批判輪教訓）】
 - 每 PRD REQ ≥1 Rn；每 Rn ≥1 QA covers + 強制點；完整性/安全的驗證 BE 有且權威。
-- gate⑤：多分支 Rn 各 happy/error/edge ≥1 case（「僅…/未撰寫/RD 補」會被判 partial）。
+- gate⑤：多分支 Rn 各 happy/error/edge ≥1 case（partial 判定詞見 `check-srs-bundle.py` 檔頭）。
 - Bible 安全/災難條件逐條對：carried(Rn) 或 disclaimed；【安全/災難類未承載 → 不得 Approved
   （連 subset 也不行）】。
 - PRD Error Response 每個錯誤碼 → 落某 Rn + openapi response（對的 HTTP status），否則明文
@@ -132,11 +132,11 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 - Status 雙軸（規格定版 vs 實作完成），勿單一 Approved(subset) 混用。
 - **新舊 DB + 既有 spec reconcile**：SRS 已對 schema-diff（新舊 DB 差異/新 schema）+
   feature-inventory/matrix/decisions/pending/escalations（既有重構 spec）；**更動後需求以
-  Rn/@PENDING 顯式承載、附來源+三判，未遺漏**；既有決策（AUD-6/A-5/T24/頁合併…）當約束不重議。
+  Rn/@PENDING 顯式承載、附來源+三判，未遺漏**；既有決策（AUD-6/A-5/T24/頁合併…）當約束不重議。**（2026-06-18 加 backstop：機械 `gateⓇ` warn『spec 無 delta 段』＋ spec-reviewer 紅旗⑥ 查『只寫待 RD』→ reconcile 不再只靠自律。）**
 
 【過閘門（兩層，先機械再語意）】
 1. 機械：`python scripts/check-srs-bundle.py docs/specs/srs/<funcId>` 必 exit 0。
-2. 語意：spec-reviewer（`.codex/agents/spec-reviewer.toml`，唯讀）無未解 Blocker；
+2. 語意：spec-reviewer（`.codex/agents/spec-reviewer.toml`＝部署後本機路徑、repo 範本在 `docs/env/codex/spec-reviewer.toml`，唯讀）無未解 Blocker；
    採納修正後【再審一輪】（修正可能引入新錯）。
 
 【回填】bundle 連到 feature-inventory 該頁 + per-page-reinventory-matrix（SRS 欄）；

@@ -26,6 +26,10 @@
          皆 warn（disclaim 由人/reviewer 認）。**關鍵：解析前去 markdown 底線跳脫
          `\\_`**（否則 PRD 表格的 `MSG\\_X` 漏抓＝SR-B1 當初的根因）。
          （2026-06-16 批判輪3，源 00800 spec-review SR-B1/B2）
+  gateⓇ reconcile 承載（warn）：spec.md 須有『新舊 DB 對照 / 更動 delta / reconcile』段，
+         否則 warn——防規模化靜默跳過 db-schema/refactor reconcile（2026-06-18 PRD→SRS 流程審查，
+         源 EPROZ00100 首跑 schema.sql 把 db-schema 對照整段 defer 給 RD、兩閘門皆放行）；段內容
+         真確性〔每條附來源+三判 vs 只寫『待 RD』〕＝spec-reviewer 紅旗⑥（語意層）。
   [--all 附帶] doc-paths：全 repo markdown 內 backtick 引用的 root-anchored 路徑
          存在性（advisory；歷史檔 build-tasks/done/、archive/ 不掃）
 
@@ -33,7 +37,7 @@
 定稿階段的 pre-check（**同號同義、不同階段**）。gateⒷ/gateⓅ/gateⓈ/xfile/doc-paths＝**SRS
 階段專屬、DoD 牆無對應格**，故用字母標（Ⓑ=Bible、Ⓟ=Pending、Ⓢ=Status/Safety）而非接續
 ⑥⑦——避免與牆上 ⑥Build/⑦LLM-advisory 撞號（Ⓑ=Bible、Ⓟ=Pending、Ⓢ=Status/Safety、
-Ⓔ=Error碼承載）。完整對照表見 `docs/specs/srs/README.md`。
+Ⓔ=Error碼承載、Ⓡ=Reconcile）。完整對照表見 `docs/specs/srs/README.md`。
 
 **分工**：語意正確性（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、
 NFR 量化）仍由 `.claude/agents/spec-reviewer.md`（人/LLM）審。兩層互補、不重疊。
@@ -575,6 +579,35 @@ def gate_error_carry(bundle):
     return fails, warns, infos
 
 
+# ---------- gateⓇ reconcile：新舊 DB / refactor 更動 delta 承載（warn 級）----------
+RECONCILE_HEAD_RE = re.compile(r"新舊\s*DB|更動\s*delta|delta\s*清單|reconcile", re.I)
+
+
+def gate_reconcile(bundle):
+    """gateⓇ：reconcile 承載（**warn 級**，不破綠）。
+
+    SRS 須**顯式承載**「新舊 DB（local docs/db-schema/）＋ refactor（local docs/refactor/）的更動 delta」——
+    spec.md 應有一段標題含『新舊 DB 對照 / 更動 delta / delta 清單 / reconcile』；缺＝warn。
+    機械只驗『段存在』（防規模化時整段靜默跳過 reconcile）；段內每條是否真有來源+三判、
+    schema.sql 是否真帶 change-hint 還是只寫『待 RD』＝**spec-reviewer 紅旗⑥**（語意層）。
+    （2026-06-18 PRD→SRS 流程審查：plan③ reconcile 原機械/語意皆不查、EPROZ00100 首跑實證被靜默跳過。）
+    """
+    sp = os.path.join(bundle, "spec.md")
+    if not os.path.isfile(sp):
+        return [], []
+    has = any(
+        re.match(r"^#{1,6}\s", ln) and RECONCILE_HEAD_RE.search(ln)
+        for ln in read(sp).splitlines()
+    )
+    if has:
+        return [], []
+    return [], [
+        "spec.md 無『新舊 DB 對照 / 更動 delta / reconcile』段——確認已對 local "
+        "docs/db-schema/+docs/refactor/ reconcile（規劃 repo 產出搆不到兩夾時，須顯式 disclaim"
+        "『待母資料夾複核』+ 列已知 delta，非靜默留白）；防規模化跳過（gateⓇ；內容真確性見 spec-reviewer 紅旗⑥）"
+    ]
+
+
 # ---------- gate ⑦ @PENDING ↔ pending-register 同步 ---------------------------
 REGISTER_PATH = "docs/pending-register.md"
 RP_CELL_RE = re.compile(r"^\*{0,2}(RP\d+)\b")
@@ -663,6 +696,7 @@ def check_bundle(bundle):
     gpf, gpw, gpi = gate_pending_register(bundle)
     gsf, gsw = gate_status_safety(bundle)
     gef, gew, gei = gate_error_carry(bundle)
+    grf, grw = gate_reconcile(bundle)
     sections = [
         ("gate①openapi", g1f, g1w, []),
         ("gate②schema ", g2f, g2w, []),
@@ -672,6 +706,7 @@ def check_bundle(bundle):
         ("gateⓅpending同步", gpf, gpw, gpi),
         ("gateⓈstatus安全", gsf, gsw, []),
         ("gateⒺ錯誤碼承載", gef, gew, gei),
+        ("gateⓇreconcile", grf, grw, []),
     ]
     for name, fails, warns, infos in sections:
         status = "FAIL" if fails else "PASS"

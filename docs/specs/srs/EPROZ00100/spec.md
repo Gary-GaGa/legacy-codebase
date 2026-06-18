@@ -106,6 +106,17 @@
 - **prompt 端點 method（GET vs POST）**——受 redistribution 去留（TBD-002）牽動：保留 side effect→POST（REQ-001-05）；移除→可 GET。SRS 暫定 POST、待 TBD-002。
 - **`clearSession` method**——PRD `clearSession=DELETE`（§6），SRS 改 **POST**（`epl-*` RPC 慣例用 POST、非 REST DELETE）；屬慣例對齊、非遺漏（N1）。
 
+## 新舊 DB 對照 / 更動 delta（reconcile）
+> ⚠️ **本 bundle 在規劃 repo 產出、搆不到 local `docs/db-schema/`+`docs/refactor/`**（兩夾 local-only、母資料夾才有）→ 逐欄 delta 標「**待母資料夾 Codex 複核**」；下列為從 repo 內 findings/decisions/as-is 碼可確認的**已知 delta**，三判 tag 見 `process/legacy-parity-sop.md`。**dev host 上 Codex 重跑時須把「待複核」各列換成實 delta（db-schema 行/refactor 段+三判），不得只留 disclaim 即標 Approved**（gateⓇ 段已在；內容真確性＝spec-reviewer 紅旗⑥）。
+
+| 項 | 來源 | delta | 三判 |
+|---|---|---|---|
+| `langType` 退出資料 WHERE | `done/00100-todo-fix.md`／`decisions` i18n 列 | 舊把 `LOAN_TYPE_LANG_TYPE` 當資料過濾（zh_TW→0=regression）→ 退出 WHERE、多語系欄 LEFT JOIN+fallback（`bbbaa19`/`7e1f0d2`）| **(a) regression 修回**（R4）|
+| `CASE_PROGRESS` 長度 | `VMainBorrowerInfoEntity:50`（as-is 碼坐實）| 新 entity `VARCHAR2(5)`；schema.sql 已對齊 | **(c) DB 對齊**（schema 以新為準）|
+| `APPLICATION_NO`/`OTH_REASON` 等欄長 | **待 `docs/db-schema/02_tables/TB_*.md`** | schema.sql 長度（30/100…）＝SA 草案、待對新 snapshot 精度/長度核 | 待母資料夾複核 |
+| refactor baseline「更動後需求」delta | **待 `docs/refactor/`**（funcId `EPROZ00100` / `epl-*`）| 新 PRD ⟷ 00100 refactor latest 的 delta（含 API 欄位表 maxlength/必要）未取（dev host 才有）| 待母資料夾複核 |
+| 既有決策約束 | `decisions`/`pending-register` | 本頁無既有撥貸/精度/KHR 類已裁約束牽涉（00100＝z0 待辦頁）| —（無約束衝突）|
+
 ## Traceability Matrix（PRD REQ → Rn → QA）
 | PRD REQ | Rn | QA covers |
 |---|---|---|

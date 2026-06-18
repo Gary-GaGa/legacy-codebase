@@ -2,7 +2,7 @@
 
 > flow 第 ③ 層（分層見 [`../README.md`](../README.md)、方法論見 [`../../spec-architecture.md`](../../spec-architecture.md)）。
 > **一個 story/page = 一束 artifacts**，全靠同一個 ID（funcId，如 `EPROZ00800`）串起來，讓 RD agent 能**機器證明**自己通過 SA/QA 邊界。
-> Worked example：~~`EPROZ00800/`~~ —— **v0.9 已封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)）；spec 層重置，待新 Bible v1.1 + 新版 PRD **重產**。新 bundle 產出前範本暫缺；結構/閘門對照見下，流程見 [`../../build-tasks/prd-to-srs-codex-dispatch.md`](../../build-tasks/prd-to-srs-codex-dispatch.md)。
+> Worked example：**`EPROZ00100/`**（v0.2：機械閘門綠、spec-reviewer 無 Blocker、In Review＝現成可照抄的活範本）；~~`EPROZ00800/`~~ **v0.9 已封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)，待新 Bible v1.1＋新 PRD 重產）。結構/閘門對照見下，流程見 [`../../build-tasks/prd-to-srs-codex-dispatch.md`](../../build-tasks/prd-to-srs-codex-dispatch.md)。
 
 ## 結構
 ```
@@ -33,7 +33,7 @@
 | ⑤ 覆蓋率：ID 對表 | gate⑤：Rn↔QA covers / 懸空引用 / **分支覆蓋自承不完整=warn**（2026-06-16）|
 | ⑥ Build 綠 | —（牆上 ⑥；腳本無同號項，撞號已消除）|
 | ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與牆上 ⑦ 混）|
-| —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、**gateⓈ** Status↔安全/雙軸〔(a) Approved+`BPn-PENDING`=warn；(b) Status 未分「規格定版/實作完成」=warn——批判輪1/輪2 2026-06-16〕、**gateⒺ** 錯誤碼承載〔PRD Error 表→spec/openapi 漏承載=warn、HTTP status 不一致=warn——批判輪3 2026-06-16，源 SR-B1/B2〕、xfile 跨檔、doc-paths |
+| —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、**gateⓈ** Status↔安全/雙軸〔(a) Approved+`BPn-PENDING`=warn；(b) Status 未分「規格定版/實作完成」=warn——批判輪1/輪2 2026-06-16〕、**gateⒺ** 錯誤碼承載〔PRD Error 表→spec/openapi 漏承載=warn、HTTP status 不一致=warn——批判輪3 2026-06-16，源 SR-B1/B2〕、**gateⓇ** reconcile 承載〔spec.md 須有『新舊 DB 對照/更動 delta』段否則 warn——防規模化靜默跳過 db-schema/refactor reconcile，2026-06-18；段內容真確＝spec-reviewer 紅旗⑥〕、xfile 跨檔、doc-paths |
 
 ## 與 vision 的關係
 boundary bundle 是把閘門 ①/②/④/⑤ 從「文件 + 延後」升級成「迴圈內可跑」的路徑（`../../process/vision-pipeline.md` §8 漸進落地）——**不必一次到位**，先一頁跑通再放大。

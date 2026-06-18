@@ -90,7 +90,7 @@ flowchart LR
 
 | 概念 | 檔案 |
 |---|---|
-| SRS bundle（範本/實例） | ~~`docs/specs/srs/EPROZ00800/`~~ **v0.9 已封存**（`docs/archive/EPROZ00800-v0.9-superseded/srs/{spec,openapi,schema,qa-cases}`，2026-06-17；範本暫缺待重產）。分層資料夾＝`docs/specs/`：bible→prd→srs |
+| SRS bundle（範本/實例） | **`docs/specs/srs/EPROZ00100/`**（v0.2 現成範本：機械閘門綠/In Review）；~~`EPROZ00800/`~~ **v0.9 已封存**（`docs/archive/EPROZ00800-v0.9-superseded/srs/{spec,openapi,schema,qa-cases}`，2026-06-17，待重產）。分層資料夾＝`docs/specs/`：bible→prd→srs |
 | 設計規格慣例 | `frontend/AGENTS.md §5`（Adobe XD） |
 | 機械閘門 | `scripts/check-srs-bundle.py`（①②⑤）、`scripts/verify-c0.py` |
 | 語意審查 | `.claude/agents/spec-reviewer.md`（Codex：`docs/env/codex/spec-reviewer.toml`） |
