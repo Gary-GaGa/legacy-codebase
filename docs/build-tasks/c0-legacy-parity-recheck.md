@@ -4,8 +4,8 @@
 > **判準＝`docs/process/legacy-parity-sop.md`**（舊系統為主 + 三判）。逐頁 disposition 回填 `refactor-audit/per-page-reinventory-matrix.md` 的 `parity vs 舊` / `disposition` 兩欄。
 >
 > **為何 reopen（整條企金線同病）**：
-> - **c0 評分線（00110–00120）**＝當初只對**個金 i0** 鏡像 audit、未對舊企金 c0 行為比（`decisions.md` 0921「撥貸收斂後評估補比」）。
-> - **CSU 主流程（0110–0173）**＝Phase G 由**鏡像個金 ISU twin** 補建（`decisions.md` CSU0130「案件編輯子頁鏡像 twin」）、同樣**未對舊企金 cs/cu 驗**。
+> - **c0 評分線（00110–00120）**＝當初只對**個金 i0** 鏡像 audit、未對舊企金 c0 行為比（`archive/decisions-2026H1-disbursement.md` 0921「撥貸收斂後評估補比」）。
+> - **CSU 主流程（0110–0173）**＝Phase G 由**鏡像個金 ISU twin** 補建（`archive/decisions-2026H1-c0-audit.md` CSU0130「案件編輯子頁鏡像 twin」）、同樣**未對舊企金 cs/cu 驗**。
 > - 兩者都是「對個金像、未對舊企金忠實」→ **企金線整體**是 parity 系統性缺口（per-page 矩陣坐實）。撥貸已 06-17 收斂 → 補比到期。
 
 ## 目的

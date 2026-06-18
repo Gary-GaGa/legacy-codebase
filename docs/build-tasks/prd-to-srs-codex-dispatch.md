@@ -81,7 +81,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
         已知缺＝**`EPROC00119`/`EPROC00120`**（與企金線 T1 風險一致；⚠️ risk-tier T1 先跑頁是 `EPROC00118`，與此 refactor 缺頁 `EPROC00119` **只差一碼、不同維度，勿混**）；額外有＝`EPROCSU0140`/`EPROZ00420`/**`EPROZ0B001-0B007`（批次，
         撥貸批次層 AUD-10 B001-B008 可取為 as-is）**/COMMON/FUNCTION。
    C. 我方既有裁定/約束（repo，勿 re-litigate）：
-      - `docs/decisions.md`（已裁：AUD-6 精度 keep-new、A-5 KHR 收窄、T24 照舊、頁合併 CS/CU→CSU…）
+      - `docs/decisions.md`＋`docs/archive/decisions-2026H1-disbursement.md`（已裁：AUD-6 精度 keep-new〔decisions〕、A-5 KHR 收窄/T24 照舊〔disbursement archive〕、頁合併 CS/CU→CSU…）
       - `docs/pending-register.md`（該頁開著的 @PENDING/escalation）
       - `docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md`（該頁 disposition）
       - `docs/disbursement/disbursement-domain-escalations.md`+`disbursement-triage.md`（撥貸頁）

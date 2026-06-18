@@ -105,10 +105,10 @@
 | EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`（`39e95dd`；**calc 保留接上**）；授權列；🚩 2 escalation；**SRS 全清重跑中（待母資料夾重產）** |
 | EPROC00119 | Financial Statement FI | ✅ | ✅ | ✅ F-8 已修（`6919da5`，options 接 `epl-sele-c0-financial-statement-comments`）；**Phase V 必驗**：下拉有值+save 帶值+GI-sele 對 FI（businessType F）無分支影響；授權列；export 模板沿用 i0？|
 | EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`（info 留 isQuery、save 送 applicationNo/isFinish/financialList + cetOne/totalCapitalRatio）；i0 FI 有 list 但頁不消費 options → `getMenu()`回`of({})`不接；**未接 `-staff-fi`/funcIsStaffLoan**（cleanup）；BOM/build 過。授權列 |
-> **範本＝i0 `individual/credit-investigation`**：容器 component 動態載 tab（`epl-*-i0-credit-investigation-tab`、`creditInvestigationNav()` config、`CreditInvestigationPageCode` enum）、各子頁 `components/<name>/{component,services}`。c0 照此鏡像、改 `-c0-` endpoint + corporate DTO。
+> **範本＝i0 `individual/credit-investigation`**（容器動態載 tab、各子頁 `components/<name>/{component,services}`；c0 鏡像、改 `-c0-` endpoint + corporate DTO）。
 > ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。
 > ⚠️ audit（06-11）：舊源有 `EPROC0_0211/0213`（展期限定 FinEvalTable/Scorecard），新系統 FE/BE 全無→**AUD-2 待裁**（是否由 00116-00120 涵蓋；`refactor-audit/M7a-c0-00110-00115.md`）。
-> **進度**：✅ Step 1 容器 + 00115 pilot；✅ Step 2 八子頁齊（**Phase F 收工 2026-06-09**；各頁 commit/calc 註記見上表列、過程見 `build-tasks/done/phase-f-*`）。✅ `00117`/`00120`＝business-only（**決策 B**，對舊 source 驗畢、非 regression——證據/裁決全文見 `decisions.md`；staff 端點 cleanup 已清 `dcd9602`）。⚠️ **watch（Phase V）**：① calc 逐頁不同——00118/00116/00119 有 calc 要保留接上、00112/00114 無（已隱），勿誤套 ② 真元件就緒後實跑 G/F 切換 ③ 整合測確認 00112 totals / 00114 rating 唯讀語意與 BE 一致。
+> **進度**：✅ Phase F 收工（容器+8 子頁，2026-06-09；過程 `build-tasks/done/phase-f-*`）；✅ `00117`/`00120`＝business-only（決策 B，證據見 `archive/decisions-2026H1-c0-audit.md`）。⚠️ **watch（Phase V）**：① calc 逐頁不同（00118/00116/00119 有、00112/00114 無已隱，勿誤套）② 實跑 G/F 切換 ③ 00112 totals / 00114 rating 唯讀語意對 BE。
 
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
@@ -170,7 +170,7 @@
 - **剩（非 coding）**：納入 Phase V 整合驗證 + c0 新 endpoint 授權列（見 ⑥）；staff 端點 cleanup（見 ⑨）。
 
 **①b ✅ 企金主流程 FE 後半段（Phase G 全收口 06-15；audit F-1/DIFF-001；owner：前端）**
-- 原況：六頁＋3 popup（0174/0175/0261）FE 全缺；BE `Csu*Controller` 全在。**G1（0160+0261，`809d25d`）/G2（0150 三 tab，`14b254e`）/G3（0170+0174/0175，`646e178`）/G4（0171，`8badefc`）/G5（0172，`0ff2140`）/G6（0173，`4429551`）全 ✅、審過、build 綠、BE 零改。**
+- 原況：六頁＋3 popup（0174/0175/0261）FE 全缺、BE `Csu*Controller` 全在 → **G1–G6 全 ✅**（0160+0261/0150/0170+popup/0171/0172/0173；審過、build 綠、BE 零改；各 commit 見 §2B 各列）。
 - 卡已歸檔 `build-tasks/done/phase-g-csu-mainflow-fe.md`。**殘留＝Phase V runtime 待測**（見 `verification-handoff §6` V-2／本卡 §2B 各列）＋檔案 upload/download 無 CSU route（暫緩 track）＋XD 設計走查共通項。
 
 **② 整合驗證（owner：dev/uat 整合測試）— 量大、非補碼**
@@ -205,7 +205,7 @@
 
 - 🟡 **命名 tech-debt（06-12 快檢記錄）**：`epl-comm-isu-update-total-amount`（+class/DTO）實為 case-type 無關（計算不落 DB；LDTC 副作用被 `LON_ATTRIBUTE='I'` gate 限定），corporate 沿用安全——rename 低優先、閒時清。
 
-**⑩ audit 修復包（2026-06-11；owner：前後端）**：✅ 已修×5（`00660`/`00100`/`00119` `5a47038`/`2599752`/`6919da5`，06-11；**`00640` PDF `c1bda77`、`00300` FE 導回 `40d931c`，06-15**，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ **BIBLE-GAP recon 完成（AUD-5 關 06-15）**；待裁＝AUD-2/3/4/7/8/11（AUD-1/5/6/9/**10** 已關，AUD-10 批次層 06-16 結＝§2F）。
+**⑩ audit 修復包（2026-06-11）**：✅ 已修×7（00660/00100/00119/00640/00300，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ BIBLE-GAP recon（AUD-5 關 06-15）；**待裁＝AUD-2/3/4/7/8/11**（AUD-1/5/6/9/10 已關）。
 
 ---
 
