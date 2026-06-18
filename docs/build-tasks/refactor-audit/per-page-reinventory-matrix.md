@@ -128,7 +128,7 @@
 
 | funcId | risk | prd（`docs/specs/prd/`）| status | srs（`docs/specs/srs/`）|
 |---|---|---|---|---|
-| `EPROZ00100` | z0/示範 | —（全清重跑、待重放）| not-started | — |
+| `EPROZ00100` | z0 共用 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md` | in-review | `docs/specs/srs/EPROZ00100/` |
 | `EPROC00118` | T1 企金線 | —（全清重跑、待重放）| not-started | — |
 | `EPROC00120` | T1 企金線 | — | not-started | — |
 | `EPROCSU0170` | T1 企金線 | — | not-started | — |

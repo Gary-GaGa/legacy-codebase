@@ -1,0 +1,399 @@
+openapi: 3.0.3
+info:
+  title: EPROZ00100 TO DO LIST
+  version: 0.3.0-draft
+  description: RPC-style SRS contract for EPROZ00100. Pending decisions are documented in spec.md.
+paths:
+  /epl-comm-todolist-prompt:
+    post:
+      summary: Candidate prompt operation pending TBD-002
+      description: Candidate POST contract only. TBD-002 must decide whether prompt keeps CA/CR redistribution side effects and therefore finalizes this method/operation.
+      x-srs-pending: TBD-002
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PromptResponse'
+        '403':
+          description: E998 authentication or authorization failure
+        '500':
+          description: REDISTRIBUTION_FAILED / E999 when TBD-002 keeps redistribution and it fails
+  /epl-list-todolist:
+    post:
+      summary: Query work-list for normal and CAD roles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToDoListRequest'
+      responses:
+        '200':
+          description: 0000 success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToDoListResponse'
+        '400':
+          description: E102 / INVALID_CAD_QUERY_CONDITION
+        '403':
+          description: E998 authentication or authorization failure
+        '500':
+          description: E999 / MSG_QUERY_FAIL / MSG_OVER_COUNT_LIMIT
+  /epl-comm-field-options:
+    post:
+      summary: Load DEL_REASON or CLO_REASON options
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldOptionsRequest'
+      responses:
+        '200':
+          description: 0000 success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FieldOptionsResponse'
+        '400':
+          description: E102 missing msgCode or langType
+        '403':
+          description: E998 authentication failure
+        '500':
+          description: E999 / MSG_QUERY_FAIL
+  /epl-case-insert-delreason:
+    post:
+      summary: Delete case and persist delete reason
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteRequest'
+      responses:
+        '200':
+          description: 0000 success
+        '400':
+          description: E102 / MISSING_APPLICATION_NO / MISSING_REASON / MISSING_OTHER_REASON
+        '403':
+          description: E998 / FORBIDDEN_ACTION
+        '500':
+          description: E999 rollback failure
+  /epl-case-insert-cloreason:
+    post:
+      summary: Close CAD case and persist close reason
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloseRequest'
+      responses:
+        '200':
+          description: 0000 success
+        '400':
+          description: E102 / MISSING_APPLICATION_NO / MISSING_REASON / MISSING_OTHER_REASON
+        '403':
+          description: E998 / FORBIDDEN_ACTION
+        '500':
+          description: E999 rollback failure
+  /epl-file-todolist-download:
+    post:
+      summary: Dispatch proposal download by type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadRequest'
+      responses:
+        '200':
+          description: 0000 success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadResponse'
+        '400':
+          description: E102 / MISSING_APPLICATION_NO / INVALID_TYPE
+        '403':
+          description: E998 / FORBIDDEN_ACTION
+        '500':
+          description: E999 / DOWNLOAD_FAILED
+  /epl-comm-todolist-setsession:
+    post:
+      summary: Set current application context
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionRequest'
+      responses:
+        '200':
+          description: 0000 success
+        '400':
+          description: E102 / MISSING_APPLICATION_NO
+        '403':
+          description: E998 authentication or authorization failure
+        '500':
+          description: E999 / COMMON_MSG_SET_SESSION_FAIL
+  /epl-comm-todolist-clearsession:
+    post:
+      summary: Clear current application context
+      responses:
+        '200':
+          description: 0000 success
+        '403':
+          description: E998 authentication or authorization failure
+        '500':
+          description: E999 / COMMON_MSG_SET_SESSION_FAIL
+components:
+  schemas:
+    ApiResult:
+      type: object
+      required: [code, message, data]
+      properties:
+        code:
+          type: string
+          maxLength: 30
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: object
+    PromptResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResult'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                isAO:
+                  type: boolean
+                role:
+                  type: string
+                  maxLength: 3
+                isCA:
+                  type: boolean
+                isCRCOSCO:
+                  type: boolean
+                isCOSCO:
+                  type: boolean
+                isCADMERCER:
+                  type: boolean
+    ToDoListRequest:
+      type: object
+      required: [page, size, langType]
+      properties:
+        page:
+          type: integer
+          minimum: 1
+          maximum: 99999
+        size:
+          type: integer
+          minimum: 1
+          maximum: 200
+        langType:
+          type: string
+          maxLength: 10
+          enum: [zh_TW, en_US]
+        applicationNo:
+          type: string
+          maxLength: 30
+        approvalDateStart:
+          type: string
+          maxLength: 10
+          description: DD/MM/YYYY
+        approvalDateEnd:
+          type: string
+          maxLength: 10
+          description: DD/MM/YYYY
+        mainBorrowerName:
+          type: string
+          maxLength: 100
+        docNo:
+          type: string
+          maxLength: 20
+        lonTypeCode:
+          type: string
+          maxLength: 5
+        caseProgress:
+          type: string
+          maxLength: 5
+    ToDoListResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResult'
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [totalCount, toDoList]
+              properties:
+                totalCount:
+                  type: integer
+                toDoList:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ToDoListItem'
+    ToDoListItem:
+      type: object
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        receivedDate:
+          type: string
+        applicationDate:
+          type: string
+        approvalDate:
+          type: string
+        decisionDateDisplay:
+          type: string
+          maxLength: 10
+          description: CAD decision date display.
+        approvalLevelDisplay:
+          type: string
+          maxLength: 50
+          description: CAD approval level display.
+        lonTypeCode:
+          type: string
+          maxLength: 5
+        loanName:
+          type: string
+          maxLength: 200
+        productName:
+          type: string
+          maxLength: 50
+        mainBorrowerName:
+          type: string
+          maxLength: 100
+        borrowerName:
+          type: string
+          maxLength: 100
+          description: CAD borrower-name display when different from mainBorrowerName.
+        salesChannel:
+          type: string
+          maxLength: 50
+        caseProgress:
+          type: string
+          maxLength: 5
+        appProcessName:
+          type: string
+          maxLength: 200
+        docNo1:
+          type: string
+          maxLength: 30
+        relatedParty:
+          type: string
+          enum: [Y, N]
+        usdSumLoanAmount:
+          type: string
+          maxLength: 20
+          pattern: '^-?\d{1,17}(\.\d{1,2})?$'
+          description: Sum of USD LOAN_AMOUNT values; preserves DB NUMBER(17,2) scale and must not be truncated.
+        khrSumLoanAmount:
+          type: string
+          maxLength: 20
+          pattern: '^-?\d{1,17}(\.\d{1,2})?$'
+          description: Sum of KHR LOAN_AMOUNT values; API preserves DB NUMBER(17,2) scale. Any UI zero-decimal KHR display must not alter this value.
+        page:
+          type: string
+          maxLength: 30
+    FieldOptionsRequest:
+      type: object
+      required: [msgCode, langType, isPopOrApproved]
+      properties:
+        msgCode:
+          type: string
+          maxLength: 30
+          enum: [DEL_REASON, CLO_REASON]
+        langType:
+          type: string
+          maxLength: 10
+        applicationNo:
+          type: string
+          maxLength: 30
+        isPopOrApproved:
+          type: boolean
+    FieldOptionsResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResult'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  value:
+                    type: string
+                    maxLength: 50
+                  label:
+                    type: string
+                    maxLength: 200
+    DeleteRequest:
+      type: object
+      required: [applicationNo, reasonCode]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        reasonCode:
+          type: string
+          maxLength: 100
+          description: Semicolon-delimited DEL_REASON codes.
+        othReason:
+          type: string
+          maxLength: 100
+    CloseRequest:
+      type: object
+      required: [applicationNo, caseProgress, reasonCode]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        caseProgress:
+          type: string
+          maxLength: 5
+        reasonCode:
+          type: string
+          maxLength: 100
+          description: Semicolon-delimited CLO_REASON codes.
+        othReason:
+          type: string
+          maxLength: 100
+    DownloadRequest:
+      type: object
+      required: [applicationNo, type]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        type:
+          type: string
+          enum: [CS, CU, IS, IU]
+    DownloadResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResult'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                encryptTempFileFullPath:
+                  type: string
+                  description: Pending TBD-006; to-be may become token.
+    SessionRequest:
+      type: object
+      required: [applicationNo]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        action:
+          type: string
+          maxLength: 30
