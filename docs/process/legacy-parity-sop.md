@@ -3,6 +3,7 @@
 > **狀態**：standing SOP，owner 立 2026-06-17。**重構期遇「新≠舊」一律照本準則處置。**
 > **怎麼來的**：owner 與團隊比對「已完成項」發現落差，成因＝①畫面/模組縮編②以舊為基礎+調整（如 T24）③新 DB 變動。owner 定調「**直接以舊系統為主，遇 DB 不同先按頁登記、再判調整需求、再確定樣板**」；本 SOP ＝該方針 + 本 repo 既有教訓的防呆。
 > **單一出處**：方針權威＝本檔；個案裁定＝`decisions.md`（append-only）；待決登記＝`pending-register.md`/`escalations`；頁狀態＝`feature-inventory.md`。
+> **多來源裁準延伸**：本 SOP 聚焦「舊系統 vs 新」三判；**多來源（PRD+舊系統+db-schema+refactor）合成 SRS 的來源優先序＋DB-resolvable fact 規則＋refactor 層域規則＝`docs/spec-architecture.md §5b`**（本梯為三判的「來源版細化」、非平行制度——遇多源衝突先看 §5b）。
 > **結案即歸檔（standing）**：一束 saga 決策全結案（剩執行/UAT）後，把已結案決策列 verbatim 凍結到 `archive/decisions-YYYYHn-<topic>.md`、`decisions.md` 留一列 🗄 指標——免流水帳無限長吃 context（凍結＝搬遷非改寫；細則見 `decisions.md` header）。
 
 ## 0. 核心防呆（讀這段就好）

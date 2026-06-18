@@ -18,7 +18,7 @@ model: opus
 4. **可測試性** — 每條 `Rn` 是否 ≥1 個 QA case `covers:`；acceptance 用 Given/When/Then；`@PENDING` 的 case 是否標明（TBD 關閉前不計入 gate⑤）。
 5. **可追溯性** — `Rn` 是否 `covers-prd:` 到 PRD REQ（上）、QA 是否 `covers: Rn`（下）；funcId backbone 是否串到底；**Traceability Matrix 是否完整**。
 6. **可平行性** — rule/模組邊界是否清楚，能否拆給多 agent 平行實作。
-7. **邊界契約（DoD 閘門 ①②③）** — endpoints 是否為**真實 `epl-*`**（非 PRD 理想化 REST）、method 符語意（mutate=POST）；`openapi.yaml`/`schema.sql` 是否齊且與 `Rn` 一致。
+7. **邊界契約（語意審 ①②契約/schema 層；機械＝`check-srs-bundle` ①②⑤，③verify-c0 屬 c0 鏡像、非本職）** — endpoints 是否為**真實 `epl-*`**（非 PRD 理想化 REST）、method 符語意（mutate=POST）；`openapi.yaml`/`schema.sql` 是否齊且與 `Rn` 一致。
 
 ## 逐檔深審 checklist（語意層；機械層交 `scripts/check-srs-bundle.py`）
 > 這些是**判斷題**——腳本驗不出，正是你的價值。逐檔對照：

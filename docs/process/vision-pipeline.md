@@ -68,6 +68,7 @@ EPROC00118/
 - **不舒服但要講**：vision 的支點（可執行邊界）**正是目前 30% 專案刻意 punt 掉的**（靠「build 綠 + 之後人工整合」，而 runbook 自己寫「build 綠 ≠ 正確」）。往 vision 走 = 把 1/2/4/5 從「文件 + 延後」升級成「迴圈內可跑」。
 
 ## 8. 漸進落地（別一次到位）
+> **現況（2026-06-18）**：本節＝**product-repo code 階段**邊界閘門（springdoc／Testcontainers／build）的漸進計畫，與**已落地的 SRS 階段**機械閘門（`check-srs-bundle` ①②⑤＋字母，spec repo）**不同層**；SRS 軌已過 pilot（00118 跑通）。code 階段閘門 1/4/5 仍按下列漸進，實時進度見 `docs/STATUS.md`。
 > 具體 plumbing 做法（含真正的前置摩擦：壞 baseline 測試 / Oracle native SQL / JWT / Nexus image）見
 > [`build-tasks/done/B-boundary-gate-plumbing.md`](../build-tasks/done/B-boundary-gate-plumbing.md)。
 1. **先接閘門 1**：springdoc 生 OpenAPI + snapshot test（配既有 controller）。

@@ -17,7 +17,7 @@
 |---|---|---|---|---|
 | **Legacy → Bible**（反推·知識萃取） | EPRO Expert 反推舊系統 | **`.claude/skills/legacy-to-bible/`** ∥ `docs/env/codex/prompts/legacy-to-bible.md` | 產 `specs/bible/bible-<domain>.md`；原料＝[`legacy/`](legacy/)（module-*/page-mapping/migration-backlog/db-schema-catalog）、`decisions.md §D1` | — |
 | **PRD**（what/why） | PM/PO 寫需求 | `/product-brainstorming`、`/write-spec`（官方 plugin，雙軌同） | **PRD 在 repo 外**（如 `CDC-EPRO-0001`）；流程見 `CLAUDE.md §3` | — |
-| **SRS**（how） | SA 轉系統規格 | **`.claude/skills/prd-to-srs/SKILL.md`** ∥ `docs/env/codex/prompts/prd-to-srs.md` | **`specs/srs/<funcId>/`**：`spec.md`(Rn)・`openapi.yaml`・`schema.sql`；方法論 `spec-architecture.md`；重大取捨 `adr/ADR-*.md` | ①②③ |
+| **SRS**（how） | SA 轉系統規格 | **`.claude/skills/prd-to-srs/SKILL.md`** ∥ `docs/env/codex/prompts/prd-to-srs.md` | **`specs/srs/<funcId>/`**：`spec.md`(Rn)・`openapi.yaml`・`schema.sql`；方法論 `spec-architecture.md`；重大取捨 `adr/ADR-*.md` | ①②⑤（+字母 Ⓑ/Ⓟ/Ⓢ/Ⓔ/Ⓡ；③④⑥ code 階段，見 `specs/srs/README.md §閘門編號對照`）|
 | **as-is 驗證**（brownfield loop） | 驗 migrated 碼 vs 舊系統/PRD | 唯讀 audit 任務單 | `build-tasks/<funcId>-verification-findings.md`（如 `00800-verification-findings.md`）、`build-tasks/*-investigation.md` | — |
 | **QA cases** | QA 轉可跑驗收 | （隨 SRS） | `specs/srs/<funcId>/qa-cases.md`（每條 `covers: Rn`） | ④⑤ |
 | **RD-Agent**（開發+測試） | Codex 照任務單實作 | Codex（母資料夾） | **產品碼在 repo 外**；in-repo＝**任務單** `build-tasks/*.md`（live）、`build-tasks/done/`（歷史 22 份） | ⑥ |

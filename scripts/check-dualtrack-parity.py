@@ -35,6 +35,7 @@ ANCHORS = [
     (".codex/hooks.json", "形式硬閘門 hooks"),
     # ── 共用 canonical 參照（兩軌都指同一權威來源）──
     ("ai-workflow.mmd", "AI flow 唯一圖源"),
+    ("來源優先序", "SRS 來源優先序梯/升級觸發（內容權威＝spec-architecture §5b）"),
     ("check-srs-bundle.py", "SRS 機械閘門（雙軌共用、涵蓋範圍以檔頭為準）"),
     ("feature-inventory.md", "狀態 SSOT"),
     ("spec-reviewer", "唯讀語意審角色"),
