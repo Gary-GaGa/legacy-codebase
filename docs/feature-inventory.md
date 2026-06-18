@@ -12,7 +12,7 @@
 - ⏸ **暫緩 track**（R2 報表服務 / 檔案 API / CBC R8——刻意延後、非遺漏）
 - ❓ **待 cross-check**（推定既有，未實證；開做前先唯讀盤點）
 
-**全局結論（zero-based audit 後更新 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列基線＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND；**06-15 校正後＝~133 碼在(80%)**（G1–G6＋修復落地）。真缺口＝🟠 **撥貸**（**A-1 換匯 stub ✅ 已實作 `daae4c3` 06-16**；剩 T24 正確性 domain-gated + **批次層 B001–B008 待碼驗** F-OWN-1 + A-1 spec-conformance 確認）。✅ **企金主流程 FE 後半段 Phase G 全收口（G1–G6，06-15）**＝0150/0160/0170/0171/0172/0173＋0261/0174/0175 三 popup（Phase V runtime 待測）。已收口：c0 評分 FE（Phase F）、i0 全模組（audit 22/22）。剩 UNFOUND 多為 M9 雜項群（AUD-3/4 待裁）；0140/0240 家族 AUD-1 ✅已關（06-16 owner 盤點＝已無使用）；批次層 AUD-10 ✅已關（06-16，§2F）；另待裁 AUD-2/3/4/7/8/11。
+**全局結論（zero-based audit 2026-06-11；總量表＝`build-tasks/refactor-audit/diff-vs-inventory.md`）**：166 audit 列基線＝116 碼在(70%)/11🟡/2🚫/37 UNFOUND → **06-15 校正後 ~133 碼在(80%)**（Phase F/G＋修復落地）。**已收口**：企金主流程 FE 後半段（Phase G G1–G6，§2B）、c0 評分 FE（Phase F，§2D）、i0 全模組（audit 22/22）。**真缺口＝🟠 撥貸**（A-1 換匯 stub ✅ 已實作；剩 T24 正確性 domain-gated＋批次層碼驗＋conformance，詳 §2F）。**待裁＝AUD-2/3/4/7/8/11**（AUD-1/5/6/9/10 已關）；UNFOUND 多為 M9 雜項（AUD-3/4）。
 
 **三層結構**（避免把「模組」當「單頁」）：① 模組流程（M1–M9）② 流程頁（外層 pageMap 頁籤）③ 頁內區塊（內層 tab）。遷移單位＝模組流程。
 
@@ -65,12 +65,12 @@
 | EPROCSU0110 | CS/CU 0110+0210 | Main Borrower（單 tab）| ✅ | ✅ | 🟡 驗證 |
 | EPROCSU0120 | 0120+0220 | Co-Borrower | ✅ | ✅ | 🟡 驗證 |
 | EPROCSU0130 | 0130+0230 | Guarantor | ✅ | ✅ | **✅ 2026-06-05 收尾（ng build 綠）** |
-| EPROCSU0150 | 0150+0250 | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| ✅ | ✅ | **FE 補建 G2 ✅ 06-12**（`14b254e`，三 mat-tab 照舊 cs 結構）；⏸ 檔案 API（上傳區守現狀）；Phase V 待測 |
-| EPROCSU0160 | 0160+0260 | Loan Condition（+0261 popup）| ✅ | ✅ | **FE 補建 G1 ✅ 06-12**（`809d25d`，pilot；0261 CSU popup 變體、ISU 零修改）；Phase V 待測 |
-| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | **FE 補建 G3 ✅ 06-12**（`646e178`；return dialog `endpointConfig` 參數化＋cancel CSU 變體、ISU 零 diff、build 綠）；Phase V 待測（含 ❓ 審批段細節(B1)、CSU download route 無）|
-| EPROCSU0171 | 0171 | Loan Committee Conclusion | ✅ | ✅ | **FE 補建 G4 ✅ 06-15**（`8badefc`；接 `epl-sele/info/save-csu-loan-committee`＋CSU save mapper、build 綠）；Phase V 待測（檔案 upload/download 無 CSU route＝現狀）|
-| EPROCSU0172 | 0172 | Approved Loan Condition | ✅ | ✅ | **FE 補建 G5 ✅ 06-15**（`0ff2140`；接 `epl-info-csu-app-loan-cond`、列印/下載鏡像 ISU 現狀）；⏸ 列印 R2；Phase V 待測 |
-| EPROCSU0173 | 0173 | Credit Evaluation Old | ✅ | ✅ | **FE 補建 G6 ✅ 06-15**（`4429551`；接 `epl-info-csu-cr-eval-old`、build 綠）；Phase V 待測 |
+| EPROCSU0150 | 0150+0250 | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| ✅ | ✅ | ✅ FE 補建 G2（`14b254e`）；⏸ 檔案 API；Phase V 待測 |
+| EPROCSU0160 | 0160+0260 | Loan Condition（+0261 popup）| ✅ | ✅ | ✅ FE 補建 G1（`809d25d`，pilot；+0261 popup）；Phase V 待測 |
+| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | ✅ FE 補建 G3（`646e178`；+0174/0175 popup）；Phase V 待測（❓ 審批段細節 B1、CSU download route 無）|
+| EPROCSU0171 | 0171 | Loan Committee Conclusion | ✅ | ✅ | ✅ FE 補建 G4（`8badefc`）；Phase V 待測（檔案 upload/download 無 CSU route）|
+| EPROCSU0172 | 0172 | Approved Loan Condition | ✅ | ✅ | ✅ FE 補建 G5（`0ff2140`）；⏸ 列印 R2；Phase V 待測 |
+| EPROCSU0173 | 0173 | Credit Evaluation Old | ✅ | ✅ | ✅ FE 補建 G6（`4429551`）；Phase V 待測 |
 | ~~CS 0240~~ | CS 0240 | 公司核心資料（舊 cs 0200 端）| — | — | **不開發**：2026-06-06 owner 確認新系統無使用（舊有、未遷移）|
 | CAD 報表 | CS/CU 0181 | TLOD(CAD)→ 共用 `EPROISU0181` | ⏸ | ⏸ | ⏸ R2 |
 > 不開發：`EPROCS_0240` 公司核心資料（✅ 2026-06-06 確認新系統無使用、舊有未遷移）、`EPROIS_0140` Property Info；待確認 `EPROC0_0211/0213`（流程無對應頁籤）。
