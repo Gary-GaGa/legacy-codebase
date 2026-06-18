@@ -6,7 +6,7 @@
 > 標 `TODO` 之處尚待確認——遇到時**先詢問或保守處理，切勿臆造**。
 
 ## 0. 專案目標
-全端（Java 8 + JSP）→ 前後端分離：**後端 Java 17 + Spring Boot 3.x**、**前端 Angular 14.x**。
+全端（Java 8 + JSP）→ 前後端分離：**後端 Java 17 + Spring Boot 3.3.0**、**前端 Angular 14.x**。
 採絞殺者模式（Strangler Fig）逐頁遷移，舊 JSP 與新系統並存、可隨時上線/回退。
 
 ## 1. 🚫 硬性限制（最高優先，違反即錯）
@@ -22,7 +22,7 @@
 - 兩個 registry 都是 Nexus group（maven-public 代理 Maven Central、npm-all 代理 npmjs），故公開與私有套件皆走內網。
 
 ### 1.2 版本鎖定（不得擅自升降）
-- 後端：**Java 17、Spring Boot 3.x**。
+- 後端：**Java 17、Spring Boot 3.3.0**（具體版見 `backend/AGENTS.md §1`）。
 - 前端：**Angular 14.2.x**、TypeScript `~4.7.2`、RxJS `~7.5`、zone.js `~0.11.4`、**Node 16.20.2**、**Yarn Classic**。
 
 ## 2. 整體策略
@@ -46,7 +46,7 @@
 - **索引**：[`docs/README.md`](docs/README.md)（分類導覽，先看）。
 - **狀態 SSOT（權威）**：`docs/feature-inventory.md` — 舊→新逐頁對應 + 前後端狀態 + 剩餘事項 + 排程。任何「某頁做了沒/缺什麼」以此為準（其他文件若有出入，以本檔最新校正為主）。
 - **任務單**：`docs/build-tasks/`（進行中）；已完成歷史在 `docs/build-tasks/done/`、已消化文件在 `docs/archive/`。
-- ⚠️ 進度提醒（2026-06-06）：前端**非**全完成——**c0 評分前端（容器+8 子頁）整組缺、Phase F 鏡像 i0 補建中**；撥貸核心（換匯 stub + T24）未通。細節見 `docs/feature-inventory.md`。
+- ⚠️ 進度提醒（2026-06-06 快照；**現況以 `docs/STATUS.md`/`feature-inventory.md` 為準**）：前端**非**全完成——**c0 評分前端（容器+8 子頁）整組缺、Phase F 鏡像 i0 補建中**；撥貸核心（換匯 stub + T24）未通。細節見 `docs/feature-inventory.md`。
 
 ## Spec workflow（PRD→SRS，雙軌 Claude/Codex）
 AI workflow＝`Bible→PRD→SRS→QA→RD`（見 `docs/assets/ai-workflow.mmd`）；funcId＝追溯 slug。**Codex 側工具**（部署 `docs/env/codex/` 範本到本機/專案 `.codex/`）：
