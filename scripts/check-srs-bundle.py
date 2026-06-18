@@ -412,6 +412,8 @@ def gatex_crossfile(bundle):
     op_text = read(op) if os.path.isfile(op) else ""
 
     # 1) endpoint ↔ openapi paths：openapi 的 epl-* 路徑都要在 spec.md 提到（契約要有規則對應）
+    #    epl token 容大寫（camelCase 端點名，如 epl-quer-corporateScorecard）——否則 `[a-z0-9-]`
+    #    在大寫處截短（corporateScorecard→corporate）造成 spec↔openapi 假性不符（2026-06-18 EPROC00118 pilot）。
     opaths = set()
     try:
         import yaml
@@ -420,7 +422,7 @@ def gatex_crossfile(bundle):
             opaths = {str(p).lstrip("/") for p in (odoc.get("paths") or {})}
     except Exception:  # noqa: BLE001
         opaths = set()
-    spec_epl = set(re.findall(r"epl-[a-z0-9-]+", spec))
+    spec_epl = set(re.findall(r"epl-[A-Za-z0-9-]+", spec))
     for p in sorted(opaths):
         if p.startswith("epl-") and p not in spec_epl:
             fails.append(f"openapi 有 endpoint `{p}`，但 spec.md 全文未提（契約無對應規則？）")
