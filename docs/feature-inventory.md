@@ -134,11 +134,11 @@
 | 區 | 狀態 | 內容 |
 |---|---|---|
 | 機械修正 M1–M10 | ✅ 全結案（master） | 尾欄/submit mail/RECEIVED_DATE/C20/fee key/E 位/H 段/A52/fee-delete-FN |
-| ✅ **A-1 換匯 stub（+conformance PASS）** | **已實作＋碼驗（product `daae4c3`，06-16；mvn 綠）** | `funcGetExchangeRate` 補 return＋移尾端 throw → authorize 換匯總開關打通。**Codex 唯讀 conformance 4/4 PASS**：OQ-1 `IdNo=OVSLXLON01`(`:1181`)、OQ-3 非0000拋錯中止 authorize（碼＝專屬 `FAILED_E304`）、OQ-4 throw 勿回 null、兩表同 `@Transactional`。規格/recon 收 `done/` |
+| ✅ **A-1 換匯 stub（+conformance PASS）** | **已實作＋碼驗（product `daae4c3`，06-16；mvn 綠）** | `funcGetExchangeRate` 補 return → authorize 換匯打通；**Codex conformance 4/4 PASS**（OQ-1 `OVSLXLON01`／OQ-3 `FAILED_E304` 中止／OQ-4 throw／兩表同交易）；規格/recon `done/` |
 | 🟡 B-1 `T24_COMPANY`（06-12 降級）| **前提推翻→RD 接值** | 新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存（OVSLXLON01/02 兩 schema，DDL 實查）；entity 補映射＋B8/C9 接值 |
 | ✅ T24 B-group parity（06-17） | **code 已 commit/push（`3d6f446`，origin/master，06-17 10:41；金錢/截斷欄人審過）；剩端到端/T24 接收驗證** | B-2、B-3 非幣別欄、B-4、B-5 已照舊；`E21`、`G4`/`G10`/`H8` 依 A-5 USD+KHR-only 邊界 keep。findings：`build-tasks/t24-bgroup-legacy-parity-fix-findings.md` |
 | 🔴 其餘 domain | 未決 | 檢核嚴格度、KHR 資料約束殘小、async 架構殘語意、M6 完工日 DTO… |
-| ✅ **批次層 B001–B008** | **AUD-10 結（06-16，app 層完整）** | ✅ **6 FOUND**（新批次**重編號**≠legacy 號）：B001→新B001、B002→新B002、B003 自動結案→**新B007**、B004 暫存清理→**新B003**、B006→新B006、B007 SFTP→**新B004**＋authorize inline 上傳；✅ **B005 銷案**（backend 無 `TB_EXCHANGE_RATE` read 點→inline 換匯取代每日批次；`TB_EXCHANGE_RATE` write-only vestigial）；⚪ **B008 log 歸檔＝ops**（非 app 碼，logrotate/平台確認）|
+| ✅ **批次層 B001–B008** | **AUD-10 結（06-16，app 層完整）** | ✅ **6 FOUND**（新批次**重編號**≠legacy；B001-B007 對映見 findings）；✅ **B005 銷案**（inline 換匯取代每日批次、`TB_EXCHANGE_RATE` write-only）；⚪ **B008 log＝ops**。詳 `done/aud10-batch-layer-reverify-findings.md` |
 | 整合測確認點 | 待驗 | 〔A-1 spec-conformance ✅ PASS 06-16〕M7 facility fee 值、M9 district name join、撥貸端到端（含批次層）|
 > **完整待裁清單見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ✅ **A-1 stub 已實作（`daae4c3`）→ 機械修正不再 inert、authorize 可端到端跑**；剩撥貸真完成＝B-1 接值、T24 B-group 端到端/T24 接收驗證（code 已 push `3d6f446`）、A-4/M6 domain、批次層實測。
 
@@ -198,14 +198,14 @@
 **⑧ 已裁**：`CS 0240` → **不開發**（2026-06-06 確認新系統無使用）。
 
 **⑨ Tech-debt / ops**（✅ 靜態 sweep 三批已收齊，2026-06-09；prompt 全歸檔 `done/`）
-- ✅ **FE/BE HTTP method 不一致 sweep**（`48e687f`）：00600 search-options、00640 export PDF/Excel FE→GET 對齊 BE；00600 Phase V 已補修為 GET query 無 body；00800 init-query 列 B 待裁定（按 SRS @PENDING 不動）。
-- ✅ **map-key 大小寫 sweep**（`709f65c`）：A＝quote alias / 讀端對齊大寫（loan summary/collateral/guarantor/T24/loan-condition 等）；B/UNSURE＝SELECT * Map、無法靜態綁定者不猜。⚠️ **A 修正屬 runtime-silent 類 → Phase V 必複測**（compile 抓不到）。
+- ✅ **FE/BE method sweep**（`48e687f`）：00600/00640 FE→GET 對齊 BE；00600 Phase V 已補 GET query 無 body；00800 init-query＝@PENDING 待裁。
+- ✅ **map-key 大小寫 sweep**（`709f65c`）：讀端對齊大寫；SELECT * Map 不靜態猜。⚠️ **A 修正 runtime-silent → Phase V 必複測**（compile 抓不到）。
 - ✅ **Logback `D:\temp` 外部化**（`bbc4492`）：改 `${LOG_API_PATH:${LOG_PATH:logs}}` 等跨平台預設，appender/pattern/level 未動；連帶解掉 full `mvn clean package` 卡 D:\temp。
-- ✅ **c0 staff 端點 cleanup 已完成**（`dcd9602`，2026-06-09；prompt 已歸檔 `done/c0-staff-endpoints-cleanup.md`）：刪 `epl-info/save-c0-financial-staff` + `CsuFinancialEvaluationStaffFiController` 整檔（+ staff DTO/serviceImpl、staff option/funcIsStaffLoan 依賴）；**保留** `CsuFinancialStaffController` 的 sele(list)/business method（00117 在用）、table-fi（00120）；i0 未碰；mvn + npm build 綠。
+- ✅ **c0 staff 端點 cleanup**（`dcd9602`）：刪 staff controller/DTO/serviceImpl；**保留** 00117 用的 sele/business、00120 table-fi；i0 未碰。詳 `done/c0-staff-endpoints-cleanup.md`。
 
 - 🟡 **命名 tech-debt（06-12 快檢記錄）**：`epl-comm-isu-update-total-amount`（+class/DTO）實為 case-type 無關（計算不落 DB；LDTC 副作用被 `LON_ATTRIBUTE='I'` gate 限定），corporate 沿用安全——rename 低優先、閒時清。
 
-**⑩ audit 修復包（2026-06-11）**：✅ 已修×7（00660/00100/00119/00640/00300，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ BIBLE-GAP recon（AUD-5 關 06-15）；**待裁＝AUD-2/3/4/7/8/11**（AUD-1/5/6/9/10 已關）。
+**⑩ audit 修復包（2026-06-11）**：✅ 已修×5（00660/00100/00119/00640/00300，卡全歸檔 `done/`）；F-7（00114 鈕隱驗證）入 Phase V；✅ BIBLE-GAP recon（AUD-5 關 06-15）；**待裁＝AUD-2/3/4/7/8/11**（AUD-1/5/6/9/10 已關）。
 
 ---
 
