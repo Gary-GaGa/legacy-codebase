@@ -86,7 +86,7 @@ flowchart LR
 |---|---|---|
 | 業務意圖 / invariant（為什麼、該不該） | **Bible > PRD** | refactor/DB **不可** silently 蓋；衝突→升級（C 類） |
 | 需求驗收（REQ acceptance、本期範圍） | **PRD** | refactor 可調整、但偏離記 delta；偏離 acceptance 本身→升級 |
-| API/FE 行為與契約（長相/互動/欄位/method） | **refactor(latest) > legacy** | 預設 refactor 贏（重構後最終意圖）+ 留 `REF-Dn` + legacy delta 註（不可 silent drop） |
+| API/FE 行為與契約（長相/互動/欄位/method） | **refactor(latest) > legacy** | **先過 `legacy-parity-sop` 三判**、判為 (b) 刻意演進才 refactor 贏；非 (b)→升級。留 `REF-Dn` + legacy delta 註（不可 silent drop） |
 | 物理資料結構（表/欄/型別/長度/enum domain/PK） | **new DB snapshot（`docs/db-schema/`）> refactor doc > legacy DDL** | DB＝物理真相；refactor 文件講不到物理就不蓋；snapshot≠`schema.sql`＝真 drift→先校 schema |
 | 既有資料/字典/授權現況（fact，可查） | **new DB query（snapshot rows）** | 直接撈、**不列 `@PENDING`**；要 provenance（見 Rule 1）；與 PRD/Bible 矛盾→升級 |
 

@@ -19,7 +19,7 @@
 4. **funcId＝追溯 slug**（取代通用 slug），串 Bible→PRD→SRS→QA→code。
 
 ## Consequences
-- ＋ SRS 既可機器驗證（gate ①–⑥）又有完整敘事（NFR/trade-off/追溯）；審查 read-only、不污染。
+- ＋ SRS 既可機器驗證（gate ①–⑦，其中 ⑦ LLM 語意審查在 SRS 階段＝blocking、code 階段＝advisory；見 `spec-architecture.md §6`）又有完整敘事（NFR/trade-off/追溯）；審查 read-only、不污染。
 - ＋ Claude/Codex 任一載具都能跑同一流程。
 - －維護成本：雙軌需同步（已在 constitution 標「改一版同步另一版」）。
 - **2026-06-11 更新（repo 總體檢採納）**：雙軌維持，但鏡像降為**薄殼指標**——Codex 範本
