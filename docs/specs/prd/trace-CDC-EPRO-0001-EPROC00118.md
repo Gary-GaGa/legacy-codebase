@@ -2,7 +2,7 @@
 
 > 上行追溯：PRD `CDC-EPRO-0001`（funcId `EPROC00118`，企業授信評分卡）的 FR ← Bible v1.1（`../bible/bible-eproposal.md`）。
 > ⚠️ **PRD 用 `FR-NNN`（非 `REQ-NNN`）**：gateⒷ 機械追溯比對 `REQ-\d{3}` token，**對 FR-### 不機械驗**——本表為人讀 Bible→PRD 登記（漂移點），FR↔Rn 機械追溯由 SRS `Traceability Matrix` 承載。
-> ⚠️ PRD 快照 `PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` 須與本 trace 同放 `docs/specs/prd/`（pilot push 僅含 `srs/` bundle，快照待 owner 補 push）。
+> PRD 快照 `PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` 與本 trace **同在 `docs/specs/prd/`**（owner push `8542d19`；gateⒷ 對照通過）。
 
 ## 表 A：PRD FR ↔ Bible 錨點 ↔ SRS Rn
 | FR | Bible 旅程/錨點 | SRS Rn | seam/PENDING |
