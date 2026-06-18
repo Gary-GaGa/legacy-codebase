@@ -16,6 +16,7 @@
 | docId | 版本 | funcId | 快照 | 備註 |
 |---|---|---|---|---|
 | `CDC-EPRO-0001` | v1.1 | `EPROZ00100` | ✅ **快照在 repo**（`PRD-CDC-EPRO-0001-EPROZ00100-v1.1.md`）| TO DO LIST；SRS **v0.2-draft 已產**（`../srs/EPROZ00100/`，機械閘門綠、spec-reviewer round-2 無 Blocker、In Review/待 8 TBD）＝**現成 worked example** |
+| `CDC-EPRO-0001` | v1.0 | `EPROC00118` | ⚠️ **快照待 push**（`PRD-CDC-EPRO-0001-EPROC00118-v1.0.md`；pilot 只 push `srs/`，快照待 owner 補；**trace 已在 repo**）| Corporate Scorecard（企金評分卡）；SRS **v0.1 已產**（`../srs/EPROC00118/`，pilot、機械閘門 PASS、N 軸 A–G 無 Blocker、In Review/待 10 TBD）|
 | `CDC-EPRO-0001` | v1.1（PM Review Draft） | `EPROZ00800` | ⛔ **封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)）| spec 層重置：舊 PRD（由 code 反推、未承載新 Bible v1.1 案件類型 gating/0173 映射）+ v0.9 SRS 退場 → **待新版 PRD 重產**（owner local；承載 Bible v1.1 BR-014~017/SC-002~005）|
 
 ## 下游

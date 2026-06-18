@@ -102,7 +102,7 @@
 | EPROC00115 | Borrower Group Exposure | ✅ | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`（Step 1 BGE pilot）；授權列 |
 | EPROC00116 | Financial Statement GI | ✅ | ✅ | `epl-*-c0-financial-statement-comments`（`524d8dc`；calc 保留、export POST-blob 兩邊一致、無 00640 式不符）；授權列；export 模板沿用 i0？|
 | EPROC00117 | Financial Evaluation GI | ✅ | ✅ | **business-only ✅**（`b14ae05`，決策 B）：接 `epl-sele-c0-financial-list`、`epl-info/save-c0-financial-business`（info 保留 BE 要的 isQuery、save 不帶）；**未接 `-financial-staff`/funcIsStaffLoan**（cleanup）；guard scan/BOM 過。授權列 |
-| EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`（`39e95dd`；**calc 保留接上**）；授權列；🚩 2 escalation |
+| EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`（`39e95dd`；**calc 保留接上**）；授權列；🚩 2 escalation；**SRS v0.1-draft 已產（`specs/srs/EPROC00118/`，pilot、機械閘門 PASS、N 軸 A–G 無 Blocker、In Review/待 10 TBD）** |
 | EPROC00119 | Financial Statement FI | ✅ | ✅ | ✅ F-8 已修（`6919da5`，options 接 `epl-sele-c0-financial-statement-comments`）；**Phase V 必驗**：下拉有值+save 帶值+GI-sele 對 FI（businessType F）無分支影響；授權列；export 模板沿用 i0？|
 | EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`（info 留 isQuery、save 送 applicationNo/isFinish/financialList + cetOne/totalCapitalRatio）；i0 FI 有 list 但頁不消費 options → `getMenu()`回`of({})`不接；**未接 `-staff-fi`/funcIsStaffLoan**（cleanup）；BOM/build 過。授權列 |
 > **範本＝i0 `individual/credit-investigation`**：容器 component 動態載 tab（`epl-*-i0-credit-investigation-tab`、`creditInvestigationNav()` config、`CreditInvestigationPageCode` enum）、各子頁 `components/<name>/{component,services}`。c0 照此鏡像、改 `-c0-` endpoint + corporate DTO。
@@ -238,7 +238,7 @@
 7. R2 報表服務 → 0181/i0·c0 PDF/z0 PDF；檔案上傳 API；FE/BE method-mismatch sweep；map-key sweep；Logback 外部化。
 
 **Phase S — spec 層（PRD→SRS 重產；owner：PM/SA + Codex local；並行 track）**
-8. 🟡 **前置就緒→待重產**：轉換層硬化（批判輪2/3 gate：gateⓈ/Ⓔ＋DoD＋`spec-reviewer` 紅旗）✅、Bible v1.1 已入 repo ✅、local 對比輸入（`docs/db-schema/`＋`docs/refactor/`）盤點＋抽取細則定稿 ✅、dispatch 卡 `build-tasks/prd-to-srs-codex-dispatch.md` 備齊 ✅。**SRS bundle 覆蓋 1/67**（**EPROZ00100 v0.2-draft 已產、In Review**；00800 v0.9 封存=REBUILD；覆蓋數字 SSOT＝`refactor-audit/per-page-reinventory-matrix.md`）→ owner local 用 Codex 續跑 `prd-to-srs`，**risk-tier：企金線/撥貸/00800 重產先**；SRS 落 `docs/specs/srs/`。
+8. 🟡 **前置就緒→待重產**：轉換層硬化（批判輪2/3 gate：gateⓈ/Ⓔ＋DoD＋`spec-reviewer` 紅旗）✅、Bible v1.1 已入 repo ✅、local 對比輸入（`docs/db-schema/`＋`docs/refactor/`）盤點＋抽取細則定稿 ✅、dispatch 卡 `build-tasks/prd-to-srs-codex-dispatch.md` 備齊 ✅。**SRS bundle 覆蓋 2/67**（**EPROZ00100 v0.2 + EPROC00118 v0.1**〔T1 企金線首頁、pilot 跑通〕、皆 In Review；00800 v0.9 封存=REBUILD；覆蓋數字 SSOT＝`refactor-audit/per-page-reinventory-matrix.md`）→ owner local 用 Codex 續跑 `prd-to-srs`，**risk-tier：企金線/撥貸/00800 重產先**；SRS 落 `docs/specs/srs/`。
 
 **關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。**spec 層（PRD→SRS 重產，Phase S）= 前置就緒、owner local 並行 track，不擋當前里程碑，但為 00800/企金線 rebuild 的上游**。
 
