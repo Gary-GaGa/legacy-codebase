@@ -120,7 +120,23 @@
 > 2. **撥貸**（0920/0921/0922 + T24 + 批次）—— 金錢核心，目前只有 escalations/triage、無 SRS。
 > 3. **00800 重產**（用新版 PRD 取代 v0.9）。
 > 4. 主流程 ISU / i0 / z0 —— 多 KEEP/FIX，SRS 可隨 parity 結果增量補。
-> 每產一份過 `check-srs-bundle` + `spec-reviewer`（DoD）。
+> 每產一份過 `check-srs-bundle`（含 gateⓇ）+ **SRS N 軸驗證**（`orchestration-playbook §4b`）（DoD）。
+
+### PRD→SRS 佇列 + ledger（orchestrator 機械迭代來源；2026-06-18）
+> **orchestrator 的 enumerable 來源 + 完成 ledger**（SRS 軌迴圈＝`orchestration-playbook §5b/§6b`，非 `STATUS §六`＝code 板）：依 risk 排序、取最前 `status=prd-ready` 者產 SRS；**每產一份→回填本表 `status`/`srs`（＝防重複/防漏）**；上方「§覆蓋＝x/67」由本表 `status≠not-started` 衍生。
+> status：`not-started`｜`prd-ready`（PRD 快照已放 `docs/specs/prd/`、檔名 `PRD-*<funcId>*.md`）｜`in-review`（SRS 產出＋機械 gate＋N 軸 PASS、待人審/裁 TBD）｜`approved`（TBD 全關、N 軸無 Blocker）。
+
+| funcId | risk | prd（`docs/specs/prd/`）| status | srs（`docs/specs/srs/`）|
+|---|---|---|---|---|
+| `EPROZ00100` | z0/示範 | `PRD-CDC-EPRO-0001-EPROZ00100-v1.1.md` | **in-review**（v0.2、待 8 TBD）| `EPROZ00100/` |
+| `EPROC00118` | T1 企金線 | — | not-started | — |
+| `EPROC00120` | T1 企金線 | — | not-started | — |
+| `EPROCSU0170` | T1 企金線 | — | not-started | — |
+| 企金線 T2/T3 餘頁 | T2/T3 企金線 | — | not-started | 清單見 `c0-legacy-parity-recheck.md` |
+| `EPROISU0920/0921/0922`＋T24 | 撥貸 | — | not-started | 現只 escalations/triage |
+| `EPROZ00800` | 00800 重產 | —（v0.9 PRD 已封存、待新版）| not-started | v0.9 SRS 封存 `archive/` |
+| 主流程 ISU/i0/z0 增量 | 增量 | — | not-started | — |
+> ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。完整 67 頁清單＝owner 權威盤點 `legacy/legacy-function-inventory.md`（本表先列 risk-tier 前段，餘隨 PRD 進場補列）。
 
 ## 派工（填實本矩陣）
 - **企金線對舊 parity**（Codex 帶 source）：擴 `c0-legacy-parity-recheck.md` 涵蓋範圍 → c0 評分 **+ CSU 主流程**；risk-tier 00118/00120/0170 先。

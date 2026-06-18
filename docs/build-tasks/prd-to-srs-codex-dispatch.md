@@ -136,7 +136,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 
 【過閘門（兩層，先機械再語意）】
 1. 機械：`python scripts/check-srs-bundle.py docs/specs/srs/<funcId>` 必 exit 0。
-2. 語意：spec-reviewer（`.codex/agents/spec-reviewer.toml`＝部署後本機路徑、repo 範本在 `docs/env/codex/spec-reviewer.toml`，唯讀）無未解 Blocker；
+2. 語意：**SRS N 軸驗證**（`orchestration-playbook §4b` 的 A–G 軸，≥6 正交、各 read-only、最好跨模型；axis A＝`spec-reviewer`〔`.codex/agents/spec-reviewer.toml`＝部署後本機路徑、repo 範本 `docs/env/codex/spec-reviewer.toml`〕；risk-tier T1 全 A–G、低風險頁可 A+E+G）**全軸無未解 Blocker**；
    採納修正後【再審一輪】（修正可能引入新錯）。
 
 【回填】bundle 連到 feature-inventory 該頁 + per-page-reinventory-matrix（SRS 欄）；

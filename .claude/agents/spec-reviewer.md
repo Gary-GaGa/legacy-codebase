@@ -9,6 +9,7 @@ model: opus
 對象＝本 repo 的 SRS bundle（`docs/specs/srs/<funcId>/`：`spec.md` + `openapi.yaml` + `schema.sql` + `qa-cases.md`）與其上游 PRD（`docs/specs/prd/` 快照或對話提供）。
 
 > **分工（先機械、後語意）**：機械/形式錯交給 deterministic 閘門 `scripts/check-srs-bundle.py`（**涵蓋範圍見腳本檔頭 canonical 清單**）。**你專注「機械驗不出的語意判斷」**，下面逐檔 checklist 即語意層。若你發現的是純機械錯（如 `$ref` 解不開），標一句「跑 `check-srs-bundle.py` 會擋」即可，不必細列——避免與腳本重工。
+> **本 agent＝`orchestration-playbook §4b` SRS N 軸的「軸 A（綜合/完整性）」**；規模化驗證時另有 B–G 軸（as-is parity／錯誤碼承載〔含裸名〕／安全·授權／DB reconcile／金錢·精度·截斷／可測試性）各自獨立 spawn（最好跨模型）——**本 agent 非唯一驗證角度**（owner「多角度再驗」）。你照本檔審即可，B–G 由 orchestrator 另派。
 
 ## 審查維度
 1. **完整性** — 每個 PRD `REQ-xxx` 是否都有 ≥1 條 `Rn` 對上（或明確標非本期）；缺漏 edge/error；有沒有 Non-Goals/Scope；每個 PRD `TBD` 是否都有一條 `@PENDING` 規則 + owner。
