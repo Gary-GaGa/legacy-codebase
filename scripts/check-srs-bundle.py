@@ -593,7 +593,7 @@ RECONCILE_HEAD_RE = re.compile(
 def gate_reconcile(bundle):
     """gateⓇ：reconcile 承載（**warn 級**，不破綠）。
 
-    SRS 須**顯式承載**「新舊 DB（local docs/db-schema/）＋ refactor（local docs/refactor/）的更動 delta」——
+    SRS 須**顯式承載**「新舊 DB（local docs/db-diff/）＋ refactor（local docs/refactor-spec/）的更動 delta」——
     spec.md 應有一段標題含『新舊 DB 對照 / 更動 delta / delta 清單 / reconcile』；缺＝warn。
     機械只驗『段存在』（防規模化時整段靜默跳過 reconcile）；段內每條是否真有來源+三判、
     schema.sql 是否真帶 change-hint 還是只寫『待 RD』＝**spec-reviewer 紅旗⑥**（語意層）。
@@ -610,7 +610,7 @@ def gate_reconcile(bundle):
         return [], []
     return [], [
         "spec.md 無『新舊 DB 對照 / 更動 delta / reconcile』段——確認已對 local "
-        "docs/db-schema/+docs/refactor/ reconcile（規劃 repo 產出搆不到兩夾時，須顯式 disclaim"
+        "docs/db-diff/+docs/refactor-spec/ reconcile（規劃 repo 產出搆不到兩夾時，須顯式 disclaim"
         "『待母資料夾複核』+ 列已知 delta，非靜默留白）；防規模化跳過（gateⓇ；內容真確性見 spec-reviewer 紅旗⑥）"
     ]
 

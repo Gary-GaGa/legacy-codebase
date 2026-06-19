@@ -3,7 +3,7 @@
 > **為什麼是 sidecar**：PRD 快照 verbatim 不可編（[`README.md`](README.md) 放置規則），追溯標記故放本表。
 > **誰讀**：`scripts/check-srs-bundle.py` **gateⒷ**（機械、advisory）+ `spec-reviewer`（語意）。
 > **行格式（機械約定）**：表 A 每列第 1 欄 `BR-nnn`——無 `FR-nnn` 對應時**必須**含 `BP-n` 或 `@PENDING`（否則 gateⒷ warn=漂移未登記）；表 B 每列第 1 欄 `FR-nnn`，PRD 快照的每個 FR 都要在本表出現。非 BR/非 FR 開頭列（業務里程碑/情境錨點）＝佐證註解、gate 不掃。
-> 來源：Bible [`../bible/bible-eproposal.md`](../bible/bible-eproposal.md)（BR 表 + 待驗測指標 + 業務里程碑）、PRD 快照 [`PRD-CDC-EPRO-0001-EPROC00118-v1.0.md`](PRD-CDC-EPRO-0001-EPROC00118-v1.0.md)、缺口登記 [`../../pending-register.md`](../../pending-register.md)。本頁 status＝**In Review**（同 bundle），@PENDING 引用 bundle 內 `PENDING-0nn`/`TBD-0nn`。
+> 來源：Bible [`../bible/bible-eproposal.md`](../bible/bible-eproposal.md)（BR 表 + 待驗測指標 + 業務里程碑）、PRD 快照 [`PRD-CDC-EPRO-0001-EPROC00118-v1.0.md`](PRD-CDC-EPRO-0001-EPROC00118-v1.0.md)、缺口登記 [`../../pending-register.md`](../../pending-register.md)。本頁 status＝**Draft / in-review**（同 bundle，未 Approved），@PENDING 引用 bundle 內 `PENDING-0nn`/`TBD-0nn`。
 > 〔PRD 用 `FR-###` 編號慣例；gateⒷ `REQ_RE` 同時容 `FR-###`/`REQ-###`，以 PRD 為主。〕
 
 ## A. Bible → PRD（下行：業務邊界有沒有被 PRD 承載）
