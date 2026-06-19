@@ -13,7 +13,7 @@
 ## Scope
 - 本 SRS 只涵蓋企金 C0 Corporate Scorecard 頁籤：初始化查詢、評分計算、Default 處理、AO/CR 欄位控制、Save/Finished、summary 與 checkpoint 連動。
 - 不涵蓋 `TB_SCORE_CARD_PARAM_DETAIL` 參數維護畫面、個金 scorecard、財務評估頁、collateral scorecard 第二碼更新與 UI redesign。
-- API 採 current backend/TB_API_AUTH exact RPC 命名與 POST：`epl-info-c0-corporateScorecard`、`epl-calc-c0-corporateScorecard`、`epl-save-c0-corporateScorecard`。
+- API 採 current backend/TB_API_AUTH exact RPC 命名與 POST：`epl-sele-c0-corporateScorecard-list`、`epl-info-c0-corporateScorecard`、`epl-calc-c0-corporateScorecard`、`epl-save-c0-corporateScorecard`。
 
 ## Sources
 | Source | Evidence |
@@ -24,6 +24,27 @@
 | Bible | `docs/specs/bible/bible-eproposal.md:398`-`399`, `739`-`744`, `796`. |
 | db-diff | `docs/db-diff/02_tables/TB_CORP_SCRCARD.md:38`-`150`; `docs/db-diff/02_tables/TB_SCORE_CARD_PARAM_DETAIL.md:38`-`47`; `docs/db-diff/02_tables/TB_LON_SUMMARY_INFO.md:45`-`67`; `docs/db-diff/02_tables/TB_CHECK_POINTS_CS.md:38`-`53`; `docs/db-diff/02_tables/TB_CHECK_POINTS_CU.md:38`-`50`. |
 | refactor-spec | `docs/refactor-spec/02_modules/EPROC00118.md:19`-`21`; `docs/refactor-spec/03_artifacts/be-corporate/EPROC00118/epl-info-c0-corporatescorecard.md:138`-`140`; `docs/refactor-spec/03_artifacts/be-corporate/EPROC00118/epl-calc-c0-corporatescorecard.md:138`-`140`; `docs/refactor-spec/03_artifacts/be-corporate/EPROC00118/epl-save-c0-corporatescorecard.md:138`-`140`. |
+
+## BR/SC Coverage
+| Source rule | SRS disposition |
+|---|---|
+| BR-001 C0 Corporate Scorecard tab | carried by scope and endpoints. |
+| BR-002 `EPROC0_0118` / `EPROC0_0218` parity | carried; RC checkpoint/save branch remains `PENDING-002` / `PENDING-008`. |
+| BR-003 parameter version by application date | carried by R1/R3; `END_DATE` use remains `PENDING-010`. |
+| BR-004 select item `VAR_CODE` / `SCORE` | carried by R2/R3; `SCORE` string-to-number conversion is specified in R3. |
+| BR-005 numeric range scoring | carried by R3/R8 and QA-013/QA-034. |
+| BR-006 total score sum | carried as internal calculation; calc response exposure remains `PENDING-015`. |
+| BR-007 risk level from `COR_RISK_LV` | carried by R3 and QA-010. |
+| BR-008 Default sets risk/score | carried by R4; AO-to-CR Default side effect remains `PENDING-011`. |
+| BR-009 Rate state clears after field change | carried by QA-017. |
+| BR-010/BR-011 late transaction linkage | carried as pending UI linkage in QA-035/QA-036 and `PENDING-009`. |
+| BR-012 AO save resets `CR_SCORE_CARD_COMPLETED` | carried with E2 risk under `PENDING-001`. |
+| BR-013 CR save/finished updates first character | carried with two-character semantics under `PENDING-001`. |
+| BR-014 `CUR_RATIO` percent conversion | carried by R8; SRS now limits UI percent to integer input. |
+| BR-015 update-first save | carried by R6 and QA-022A. |
+| BR-016 single transaction save | carried by R6 and QA-025/QA-025A. |
+| SC/E1 CU-return checkpoint split | pending under `PENDING-001`; QA-030A covers the CU split risk. |
+| SC/E2 full-column overwrite | pending under `PENDING-001`; QA-030 covers recompute/reset behavior. |
 
 ## As-is Parity Evidence
 | Area | Evidence | SRS triage |
@@ -56,7 +77,7 @@ PRD FR-001 also names main borrower display and initial checkpoint state. Curren
 ### R2 Scorecard 項目與欄位形狀 **強制點: both**
 covers-prd: FR-002
 
-API DTO 必須支援 AO/CR 各一組 scorecard map，至少包含 23 個 corporate scorecard items 的 code/score/input/risk/date/comment 欄位；select code 長度依 DB 為 2，risk level 長度依 DB 為 7，CR comment 依 DB 為 3000。
+API DTO 必須支援 AO/CR 各一組 scorecard map，至少包含 23 個 corporate scorecard items 的 code/input/risk/date/comment 欄位；score 值為 BE function / DB side-effect 驗證，不新增未由 current info/save DTO 證明的 response score fields。select code 長度依 DB 為 2，risk level 長度依 DB 為 7，CR comment 依 DB 為 3000。
 
 Evidence: PRD item list 見 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:248`-`270`; DB 欄位見 `docs/db-diff/02_tables/TB_CORP_SCRCARD.md:39`-`150`; refactor query response field lengths 見 `docs/refactor-spec/03_artifacts/be-corporate/EPROC00118/epl-info-c0-corporatescorecard.md:85`-`112`.
 
@@ -68,6 +89,8 @@ covers-prd: FR-003, FR-008
 Evidence: PRD rate 與有效日規則見 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:296`, `450`; DB 參數表見 `docs/db-diff/02_tables/TB_SCORE_CARD_PARAM_DETAIL.md:38`-`47`; refactor calc contract 見 `docs/refactor-spec/03_artifacts/be-corporate/EPROC00118/epl-calc-c0-corporatescorecard.md:84`-`110`, `186`-`195`.
 
 Error-code contract: validation/module messages from `funcGetRate` are carried as 400 `module message` unless mapped to explicit platform code; generic rate failure returns `COMMON_MSG_RATE_FAIL`; query/data failure returns `MSG_QUERY_FAIL`. Calc must not write `TB_CORP_SCRCARD`, `TB_LON_SUMMARY_INFO`, or checkpoint tables.
+
+`TB_SCORE_CARD_PARAM_DETAIL.SCORE` is physically `VARCHAR2(10)`. BE must convert it with numeric parsing before summing; a nonnumeric `SCORE` seed is a data/query failure and must return `MSG_QUERY_FAIL` with safe diagnostic logging, not silently coerce to zero.
 
 ### R4 Loan Default 90+ Days **強制點: both**
 covers-prd: FR-004
@@ -87,10 +110,12 @@ Evidence: PRD role 控制見 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.m
 
 Authorization contract: mutating calls must use the exact backend/TB_API_AUTH key `epl-save-c0-corporateScorecard` and must reject non-AO/non-CR roles with the platform access-denied response (current filter behavior: 401). Current backend relies on TB_API_AUTH and has no explicit `!isAO && !isCR` service reject (`backend/src/main/java/khd/svc/epro/service/corporate/impl/CsuCorporateScorecardServiceImpl.java:229`), so implementation closure is tracked as `PENDING-012`.
 
+Read/query endpoints use independent `TB_API_AUTH` rows, not session-only authorization: `epl-sele-c0-corporateScorecard-list`, `epl-info-c0-corporateScorecard`, and `epl-calc-c0-corporateScorecard` each require their own endpoint auth seed. If a future design removes any read endpoint from `TB_API_AUTH`, the replacement guard must be explicitly approved before signoff.
+
 ### R6 Save/Finished 持久化與交易一致性 **強制點: BE**
 covers-prd: FR-006
 
-AO Save/Finished must copy confirmed AO scorecard fields into the corresponding CR fields for legacy parity; only the `_AR_SCR` and `_INVENTORY_SCR` copy decision remains in `PENDING-005`.
+Legacy and current evidence show AO save/copy/reset behavior across AO and CR scorecard fields, but final reset/overwrite semantics remain under `PENDING-001` and the `_AR_SCR` / `_INVENTORY_SCR` copy decision remains in `PENDING-005`.
 
 Save/Finished 必須在單一 transaction 內 update-first/insert `TB_CORP_SCRCARD`、更新 `TB_LON_SUMMARY_INFO.CR_SCORE_CARD_COMPLETED`、更新新 checkpoint 表。任一步失敗必須 rollback。`isFinish=false` 對應 Save，`isFinish=true` 對應 Finished；此為 refactor-spec DTO 名稱，需對應 PRD legacy `check=Y/N`。
 
@@ -103,6 +128,8 @@ covers-prd: FR-007
 
 一般企金有擔/無擔分別更新 `TB_CHECK_POINTS_CS.EPROC00118` 或 `TB_CHECK_POINTS_CU.EPROC00118`；續約/變更 legacy `EPROC0_0218` 在新 DB snapshot 未出現獨立 RC 新 checkpoint 欄位，需在 `@PENDING` 中交 owner 裁是否仍映射同一 `EPROC00118` 欄或另建 RC 分流。父頁只有在 Finished 且 all-tabs check 通過時可標示 done。
 
+E1 checkpoint risk remains unresolved: CU-return/reset behavior must prove it updates the CU branch correctly and does not only clear CS. This is tracked in `PENDING-001` and covered by QA-030A.
+
 Evidence: PRD legacy checkpoint table 見 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:167`-`172`, `425`-`435`; old table removed hints 見 `docs/db-diff/02_tables/TB_CHECK_POINT_CORP.md:6`-`13`, `docs/db-diff/02_tables/TB_CHECK_POINT_RC_CORP.md:6`-`13`; new checkpoint columns 見 `docs/db-diff/02_tables/TB_CHECK_POINTS_CS.md:38`-`53`, `docs/db-diff/02_tables/TB_CHECK_POINTS_CU.md:38`-`50`.
 
 ### R8 Numeric precision and conversion **強制點: both**
@@ -112,7 +139,7 @@ covers-prd: FR-003, FR-006, FR-008
 
 Evidence: PRD conversion 見 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:223`, `384`, `630`; DB precision 見 `docs/db-diff/02_tables/TB_CORP_SCRCARD.md:139`-`150`; refactor save validation 見 `docs/refactor-spec/03_artifacts/be-corporate/EPROC00118/epl-save-c0-corporatescorecard.md:157`-`159`, `185`-`187`.
 
-Precision policy: no silent rounding or truncation is allowed in BE. Inputs exceeding DB precision/scale or refactor DTO max length must be rejected with validation error before DB write. `CUR_RATIO` is the documented conversion exception: UI percent is divided by 100 for DB storage and multiplied by 100 for display. Range matching uses `LOW_RANGE <= input < UP_RANGE`; score fields are integer precision (`NUMBER(3,0)`).
+Precision policy: no silent rounding or truncation is allowed in BE. Inputs exceeding DB precision/scale or refactor DTO max length must be rejected with validation error before DB write. `CUR_RATIO` is the documented conversion exception: UI percent is limited to integer input with no decimal places, then divided by 100 for DB storage and multiplied by 100 for display; a value such as `80.5` is invalid. Range matching uses `LOW_RANGE <= input < UP_RANGE`; derived item score fields are integer precision (`NUMBER(3,0)`) and must reject values above `999` before DB write. `totalScore` / `AO_SCORE` / `CR_SCORE` must fit `NUMBER(7,2)`; if approved seed data can produce a larger total, BE must reject with `COMMON_MSG_RATE_FAIL` rather than write an overflowing value.
 
 ## 新舊 DB / 更動 delta
 | Delta | 判定 | SRS action | Source |
@@ -122,7 +149,7 @@ Precision policy: no silent rounding or truncation is allowed in BE. Inputs exce
 | DB-D3 `TB_LON_SUMMARY_INFO` active/exact，`CR_SCORE_CARD_COMPLETED` 欄位為 `VARCHAR2(2 BYTE)`。 | carried + @PENDING semantics | 物理欄位帶入 schema；兩碼語意與跨 scorecard owner 裁列 `PENDING-001`。 | `docs/db-diff/02_tables/TB_LON_SUMMARY_INFO.md:11`-`16`, `67`; PRD TBD-002 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:56` |
 | DB-D4 legacy `TB_CHECK_POINT_CORP/CU/RC_*` 在 db-diff 標 `removed_or_unused`，note 指向 `TB_CHECK_POINTS_CS/CU`。 | changed | 新契約使用 `TB_CHECK_POINTS_CS`/`TB_CHECK_POINTS_CU` 與欄位 `EPROC00118`；舊表只保留為 migration note。 | `docs/db-diff/02_tables/TB_CHECK_POINT_CORP.md:6`-`13`; `docs/db-diff/02_tables/TB_CHECK_POINT_CU.md:6`-`13`; `docs/db-diff/02_tables/TB_CHECK_POINT_RC_CORP.md:6`-`13`; `docs/db-diff/02_tables/TB_CHECK_POINT_RC_CU.md:6`-`13`; `docs/db-diff/02_tables/TB_CHECK_POINTS_CS.md:10`-`13`, `51`; `docs/db-diff/02_tables/TB_CHECK_POINTS_CU.md:10`-`13`, `49` |
 | DB-D5 PRD legacy `EPROC0_0218` RC checkpoint 未在 new DB snapshot 出現 `EPROC00218` 或 RC-specific active table 欄。 | @PENDING | 不自建新欄；暫列 `PENDING-002`，待 SA/RD 決定 RC 是否映射同欄 `EPROC00118` 或另行 DB 變更。 | PRD `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:167`-`170`; old RC columns `docs/db-diff/02_tables/TB_CHECK_POINT_RC_CORP.md:50`, `docs/db-diff/02_tables/TB_CHECK_POINT_RC_CU.md:49`; new DB `docs/db-diff/02_tables/TB_CHECK_POINTS_CS.md:51`, `docs/db-diff/02_tables/TB_CHECK_POINTS_CU.md:49` |
-| AUTH-D1 `TB_API_AUTH` is active/exact, note `重構新增`, transpose method `重新寫入`. | changed | Contract uses exact backend API IDs including `epl-save-c0-corporateScorecard`; row-level precheck says EPROC00118 C0 target rows are not present yet while i0 source rows are present / will insert, so auth seed closure stays in `PENDING-012`. | `docs/db-diff/02_tables/TB_API_AUTH.md:10`-`16`, `32`, `38`-`40`; row precheck `docs/build-tasks/c0-authz-sql-findings.md:61`-`64`, `134`-`137`; backend controller `backend/src/main/java/khd/svc/epro/controller/corporate/CsuCorporateScorecardController.java:38`, `45`, `52` |
+| AUTH-D1 `TB_API_AUTH` is active/exact, note `重構新增`, transpose method `重新寫入`. | changed | Contract uses exact backend API IDs including select-list/info/calc/save endpoints. Row-level precheck says EPROC00118 C0 target rows are not present yet while i0 source rows are present / will insert. Missing EPROC00118 auth seeds leave endpoints unprotected in testing deployment, so closure is blocking in `PENDING-012`. | `docs/db-diff/02_tables/TB_API_AUTH.md:10`-`16`, `32`, `38`-`40`; row precheck `docs/build-tasks/c0-authz-sql-findings.md:61`-`64`, `134`-`137`; backend controller `backend/src/main/java/khd/svc/epro/controller/corporate/CsuCorporateScorecardController.java:31`, `38`, `45`, `52` |
 | REF-D1 refactor latest 僅有 BE corporate query/calculate/save 三 artifacts，無 FE artifact。 | carried | SRS endpoint 以 BE latest 為契約，FE 行為由 PRD/source parity 描述，不宣稱已有 FE spec。 | `docs/refactor-spec/02_modules/EPROC00118.md:3`-`21` |
 | REF-D2 PRD legacy `query/getRate/getDate/save` 對應 refactor `info/calc/save` 三 POST RPC；`getDate` 不獨立成 endpoint。 | changed | `getDate` 行為折入 Default flow 與 save/calc date response；Default date failure still carries `COMMON_MSG_RATE_FAIL`; 不另建 date RPC。 | PRD `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:469`-`472`, `534`; refactor endpoints `docs/refactor-spec/03_artifacts/be-corporate/EPROC00118/epl-calc-c0-corporatescorecard.md:138`-`140` |
 | REF-D3 refactor save 使用 `isFinish`，PRD legacy 使用 `check=Y/N`。 | changed | OpenAPI 使用 `isFinish`; spec 明確 mapping：Save=`false`, Finished=`true`; legacy `check` 只作 migration note。 | PRD `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:380`; refactor `docs/refactor-spec/03_artifacts/be-corporate/EPROC00118/epl-save-c0-corporatescorecard.md:154`, `195` |
@@ -141,7 +168,7 @@ Precision policy: no silent rounding or truncation is allowed in BE. Inputs exce
 ## @PENDING
 | ID | Status | Owner | Blocking? | Evidence | Required decision |
 |---|---|---|---|---|---|
-| PENDING-001 | @PENDING | PM/SA/風控 | Yes for final approval | PRD TBD-002 and DEC-004: `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:56`, `743`; pending-register E1/E2 context `docs/pending-register.md:17`-`18` | Define two-character `CR_SCORE_CARD_COMPLETED` semantics across corporate scorecard and collateral/personal scorecard. |
+| PENDING-001 | @PENDING | PM/SA/風控 | Yes for final approval | PRD TBD-002 and DEC-004: `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:56`, `743`; pending-register E1/E2 context `docs/pending-register.md:17`-`18` | Define two-character `CR_SCORE_CARD_COMPLETED` semantics across corporate scorecard and collateral/personal scorecard, including E1 CU-return branch correctness and E2 full-column overwrite/reset behavior. |
 | PENDING-002 | @PENDING | SA/RD/DBA | Yes for RC branch | PRD has `EPROC0_0218` RC checkpoint `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:169`-`170`; new DB only exposes `EPROC00118` in `TB_CHECK_POINTS_CS/CU` at `docs/db-diff/02_tables/TB_CHECK_POINTS_CS.md:51`, `docs/db-diff/02_tables/TB_CHECK_POINTS_CU.md:49` | Decide whether renewal/change corporate scorecard reuses `EPROC00118` checkpoint or needs separate DB/API branch. |
 | PENDING-003 | @PENDING | SA/RD | Yes for validation parity | PRD TBD-003 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:57`; refactor save validation `docs/refactor-spec/03_artifacts/be-corporate/EPROC00118/epl-save-c0-corporatescorecard.md:156`-`159` | Confirm to-be BE validation strictness for required fields, Rate-before-Finished, and CR comment. Numeric precision is resolved by db-diff/schema and is not pending. |
 | PENDING-004 | @PENDING | PM/SA | No for draft, Yes for role approval | PRD TBD-004 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:58`; Bible role dictionary includes `003` at `docs/specs/bible/bible-eproposal.md:796` | Decide whether role `003` can edit AO side on this page. |
@@ -152,25 +179,28 @@ Precision policy: no silent rounding or truncation is allowed in BE. Inputs exce
 | PENDING-009 | @PENDING | SA/RD/QA | No for draft, Yes before regression signoff | PRD TBD-007 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:61` | Decide whether CR late-transaction DOM-id behavior is dead code or required UI linkage. |
 | PENDING-010 | @PENDING | SA/RD/DBA | Yes for parameter effective-date logic | PRD TBD-009 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:63`; `docs/db-diff/02_tables/TB_SCORE_CARD_PARAM_DETAIL.md:46`-`47` | Decide whether scorecard parameter lookup must also apply `END_DATE` or only max `ST_DATE <= APP_DATE`. |
 | PENDING-011 | @PENDING | PM/SA/Risk | Yes for Default business approval | PRD TBD-010 and DEC-002 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:64`, `741`; current backend `backend/src/main/java/khd/svc/epro/service/corporate/impl/CsuCorporateScorecardServiceImpl.java:214`-`226` | Confirm AO Default may automatically set CR risk/score/date without CR re-rating. |
-| PENDING-012 | @PENDING | RD/Security | No for SRS draft, Yes before implementation signoff | D-axis evidence: `backend/src/main/java/khd/svc/epro/service/corporate/impl/CsuCorporateScorecardServiceImpl.java:229`; controller path `backend/src/main/java/khd/svc/epro/controller/corporate/CsuCorporateScorecardController.java:52`; auth row precheck `docs/build-tasks/c0-authz-sql-findings.md:61`-`64`, `134`-`137` | Add or verify explicit BE rejection for non-AO/non-CR save roles and insert/verify EPROC00118 `TB_API_AUTH` rows. |
+| PENDING-012 | @PENDING | RD/Security | Yes before any testing deployment | D-axis evidence: `backend/src/main/java/khd/svc/epro/service/corporate/impl/CsuCorporateScorecardServiceImpl.java:229`; controller path `backend/src/main/java/khd/svc/epro/controller/corporate/CsuCorporateScorecardController.java:52`; auth row precheck `docs/build-tasks/c0-authz-sql-findings.md:61`-`64`, `134`-`137` | Add or verify explicit BE rejection for non-AO/non-CR save roles and insert/verify EPROC00118 `TB_API_AUTH` rows before QA regression or any testing deployment. |
 | PENDING-013 | @PENDING | SA/RD | No for SRS draft, Yes before UI/API signoff | PRD FR-001 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:216`-`223`; current DTO `backend/src/main/java/khd/svc/epro/dto/response/corporate/corporateScoreCard/GetCorporateScorecardInfoResponse.java:8`-`24` | Decide whether main borrower name and initial checkpoint state are supplied by this API, parent page, or separate API. |
 | PENDING-014 | @PENDING | SA/RD/QA | No for SRS draft, Yes before UI regression signoff | PRD TBD-008 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:62` | Decide whether legacy UI display differences around default-to-N input length/decimal need compatibility handling; SRS numeric precision itself follows OpenAPI/schema and is not pending. |
 | PENDING-015 | @PENDING | SA/RD | No for SRS draft, Yes before API signoff | PRD calc response `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md:469`-`472`; current backend response `backend/src/main/java/khd/svc/epro/dto/response/corporate/corporateScoreCard/CalCorporateScoreCardResponse.java:9`-`17` | Decide whether `epl-calc-c0-corporateScorecard` must return `totalScore`, or whether current backend response with only `riskLevel` and `scoreDatetime` is accepted. |
+| PENDING-016 | @PENDING | RD | Yes before implementation signoff | R3 requires nonnumeric `TB_SCORE_CARD_PARAM_DETAIL.SCORE` to return `MSG_QUERY_FAIL`; current shared calculation evidence can silently coerce SCORE parse failures to zero at `backend/src/main/java/khd/svc/epro/service/individual/impl/FunctionServiceImpl.java:3716`-`3725`. | Verify or change the EPROC00118 calculation path so nonnumeric score seeds fail safely with `MSG_QUERY_FAIL` and never contribute zero silently. |
+| PENDING-017 | @PENDING | RD/QA | Yes before API signoff | OpenAPI and QA require `scoreDatetime` in UTC+8 `dd/MM/yyyy HH:mm:ss`; current evidence uses `LocalDateTime.now()` without explicit `ZoneId` at `backend/src/main/java/khd/svc/epro/service/individual/impl/FunctionServiceImpl.java:3807`-`3811`. | Verify deployment timezone guarantees UTC+8 or set an explicit UTC+8 clock/formatter for scoreDatetime. |
+| PENDING-018 | @PENDING | SA/RD/QA | Yes before performance signoff | NFR requires scorecard query to finish within platform AJAX timeout, but no numeric timeout / p95 target is approved in PRD or refactor-spec. | Define the measurable timeout or p95 target for select-list/info/calc/save scorecard APIs, or confirm the platform default AJAX timeout is the acceptance threshold. |
 
 ## Traceability Matrix
 | PRD | SRS | QA |
 |---|---|---|
 | FR-001 | R1 | QA-001, QA-002, QA-002A, QA-003, QA-004, QA-005, QA-006 |
 | FR-002 | R2 | QA-007, QA-008, QA-009, QA-009A, QA-009B, QA-035, QA-036 |
-| FR-003 | R3, R8 | QA-010, QA-010A, QA-011, QA-011A, QA-012, QA-013, QA-031, QA-032, QA-033, QA-034 |
+| FR-003 | R3, R8 | QA-009A, QA-010, QA-010A, QA-011, QA-011A, QA-011B, QA-012, QA-013, QA-031, QA-031A, QA-032, QA-032A, QA-033, QA-034 |
 | FR-004 | R4 | QA-014, QA-015, QA-016, QA-017, QA-017A, QA-017B, QA-017C, QA-017D, QA-035, QA-036 |
-| FR-005 | R5 | QA-017B, QA-018, QA-019, QA-020, QA-020A, QA-021 |
-| FR-006 | R6, R8 | QA-017A, QA-017D, QA-022, QA-022A, QA-023, QA-024, QA-025, QA-025A, QA-030, QA-031, QA-032, QA-033 |
-| FR-007 | R7 | QA-025A, QA-026, QA-027, QA-028, QA-029, QA-030 |
-| FR-008 | R3, R8 | QA-010, QA-011A, QA-013, QA-034 |
+| FR-005 | R5 | QA-009A, QA-017B, QA-018, QA-019, QA-020, QA-020A, QA-021 |
+| FR-006 | R6, R8 | QA-017A, QA-017D, QA-022, QA-022A, QA-023, QA-024, QA-025, QA-025A, QA-030, QA-031, QA-031A, QA-032, QA-032A, QA-033 |
+| FR-007 | R7 | QA-025A, QA-026, QA-027, QA-028, QA-029, QA-030, QA-030A |
+| FR-008 | R3, R8 | QA-010, QA-011A, QA-011B, QA-013, QA-031A, QA-034 |
 
 ## NFR
-- Security: Save/Finished authorization must be enforced by BE role/context, not only FE disabled state.
+- Security: Save/Finished authorization must be enforced by BE role/context, not only FE disabled state. EPROC00118 `TB_API_AUTH` seeds for select-list/info/calc/save endpoints must exist before QA regression or any testing deployment; missing seeds mean the endpoints are not protected.
 - Data integrity: Save/Finished must be one transaction across `TB_CORP_SCRCARD`, `TB_LON_SUMMARY_INFO`, and `TB_CHECK_POINTS_CS/CU`.
 - Privacy: do not log full scorecard payload or employee names; log action, masked application number, role, and result code only.
-- Performance: query loads fixed scorecard parameter sets and must complete within platform AJAX timeout.
+- Performance: query loads fixed scorecard parameter sets and must complete within platform AJAX timeout; measurable timeout / p95 target remains `PENDING-018`.

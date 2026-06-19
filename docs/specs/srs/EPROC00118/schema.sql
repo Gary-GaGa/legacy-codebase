@@ -1,4 +1,5 @@
 -- SRS schema excerpt for EPROC00118 Corporate Scorecard.
+-- excerpt: only SRS-relevant columns shown.
 -- Source: docs/db-diff/02_tables/*.md as local snapshot.
 -- Change hints:
 -- DB-D1 carried: TB_CORP_SCRCARD active/exact, copied from legacy data.
@@ -7,7 +8,9 @@
 -- DB-D4 changed: legacy TB_CHECK_POINT_CORP, TB_CHECK_POINT_CU, TB_CHECK_POINT_RC_CORP, TB_CHECK_POINT_RC_CU are removed_or_unused.
 -- DB-D4 new targets: TB_CHECK_POINTS_CS and TB_CHECK_POINTS_CU with EPROC00118 column.
 -- DB-D5 @PENDING: RC legacy EPROC0_0218 has no separate active new checkpoint column in db-diff snapshot.
--- AUTH-D1 carried external dependency: TB_API_AUTH must contain exact endpoint key epl-save-c0-corporateScorecard.
+-- AUTH-D1 carried external dependency: TB_API_AUTH must contain exact endpoint keys
+-- epl-sele-c0-corporateScorecard-list, epl-info-c0-corporateScorecard,
+-- epl-calc-c0-corporateScorecard, and epl-save-c0-corporateScorecard.
 
 CREATE TABLE TB_CORP_SCRCARD (
   APPLICATION_NO VARCHAR2(30 BYTE) NOT NULL,
@@ -132,6 +135,7 @@ CREATE TABLE TB_SCORE_CARD_PARAM_DETAIL (
   VAR_CODE VARCHAR2(3 BYTE) NOT NULL,
   LOW_RANGE NUMBER(11,2),
   UP_RANGE NUMBER(12,2),
+  -- SCORE is text in DB; BE converts to number for sum and rejects nonnumeric seed as MSG_QUERY_FAIL.
   SCORE VARCHAR2(10 BYTE),
   VAR_DESC VARCHAR2(100 BYTE),
   VAR_ORDER NUMBER(3,0),

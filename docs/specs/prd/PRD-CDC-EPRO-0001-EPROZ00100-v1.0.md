@@ -124,7 +124,7 @@ Version 1.1
 | REQ-002-02 | 必須排除 CASE_PROGRESS 03、D1、R0305、R0313、R0397。 |
 | REQ-002-03 | 個人案件顯示 main borrower name；公司案件顯示 corp borrower name。 |
 | REQ-002-04 | APPLICATION_DATE=01/01/1900 顯示為空白。 |
-| REQ-002-05 | 若存在 IS_Y=Y related party record，showRelated=Y，否則 N。 |
+| REQ-002-05 | 若存在 `IS_CUB_RELATED=Y`、`IS_CUBC_RELATED=Y` 或 `IS_TCP=Y` related party record，showRelated=Y，否則 N。 |
 | REQ-002-06 | 須依 loan condition detail 加總 USD/KHR 金額。 |
 
 ## 4.3 EPROZ00100-REQ-003 CAD Task Search
@@ -195,7 +195,7 @@ Version 1.1
 | TB_APP_HISTORY | insert | delete/close/redistribution | APP_PROCESS_CODE 與 processor/agent 資訊正確。 |
 | TB_DEL_REASON | insert | delete | REASON_CODE 分號串接、DEL_DATE、OTH_REASON。 |
 | TB_CLO_REASON | insert | close | REASON_CODE 分號串接、CLOSE_DATE、OTH_REASON。 |
-| TB_RELATED_PARTY_INFO | select | initQuery row enrichment | IS_Y=Y 時 showRelated=Y。 |
+| TB_RELATED_PARTY_INFO | select | initQuery row enrichment | `IS_CUB_RELATED=Y`、`IS_CUBC_RELATED=Y` 或 `IS_TCP=Y` 時 showRelated=Y。 |
 | TB_LOAN_CONDITION_DETAIL | select | initQuery amount enrichment | USD/KHR 加總正確。 |
 | TB_EMP_PROXY | select | queryCAD / CA/CR redistribution | active proxy scope 正確。 |
 

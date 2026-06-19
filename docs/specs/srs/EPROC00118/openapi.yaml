@@ -104,7 +104,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CalcResponse'
         '400':
-          description: COMMON_MSG_ERROR_LON, COMMON_UI_PLEASE_SELECT, required-field validation error, or module message
+          description: COMMON_MSG_ERROR_LON when applicationNo is blank; COMMON_UI_PLEASE_SELECT when required code is unselected; module message from funcGetRate business validation; required-field validation for malformed payload
           content:
             application/json:
               schema:
@@ -116,7 +116,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
-          description: COMMON_MSG_RATE_FAIL or MSG_QUERY_FAIL
+          description: COMMON_MSG_RATE_FAIL for generic calculation failure; MSG_QUERY_FAIL for score/risk query, seed data, or parameter lookup failure
           content:
             application/json:
               schema:
@@ -151,7 +151,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '500':
-          description: COMMON_MSG_SAVE_FAIL, COMMON_MSG_RATE_FAIL, or MSG_QUERY_FAIL
+          description: COMMON_MSG_RATE_FAIL only when Default flag=Y date lookup fails; COMMON_MSG_SAVE_FAIL for transaction/DB write failure; MSG_QUERY_FAIL for query/data failure
           content:
             application/json:
               schema:
@@ -297,6 +297,8 @@ components:
         scoreDatetime:
           type: string
           maxLength: 19
+          pattern: '^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$'
+          description: UTC+8 formatted as dd/MM/yyyy HH:mm:ss.
     CalcCodeMap:
       type: object
       required:
@@ -369,7 +371,7 @@ components:
           type: string
           maxLength: 3
           pattern: '^\d{1,3}$'
-          description: UI percent input; BE stores percent/100 into DB NUMBER(3,2) with no silent rounding or truncation.
+          description: Integer UI percent input only; BE rejects decimals such as 80.5 and stores percent/100 into DB NUMBER(3,2).
         deRatio:
           type: string
           maxLength: 11
@@ -386,19 +388,19 @@ components:
           maxLength: 2
         totalAsset:
           type: string
-          maxLength: 22
+          maxLength: 21
           pattern: '^-?\d{1,17}(\.\d{1,2})?$'
           description: SRS enforces DB NUMBER(19,2) before write.
         totalLoanAmt:
           type: string
-          maxLength: 22
+          maxLength: 21
           pattern: '^-?\d{1,17}(\.\d{1,2})?$'
           description: SRS enforces DB NUMBER(19,2) before write.
         debtRatio:
           type: string
-          maxLength: 22
+          maxLength: 8
           pattern: '^-?\d{1,4}(\.\d{1,2})?$'
-          description: Current DTO allows 22 chars; SRS enforces DB NUMBER(6,2) before write.
+          description: SRS enforces DB NUMBER(6,2) before write.
     SaveRequest:
       type: object
       required:
@@ -481,7 +483,7 @@ components:
           type: string
           maxLength: 3
           pattern: '^\d{1,3}$'
-          description: UI percent input; BE stores percent/100 into DB NUMBER(3,2) with no silent rounding or truncation.
+          description: Integer UI percent input only; BE rejects decimals such as 80.5 and stores percent/100 into DB NUMBER(3,2).
         deRatio:
           type: string
           maxLength: 11
@@ -498,19 +500,19 @@ components:
           maxLength: 2
         totalAsset:
           type: string
-          maxLength: 22
+          maxLength: 21
           pattern: '^-?\d{1,17}(\.\d{1,2})?$'
           description: SRS enforces DB NUMBER(19,2) before write.
         totalLoanAmt:
           type: string
-          maxLength: 22
+          maxLength: 21
           pattern: '^-?\d{1,17}(\.\d{1,2})?$'
           description: SRS enforces DB NUMBER(19,2) before write.
         debtRatio:
           type: string
-          maxLength: 22
+          maxLength: 8
           pattern: '^-?\d{1,4}(\.\d{1,2})?$'
-          description: Current DTO allows 22 chars; SRS enforces DB NUMBER(6,2) before write.
+          description: SRS enforces DB NUMBER(6,2) before write.
         riskLevel:
           type: string
           maxLength: 7
@@ -520,12 +522,16 @@ components:
     ErrorResponse:
       type: object
       required:
-        - errorCode
-        - errorMessage
+        - code
+        - message
       properties:
-        errorCode:
+        code:
           type: string
           maxLength: 64
-        errorMessage:
+        message:
           type: string
           maxLength: 500
+        data:
+          type: object
+          additionalProperties: true
+          description: Error responses follow EPROResponse shape; backend serializes null data as an empty object.

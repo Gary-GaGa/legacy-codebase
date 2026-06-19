@@ -480,3 +480,7 @@ components:
         message:
           type: string
           maxLength: 500
+        data:
+          type: object
+          additionalProperties: true
+          description: Error responses follow EPROResponse shape; backend serializes null data as an empty object.
