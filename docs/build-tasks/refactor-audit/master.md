@@ -1,6 +1,6 @@
 # Full Refactor Audit Master
 
-Status: **SUPERSEDED by 2026-06-17 drift re-check**（`drift-recheck-2026-06-17.md`；06-11 code-state 已過期）。原：S-final completed on 2026-06-11.
+Status: **SUPERSEDED by 2026-06-19 drift re-check**（最新＝`drift-recheck-2026-06-19.md`：denominator 親手 trust-nothing 重推＝77 工作單位/166 列、**零 drift**；spec `2/67` ↔ migration `67` 同源自洽；批次層/AUD-1 已落地確認）。前一輪＝`drift-recheck-2026-06-17.md`（16-DIFF 分析仍有效）。06-11 code-state 已過期。原：S-final completed on 2026-06-11.
 
 ## Rules
 
