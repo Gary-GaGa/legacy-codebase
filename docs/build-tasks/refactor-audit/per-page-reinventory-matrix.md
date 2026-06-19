@@ -128,8 +128,8 @@
 
 | funcId | risk | prd（`docs/specs/prd/`）| status | srs（`docs/specs/srs/`）|
 |---|---|---|---|---|
-| `EPROZ00100` | z0 共用 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md` | prd-ready | —（bundle 全清待重產；PRD 留作 input）|
-| `EPROC00118` | T1 企金線 | —（全清重跑、待重放）| not-started | — |
+| `EPROZ00100` | z0 共用 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md` | in-review | `docs/specs/srs/EPROZ00100/` |
+| `EPROC00118` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` | in-review | `docs/specs/srs/EPROC00118/` |
 | `EPROC00120` | T1 企金線 | — | not-started | — |
 | `EPROCSU0170` | T1 企金線 | — | not-started | — |
 | 企金線 T2/T3 餘頁 | T2/T3 企金線 | — | not-started（佔位·待拆列）| 頁列舉見 `c0-legacy-parity-recheck.md` |

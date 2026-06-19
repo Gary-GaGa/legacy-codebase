@@ -1,0 +1,531 @@
+openapi: 3.0.3
+info:
+  title: EPROC00118 Corporate Scorecard API
+  version: 0.1.0
+  description: Draft SRS contract for EPROC00118.
+paths:
+  /epl-sele-c0-corporateScorecard-list:
+    post:
+      operationId: eplSeleC0CorporateScorecardList
+      summary: Query corporate scorecard option lists
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeleRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeleResponse'
+        '400':
+          description: COMMON_MSG_ERROR_LON or required-field validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ACCESS_DENIED from TB_API_AUTH
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_QUERY_FAIL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-info-c0-corporateScorecard:
+    post:
+      operationId: eplInfoC0CorporateScorecard
+      summary: Query corporate scorecard tab
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InfoRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+        '400':
+          description: COMMON_MSG_ERROR_LON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: MSG_OVER_COUNT_LIMIT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ACCESS_DENIED from TB_API_AUTH
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_QUERY_FAIL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-calc-c0-corporateScorecard:
+    post:
+      operationId: eplCalcC0CorporateScorecard
+      summary: Calculate corporate scorecard score and risk level
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalcRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalcResponse'
+        '400':
+          description: COMMON_MSG_ERROR_LON, COMMON_UI_PLEASE_SELECT, required-field validation error, or module message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ACCESS_DENIED from TB_API_AUTH
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: COMMON_MSG_RATE_FAIL or MSG_QUERY_FAIL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-save-c0-corporateScorecard:
+    post:
+      operationId: eplSaveC0CorporateScorecard
+      summary: Save or finish corporate scorecard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveRequest'
+      responses:
+        '200':
+          description: COMMON_MSG_SAVE_SUCCESS. `EPROI00118_MSG_DATE` is a FE prompt before Default save, not an API error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveResponse'
+        '400':
+          description: COMMON_MSG_ERROR_LON, EPROI00118_MSG_ERROR_FLG, COMMON_UI_PLEASE_SELECT, COMMON_MSG_RATE, or required-field validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ACCESS_DENIED from TB_API_AUTH or BE role authorization rejection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: COMMON_MSG_SAVE_FAIL, COMMON_MSG_RATE_FAIL, or MSG_QUERY_FAIL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    SeleRequest:
+      type: object
+      required:
+        - langType
+        - applicationNo
+      properties:
+        langType:
+          type: string
+          maxLength: 10
+        applicationNo:
+          type: string
+          maxLength: 30
+    SeleResponse:
+      type: object
+      properties:
+        managementExecutivesAgeRangeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        ageRangeOfGuarantorList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        companyTypeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        industryList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        yearsInOperationList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        loanPurposeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        repaymentSourceList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        kScoreCbcConsumerCreditReportList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        maxOverdueDaysList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        noOfLateTransactionInList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        substantiationOfRepaymentSourceList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        companyWithPositiveNetIncomeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        companyWithConsecutiveSalesGrowthRatioList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        companyWithConsecutiveNetProfitMarginGrowthRatioList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        changesInAPList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        changesInARList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        changesInInventoryList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+    ValueLabel:
+      type: object
+      properties:
+        value:
+          type: string
+        label:
+          type: string
+    InfoRequest:
+      type: object
+      required:
+        - applicationNo
+        - isQuery
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        isQuery:
+          type: boolean
+    InfoResponse:
+      type: object
+      required:
+        - aoRiskLevelMap
+        - crRiskLevelMap
+      properties:
+        commentDate:
+          type: string
+        comment:
+          type: string
+          maxLength: 3000
+        aoRiskLevelMap:
+          $ref: '#/components/schemas/ScorecardRoleMap'
+        crRiskLevelMap:
+          $ref: '#/components/schemas/ScorecardRoleMap'
+    CalcRequest:
+      type: object
+      required:
+        - applicationNo
+        - codeMap
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        codeMap:
+          $ref: '#/components/schemas/CalcCodeMap'
+    CalcResponse:
+      type: object
+      required:
+        - riskLevel
+        - scoreDatetime
+      properties:
+        riskLevel:
+          type: string
+          maxLength: 7
+        scoreDatetime:
+          type: string
+          maxLength: 19
+    CalcCodeMap:
+      type: object
+      required:
+        - ageCode
+        - guarAgeCode
+        - companyTypeCode
+        - industryCode
+        - yearOpCode
+        - loanPurposeCode
+        - repaymentStatusCode
+        - kScoreCode
+        - maxOverdueCode
+        - trans12MonCode
+        - subsRepaymentStatusCode
+        - compPositiveCode
+        - growthRatioCode
+        - pmGrowthRatioCode
+        - curRatio
+        - deRatio
+        - apCode
+        - arCode
+        - inventoryCode
+        - totalAsset
+        - totalLoanAmt
+        - debtRatio
+      properties:
+        ageCode:
+          type: string
+          maxLength: 2
+        guarAgeCode:
+          type: string
+          maxLength: 2
+        companyTypeCode:
+          type: string
+          maxLength: 2
+        industryCode:
+          type: string
+          maxLength: 2
+        yearOpCode:
+          type: string
+          maxLength: 2
+        loanPurposeCode:
+          type: string
+          maxLength: 2
+        repaymentStatusCode:
+          type: string
+          maxLength: 2
+        kScoreCode:
+          type: string
+          maxLength: 2
+        maxOverdueCode:
+          type: string
+          maxLength: 2
+        trans12MonCode:
+          type: string
+          maxLength: 2
+        subsRepaymentStatusCode:
+          type: string
+          maxLength: 2
+        compPositiveCode:
+          type: string
+          maxLength: 2
+        growthRatioCode:
+          type: string
+          maxLength: 2
+        pmGrowthRatioCode:
+          type: string
+          maxLength: 2
+        curRatio:
+          type: string
+          maxLength: 3
+          pattern: '^\d{1,3}$'
+          description: UI percent input; BE stores percent/100 into DB NUMBER(3,2) with no silent rounding or truncation.
+        deRatio:
+          type: string
+          maxLength: 11
+          pattern: '^-?\d{1,7}(\.\d{1,2})?$'
+          description: SRS enforces DB NUMBER(9,2) before write.
+        apCode:
+          type: string
+          maxLength: 2
+        arCode:
+          type: string
+          maxLength: 2
+        inventoryCode:
+          type: string
+          maxLength: 2
+        totalAsset:
+          type: string
+          maxLength: 22
+          pattern: '^-?\d{1,17}(\.\d{1,2})?$'
+          description: SRS enforces DB NUMBER(19,2) before write.
+        totalLoanAmt:
+          type: string
+          maxLength: 22
+          pattern: '^-?\d{1,17}(\.\d{1,2})?$'
+          description: SRS enforces DB NUMBER(19,2) before write.
+        debtRatio:
+          type: string
+          maxLength: 22
+          pattern: '^-?\d{1,4}(\.\d{1,2})?$'
+          description: Current DTO allows 22 chars; SRS enforces DB NUMBER(6,2) before write.
+    SaveRequest:
+      type: object
+      required:
+        - applicationNo
+        - isFinish
+        - aoRiskLevelMap
+        - crRiskLevelMap
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        isFinish:
+          type: boolean
+          description: false means Save; true means Finished.
+        comment:
+          type: string
+          maxLength: 3000
+        aoRiskLevelMap:
+          $ref: '#/components/schemas/ScorecardRoleMap'
+        crRiskLevelMap:
+          $ref: '#/components/schemas/ScorecardRoleMap'
+    SaveResponse:
+      type: object
+      description: Current backend returns an empty data map; success and message code are carried by the standard EPROResponse envelope.
+      additionalProperties: false
+      properties: {}
+    ScorecardRoleMap:
+      type: object
+      description: Current info/save DTO does not expose score fields; score precision is verified through DB side effects (`*_SCR NUMBER(3,0)`) and QA/schema, not as request/response properties.
+      properties:
+        loanDefDayFlag:
+          type: string
+          maxLength: 2
+          enum:
+            - Y
+            - N
+        ageCode:
+          type: string
+          maxLength: 2
+        guarAgeCode:
+          type: string
+          maxLength: 2
+        companyTypeCode:
+          type: string
+          maxLength: 2
+        industryCode:
+          type: string
+          maxLength: 2
+        yearOpCode:
+          type: string
+          maxLength: 2
+        loanPurposeCode:
+          type: string
+          maxLength: 2
+        repaymentStatusCode:
+          type: string
+          maxLength: 2
+        kScoreCode:
+          type: string
+          maxLength: 2
+        maxOverdueCode:
+          type: string
+          maxLength: 2
+        trans12MonCode:
+          type: string
+          maxLength: 2
+        subsRepaymentStatusCode:
+          type: string
+          maxLength: 2
+        compPositiveCode:
+          type: string
+          maxLength: 2
+        growthRatioCode:
+          type: string
+          maxLength: 2
+        pmGrowthRatioCode:
+          type: string
+          maxLength: 2
+        curRatio:
+          type: string
+          maxLength: 3
+          pattern: '^\d{1,3}$'
+          description: UI percent input; BE stores percent/100 into DB NUMBER(3,2) with no silent rounding or truncation.
+        deRatio:
+          type: string
+          maxLength: 11
+          pattern: '^-?\d{1,7}(\.\d{1,2})?$'
+          description: SRS enforces DB NUMBER(9,2) before write.
+        apCode:
+          type: string
+          maxLength: 2
+        arCode:
+          type: string
+          maxLength: 2
+        inventoryCode:
+          type: string
+          maxLength: 2
+        totalAsset:
+          type: string
+          maxLength: 22
+          pattern: '^-?\d{1,17}(\.\d{1,2})?$'
+          description: SRS enforces DB NUMBER(19,2) before write.
+        totalLoanAmt:
+          type: string
+          maxLength: 22
+          pattern: '^-?\d{1,17}(\.\d{1,2})?$'
+          description: SRS enforces DB NUMBER(19,2) before write.
+        debtRatio:
+          type: string
+          maxLength: 22
+          pattern: '^-?\d{1,4}(\.\d{1,2})?$'
+          description: Current DTO allows 22 chars; SRS enforces DB NUMBER(6,2) before write.
+        riskLevel:
+          type: string
+          maxLength: 7
+        actionDate:
+          type: string
+          maxLength: 26
+    ErrorResponse:
+      type: object
+      required:
+        - errorCode
+        - errorMessage
+      properties:
+        errorCode:
+          type: string
+          maxLength: 64
+        errorMessage:
+          type: string
+          maxLength: 500
