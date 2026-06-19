@@ -24,7 +24,7 @@
 | **AUD-8**（schema-diff）| new02 獨有 `TB_PAGE_COLUMN_AUTH_CATEGORY/_DETAIL` 用途確認（R7 三表外的新權限機制？）| 權限模型完整性 | SA/ops | 06-12 | 同 |
 | **AUD-11**（F-OWN-4）| `EPROCU0160` typo vs 真分歧——**Codex 碼驗 06-17＝UNFOUND（先不關）**：新 source **無獨立 `EPROCU0160`**（FE pageCode/route/API + BE controller 全 → `EPROCSU0160`/`epl-*-csu-*`＝傾向 typo/已併），**但** ① checkout 無 `TB_PAGE_MENU` row data → 無法證 CU×0160 routing 實指 CSU0160 ② `CsuLoanConditionServiceImpl:597` 讀 `EPROISU0160`（CS/CU checkpoint 欄＝`EPROCSU0160`）→ CU 分流正確性存疑 | 待 ① 唯讀 SQL 查 `TB_PAGE_MENU` 無擔×0160 routing ② `:597` ISU0160 是否 CU 誤接 bug | DBA(SQL)＋RD(`:597`) | 06-16 | F-OWN-4＋`done/aud11-cu0160-page-reverify-findings.md`（push `8c376f7`）＋**派工卡 `build-tasks/aud11-closeout-dba-rd.md`** |
 | **企金線 老系統 parity 補比**（reopen 06-17，**18 頁**）| 企金線（c0 評分 9 + CSU 主流程 9）由鏡像個金 i0/ISU twin 建、**未對舊企金 cs/cu 行為比**（0921「撥貸收斂後評估補比」）→ 撥貸已收斂、補比到期；E1/E2（00118）、AUD-11（CSU0160）合流 | 企金線各頁老系統 parity 維度定版（risk-tier 00118/00120/0170 先）| 信用決策 domain＋RD/Codex（碼驗）| 06-17 | `archive/decisions-2026H1-disbursement.md` 0921＋`decisions.md` c0-parity reopen 列＋**派工卡 `build-tasks/c0-legacy-parity-recheck.md`**（18 頁批次，套 `process/legacy-parity-sop.md`）|
-| ~~EPROZ00100 / EPROC00118 SRS TBD~~ | 隨 **2026-06-18 全清重跑**移除（兩頁 spec 已砍）；TBD 待母資料夾重產後重登（00118：TBD-002 與 c0 E1/E2 合流）| — | PM/SA/RD/風控 | 06-18 | 見 `decisions` 全清重跑列；重產後 spec §@PENDING 為單一出處 |
+| EPROZ00100 / EPROC00118 SRS @PENDING | **2026-06-18 重產 in-review**：兩頁 spec §@PENDING 為單一出處（00100 `PENDING-Z001`~`Z010`、00118 `PENDING-001`~`015`）；`gateⓅ` PASS；**跨模型 N 軸複驗各有 Blocker、待修**（見 `decisions` 重產 pilot 驗收列）| 待人審/裁/修 | PM/SA/RD/風控 | 06-18 | 各頁 `spec.md §@PENDING`（單一出處）|
 
 ## ⚪ 非阻擋 / 暫緩 / 待業務（可獨立排）
 | ID | 待決 | owner | 來源 |
