@@ -3,7 +3,7 @@
 > **🔄 新 session / context 中斷後從這接回**（狀態全在 repo·已併 main，非對話記憶——心法見 `verification/verification-execution.md`「真相存 doc 不存記憶」）：
 > 讀序＝① `CLAUDE.md`（憲法）② **本檔**（一眼看進度/剩什麼/卡誰）③ `pending-register.md`（待決+owner）④ `build-tasks/` 各卡（**待派 prompt 在卡裡**）⑤ `decisions.md`（流水帳）。**下一步優先序見 §六**。
 > ⚠️ Codex 在母資料夾產的 findings 是 untracked → **push 上來才進 repo**（同 AUD-10/KHR）。
-> 2026-06-17 更新：T24 B-group parity fix 已套用並產出 `build-tasks/t24-bgroup-legacy-parity-fix-findings.md`；`E21` 依 A-5 USD+KHR-only 邊界 keep、`G4`/`G10`/`H8` 換匯欄幣別**來源 06-17 owner 裁照舊**（坐實舊 `DISBURSEMENT_CURRENCY`、收窄/rounding 仍 keep）。**金錢/截斷欄 pre-push 最嚴人審已過 → code 已 commit/push（product repo，commit `3d6f446`，06-17 10:41，已在 origin/master）**；剩端到端/T24 接收驗證（Phase V/UAT）。
+> 2026-06-17 更新：T24 B-group parity fix 已套用並產出 `build-tasks/done/t24-bgroup-legacy-parity-fix-findings.md`；`E21` 依 A-5 USD+KHR-only 邊界 keep、`G4`/`G10`/`H8` 換匯欄幣別**來源 06-17 owner 裁照舊**（坐實舊 `DISBURSEMENT_CURRENCY`、收窄/rounding 仍 keep）。**金錢/截斷欄 pre-push 最嚴人審已過 → code 已 commit/push（product repo，commit `3d6f446`，06-17 10:41，已在 origin/master）**；剩端到端/T24 接收驗證（Phase V/UAT）。
 
 > **定位**：一眼看「整體進度／還剩什麼／卡在誰」。**細節不在這**——逐頁狀態＝`feature-inventory.md`（SSOT）、待決＝`pending-register.md`（SSOT）、Phase V runtime＝`verification/verification-handoff.md`。本檔只彙總層、指向 SSOT，數字來源見各列。
 > 更新：里程碑後刷新；最後更新 **2026-06-18**（**撥貸 owner 決策牆清空**：A-1 conformance PASS／批次層 AUD-10／T24 照舊／A-5 幣別 keep；PRD→SRS 轉換層硬化批判輪2/3；**06-17 撥貸殘 domain A-4/M6/B-1/G·H 全裁照舊**；**B-group push `3d6f446` 回填**；**進度盤納入 PRD→SRS 規格產出軌**；**06-18 EPROZ00100 SRS v0.2 已產（prd-to-srs→機械閘門 PASS→spec-reviewer 修畢、In Review）→ 覆蓋 0/67→1/67；其後同日 owner 全清重跑 00100/00118 → 覆蓋退回 0/67；最終 pipeline 母資料夾重產 00100+00118 → push 回 main、機械 PASS、ledger in-review、覆蓋 2/67〔跨模型 N 軸複驗各有 Blocker 待修〕**）。

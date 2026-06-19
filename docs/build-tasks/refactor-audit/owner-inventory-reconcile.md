@@ -72,7 +72,7 @@ owner 表 `EPROC0_0211`＝「流程中無看到對應的頁籤」、`EPROC0_0213
 
 ## 6. 待 Codex 碼驗派工（docs-only 升級為碼驗）
 - **批次等價物**（最重要）：新系統有沒有 B001–B008 的等價物？（Spring `@Scheduled`/batch 入口 grep；尤其 B005 匯率排程、B006 放款結果檔、B007 SFTP）→ 逐個 found/UNFOUND + `file:line`。
-- **CU0160**：新系統企金無擔 Loan Condition 頁/endpoint 對應（**派工卡＝`build-tasks/aud11-cu0160-page-reverify.md`**＝AUD-11；typo 併入 vs 真分歧）→ ✅ **碼驗回 06-17＝UNFOUND·先不關**（無獨立 CU0160→傾向已併；殘 `TB_PAGE_MENU` data + `:597` ISU0160 分流存疑，見 §3 F-OWN-4）。**收尾派工卡（DBA SQL + RD `:597`）＝`build-tasks/aud11-closeout-dba-rd.md`**。
+- **CU0160**：新系統企金無擔 Loan Condition 頁/endpoint 對應（**派工卡＝`build-tasks/done/aud11-cu0160-page-reverify.md`**＝AUD-11；typo 併入 vs 真分歧）→ ✅ **碼驗回 06-17＝UNFOUND·先不關**（無獨立 CU0160→傾向已併；殘 `TB_PAGE_MENU` data + `:597` ISU0160 分流存疑，見 §3 F-OWN-4）。**收尾派工卡（DBA SQL + RD `:597`）＝`build-tasks/aud11-closeout-dba-rd.md`**。
 - （其餘 67 頁的「碼在 vs 疑未完」沿用既有 audit；本表未推翻任何頁級狀態。）
 
 ---
