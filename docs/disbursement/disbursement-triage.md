@@ -2,7 +2,7 @@
 
 > **舊系統比對（Step A/A2/B）完成後的綜合裁決**（2026-06-05）。逐項證據表（含 T24 段位、舊業務規則、`file:line`）存本機 `legacy-extract/*-compare.md`（gitignore）；本檔只到**主題 / 嚴重度 / owner / 信心**。
 > 配 `verification-handoff.md` §2.1/§2.2/§2.3。
-> ⚠️ **重大裁定更新（2026-06-16）**：① **A-1 換匯 stub 已實作＋conformance PASS**（`daae4c3`，P0-1 結）② **批次層 AUD-10 結**（6/8 FOUND + B005 inline-取代銷案）③ **owner「T24 都照舊系統規格」** → §2/§3 所有 T24 欄值/來源/格式/截斷 **全收編＝照舊 parity、轉執行**（卡 `build-tasks/t24-bgroup-legacy-parity-fix.md`）。**下文 §0/P0-3/§6 對 A-1「未完成」、T24_COMPANY「死路」、KHR「維持新」之描述均已被後續裁定 supersede**——殘 domain（A-4 檢核 / M6 完工日 / B-1 T24_COMPANY / KHR G·H）**06-17 全裁「照舊系統處理」**（B-1 取 `OVSLXLON01`、KHR G·H 來源照舊坐實舊 `DISBURSEMENT_CURRENCY`；A-5 USD/KHR 收窄 keep 不變）。
+> ⚠️ **重大裁定更新（2026-06-16）**：① **A-1 換匯 stub 已實作＋conformance PASS**（`daae4c3`，P0-1 結）② **批次層 AUD-10 結**（6/8 FOUND + B005 inline-取代銷案）③ **owner「T24 都照舊系統規格」** → §2/§3 所有 T24 欄值/來源/格式/截斷 **全收編＝照舊 parity、轉執行**（卡 `build-tasks/done/t24-bgroup-legacy-parity-fix.md`）。**下文 §0/P0-3/§6 對 A-1「未完成」、T24_COMPANY「死路」、KHR「維持新」之描述均已被後續裁定 supersede**——殘 domain（A-4 檢核 / M6 完工日 / B-1 T24_COMPANY / KHR G·H）**06-17 全裁「照舊系統處理」**（B-1 取 `OVSLXLON01`、KHR G·H 來源照舊坐實舊 `DISBURSEMENT_CURRENCY`；A-5 USD/KHR 收窄 keep 不變）。
 
 ## 0. 總結論（里程碑更正）
 **新撥貸後端（`0921 DataInput` + `0922 Summary` + T24 組檔）＝結構搭好、但功能未完成且與舊系統實質分歧。**
@@ -75,7 +75,7 @@
 
 **逐項閘門（每筆機械修正）**：① 屬上表某項 ② 引舊 spec `file:line` 證「舊明確正確且非移除依賴」 ③ 只動該 method、不外擴 ④ `mvn package` 綠 ⑤ 回報 diff + 依據供人審 → 過了才推產品 repo。
 
-**2026-06-17 B-group owner-fix 補記**：本批是依 06-16 owner「T24 都照舊系統規格」另行授權，非擴張一般 allowlist。證據與修正清單見 `build-tasks/t24-bgroup-legacy-parity-fix-findings.md`；金錢/截斷欄 pre-push 最嚴人審**已過 → code 已 commit/push（product repo，commit `3d6f446`，06-17 10:41，已在 origin/master）**；剩端到端/T24 接收驗證。
+**2026-06-17 B-group owner-fix 補記**：本批是依 06-16 owner「T24 都照舊系統規格」另行授權，非擴張一般 allowlist。證據與修正清單見 `build-tasks/done/t24-bgroup-legacy-parity-fix-findings.md`；金錢/截斷欄 pre-push 最嚴人審**已過 → code 已 commit/push（product repo，commit `3d6f446`，06-17 10:41，已在 origin/master）**；剩端到端/T24 接收驗證。
 
 ### 7.1 進度
 | 項 | 狀態 | 證據 |

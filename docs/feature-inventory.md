@@ -136,7 +136,7 @@
 | 機械修正 M1–M10 | ✅ 全結案（master） | 尾欄/submit mail/RECEIVED_DATE/C20/fee key/E 位/H 段/A52/fee-delete-FN |
 | ✅ **A-1 換匯 stub（+conformance PASS）** | **已實作＋碼驗（product `daae4c3`，06-16；mvn 綠）** | `funcGetExchangeRate` 補 return → authorize 換匯打通；**Codex conformance 4/4 PASS**（OQ-1 `OVSLXLON01`／OQ-3 `FAILED_E304` 中止／OQ-4 throw／兩表同交易）；規格/recon `done/` |
 | 🟡 B-1 `T24_COMPANY`（06-12 降級）| **前提推翻→RD 接值** | 新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存（OVSLXLON01/02 兩 schema，DDL 實查）；entity 補映射＋B8/C9 接值 |
-| ✅ T24 B-group parity（06-17） | **code 已 commit/push（`3d6f446`，origin/master，06-17 10:41；金錢/截斷欄人審過）；剩端到端/T24 接收驗證** | B-2、B-3 非幣別欄、B-4、B-5 已照舊；`E21`、`G4`/`G10`/`H8` 依 A-5 USD+KHR-only 邊界 keep。findings：`build-tasks/t24-bgroup-legacy-parity-fix-findings.md` |
+| ✅ T24 B-group parity（06-17） | **code 已 commit/push（`3d6f446`，origin/master，06-17 10:41；金錢/截斷欄人審過）；剩端到端/T24 接收驗證** | B-2、B-3 非幣別欄、B-4、B-5 已照舊；`E21`、`G4`/`G10`/`H8` 依 A-5 USD+KHR-only 邊界 keep。findings：`build-tasks/done/t24-bgroup-legacy-parity-fix-findings.md` |
 | 🔴 其餘 domain | 未決 | 檢核嚴格度、KHR 資料約束殘小、async 架構殘語意、M6 完工日 DTO… |
 | ✅ **批次層 B001–B008** | **AUD-10 結（06-16，app 層完整）** | ✅ **6 FOUND**（新批次**重編號**≠legacy；B001-B007 對映見 findings）；✅ **B005 銷案**（inline 換匯取代每日批次、`TB_EXCHANGE_RATE` write-only）；⚪ **B008 log＝ops**。詳 `done/aud10-batch-layer-reverify-findings.md` |
 | 整合測確認點 | 待驗 | 〔A-1 spec-conformance ✅ PASS 06-16〕M7 facility fee 值、M9 district name join、撥貸端到端（含批次層）|
