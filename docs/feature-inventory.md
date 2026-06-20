@@ -238,7 +238,7 @@
 7. R2 報表服務 → 0181/i0·c0 PDF/z0 PDF；檔案上傳 API；FE/BE method-mismatch sweep；map-key sweep；Logback 外部化。
 
 **Phase S — spec 層（PRD→SRS 重產；owner：PM/SA + Codex local；並行 track）**
-8. Phase S status: SRS bundle coverage **2/67**; `EPROZ00100` and `EPROC00118` are Approved after 2026-06-20 RD/DBA contract closeout. Next expansion follows risk tier (corporate line / disbursement / 00800).
+8. Phase S status: SRS bundle coverage **2/67**; `EPROZ00100` and `EPROC00118` are Approved after 2026-06-20 RD/DBA contract closeout. Next expansion follows risk tier (corporate line / disbursement / 00800). **決策頁 SRS 產出佇列（≈22 頁＋各頁要餵的輸入）＝`srs-production-queue-2026-06-20.md`（已回填 matrix ledger 逐頁列）**；企金線 18 頁 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗餵入。
 
 **關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。**spec 層（PRD→SRS 重產，Phase S）= 前置就緒、owner local 並行 track，不擋當前里程碑，但為 00800/企金線 rebuild 的上游**。
 
