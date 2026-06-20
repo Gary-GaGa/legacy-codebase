@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: EPROC00118 Corporate Scorecard API
   version: 0.1.0
-  description: Draft SRS contract for EPROC00118.
+  description: SRS contract for EPROC00118. Approved 2026-06-20 (RD/DBA contract closeout); authoritative status in spec.md.
 paths:
   /epl-sele-c0-corporateScorecard-list:
     post:

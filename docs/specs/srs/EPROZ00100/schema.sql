@@ -7,7 +7,7 @@
 -- DB-D4 carried: TB_RELATED_PARTY_INFO, TB_LOAN_CONDITION_DETAIL, TB_EMP_PROXY active/exact read dependencies.
 -- DB-D5 changed: TB_ROLE_DEFINE, TB_PROCESS_CODE, TB_API_AUTH active/exact but rewritten seed/config.
 -- REF-D1 changed: latest refactor baseline exposes epl-list-todolist, epl-case-insert-delreason, epl-case-insert-cloreason.
--- REF-D5 changed: prompt/session/download/reason-list endpoints are approved; implementation artifacts remain missing.
+-- REF-D5 changed: prompt/session/download/reason-list endpoints are approved; RD closeout implemented these migration endpoints and DBA seeded/verified their TB_API_AUTH rows on 2026-06-20 (no new DDL table required).
 -- External source-only tables mentioned by refactor evidence: TB_MAIN_BORROWER_PERSONAL_INFO, TB_MAIN_BORROWER_INFO_CORP.
 
 CREATE TABLE TB_LON_SUMMARY_INFO (
