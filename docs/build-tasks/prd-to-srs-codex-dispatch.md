@@ -116,6 +116,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 - PRD 內若帶 legacy 細節（checkpoint key 名/現行 method/欄寬）不可原樣搬進 openapi/schema
   契約 → 辨識並標 to-be 或 @PENDING。
 - 不臆造 file:line；未證標「待 RD 核對」。
+- **既有決策（如 T24 照舊）＝ provenance 帶進 Rn（SRS 為結論），非凍結為 done**：原系統處理／「code 已 push」＝**as-is 證據墊底、≠ SRS 已定版**；**讀 SRS 即見結論**，不必回翻決策檔（決策只當 provenance 連結）。金錢/交易/安全面凡未逐欄坐實或有缺口 → `@PENDING`、不標 ✅（ADR-0002 升級觸發：金額/交易/安全；先 SRS 結論、再以原系統處理為 as-is 佐證）。
 
 【DoD（Approved 前必過，含批判輪教訓）】
 - 每 PRD REQ ≥1 Rn；每 Rn ≥1 QA covers + 強制點；完整性/安全的驗證 BE 有且權威。
