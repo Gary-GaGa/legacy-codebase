@@ -31,11 +31,13 @@
    c. 機械 gate：python scripts/check-srs-bundle.py docs/specs/srs/<funcId> 必 exit 0（含 gateⓇ reconcile）。
    d. SRS N 軸驗證（playbook §4b 的 A–G）：各 spawn 一 read-only sub-agent、獨立 session、不同指示、最好跨模型（risk-tier T1 全 A–G；低風險頁可 A+E+G）→ 採納修正後【再審一輪】。
    e. 達標（exit 0 + N 軸無 Blocker）→ 回填該頁 ledger status=in-review、填 srs 路徑（覆蓋計數由此衍生）→ 回 1a 取下一個 prd-ready。
-   f. 未達標（gate FAIL / N 軸殘 Blocker 需 C 類裁定）→ 該頁標 FAIL/blocked+原因、status 留 prd-ready（不誤升）→ 回 1a 續跑下一頁（單頁失敗不擋整批）。
+   f. 未達標（gate FAIL / N 軸殘 Blocker 需 C 類裁定）→ 該頁 **status=blocked**+原因（**離開 prd-ready 集合→下輪不會被重取**；嚴禁留 prd-ready，否則同頁被無限重取）→ 回 1a 續跑下一頁（單頁失敗不擋整批）。
 
-2. 守則（不得違反）：序列非並行；每頁全程過 gate＋N 軸、不跳；終點＝in-review，【不得自宣 approved】（TBD 全關+人裁才 approved）；不得碰 C 類（裁 TBD/風險/架構/domain），只標 @PENDING；context 衛生＝每 sub-task 獨立 session、主控只收 PASS/FAIL/findings 路徑。
+2. 守則（不得違反）：序列非並行；每頁全程過 gate＋N 軸、不跳；終點＝in-review，【不得自宣 approved】（TBD 全關+人裁才 approved）；不得碰 C 類（裁 TBD/風險/架構/domain），只標 @PENDING；context 衛生＝每 sub-task 獨立 session、主控只收 PASS/FAIL/findings 路徑；**不中途改 ledger 排序**（要調序先停批再重啟）。
 
-3. 停點＝ledger 的 prd-ready 全清（皆 in-review 或 FAIL/blocked）才停＝batch checkpoint。彙總回報：每頁一行（in-review / FAIL+原因 / blocked=待裁）+ bundle/findings 路徑，整批一起交人審/裁 TBD。
+2b. 🛑 circuit-breaker：偵測**系統性/重複**失敗——同一 N 軸在連續多頁出同類 Blocker、或多頁共同 local 輸入缺陷（如 docs/db-diff 版本舊、reconcile 範本缺）——**暫停整批 drain、回報、不續跑**，等修根因再重啟（別把同一個錯複製到整批）。
+
+3. 停點＝ledger 已無 prd-ready（皆 in-review 或 blocked）才停＝batch checkpoint。彙總回報：每頁一行（in-review / blocked=gate-fail 或 待裁 C 類）+ bundle/findings 路徑，整批一起交人審/裁 TBD。
 ```
 
 ---
@@ -43,8 +45,13 @@
 ## 步驟 2 — batch checkpoint（人）
 - 全批停在 `in-review` 後，逐頁人審 + 裁 open `@PENDING`/TBD（C 類 owner/RD/DBA/domain）。
 - TBD 全關 + N 軸無 Blocker → 人把該頁 ledger 升 `approved`（orchestrator 不自升）。
-- FAIL/blocked 頁：看是 gate/N 軸可修（回 owner 母資料夾修→重跑該頁）還是 C 類待裁（進 `pending-register`）。
+- `blocked` 頁：看是 gate/N 軸可修（回 owner 母資料夾修）還是 C 類待裁（進 `pending-register`）→ 修/裁後**重標 `prd-ready`** 進下一批重跑（blocked 不會自動重試）。
 - 回填 `STATUS §一/§二`、`feature-inventory §5 Phase S`、覆蓋計數（ledger `in-review`/`approved` 涵蓋頁數 / 67）。
+
+### 首批放量（漸進，別一次全放）
+- **首次批量建議 ≤5 頁、同 risk-tier**（低風險先）；證實人審 + N 軸跟得上、circuit-breaker 沒被觸發，再擴大批量。
+- **禁止為衝吞吐而降 N 軸**：risk-tier T1（金錢/計分/checkpoint/授權）一律全 A–G（§4b）；只有低風險頁可 A+E+G。
+- owner 一次標的 `prd-ready` 數＝該批 drain 範圍——**owner 即放量節流閥**（標少＝小批）。
 
 ---
 
@@ -55,7 +62,9 @@
 | 每頁 gate+N 軸? | ✅ 全程，不跳 |
 | 自動到哪? | `in-review`（**不自升 approved**） |
 | 停點 | 整批 prd-ready 清空後一次（batch checkpoint） |
-| 單頁 FAIL | 標因、留 prd-ready、續跑下一頁 |
+| 單頁 FAIL | 標因→**status=blocked**（離開 prd-ready，防無限重取）、續跑下一頁 |
+| 首批放量 | ≤5 頁同 risk-tier，漸進；不為吞吐降 N 軸 |
+| 系統性/重複失敗 | 🛑 暫停整批、回報、修根因再重啟 |
 | C 類（裁定/風險/架構/domain） | ❌ 不碰，只標 @PENDING |
 
 > 卡歸檔 `done/`：本批 drain 跑完、回填完成後移。
