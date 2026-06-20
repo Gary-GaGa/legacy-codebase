@@ -16,7 +16,7 @@
 ## 已知 PRD（快照狀態）
 | docId | 版本 | funcId | 快照 | 備註 |
 |---|---|---|---|---|
-| `CDC-EPRO-0001` | v1.0（工作快照） | `EPROZ00100` / `EPROC00118` | ✅ **已重產 in-review（2026-06-18）**：兩頁 PRD 快照＋SRS bundle＋trace sidecar 全在 repo、機械閘門 PASS、Status=Draft（覆蓋 2/67）；跨模型複審 Blocker 已修(06-19)、待 owner/RD/DBA 裁 pending 才 Approved | TO DO LIST / Corporate Scorecard；見 `decisions` 06-18 重產驗收列 + 06-19 複審列 |
+| `CDC-EPRO-0001` | v1.0（工作快照） | `EPROZ00100` / `EPROC00118` | ✅ **已重產 in-review（2026-06-18）**：兩頁 PRD 快照＋SRS bundle＋trace sidecar 全在 repo、機械閘門 PASS、Status=Draft（覆蓋 2/67）；跨模型複審 Blocker 已修(06-19)；**06-20 owner-decision pending 全關、bundle 無 open pending → Approved 殘 blocker＝contract 軸 RD/DBA 實作 gap（非裁定缺）** | TO DO LIST / Corporate Scorecard；見 `decisions` 06-18 重產驗收列 + 06-19 複審列 + 06-20 pending 全關列 |
 | `CDC-EPRO-0001` | v1.1（PM Review Draft） | `EPROZ00800` | ⛔ **封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)）| spec 層重置：舊 PRD（由 code 反推、未承載新 Bible v1.1 案件類型 gating/0173 映射）+ v0.9 SRS 退場 → **待新版 PRD 重產**（owner local；承載 Bible v1.1 BR-014~017/SC-002~005）|
 
 ## 下游

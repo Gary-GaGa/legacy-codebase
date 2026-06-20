@@ -113,7 +113,7 @@
 ---
 
 ## PRD→SRS backlog（接「新版 Bible/PRD 跑 to SRS」）
-> 現 repo spec 覆蓋＝**2/67**（**2026-06-18 母資料夾用最終 pipeline 重產 `EPROZ00100`＋`EPROC00118`**，兩頁 SRS bundle 已 push 回 main、機械閘門 `check-srs-bundle` PASS、ledger=in-review〔待人審/裁 TBD；**跨模型 N 軸複驗 Blocker 已修(06-19)、opus×2 複審 PASS；剩 owner/RD/DBA pending TBD 才 Approved**（修正清單＝`build-tasks/EPROZ00100-EPROC00118-nfix-card.md`）〕；00800 v0.9 仍封存待重產；Bible v1.1 已在 repo）。owner 放 PRD → 跑 `prd-to-srs` 產 SRS。**覆蓋計數方法＝下方「PRD→SRS 佇列 + ledger」表註（單一出處）。**
+> 現 repo spec 覆蓋＝**2/67**（**2026-06-18 母資料夾用最終 pipeline 重產 `EPROZ00100`＋`EPROC00118`**，兩頁 SRS bundle 已 push 回 main、機械閘門 `check-srs-bundle` PASS、ledger=in-review〔待人審/裁 TBD；**跨模型 N 軸複驗 Blocker 已修(06-19)、opus×2 複審 PASS；06-20 owner-decision pending 全關（00100 `Z001~Z010`＋00118 `001~018`）、bundle 無 open pending → Approved 殘 blocker＝contract 軸 RD/DBA 實作 gap（非裁定缺）**（修正清單＝`build-tasks/EPROZ00100-EPROC00118-nfix-card.md`）〕；00800 v0.9 仍封存待重產；Bible v1.1 已在 repo）。owner 放 PRD → 跑 `prd-to-srs` 產 SRS。**覆蓋計數方法＝下方「PRD→SRS 佇列 + ledger」表註（單一出處）。**
 > **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-diff/`+`docs/refactor-spec/`。
 > **risk-tier 產 SRS 順序**（= rebuild/fix 最需規格者先）：
 > 1. **企金線**（CSU 主流程 + c0 評分，~18 頁）—— parity 回來若判 rebuild，立即需 SRS。

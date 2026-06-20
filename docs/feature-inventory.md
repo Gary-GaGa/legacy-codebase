@@ -102,7 +102,7 @@
 | EPROC00115 | Borrower Group Exposure | ✅ | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`（Step 1 BGE pilot）；授權列 |
 | EPROC00116 | Financial Statement GI | ✅ | ✅ | `epl-*-c0-financial-statement-comments`（`524d8dc`；calc 保留、export POST-blob 兩邊一致、無 00640 式不符）；授權列；export 模板沿用 i0？|
 | EPROC00117 | Financial Evaluation GI | ✅ | ✅ | **business-only ✅**（`b14ae05`，決策 B）：接 `epl-sele-c0-financial-list`、`epl-info/save-c0-financial-business`；未接 `-financial-staff`（cleanup）；授權列 |
-| EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`（`39e95dd`；**calc 保留接上**）；授權列；🚩 2 escalation；**SRS 重產 in-review**（`docs/specs/srs/EPROC00118/`，機械 PASS；**Blocker 已修(06-19)、opus 複審 PASS**（F 精度+D authZ seed）；剩 owner/RD/DBA pending TBD）|
+| EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`（`39e95dd`；**calc 保留接上**）；授權列；🚩 2 escalation；**SRS 重產 in-review**（`docs/specs/srs/EPROC00118/`，機械 PASS；**Blocker 已修(06-19)、opus 複審 PASS**（F 精度+D authZ seed）；**06-20 owner-decision pending 全關（`001~018`）、無 open @PENDING；Approved held＝contract 軸 RD/DBA 實作 gap（四端點 seed/DTO/save guard）**）|
 | EPROC00119 | Financial Statement FI | ✅ | ✅ | ✅ F-8 已修（`6919da5`，options 接 `epl-sele-c0-financial-statement-comments`）；**Phase V 必驗**：下拉有值+save 帶值+GI-sele 對 FI（businessType F）無分支影響；授權列；export 模板沿用 i0？|
 | EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`；i0 FI list 不消費→`getMenu()`回`of({})`；未接 `-staff-fi`（cleanup）；授權列 |
 > **範本＝i0 `individual/credit-investigation`**（容器動態載 tab、各子頁 `components/<name>/{component,services}`；c0 鏡像、改 `-c0-` endpoint + corporate DTO）。
@@ -113,7 +113,7 @@
 ### 2E. 共用 `EPROZ00*`（M8 z0）
 | 新頁 | 名稱 | FE | BE | 剩餘 / 備註 |
 |---|---|:--:|:--:|---|
-| EPROZ00100 | TO DO LIST（+00101/00102 popup）| ✅ | ✅ | ✅ F-10 已修（`2599752`）；F-9＝`@PENDING` 掛 R2/檔案 API 兩 ⏸ track；**SRS 重產 in-review**（`docs/specs/srs/EPROZ00100/`，機械 PASS；**Blocker 已修(06-19)、opus 複審 PASS**（R4 route→EPROISU/CSU）；剩 owner/RD/DBA pending TBD）|
+| EPROZ00100 | TO DO LIST（+00101/00102 popup）| ✅ | ✅ | ✅ F-10 已修（`2599752`）；F-9＝`@PENDING` 掛 R2/檔案 API 兩 ⏸ track；**SRS 重產 in-review**（`docs/specs/srs/EPROZ00100/`，機械 PASS；**Blocker 已修(06-19)、opus 複審 PASS**（R4 route→EPROISU/CSU）；**06-20 owner-decision pending 全關（`Z001~Z010`）、無 open @PENDING；Approved held＝contract 軸 RD/DBA 實作 gap（seed/guard）**）|
 | EPROZ00200 | New Case Application（進件入口）| ✅ | ✅ | ✅；案號序列細節未深入 |
 | EPROZ00300 | Document Checklist | ✅ | ✅ | ✅ FE 導回已修（`40d931c`，共用 `goPreviousPage()`→ToDo、BE 零改非缺陷）。⚠️ **Phase V 驗**：共用方法連帶 Related Party/Revised Item 三呼叫端語意（日後回原入口需 originPage 分流）。次要待裁：APP_HISTORY=98/權限等價（UNFOUND）|
 | EPROZ00400 | Case Distribution | ✅ | ✅ | cross-check ✅ |
@@ -238,7 +238,7 @@
 7. R2 報表服務 → 0181/i0·c0 PDF/z0 PDF；檔案上傳 API；FE/BE method-mismatch sweep；map-key sweep；Logback 外部化。
 
 **Phase S — spec 層（PRD→SRS 重產；owner：PM/SA + Codex local；並行 track）**
-8. 🟡 **前置就緒→待重產**：轉換層硬化（gateⓈ/Ⓔ＋DoD＋紅旗）✅、Bible v1.1 入 repo ✅、local 對比輸入盤點+抽取細則 ✅、dispatch 卡 ✅。**SRS bundle 覆蓋 2/67**（00100/00118 已重產 in-review〔機械 PASS；**跨模型 N 軸複驗 Blocker 已修(06-19)、opus×2 複審 PASS；剩 owner/RD/DBA pending TBD 才 Approved**〕、00800 封存=REBUILD；覆蓋 SSOT＝`refactor-audit/per-page-reinventory-matrix.md`）→ owner local Codex 重產，risk-tier 企金線/撥貸/00800 先；SRS 落 `docs/specs/srs/`。
+8. 🟡 **前置就緒→待重產**：轉換層硬化（gateⓈ/Ⓔ＋DoD＋紅旗）✅、Bible v1.1 入 repo ✅、local 對比輸入盤點+抽取細則 ✅、dispatch 卡 ✅。**SRS bundle 覆蓋 2/67**（00100/00118 已重產 in-review〔機械 PASS；**跨模型 N 軸複驗 Blocker 已修(06-19)、opus×2 複審 PASS；06-20 owner-decision pending 全關、bundle 無 open pending → Approved 殘 blocker＝contract 軸 RD/DBA 實作 gap**〕、00800 封存=REBUILD；覆蓋 SSOT＝`refactor-audit/per-page-reinventory-matrix.md`）→ owner local Codex 重產，risk-tier 企金線/撥貸/00800 先；SRS 落 `docs/specs/srs/`。
 
 **關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。**spec 層（PRD→SRS 重產，Phase S）= 前置就緒、owner local 並行 track，不擋當前里程碑，但為 00800/企金線 rebuild 的上游**。
 
