@@ -76,3 +76,31 @@
 - 每當 owner 把某頁 PRD 放進 `docs/specs/prd/` → 該 funcId 在 **matrix ledger 升 `prd-ready` + 填 `prd` 欄**（orchestrator 只 pick `prd-ready`，故 not-started 列不影響迭代、無 churn）。
 - **ledger 仍是覆蓋計數與 orchestrator 的單一出處**；本佇列＝該 ledger 的「各頁輸入需求」註解視圖。
 - 規模化前先跑 `prd-to-srs-orchestrator-pilot.md` 一頁，過了再批量（`orchestration-playbook §5b/§6b`）。
+
+---
+
+## 六、PRD 作清單（execution；給 PM/owner）
+
+> **要產的 PRD ＝下表 funcId**（00100/00118 已有 PRD+SRS，不在內）。每份 PRD 作完→放 `docs/specs/prd/`→matrix ledger 該列升 `prd-ready`→orchestrator(母資料夾 Codex) drain。
+> **檔名規約**＝`PRD-CDC-EPRO-0001-<funcId>-v1.0.md`（同既有 `PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md`）。
+> **PRD 內容預檢**（讓閘門接得上，完整見 `build-tasks/prd-to-srs-codex-dispatch.md §PRD 內容格式預檢`）：① 檔名含 funcId ② 錯誤碼用 `MSG_*`/`COMMON_MSG_*`（裸名 gateⒺ 抓不到）③ §DB 影響矩陣列實表名 `TB_*`+module_code/端點 ④ REQ 用 `REQ-NNN` ⑤ TBD 列表＋owner ⑥ maxlength/必要能給就給 ⑦ 附該頁 as-is findings 路徑。
+> **分批鐵則**（circuit-breaker，§drain 卡）：**首批 ≤5 頁、同 risk-tier**；T1 一律全 A–G N 軸、不為吞吐降軸；一批 drain 完人審過再放下一批。
+
+### Batch 1（建議先做：輸入已備、無 parity 前置）— 4 份
+| 順 | funcId | PRD 檔名 | 差異輸入來源（作 PRD 時引）| 備註 |
+|---|---|---|---|---|
+| 1 | `EPROISU0921` | `PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md` | `disbursement-triage.md`/`disbursement-domain-escalations.md`（A-4 已裁照舊）+db-diff | 撥貸 Data Input |
+| 2 | `EPROISU0922` | `PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | 同上（A-1✅/T24 照舊✅/B-1 接值）+T24 組檔 | 撥貸 Summary/T24 |
+| 3 | `EPROISU0920` | `PRD-CDC-EPRO-0001-EPROISU0920-v1.0.md` | 同上（頁框，domain-gated）| 撥貸 Process |
+| 4 | `EPROZ00800` | `PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md` | Bible v1.1 BR-014~017/SC-002~005 + 封存 `archive/EPROZ00800-v0.9-superseded/`（RP1-10/SR-B1/B2/RP8/RP11 為輸入）| REBUILD、新版 PRD 取代 v0.9 |
+
+### Batch 2+（企金線；**每份 PRD 前須先有該頁 `c0-legacy-parity-recheck` 碼驗 findings** 餵 as-is）— 17 份
+> risk-tier 先：`EPROC00120`、`EPROCSU0170`（00118 已有 SRS，其 parity 為 follow-up、非新 PRD）。**每批 ≤5、同 tier**。
+| tier | funcId（PRD 檔名同規約）| parity 前置 |
+|---|---|---|
+| T1 企金線(先) | `EPROC00120`、`EPROCSU0170` | 需 parity 碼驗（00120 i0-mirror·無 refactor baseline）|
+| T1 企金線 c0 | `EPROC00110`/`00112`/`00114`/`00115`/`00116`/`00117`/`00119` | 需 parity 碼驗（00119 i0-mirror）|
+| T2 企金線 CSU | `EPROCSU0110`/`0120`/`0130`/`0150`/`0160`/`0171`/`0172`/`0173` | 需 parity 碼驗（0160 另含 AUD-11 routing）|
+
+> 增量 KEEP 頁（ISU/i0/z0 多數）＝**無待裁差異、暫不需 PRD**；要補純文件 SRS 時再隨增量 track 拆列。
+> **00118 follow-up**（已有 SRS）：E1/E2 + parity 碼驗結果以**新 @PENDING** 補進既有 bundle，非重作 PRD。
