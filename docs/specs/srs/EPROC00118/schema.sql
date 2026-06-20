@@ -4,10 +4,12 @@
 -- Change hints:
 -- DB-D1 carried: TB_CORP_SCRCARD active/exact, copied from legacy data.
 -- DB-D2 changed: TB_SCORE_CARD_PARAM_DETAIL active/exact, transpose_method=rewritten fixed parameters.
--- DB-D3 carried plus @PENDING semantics: TB_LON_SUMMARY_INFO.CR_SCORE_CARD_COMPLETED is physical VARCHAR2(2 BYTE).
+-- DB-D3 carried: TB_LON_SUMMARY_INFO.CR_SCORE_CARD_COMPLETED is physical VARCHAR2(2 BYTE);
+-- first char is corporate scorecard status, second char is other scorecard status.
 -- DB-D4 changed: legacy TB_CHECK_POINT_CORP, TB_CHECK_POINT_CU, TB_CHECK_POINT_RC_CORP, TB_CHECK_POINT_RC_CU are removed_or_unused.
 -- DB-D4 new targets: TB_CHECK_POINTS_CS and TB_CHECK_POINTS_CU with EPROC00118 column.
--- DB-D5 @PENDING: RC legacy EPROC0_0218 has no separate active new checkpoint column in db-diff snapshot.
+-- DB-D5 resolved: RC legacy EPROC0_0218 reuses EPROC00118 in TB_CHECK_POINTS_CS/CU.
+-- DB-D6 carried: TB_MAIN_BORROWER_INFO_CORP.MAIN_BORROWER_NAME is exposed by the info API.
 -- AUTH-D1 carried external dependency: TB_API_AUTH must contain exact endpoint keys
 -- epl-sele-c0-corporateScorecard-list, epl-info-c0-corporateScorecard,
 -- epl-calc-c0-corporateScorecard, and epl-save-c0-corporateScorecard.
@@ -150,6 +152,13 @@ CREATE TABLE TB_LON_SUMMARY_INFO (
   SECURE_ATTRIBUTE VARCHAR2(2 BYTE),
   CR_SCORE_CARD_COMPLETED VARCHAR2(2 BYTE),
   CONSTRAINT PK_TB_LON_SUMMARY_INFO PRIMARY KEY (APPLICATION_NO)
+);
+
+CREATE TABLE TB_MAIN_BORROWER_INFO_CORP (
+  APPLICATION_NO VARCHAR2(30 BYTE) NOT NULL,
+  MAIN_BORROWER_NAME VARCHAR2(100 BYTE) NOT NULL,
+  ESTABLISH_DATE DATE NOT NULL,
+  CONSTRAINT PK_TB_MAIN_BORROWER_INFO_CORP PRIMARY KEY (APPLICATION_NO, MAIN_BORROWER_NAME, ESTABLISH_DATE)
 );
 
 CREATE TABLE TB_CHECK_POINTS_CS (

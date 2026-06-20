@@ -145,7 +145,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '401':
-          description: ACCESS_DENIED from TB_API_AUTH or BE role authorization rejection
+          description: ACCESS_DENIED from TB_API_AUTH or BE role authorization rejection, including cross-side map tampering
           content:
             application/json:
               schema:
@@ -262,9 +262,19 @@ components:
     InfoResponse:
       type: object
       required:
+        - mainBorrowerName
+        - checkpointStatus
         - aoRiskLevelMap
         - crRiskLevelMap
       properties:
+        mainBorrowerName:
+          type: string
+          maxLength: 100
+          description: Value from TB_MAIN_BORROWER_INFO_CORP.MAIN_BORROWER_NAME for this application.
+        checkpointStatus:
+          type: string
+          maxLength: 2
+          description: Value from TB_CHECK_POINTS_CS/CU.EPROC00118 after CS/CU branch selection.
         commentDate:
           type: string
         comment:
@@ -287,6 +297,7 @@ components:
           $ref: '#/components/schemas/CalcCodeMap'
     CalcResponse:
       type: object
+      description: Public calc response intentionally exposes only risk level and rating timestamp; totalScore remains a server-side calculation and is not returned.
       required:
         - riskLevel
         - scoreDatetime
@@ -298,7 +309,7 @@ components:
           type: string
           maxLength: 19
           pattern: '^\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}$'
-          description: UTC+8 formatted as dd/MM/yyyy HH:mm:ss.
+          description: Must be generated with an explicit Asia/Taipei / UTC+8 clock and formatted as dd/MM/yyyy HH:mm:ss.
     CalcCodeMap:
       type: object
       required:
@@ -403,11 +414,10 @@ components:
           description: SRS enforces DB NUMBER(6,2) before write.
     SaveRequest:
       type: object
+      description: Role-scoped save. BE derives the writable side from the authenticated session role; client-supplied non-writable side maps are non-authoritative and cross-side tampering must be rejected without DB writes.
       required:
         - applicationNo
         - isFinish
-        - aoRiskLevelMap
-        - crRiskLevelMap
       properties:
         applicationNo:
           type: string
@@ -419,8 +429,10 @@ components:
           type: string
           maxLength: 3000
         aoRiskLevelMap:
+          description: AO-side scorecard values. Writable only for AO roles; CR roles must not update these fields through save.
           $ref: '#/components/schemas/ScorecardRoleMap'
         crRiskLevelMap:
+          description: CR-side scorecard values. Writable only for CR roles; AO-to-CR copy/default effects must be produced by server-side rules, not client-provided AO requests.
           $ref: '#/components/schemas/ScorecardRoleMap'
     SaveResponse:
       type: object

@@ -171,6 +171,7 @@ paths:
     post:
       operationId: eplSessionZ0CurrentApplicationSet
       summary: Set current application session context
+      description: Migration-only bridge for legacy routes that still read server-session application context. Long-term target is route/API state.
       requestBody:
         required: true
         content:
@@ -199,6 +200,7 @@ paths:
     delete:
       operationId: eplSessionZ0CurrentApplicationClear
       summary: Clear current application session context
+      description: Migration-only bridge cleanup. Authorization failure must leave existing session state unchanged.
       responses:
         '200':
           description: Success
@@ -295,15 +297,16 @@ components:
           type: string
           maxLength: 10
           pattern: '^\d{2}/\d{2}/\d{4}$'
-          description: dd/MM/yyyy
+          description: dd/MM/yyyy; when paired with endDecisionDate, backend rejects ranges over six calendar months.
         endDecisionDate:
           type: string
           maxLength: 10
           pattern: '^\d{2}/\d{2}/\d{4}$'
-          description: dd/MM/yyyy
+          description: dd/MM/yyyy; must not be before startDecisionDate or later than startDecisionDate plus six calendar months.
         docNo:
           type: string
           maxLength: 30
+          description: CAD search document/register number; maps to the legacy NO-equivalent search over identity document fields plus REGISTER_NO.
         mainBorrowerName:
           type: string
           maxLength: 30
@@ -367,6 +370,7 @@ components:
         docNo1:
           type: string
           maxLength: 30
+          description: Returned from V_MAIN_BORROWER_INFO.DOC_NO_REGISTER_NO; corporate cases must surface REGISTER_NO.
         salesChannel:
           type: string
           maxLength: 50
@@ -388,7 +392,21 @@ components:
           items:
             type: string
             maxLength: 10
-          description: Client reason array; backend joins to the DB semicolon string.
+            enum:
+              - D01
+              - D02
+              - D03
+              - D04
+              - D05
+              - D06
+              - D07
+              - D08
+              - D09
+              - D10
+              - D11
+              - D12
+              - D99
+          description: Client reason array using approved DB baseline D01-D12 or D99; backend joins to the DB semicolon string.
         otherReason:
           type: string
           maxLength: 100
@@ -408,7 +426,20 @@ components:
           items:
             type: string
             maxLength: 10
-          description: Client close-reason array; backend joins to the DB semicolon string.
+            enum:
+              - C01
+              - C02
+              - C03
+              - C04
+              - C05
+              - C06
+              - C07
+              - C08
+              - C09
+              - C10
+              - C11
+              - C99
+          description: Client close-reason array using approved DB baseline C01-C11 or C99; backend joins to the DB semicolon string.
         otherReason:
           type: string
           maxLength: 100
@@ -436,10 +467,11 @@ components:
         downloadToken:
           type: string
           maxLength: 200
-          description: One-time short-lived token; response must not expose reusable local filesystem paths.
+          description: One-time short-lived token; response must not expose reusable local filesystem paths. Token TTL follows platform policy when available, otherwise defaults to configurable 10 minutes.
         expiresAt:
           type: string
           format: date-time
+          description: Token expiry timestamp.
     SessionRequest:
       type: object
       required:
@@ -451,6 +483,7 @@ components:
         action:
           type: string
           maxLength: 30
+          description: Optional legacy action context while the migration-only session bridge is still active.
     ReasonResponse:
       type: object
       properties:

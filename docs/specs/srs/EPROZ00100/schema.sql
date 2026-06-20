@@ -2,12 +2,12 @@
 -- Source: docs/db-diff/02_tables/*.md as local new DB snapshot.
 -- Change hints:
 -- DB-D1 carried: TB_LON_SUMMARY_INFO active/exact, copied with modified column data.
--- DB-D2 carried + @PENDING: TB_APP_HISTORY active/exact; PRD/legacy proxy agent fields need DBA/RD reconciliation.
+-- DB-D2 carried: TB_APP_HISTORY active/exact; to-be uses PROCESS_EMP_CODE/PROCESS_EMP_NAME for proxy actors.
 -- DB-D3 carried: TB_DEL_REASON and TB_CLO_REASON active/exact.
 -- DB-D4 carried: TB_RELATED_PARTY_INFO, TB_LOAN_CONDITION_DETAIL, TB_EMP_PROXY active/exact read dependencies.
 -- DB-D5 changed: TB_ROLE_DEFINE, TB_PROCESS_CODE, TB_API_AUTH active/exact but rewritten seed/config.
 -- REF-D1 changed: latest refactor baseline exposes epl-list-todolist, epl-case-insert-delreason, epl-case-insert-cloreason.
--- REF-D5 @PENDING: prompt/session/download/reason-list endpoint ownership is draft until RD confirms artifacts.
+-- REF-D5 changed: prompt/session/download/reason-list endpoints are approved; implementation artifacts remain missing.
 -- External source-only tables mentioned by refactor evidence: TB_MAIN_BORROWER_PERSONAL_INFO, TB_MAIN_BORROWER_INFO_CORP.
 
 CREATE TABLE TB_LON_SUMMARY_INFO (
@@ -36,8 +36,7 @@ CREATE TABLE TB_APP_HISTORY (
   PROCESS_EMP_NAME VARCHAR2(50 BYTE),
   PROCESS_BRANCH_CODE VARCHAR2(5 BYTE),
   PROCESS_BRANCH_NAME VARCHAR2(50 BYTE),
-  -- PENDING-Z010: legacy writes PROCESS_AGENT_CODE/PROCESS_AGENT_NAME for proxy delete/close,
-  -- but local db-diff TB_APP_HISTORY snapshot lists only seven physical columns.
+  -- Legacy PROCESS_AGENT_CODE/PROCESS_AGENT_NAME are source evidence only, not to-be columns.
   PROCESS_DATE TIMESTAMP(6) NOT NULL,
   CONSTRAINT PK_TB_APP_HISTORY PRIMARY KEY (APPLICATION_NO, APP_PROCESS_CODE, PROCESS_DATE)
 );

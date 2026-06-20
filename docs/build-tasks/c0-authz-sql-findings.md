@@ -101,6 +101,35 @@ Original card said existing 00117 (`CsuFinancialStaffController`) should not be 
 - `TB_ROLE_TASK`: 0 rows expected to insert; all 8 target pages already have the source-equivalent task row.
 - `00117`: `TB_ROLE_TASK` exists, but all 3 current `TB_API_AUTH` endpoint rows are absent; this addendum now expects 3 `TB_API_AUTH` inserts for `EPROC00117`.
 
+### EPROC00118 Security Close Verification List
+
+Use this list to re-check the EPROC00118 authorization close conditions before QA regression or testing deployment.
+
+2026-06-19 SELECT-only verification against `OVSLXLON02` found `TARGET_COUNT=0` and `SOURCE_COUNT=4`, so the four target rows still need DB apply evidence. Owner decision on 2026-06-20 also requires service-level rejection for non-AO/non-CR save roles; DB seed evidence alone is not sufficient for full security signoff.
+
+| Target API_ID | Expected ROLE | REF_FUNCTION_ID | Source API_ID |
+|---|---|---|---|
+| `epl-sele-c0-corporateScorecard-list` | `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | `EPROC00118` | `epl-sele-i0-corporateScorecard-list` |
+| `epl-info-c0-corporateScorecard` | `001;002;003;101;102;103;201;202;203;301;302;401;402;403;404;405` | `EPROC00118` | `epl-info-i0-corporateScorecard` |
+| `epl-calc-c0-corporateScorecard` | `001;002;102;103` | `EPROC00118` | `epl-calc-i0-corporateScorecard` |
+| `epl-save-c0-corporateScorecard` | `001;002;102;103` | `EPROC00118` | `epl-save-i0-corporateScorecard` |
+
+SELECT-only recheck SQL:
+
+```sql
+select api_id, role, ref_function_id
+from tb_api_auth
+where api_id in (
+  'epl-sele-c0-corporateScorecard-list',
+  'epl-info-c0-corporateScorecard',
+  'epl-calc-c0-corporateScorecard',
+  'epl-save-c0-corporateScorecard'
+)
+order by api_id;
+```
+
+Expected close condition: all four target rows exist with the `ROLE` and `REF_FUNCTION_ID` above; `epl-save-c0-corporateScorecard` also has service-level non-AO/non-CR rejection evidence and a regression test proving no scorecard, summary, or checkpoint update occurs.
+
 ### Ops Apply Checklist
 
 1. Execute/apply only against schema `OVSLXLON02`; confirm current schema before applying and do not run against `OVSLXLON01`.
