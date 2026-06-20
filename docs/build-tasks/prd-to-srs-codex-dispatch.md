@@ -79,7 +79,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
       - **覆蓋先查**：refactor-spec 缺該頁→無 baseline 可 reconcile→走 i0-mirror＋`legacy-parity-sop`（標 parity 風險、不臆造 baseline）。
         已知缺＝**`EPROC00119`/`EPROC00120`**（無獨立 module/artifact、只在 `EPROC00110` 規則被引；相近 `EPROI00119`/`EPROI00120` 存在——⚠️ 勿混；risk-tier T1 先跑頁 `EPROC00118` 與此只差一碼、不同維度）；其餘額外覆蓋（如 `EPROZ0B001-0B007` 批次）依 latest map 實查。
    C. 我方既有裁定/約束（repo，勿 re-litigate）：
-      - `docs/decisions.md`＋`docs/archive/decisions-2026H1-disbursement.md`（已裁：AUD-6 精度 keep-new〔decisions〕、A-5 KHR 收窄/T24 照舊〔disbursement archive〕、頁合併 CS/CU→CSU…）
+      - `docs/decisions.md`＋`docs/archive/decisions-2026H1-disbursement.md`（已裁：AUD-6 精度 keep-new〔decisions〕、A-5 KHR 收窄、頁合併 CS/CU→CSU…）。**⚠️ 例外：T24（0922）+A-4/M6（0921）「照舊」06-20 SRS-層 re-open＝可 re-litigate（走 §5b 梯裁、見上方 re-open 鐵則），勿當凍結約束**。
       - `docs/pending-register.md`（該頁開著的 @PENDING/escalation）
       - `docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md`（該頁 disposition）
       - `docs/disbursement/disbursement-domain-escalations.md`+`disbursement-triage.md`（撥貸頁）

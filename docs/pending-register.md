@@ -5,7 +5,8 @@
 > **06-11 裁定輪**：`00800` TBD-001~007 七條全裁（五關二改追蹤），見文末 §✅ 已關。
 
 ## 🔴 擋主線（卡住才能往下走）
-> **（目前無）**——2026-06-16 owner「**T24 都照舊系統規格**」後，撥貸 domain group **大縮移 🟡**；A-1（換匯 stub+conformance）、批次層 AUD-10 全結 → **無 owner 決策擋主線**，撥貸剩**執行**（Codex T24 B-group batch-fix＋殘 domain A-4/M6/B-1/G·H〔06-17 全裁照舊〕的 Codex 收尾）+ T24 UAT。
+> **（code 主線無擋）**——A-1（換匯 stub+conformance）、批次層 AUD-10 全結、T24 B-group parity-fix（`3d6f446`）→ **code 主線無 owner 決策擋**，code 剩執行 + T24 UAT。
+> **⚠️ 但 SRS 層有 owner 待決（移 🟡）**：2026-06-20 **T24（0922）+A-4/M6（0921）SRS-層 re-open**——產 SRS 時 to-be 走 §5b 梯裁、owner 逐欄/逐項 confirm（見下方兩 re-open 列）。即「06-16/06-17 照舊」**僅 code as-is baseline、非 SRS 定案**。故撥貸 owner-decision **非全清空**：code 清、SRS 待梯裁+confirm。
 
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
@@ -73,4 +74,4 @@
 ---
 > 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。**裁定內容只寫來源檔（spec §@PENDING）**，本表只留 id/狀態/owner/指回——本表＝derived 視圖。
 > **機械同步**：SRS 來源列（RPn/BP-n）由 `scripts/check-srs-bundle.py` gateⓅ 對 spec §@PENDING 表自動 diff（漏登記/失步=FAIL）；非 SRS 來源列（A-1 OQ、撥貸 group、E1/E2…）仍靠人工。
-> 用途：站會/交接看這張就知道「等誰、等什麼」；**🔴 擋主線 owner 決策＝目前無**（2026-06-16 T24 全裁「照舊規格」後清空）——撥貸 A-1/批次層/T24/殘 domain（A-4/M6/B-1/G·H）全裁（06-17 全照舊）→ owner-decision **全清空**、剩 Codex 執行 + T24 UAT。
+> 用途：站會/交接看這張就知道「等誰、等什麼」；**🔴 擋 code 主線 owner 決策＝目前無**（A-1/批次層/T24 code 已落）——但 **⚠️ SRS 層有 owner 待決**：06-20 T24/A-4/M6 SRS-層 re-open（見頂部 🔴 區註 + 上方兩 🟡 re-open 列）→ 撥貸 owner-decision **非全清空**（code 清、SRS 待 §5b 梯裁+owner confirm）。

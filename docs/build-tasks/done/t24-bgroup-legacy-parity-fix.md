@@ -1,5 +1,6 @@
 # Build Task — T24 B-group 照舊系統規格 batch-fix（owner 裁定 2026-06-16）
 
+> **⚠️ 2026-06-20 SRS-層 re-open**：本卡＝**code 層 parity-fix（已完成、`3d6f446`），其結果＝SRS 的 as-is baseline 證據、非 SRS to-be 定案**。產 T24 SRS（`EPROISU0922`）時 to-be 走 §5b 梯裁（refactor-spec 有對應 T24 調整→偏新使用方式）+owner confirm，**勿把本卡當「T24 最終規格」**。見 `decisions.md`「T24 於 SRS 層 re-open」、`pending-register`「T24 SRS re-open」。
 > **owner 裁定（2026-06-16）：「T24 都照舊系統規格」** → 撥貸 T24 組檔的 outbound 欄值/格式/來源/截斷**一律對齊舊系統**（延伸 A-1/A-2 已立的 parity 原則到整個 T24 檔）。
 > 載具：Codex（母資料夾，新後端 + legacy 唯讀對照 → 改新後端）。**性質＝逐欄坐実舊行為 → 改新碼對齊**（同 get-body/langtype sweep 模式，但**含金錢欄 → pre-push 最嚴人審**）。
 > 範圍清單＝`disbursement/disbursement-domain-escalations.md` §B（B-2~B-5）＋§A A-3；逐欄主題見該檔。

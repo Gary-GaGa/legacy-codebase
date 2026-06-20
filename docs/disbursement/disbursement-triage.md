@@ -4,6 +4,8 @@
 > 配 `verification-handoff.md` §2.1/§2.2/§2.3。
 > ⚠️ **重大裁定更新（2026-06-16）**：① **A-1 換匯 stub 已實作＋conformance PASS**（`daae4c3`，P0-1 結）② **批次層 AUD-10 結**（6/8 FOUND + B005 inline-取代銷案）③ **owner「T24 都照舊系統規格」** → §2/§3 所有 T24 欄值/來源/格式/截斷 **全收編＝照舊 parity、轉執行**（卡 `build-tasks/done/t24-bgroup-legacy-parity-fix.md`）。**下文 §0/P0-3/§6 對 A-1「未完成」、T24_COMPANY「死路」、KHR「維持新」之描述均已被後續裁定 supersede**——殘 domain（A-4 檢核 / M6 完工日 / B-1 T24_COMPANY / KHR G·H）**06-17 全裁「照舊系統處理」**（B-1 取 `OVSLXLON01`、KHR G·H 來源照舊坐實舊 `DISBURSEMENT_CURRENCY`；A-5 USD/KHR 收窄 keep 不變）。
 
+> **⚠️ 重大裁定更新（2026-06-20）— SRS-層 re-open**：本檔下文所有「T24 照舊」「殘 domain 全裁照舊」「照舊系統處理」**僅 code 層 as-is baseline（parity-fix `3d6f446` 不變）**，**非 SRS 定案**。產 SRS（`EPROISU0921/0922`）時 **T24（0922）+A-4/M6（0921）的 to-be 走 §5b SoT 梯裁**：as-is 舊 → 比對 `db-diff`+`refactor-spec` → **T24 偏新使用方式（refactor-spec 有對應 T24 調整、refactor-wins）／核心 A-4/M6 預設舊 baseline、僅 delta 才改** → owner 逐欄/逐項 confirm（KHR-G·H/B-1 屬 T24 欄、併 0922）。權威＝`decisions.md`「T24/0921 於 SRS 層 re-open」+「撥貸 re-open to-be＝走 §5b 梯裁」、`pending-register` 兩 re-open 列、`spec-architecture §5b`。
+
 ## 0. 總結論（里程碑更正）
 **新撥貸後端（`0921 DataInput` + `0922 Summary` + T24 組檔）＝結構搭好、但功能未完成且與舊系統實質分歧。**
 - ~~目前無法端到端授權：`funcGetExchangeRate` 是 throw-stub~~ → **✅ A-1 已實作＋conformance PASS（`daae4c3` 06-16）**，authorize 可端到端跑。
