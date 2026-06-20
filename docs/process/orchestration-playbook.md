@@ -65,17 +65,23 @@
 > code 軌（§5）吃 code 任務板；**SRS 軌吃 `build-tasks/refactor-audit/per-page-reinventory-matrix.md` 的「PRD→SRS 佇列 + ledger」表**（＝orchestrator 可機械迭代的逐 funcId 清單＋完成 ledger，補 owner ①「依序處理每個 PRD、不重複不漏」）。
 ```
 讀 per-page-reinventory-matrix「PRD→SRS 佇列 + ledger」表
- → 取 risk-tier 最前、status=prd-ready 的一頁（status=not-started 但 prd 欄空＝PRD 未放→跳過、回報「待 owner 放 PRD」）
- → spawn 獨立 sub-agent 跑 prd-to-srs（dispatch 卡 prompt，填 funcId/PRD 路徑）→ 產 bundle 到 docs/specs/srs/<funcId>/
- → 機械 gate：check-srs-bundle.py exit 0（含 gateⓇ reconcile）
- → SRS N 軸驗證（§4b 的 A–G 七正交、跨模型）→ 採納修正後再審一輪
- → 達標 → 佇列表該頁 status=in-review、填 srs 路徑（＝ledger 回填，防重複/防漏；覆蓋計數由此衍生）
- → 停 checkpoint 等人審/裁 TBD；下一輪取佇列下一頁
+ → 起手對帳：docs/specs/prd/ 實檔 ⟷ 佇列 prd 欄（實檔有而表列 not-started→回報待標 prd-ready，不靜默漏）
+ → while 佇列仍有 status=prd-ready 列（可多頁同時 ready）：           ← drain 迴圈
+     取 risk-tier 最前、status=prd-ready 的【一頁】（序列、一次只一頁；同 risk 依表序）
+      → spawn 獨立 sub-agent 跑 prd-to-srs（dispatch 卡 prompt，填 funcId/PRD 路徑）→ 產 bundle 到 docs/specs/srs/<funcId>/
+      → 機械 gate：check-srs-bundle.py exit 0（含 gateⓇ reconcile）
+      → SRS N 軸驗證（§4b 的 A–G 七正交、跨模型）→ 採納修正後再審一輪
+      → 達標（exit 0 + N 軸無 Blocker）→ 該頁 status=in-review、填 srs 路徑（＝ledger 回填，防重複/防漏；覆蓋計數由此衍生）
+      → 未達標（gate FAIL / N 軸殘 Blocker 需 C 類裁定）→ 該頁標 FAIL/blocked+原因、status 留 prd-ready（不誤升 in-review）
+                                                          → 繼續下一頁（單頁失敗不擋整批 drain；批末一併回報）
+ → 佇列 prd-ready 全清（皆 in-review 或 FAIL/blocked）→ 停【batch checkpoint】，彙總「整批」等人審/裁 TBD
+人審/裁 TBD → in-review 升 approved（人裁，orchestrator 不自升）→ 下一批（owner 再放 PRD 標 prd-ready）
 ```
-- **一次一頁**（dispatch 鐵則）：別一次吞整批；每頁各自過 gate＋N 軸＋人審。
-- **不急著轉完**：佇列無期限，risk-tier 前段先；owner 未放 PRD 的頁＝blocked、不臆造。
-- **bundle/佔位列不可直接 pick**：佇列表的多頁列（企金線 T2/T3、撥貸群、ISU/i0/z0 增量）＝佔位、非派工單位；PRD 進場須先**拆成一 funcId 一列**才可 `prd-ready`（守「一頁一列、一次一頁」）。同 risk tier 內 tie-break＝**表序由上而下**。
-- **起手對帳（防漏）**：每輪先列 `docs/specs/prd/PRD-*.md` 實檔 ⟷ 佇列 `prd` 欄；**實檔有而表列仍 not-started＝回報 owner「PRD 已放、待標 prd-ready（或拆列）」、不靜默漏**（補 plan①「不漏」）。
+- **drain 到底，但仍序列一次一頁**：允許多頁同時 `prd-ready`；orchestrator **逐頁序列**處理（每頁各自過 gate＋N 軸＋ledger 回填），**一頁達標即接下一頁、不在每頁停**——checkpoint 從「每頁停」改為「**整批 prd-ready 清空後停一次**」(batch checkpoint)。序列(非並行)＝保 context 衛生＋避免 correlated 錯。
+- **終點仍是 in-review、非 approved**：drain 只把 `prd-ready`→`in-review`（產出+gate+N 軸無 Blocker，含 open @PENDING/TBD）；**升 approved 仍須人裁 TBD**（C 類不碰）。安全網不變、只是把人審聚到批末一次做。
+- **單頁 FAIL 不擋整批**：某頁 gate FAIL 或 N 軸殘 Blocker（需 C 類）→ 標 FAIL/blocked+原因、留 `prd-ready`、續跑下一頁；批末彙總哪些頁卡、卡什麼。
+- **owner 控放量、orchestrator 控 drain**：佇列無期限、risk-tier 前段先；**owner 放多少 PRD（升多少 prd-ready）就 drain 多少**——「不急著轉完」指 owner 放 PRD 的步調，非 drain 本身（既有 `prd-ready` 一律 drain 到 in-review）。owner 未放 PRD 的頁＝not-started、跳過不臆造。
+- **bundle/佔位列不可直接 pick**：佇列表的多頁列（ISU/i0/z0 增量等）＝佔位、非派工單位；PRD 進場須先**拆成一 funcId 一列**才可 `prd-ready`（守「一頁一列、序列一次一頁」）。同 risk tier 內 tie-break＝**表序由上而下**。
 
 ## 6. orchestrator prompt 骨架（可直接 pilot）
 ```
@@ -92,14 +98,14 @@
 > **pilot 派工卡（一頁、含前置/對帳/拆列/N 軸/回填）＝`build-tasks/prd-to-srs-orchestrator-pilot.md`**——規模化前先用它跑通一頁。
 ```
 你是 SRS orchestrator。任務板＝docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md 的「PRD→SRS 佇列 + ledger」表。
-1. 取 risk-tier 最前、status=prd-ready（PRD 快照已在 docs/specs/prd/、檔名 PRD-*<funcId>*.md）的一頁；status=not-started 且 prd 欄空＝PRD 未放→跳過、回報「待 owner 放 PRD」。不一次吞整批。
-   起手先對帳 docs/specs/prd/ 實檔 ⟷ 佇列 prd 欄：實檔有但表列 not-started→回報「PRD 已放、待標 prd-ready」；bundle/佔位列（多 funcId）不可直接 pick，須先拆成一 funcId 一列；同 risk 依表序。
+0. 起手對帳 docs/specs/prd/ 實檔 ⟷ 佇列 prd 欄：實檔有但表列 not-started→回報「PRD 已放、待標 prd-ready」；bundle/佔位列（多 funcId）不可直接 pick，須先拆成一 funcId 一列。
+1. **drain 迴圈**：只要佇列還有 status=prd-ready 列（可多頁），就取 risk-tier 最前、同 risk 依表序的【一頁】處理（序列、一次只一頁、不並行、不一次吞整批）；status=not-started/prd 欄空＝PRD 未放→不 pick。
 2. spawn 獨立 sub-agent 跑 prd-to-srs（用 build-tasks/prd-to-srs-codex-dispatch.md 的 prompt，填該 funcId/PRD 路徑）→ 產 bundle 到 docs/specs/srs/<funcId>/。
 3. 機械 gate：python scripts/check-srs-bundle.py docs/specs/srs/<funcId> 必 exit 0（含 gateⓇ reconcile）。
 4. SRS N 軸驗證：依 playbook §4b 各 spawn 一 read-only sub-agent 跑 A–G 軸（各獨立 session、不同指示、最好跨模型；非單一 spec-reviewer；低風險頁可 A+E+G、risk-tier T1 全 A–G）→ 採納修正後再審一輪。
-5. 達標（機械 exit 0 + N 軸無 Blocker）→ 回填佇列表該頁 status=in-review、填 srs 路徑（＝ledger，防重複/防漏）；不得自宣 approved（TBD 全關+人裁才 approved）、不得跳 gate/軸、不得碰 C 類（裁 TBD/風險/架構/domain）。
+5. 該頁達標（機械 exit 0 + N 軸無 Blocker）→ 回填該頁 status=in-review、填 srs 路徑（＝ledger，防重複/防漏）→ **回到步驟 1 取下一個 prd-ready 頁**（不在每頁停）。未達標（gate FAIL / N 軸殘 Blocker 需 C 類）→ 該頁標 FAIL/blocked+原因、留 prd-ready、**續跑下一頁**（單頁失敗不擋整批）。**不得自宣 approved（TBD 全關+人裁才 approved）、不得跳 gate/軸、不得碰 C 類（裁 TBD/風險/架構/domain）。**
 6. context 衛生：每 sub-task 獨立 session，主控只收 PASS/FAIL/findings 路徑。
-彙總回報：每頁一行（in-review / FAIL+原因 / blocked=待 PRD 或待裁）+ bundle/findings 路徑。停此等人審/裁 TBD，下一輪取佇列下一頁。
+**佇列 prd-ready 全清（皆 in-review 或 FAIL/blocked）才停**＝batch checkpoint。彙總回報：每頁一行（in-review / FAIL+原因 / blocked=待裁）+ bundle/findings 路徑，整批一起交人審/裁 TBD。
 ```
 
 ## 7. config 落地（部署本機 `.codex/`）
@@ -111,3 +117,4 @@
 
 ## 8. 天花板（誠實標）
 orchestration 省的是「派工打字＋貼 prompt」，**省不掉審查＋裁定**。天花板＝「自動到等審」，非「自動到上線」。pilot 建議：先用 `epl-* method 慣例 recon` + `0922-t24-exchrate-colname-fix`（兩個 A 類、互不相依）跑一輪,確認「停在等審、不自宣 done、不碰 C 類、三軸真獨立」四條守得住,再放大到批量 PRD→SRS（SRS 軌 pilot＝`build-tasks/prd-to-srs-orchestrator-pilot.md`，跑通一頁再批量）。
+> **SRS 軌 drain 模式已啟用（2026-06-20）**：pilot 已過（`EPROZ00100`/`EPROC00118` 重產 → Approved）→ SRS 軌改 **drain 迴圈**（§5b/§6b）：允許多頁同時 `prd-ready`、**序列一次一頁**逐頁過 gate＋N 軸，**checkpoint 從「每頁停」改為「整批 prd-ready 清空後停一次」**（batch checkpoint）。守則不變：序列非並行、每頁全 gate＋N 軸、終點 `in-review`（不自升 approved）、C 類不碰、單頁 FAIL 標因續跑。

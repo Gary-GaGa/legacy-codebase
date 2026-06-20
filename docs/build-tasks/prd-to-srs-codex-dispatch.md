@@ -1,6 +1,7 @@
 # PRD → SRS dispatch prompt（給 Codex；新版 Bible/PRD 用）
 
-> **用法**：在母資料夾（產品碼 + 規劃 repo 可讀 + 新版 Bible/PRD 放好）開 Codex，**一次一頁**貼下方 prompt（填 `<funcId>` / `<PRD 路徑>`）。產 SRS bundle → 過閘門 → 回填。
+> **用法**：在母資料夾（產品碼 + 規劃 repo 可讀 + 新版 Bible/PRD 放好）開 Codex。下方 prompt＝**單頁轉換單元**（填 `<funcId>` / `<PRD 路徑>`）；產 SRS bundle → 過閘門 → 回填。
+> **批量 = drain（2026-06-20）**：規模化由 SRS orchestrator（`orchestration-playbook §5b/§6b`）驅動——允許**多頁同時 `prd-ready`**，orchestrator **序列**逐頁套用本 prompt（一次一頁、每頁各自過 gate＋N 軸＋回填），**持續 drain 直到所有既有 `prd-ready` 都轉成 `in-review`** 才停（batch checkpoint）。本 prompt 本身不變、仍是單頁；改的是外層迴圈不再每頁停。
 > **依賴**：① 新版 PRD（必）+ Bible（有則接上游追溯）② 該頁產品碼（as-is）③ 規劃 repo 的 skill/SOP（prompt 已內聯關鍵，不可讀亦能跑）④ **對比輸入 md**（新舊 DB 差異/新 schema + 既有重構 spec，見 prompt 內 §5）。
 > **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24〕→ ④ `EPROZ00800` 重產（新版 PRD；v0.9 已封存）→ ⑤ 主流程 ISU/i0/z0 增量。
 
@@ -143,7 +144,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 ---
 
 ## 備註
-- **一次一頁**：別一次吞整批；T1 三頁各自跑、各自過閘門、各自人審。
+- **序列一次一頁、但 drain 整批**（2026-06-20 改）：不並行吞整批；每頁各自過閘門＋N 軸＋回填，但 orchestrator **一頁達標即接下一頁、不在每頁停**，drain 完所有 `prd-ready`→`in-review` 才停在 batch checkpoint **一次交人審/裁 TBD**（非每頁人審）。終點仍是 `in-review`、不自升 approved（人裁 TBD 才升）。迴圈權威＝`orchestration-playbook §5b/§6b`。
 - **parity 與 SRS 互補**：企金線 18 頁 parity 卡（`c0-legacy-parity-recheck.md`）的 findings 餵 SRS 的 as-is 欄；兩者可並行，但同頁建議 parity 先（as-is 才實）。
 - **SRS 落點是規劃 repo**（`docs/specs/srs/`）：Codex 要能寫到規劃 repo；**Bible v1.1 已在 repo**（`docs/specs/bible/`），新版 PRD 放 `docs/specs/prd/`（舊 00800 PRD 已封存 `docs/archive/EPROZ00800-v0.9-superseded/`）。
 - **00800 重產**：v0.9 SRS 已封存（`docs/archive/EPROZ00800-v0.9-superseded/srs/`）；用新版 PRD 從新 Bible v1.1 **重產**——封存內 RP1-10 裁定 + SR-B1/B2（2 錯誤碼）+ RP8/RP11 為重產輸入，一併承載。

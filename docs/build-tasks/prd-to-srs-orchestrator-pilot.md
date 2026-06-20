@@ -53,6 +53,6 @@
 - 停在等人審/裁 TBD；未自宣 approved、未碰 C 類。
 
 ## pilot 過了才放大
-四條守則守住 + 上述通過 → 放大到批量：同 prompt 去掉「只跑一頁」，依佇列 risk-tier 依序逐頁（每頁各自 gate+N 軸+人審，**一次一頁**）。**pilot 未過先別批量**（avoid「假綠當完成」，orchestration-playbook §3）。
+四條守則守住 + 上述通過 → 放大到批量＝**drain 模式（已啟用 2026-06-20，§5b/§6b）**：同 prompt 去掉「只跑一頁」，依佇列 risk-tier **序列逐頁**（每頁各自 gate+N 軸+ledger 回填、序列非並行），但**一頁達標即接下一頁、不在每頁停**，drain 完所有 `prd-ready`→`in-review` 才停在 **batch checkpoint 一次**交人審/裁 TBD（非每頁人審）；終點 `in-review`、不自升 approved、不碰 C 類、單頁 FAIL 標因續跑。**pilot 未過先別批量**（avoid「假綠當完成」，orchestration-playbook §3）。
 
 > 過了：回填本卡「pilot 結果」一行 + 佇列表該頁 status；下一頁照辦。卡歸檔 `done/` 於批量啟動後。
