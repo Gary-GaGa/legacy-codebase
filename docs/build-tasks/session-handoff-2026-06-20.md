@@ -19,7 +19,9 @@
 - SSOT 五檔自洽（#116 健檢確認）。
 
 ## 3. 下一步（都不在 Claude 這側）
-**A. owner 裁定 → 推 00100/00118 → Approved**
+> **⚠️ 06-20 PM 更新（A 已過時）**：owner 已把兩頁所有 owner-decision @PENDING 全裁/全關（00100 `Z001~Z010`＋00118 `001~018`，push `d056803`，bundle 無 open pending、機械閘門兩頁 PASS）。**A 不再適用**——殘 Approved-blocker 改為 **contract 軸 RD/DBA 實作 gap**（DTO/status/`TB_API_AUTH` seed/save guard 未追上 to-be SRS）。詳見 `decisions.md` 06-20 列＋`pending-register.md` 該列＋證據 `pilot-srs-pending-verification.md`。下一步＝**RD/DBA 補 implementation/seed/測試證據 → contract 軸 PASS → Approved**；或走 §3-B 掛 source 放大。以下 A 段保留為史實。
+
+**A. ~~owner 裁定 → 推 00100/00118 → Approved~~（✅ 06-20 已裁完，見上方更新）**
 - 工具＝`EPROZ00100-EPROC00118-pending-decision-brief.md`。
 - **先裁這 2 條**（28 條裡唯一擋 Approved 的）：`00100 PENDING-Z001`（逐角色 action 權限，PM/SA）＋ `00118 PENDING-001`（`CR_SCORE_CARD_COMPLETED` 兩碼語意＋E1/E2，PM/SA/風控）。
 - 其餘 26 條擋後續 signoff/部署，照 digest §6 順序逐關清；**部署最硬閘＝`00118 PENDING-012`**（`TB_API_AUTH`＋非授權角色拒絕，"before ANY testing deployment"）。

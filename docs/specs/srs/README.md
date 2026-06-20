@@ -2,7 +2,7 @@
 
 > flow 第 ③ 層（分層見 [`../README.md`](../README.md)、方法論見 [`../../spec-architecture.md`](../../spec-architecture.md)）。
 > **一個 story/page = 一束 artifacts**，全靠同一個 ID（funcId，如 `EPROZ00800`）串起來，讓 RD agent 能**機器證明**自己通過 SA/QA 邊界。
-> Worked example：**`EPROZ00100`／`EPROC00118` 已重產、in-review**（2026-06-18 母資料夾最終 pipeline 重產 → push 回 main；Status=Draft、機械閘門全 PASS、Bible↔PRD trace sidecar 已補；覆蓋 2/67，跨模型複審 Blocker 已修 06-19、待 owner/RD/DBA 裁 pending 才 Approved）；~~`EPROZ00800/`~~ **v0.9 已封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)，待重產）。結構/閘門對照見下，流程見 [`../../build-tasks/prd-to-srs-codex-dispatch.md`](../../build-tasks/prd-to-srs-codex-dispatch.md)。
+> Worked example：**`EPROZ00100`／`EPROC00118` 已重產、in-review**（2026-06-18 母資料夾最終 pipeline 重產 → push 回 main；Status=Draft、機械閘門全 PASS、Bible↔PRD trace sidecar 已補；覆蓋 2/67，跨模型複審 Blocker 已修 06-19；**06-20 owner-decision pending 全關（00100 `Z001~Z010`＋00118 `001~018`）、bundle 無 open pending → Approved 殘 blocker＝contract 軸 RD/DBA 實作 gap（DTO/status/seed/guard 未追 to-be、非裁定缺）**）；~~`EPROZ00800/`~~ **v0.9 已封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)，待重產）。結構/閘門對照見下，流程見 [`../../build-tasks/prd-to-srs-codex-dispatch.md`](../../build-tasks/prd-to-srs-codex-dispatch.md)。
 
 ## 結構
 ```
