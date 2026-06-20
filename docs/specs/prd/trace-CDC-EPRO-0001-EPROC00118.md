@@ -13,7 +13,7 @@
 | BR-005（CA 只做行政分案、不參與信用評分與核定）| FR-005 AO/CR 角色控制 承載（界定誰非評分人）| 承載 | scorecard 由 CR/AO 維護、CA 不參與 |
 | BR-006（CR 可調撥貸條件金額、非最終核定人）| FR-005 AO/CR 角色控制 | 承載 | CR vs AO 欄位/button/comment 顯示與儲存邏輯不同 |
 | 〔非 BR〕業務里程碑「徵信/評分」Scorecard（Bible:258）| FR-001/FR-002/FR-003 | 承載 | 徵信評分族群完整代號 source 盤點＝本頁坐實 `EPROC00118` |
-| 〔非 BR〕角色 `103 Credit Reviewer + Scorecard`（Bible:399/796）`TB_ROLE_DEFINE`/`TB_API_AUTH`| FR-005 角色控制 ＋ FR-006 儲存授權 | 承載 → @PENDING（`PENDING-012`）| **D 軸**：`TB_API_AUTH` seed 補（端點授權）＝pre-deploy `PENDING-012`；role 103＝評分專屬權限 |
+| 〔非 BR〕角色 `103 Credit Reviewer + Scorecard`（Bible:399/796）`TB_ROLE_DEFINE`/`TB_API_AUTH`| FR-005 角色控制 ＋ FR-006 儲存授權 | 承載 → `012` 已裁（owner 06-20）→ 殘 RD/DBA 實作 | **D 軸**：`TB_API_AUTH` 四 seed＋save service-level reject（owner 06-20 裁）＝部署最硬閘、殘 RD/DBA 實作；role 103＝評分專屬權限 |
 | 〔非 BR〕狀態流/page-menu 連動 `TB_PROCESS_CODE`（Bible:797）| FR-007 父頁與完成狀態連動 | 承載 | 更新 page menu 與 `CR_SCORE_CARD_COMPLETED` |
 | 〔非 BR〕稽核追蹤 `TB_APP_HISTORY`（Bible:810）| FR-006 Save/Finished 儲存 | 承載 | upsert `TB_CORP_SCRCARD`、更新 summary 與 checkpoint |
 
@@ -25,9 +25,9 @@
 | FR-003（Rate 計算）| **Bible 無計算公式錨點**（最近＝BR-025 僅規範評分族群歸屬 Bible:739；公式 code-derived）| total score/risk level/rating date；**CUR_RATIO integer-only（不靜默截斷）**＝F 軸修正 |
 | FR-004（Loan Default 90+ Days 處理）| **Bible 無 Default-flag 錨點**（BR-007 僅規範 CO/SCO 授權層級分層 Bible:721、與本頁評分卡 Default 短路無關；FR-004＝source-confirmed code 行為）| Default=Yes → 直接設 Default risk、score=-1 |
 | FR-005（AO/CR 角色控制）| AO 側＝BR-004 業務單位（Bible:718）；CR 側＝BR-006 CR（Bible:720）；BR-005（CA 不參與評分 Bible:719）界定非評分人；角色 102/103（Bible:399）| AO 與 CR 欄位/button/comment 顯示與儲存邏輯不同 |
-| FR-006（Save/Finished 儲存）| 稽核追蹤 `TB_APP_HISTORY`（Bible:810）| upsert `TB_CORP_SCRCARD`、更新 summary 與 checkpoint；端點授權 → @PENDING（`PENDING-012`） |
+| FR-006（Save/Finished 儲存）| 稽核追蹤 `TB_APP_HISTORY`（Bible:810）| upsert `TB_CORP_SCRCARD`、更新 summary 與 checkpoint；端點授權 → `012` 已裁（owner 06-20）→ 殘 RD/DBA seed+guard 實作 |
 | FR-007（父頁與完成狀態連動）| 狀態流/page-menu（Bible:797）| 更新 page menu 與 `CR_SCORE_CARD_COMPLETED`（`EPROC0_0110`/`EPROC0_0210`/`EPRO_Z0Z006`） |
 | FR-008（參數有效日期）| **Bible 無明確錨點**（code-derived；`TB_SCORE_CARD_PARAM_DETAIL.SQL_FIND_RANGE_001`）| 依申請日取有效版本與 score range；Bible 回填候選 |
 
 > **讀法**：A 表抓「Bible 有、PRD 漏」（→@PENDING 登記）；B 表抓「PRD 有、Bible 無」（→Bible 回填候選 or legacy-当-需求嫌疑，後者由 `spec-reviewer` 把關）。
-> **維護**：外部 PRD 改版重新快照時，本表同步重對；@PENDING 關閉（owner/RD/DBA 裁定）時更新狀態欄。**bundle 仍 In Review、未 Approved**——本表 gap 列＝候選、非已裁。
+> **維護**：外部 PRD 改版重新快照時，本表同步重對；@PENDING 關閉（owner/RD/DBA 裁定）時更新狀態欄。**bundle 仍 In Review、未 Approved**（owner-decision @PENDING 已 06-20 全關 → 殘 contract 軸 RD/DBA 實作 gap，見 `../../pending-register.md`／`../../build-tasks/EPROZ00100-EPROC00118-contract-closeout-card.md`）；本表原 `@PENDING` 列已標「已裁→殘實作」。
