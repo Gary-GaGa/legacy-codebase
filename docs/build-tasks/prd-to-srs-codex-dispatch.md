@@ -120,7 +120,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 - **⚠️ owner 明示 re-open 的決策＝不沿用為定案（現況：①T24＝0922 REQ-004；②0921 A-4/M6＝REQ-002/003/006。見 `decisions.md`「T24 於 SRS 層 re-open」＋「0921 A-4/M6 於 SRS 層 re-open」＋「撥貸 re-open 的 to-be＝走 §5b SoT 梯裁」＋`pending-register` 同列）**：該域 SRS 不寫「照舊 ✅」；**to-be 由 §5b SoT 梯裁產生、非自由心證、亦非 default 照舊**：
   - **as-is baseline＝原系統處理（撥貸核心還原舊版；`file:line`）**；原 parity-fix／已修 code 僅 as-is 證據。
   - **比對 `db-diff` + `refactor-spec`** → 過 `legacy-parity-sop` 三判：(b) 刻意演進 → **refactor 本層贏、to-be＝新使用方式＋留 `REF-Dn` delta**（不 silent drop）；(a) regression → 維持舊 baseline；無從裁 → `@PENDING` 待 owner confirm。
-  - **T24（0922）＝refactor-spec 有對應調整 → to-be 偏新使用方式（refactor-wins）**；**核心（0921 A-4/M6）＝baseline 舊，僅 db-diff/refactor-spec 命中 delta 才改**。`refactor-spec`＝**SRS 必讀來源**（母資料夾/產品側）。
+  - **T24（0922）＝refactor-spec 有對應調整 → to-be 偏新使用方式（refactor-wins）**；**核心（0921 A-4/M6）＝baseline 舊，僅 db-diff/refactor-spec 命中 delta 才改**。`refactor-spec`＝**SRS 必讀來源**〔路徑慣例 `docs/refactor-spec/02_modules/<funcId>.md` ＋ `03_artifacts/{be,fe}-shared/<funcId>/`；`db-diff`＝`docs/db-diff/`；二夾皆**母資料夾-local、本規劃 repo 無**〕；**搆不到兩夾時** SRS 須顯式 disclaim「待母資料夾複核」＋列已知 delta（`check-srs-bundle` gateⓇ，非靜默留白）。
   - 一般決策仍照上條（帶入為約束、不重議）；本條限 owner 點名 re-open 者。權威＝`spec-architecture §5b`／`ADR-0002`。
 
 【DoD（Approved 前必過，含批判輪教訓）】

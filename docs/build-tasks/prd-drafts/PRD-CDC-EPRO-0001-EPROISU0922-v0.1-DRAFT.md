@@ -53,7 +53,7 @@ authorize 成功＝寫 `TB_DISBUR_DATE` ＋ `TB_EXCHANGE_RATE`，**同一 `@Tran
 ### REQ-004 組 T24 介面檔（段 A–H）— ⚠️ owner re-open；to-be 走 §5b SoT 梯裁（偏新使用方式）
 **結論方式（SRS 為準）**：T24 段 A–H 逐欄 to-be **由 §5b SoT 梯裁產生、非 default 照舊**——每欄：①**as-is baseline＝原系統 T24 處理**（撥貸核心還原舊版；引舊 spec／碼 `file:line`）②**比對 `db-diff` + `refactor-spec`**（過 `legacy-parity-sop` 三判）③(b) 刻意演進 → **to-be＝新使用方式（refactor 本層贏）＋留 `REF-Dn` delta**；(a) regression → 維持舊 baseline；無從裁 → `@PENDING` ④**owner 逐欄 confirm**。**不可寫「照舊 ✅」**。
 - **方向（owner 06-20 釐清）**：舊系統 T24 在實際重構案已調整/優化、`refactor-spec` 有對應 T24 調整 → **T24 to-be 偏新使用方式（refactor-wins, REF-Dn）**；此修正 06-16「T24 都照舊」之過度簡化（誤把 (b) 刻意演進當 (a) regression）。依據＝`decisions.md`「撥貸 re-open 的 to-be＝走 §5b SoT 梯裁」＋「T24 於 SRS 層 re-open」；權威＝`spec-architecture §5b`／`ADR-0002`。
-- **必讀來源**：`refactor-spec`（母資料夾/產品側，本 repo 無）＝T24 新使用方式之 SoT；`db-diff`＝物理欄真相；舊系統 T24＝as-is baseline。
+- **必讀來源（母資料夾-local，本規劃 repo 無此二夾）**：`refactor-spec`＝T24 新使用方式 SoT〔`docs/refactor-spec/02_modules/EPROISU0922.md` ＋ `03_artifacts/{be,fe}-shared/EPROISU0922/`（T24 介面 artifact）〕；`db-diff`＝物理欄真相〔`docs/db-diff/`〕；舊系統 T24＝as-is baseline。**搆不到兩夾時** SRS 顯式 disclaim「待母資料夾複核」＋列已知 delta（`check-srs-bundle` gateⓇ，非靜默留白）。
 - **as-is 證據（baseline、≠結論）**：現碼行為（parity-fix `3d6f446`，已對齊舊）＋逐欄 findings `t24-bgroup-legacy-parity-fix-findings.md` ＋舊 spec `EPROIS_0922-t24.md` `file:line`。
 - **逐欄清單（各：as-is baseline → 比對 refactor-spec/db-diff → to-be(新/舊/REF-Dn) → owner confirm）**：A15/A16/A31/A52、B 段、C12/C13/C20/C26、D 段、E14–E23/E21、G4/G7/G10/G11–G12、H1–H8。**換匯欄 `G4`/`G10`/`H8` + KHR 來源風險最高、先**。
 - **強制點**：BE（金錢/交易）。
