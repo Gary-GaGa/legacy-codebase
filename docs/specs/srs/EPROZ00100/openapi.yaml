@@ -167,6 +167,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+    get:
+      operationId: eplFileZ0ProposalDownloadConsume
+      summary: Consume proposal download token
+      description: Streams the PDF for a valid one-time token. Expired, reused, or unknown tokens are rejected and no reusable local filesystem path is exposed.
+      parameters:
+        - in: query
+          name: downloadToken
+          required: true
+          schema:
+            type: string
+            maxLength: 200
+      responses:
+        '200':
+          description: PDF stream
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Missing downloadToken
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: ACCESS_DENIED for expired, reused, unknown, or unauthorized token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: DOWNLOAD_FAILED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /epl-session-z0-current-application:
     post:
       operationId: eplSessionZ0CurrentApplicationSet

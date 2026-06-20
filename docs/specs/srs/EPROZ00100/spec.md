@@ -3,7 +3,7 @@
 ## Metadata
 | Field | Value |
 |---|---|
-| Status | Draft |
+| Status | 規格定版: Approved / 實作完成: Approved (RD/DBA closeout 2026-06-20) |
 | Owner | PM/SA/RD/QA review |
 | funcId | EPROZ00100 |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md` |
@@ -13,9 +13,9 @@
 
 ## Scope
 - In scope: EPROZ0_0100 / EPROZ00100 dashboard initialization, role flags, TO DO LIST query, CAD/TLOD query, page routing, delete, close, reason selection, proposal download, and current-application session context.
-- In scope: API contract draft for Spring Boot migration and DB side-effect verification against active new DB snapshot.
-- Implementation/test readiness: missing endpoint implementation or `TB_API_AUTH` seed rows are blockers before QA regression or any testing deployment, but they do not reopen owner-decision pending items inside this SRS bundle.
-- This bundle is draft/in-review evidence only. It is not Approved.
+- In scope: Approved API contract for Spring Boot migration and DB side-effect verification against active new DB snapshot.
+- Implementation/test readiness closed on 2026-06-20: endpoint implementation and `TB_API_AUTH` seed rows were applied and rechecked against `OVSLXLON02`; no owner-decision pending items remain open inside this SRS bundle.
+- This bundle is Approved as of 2026-06-20 after RD/DBA contract closeout verification.
 
 ## Sources
 | Source | Evidence |
@@ -49,14 +49,14 @@
 ## Endpoints
 | Endpoint | Method | Purpose | Covers | Baseline |
 |---|---|---|---|---|
-| `epl-init-z0-todolist` | POST | Clear current session, return role flags, and run CA/CR redistribution when source conditions match | R1 | Owner decision 2026-06-19 keeps legacy side effect; refactor artifact and auth seed still missing |
+| `epl-init-z0-todolist` | POST | Clear current session, return role flags, and run CA/CR redistribution when source conditions match | R1 | Owner decision 2026-06-19 keeps legacy side effect; implemented and auth seed verified on 2026-06-20 |
 | `epl-list-todolist` | POST | Query non-CAD task list and CAD/TLOD search list using explicit query mode | R2, R3, R4 | refactor latest BE artifact |
 | `epl-case-insert-delreason` | POST | Delete case with delete reason and history update | R5 | refactor latest BE artifact |
 | `epl-case-insert-cloreason` | POST | Close CAD/TLOD case with close reason and history update | R6 | refactor latest BE artifact |
-| `epl-file-z0-proposal-download` | POST | Generate proposal download reference for CS/CU/IS/IU | R7 | Owner decision 2026-06-19 requires one-time token contract; implementation and auth seed still missing |
-| `epl-session-z0-current-application` | POST/DELETE | Set or clear current application context while legacy pages still need session | R8 | Owner decision 2026-06-19 approves migration-only bridge; implementation and auth seed still missing |
-| `epl-sele-z0-delete-reason` | GET | Return delete reason code map | R5 | PRD/legacy draft |
-| `epl-sele-z0-close-reason` | GET | Return close reason code map | R6 | PRD/legacy draft |
+| `epl-file-z0-proposal-download` | POST/GET | Generate and consume a one-time proposal download reference for CS/CU/IS/IU | R7 | Owner decision 2026-06-19 requires one-time token contract; implemented and auth seed verified on 2026-06-20 |
+| `epl-session-z0-current-application` | POST/DELETE | Set or clear current application context while legacy pages still need session | R8 | Owner decision 2026-06-19 approves migration-only bridge; implemented and auth seed verified on 2026-06-20 |
+| `epl-sele-z0-delete-reason` | GET | Return delete reason code map | R5 | Implemented and auth seed verified on 2026-06-20 |
+| `epl-sele-z0-close-reason` | GET | Return close reason code map | R6 | Implemented and auth seed verified on 2026-06-20 |
 
 ### R1 Dashboard initialization and redistribution **強制點 both**
 covers-prd: REQ-001
@@ -113,7 +113,7 @@ Error-code contract: missing `applicationNo` returns `MISSING_APPLICATION_NO`; n
 ### R7 Proposal download **強制點 both**
 covers-prd: REQ-007
 
-Owner decision on 2026-06-19 approves the tokenized download contract. `type=CS/CU/IS/IU` dispatches to the corresponding proposal module only after the backend validates the requested type against the case attributes in `TB_LON_SUMMARY_INFO.LON_ATTRIBUTE` and `SECURE_ATTRIBUTE`; the client-provided type is not trusted by itself. The response must return a one-time, short-lived `downloadToken` with `expiresAt` metadata and must not expose a reusable local filesystem path. Token TTL uses the platform download-token policy when one exists; otherwise the default TTL is 10 minutes and must be configurable. The legacy `encryptTempFileFullPath` return is source evidence only, not the to-be API contract.
+Owner decision on 2026-06-19 approves the tokenized download contract. `type=CS/CU/IS/IU` dispatches to the corresponding proposal module only after the backend validates the requested type against the case attributes in `TB_LON_SUMMARY_INFO.LON_ATTRIBUTE` and `SECURE_ATTRIBUTE`; the client-provided type is not trusted by itself. POST returns a one-time, short-lived `downloadToken` with `expiresAt` metadata and must not expose a reusable local filesystem path. GET on the same API ID consumes the token and streams the PDF; reuse, expiry, or an unknown token must be rejected. Token TTL uses the platform download-token policy when one exists; otherwise the default TTL is 10 minutes and must be configurable. The legacy `encryptTempFileFullPath` return is source evidence only, not the to-be API contract.
 
 Evidence: PRD names CS/CU/IS/IU dispatch and encrypted temp file output at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md:177`-`183`, response draft at `249`, and security concerns at `275`. Legacy `downloadFile` is an audited print action and dispatches CS/CU/IS/IU at `legacy-epro/JavaSource/com/cathaybk/epro/z0/trx/EPROZ0_0100.java:224`-`241`. Bible requires report/proposal sources to align with process source of truth at `docs/specs/bible/bible-eproposal.md:809`-`810`.
 
@@ -144,7 +144,7 @@ Backend must enforce role authorization for delete, close, download, and mutatio
 | `epl-sele-z0-delete-reason` | `001;002` |
 | `epl-sele-z0-close-reason` | `404;405` |
 
-Evidence: PRD NFR requires backend authorization, audit, and safe logging at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md:270`-`275`. Bible requires API authorization by `TB_API_AUTH` and negative tests for hidden-button bypass at `docs/specs/bible/bible-eproposal.md:332`, `439`, `448`. db-diff defines `TB_API_AUTH` as active/exact and rewritten at `docs/db-diff/02_tables/TB_API_AUTH.md:11`-`16`, with single-column PK `API_ID` and columns `API_ID`, `ROLE`, and `REF_FUNCTION_ID` at `38`-`40`. Runtime evidence records `ROLE LIKE %:role%` and exact `API_ID` matching at `docs/build-tasks/c0-authz-sql-findings.md:21`, with DB precheck confirming `TB_API_AUTH_PK(API_ID)` at `30`. DB verification found existing rows for list/delete/close and missing rows for init, proposal download, session bridge, and reason-list endpoints at `docs/build-tasks/pilot-srs-pending-verification.md:68`.
+Evidence: PRD NFR requires backend authorization, audit, and safe logging at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md:270`-`275`. Bible requires API authorization by `TB_API_AUTH` and negative tests for hidden-button bypass at `docs/specs/bible/bible-eproposal.md:332`, `439`, `448`. db-diff defines `TB_API_AUTH` as active/exact and rewritten at `docs/db-diff/02_tables/TB_API_AUTH.md:11`-`16`, with single-column PK `API_ID` and columns `API_ID`, `ROLE`, and `REF_FUNCTION_ID` at `38`-`40`. Runtime evidence records `ROLE LIKE %:role%` and exact `API_ID` matching at `docs/build-tasks/c0-authz-sql-findings.md:21`, with DB precheck confirming `TB_API_AUTH_PK(API_ID)` at `30`. DB verification originally found missing rows for init, proposal download, session bridge, and reason-list endpoints at `docs/build-tasks/pilot-srs-pending-verification.md:68`; RD/DBA closeout applied and SELECT-only rechecked the final baseline against `OVSLXLON02` on 2026-06-20.
 
 Error-code contract: business authorization failure returns `FORBIDDEN_ACTION`; platform/API-auth failure returns `ACCESS_DENIED` or the platform standard auth response and must not be treated as successful mutation.
 
@@ -160,7 +160,7 @@ Error-code contract: business authorization failure returns `FORBIDDEN_ACTION`; 
 | REF-D2 PRD lists legacy-style `/api/eproz0-0100/initQuery` GET and `/queryCAD` POST, while refactor latest has one POST `epl-list-todolist` artifact with search fields. | changed | Use POST `epl-list-todolist` with `queryMode=GENERAL/CAD` in OpenAPI; keep legacy action names as trace labels only. | PRD `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md:217`-`219`; refactor `docs/refactor-spec/03_artifacts/be-shared/EPROZ00100/epl-list-todolist.md:135`-`137`, `149`-`156` |
 | REF-D3 delete/close refactor artifacts have placeholder API paths (`待補/...`), field-validation code `E102`, and `reasonCode` / `caseProgress` fields, while PRD/legacy require `reasonList[]` and do not require close `caseProgress` from the client. | changed | OpenAPI carries PRD business codes and the PRD/legacy request shape; `E102` remains platform validation evidence for field-level failures until RD maps final error envelope. | `docs/refactor-spec/03_artifacts/be-shared/EPROZ00100/epl-case-insert-delreason.md:114`, `187`-`188`; `docs/refactor-spec/03_artifacts/be-shared/EPROZ00100/epl-case-insert-cloreason.md:114`, `185`-`187`; PRD `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md:235`-`236`, `256`-`258`; legacy `legacy-epro/JavaSource/com/cathaybk/epro/z0/trx/EPROZ0_0100.java:334`, `379` |
 | REF-D4 FE latest says CAD was updated to TLOD in v1.5, while PRD still uses CAD language for role `404/405`. | changed | SRS names CAD/TLOD together and carries the DB/Bible role display baseline; owner decision on 2026-06-19 approves the role allow-list in R9. | `docs/refactor-spec/03_artifacts/fe-shared/EPROZ00100/eproz00100-to-do-list.md:96`, `213`-`214`; PRD `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md:34`, `93`; Bible `docs/specs/bible/bible-eproposal.md:408`-`409` |
-| REF-D5 refactor latest does not expose separate BE artifacts for prompt redistribution, set/clear session, proposal download, or reason-list query. | changed | Owner decision on 2026-06-19 keeps prompt redistribution as `epl-init-z0-todolist`, approves tokenized proposal download as `epl-file-z0-proposal-download`, and approves the migration-only session bridge as `epl-session-z0-current-application`; implementation remains required because the current refactor artifacts/auth seeds are absent. | `docs/refactor-spec/02_modules/EPROZ00100.md:15`-`21`; PRD endpoints `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md:217`-`226` |
+| REF-D5 refactor latest does not expose separate BE artifacts for prompt redistribution, set/clear session, proposal download, or reason-list query. | changed | Owner decision on 2026-06-19 keeps prompt redistribution as `epl-init-z0-todolist`, approves tokenized proposal download as `epl-file-z0-proposal-download`, and approves the migration-only session bridge as `epl-session-z0-current-application`; RD closeout implemented these migration endpoints and DBA closeout verified their auth rows on 2026-06-20. | `docs/refactor-spec/02_modules/EPROZ00100.md:15`-`21`; PRD endpoints `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md:217`-`226` |
 
 ## Traceability Matrix
 | PRD | SRS | QA |
@@ -174,7 +174,7 @@ Error-code contract: business authorization failure returns `FORBIDDEN_ACTION`; 
 | REQ-007 | R7, R9 | QA-034, QA-034A, QA-035, QA-036, QA-036A, QA-042 |
 
 ## NFR
-- Security: backend authorization must reject direct API calls for roles without action permission; `TB_API_AUTH` seed must be verified for the eight final `epl-*` API IDs before QA regression or any testing deployment. Missing seed rows are implementation/test-readiness blockers, not open SRS owner-decision pending items.
+- Security: backend authorization must reject direct API calls for roles without action permission; `TB_API_AUTH` seed was verified for the eight final `epl-*` API IDs against `OVSLXLON02` on 2026-06-20. Any future seed drift is a regression, not an open SRS owner-decision pending item.
 - Audit: actions that mutate `TB_LON_SUMMARY_INFO` must insert `TB_APP_HISTORY` or explicitly document the exception.
 - Transaction: delete, close, and redistribution are all-or-nothing; partial reason/history/summary writes are regressions.
 - Privacy: logs must not include full reason text, full borrower name, or reusable local download paths.
