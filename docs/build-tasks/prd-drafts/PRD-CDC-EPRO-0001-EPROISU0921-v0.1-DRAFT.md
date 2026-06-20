@@ -18,7 +18,7 @@
 | 版本 | v0.1-DRAFT |
 | 上游 | Bible v1.1（撥貸個金 only）；舊頁 `EPROIS_0921` |
 
-> **SoT 原則（ADR-0002）**：以 Rn 為結論（SRS 即權威）；既有決策（A-4/M6「照舊」）＝provenance 帶進 Rn、原系統處理＝as-is 證據（「已修/已 push」≠ 定版）；金錢/檢核缺口→`@PENDING`、不標 ✅。
+> **SoT 原則（ADR-0002）＋ A-4/M6 re-open（owner 06-20, Option B）**：以 Rn 為結論（SRS 即權威）。**A-4 檢核（REQ-002/006）＋ M6 完工日（REQ-003）＝owner 明示 re-open** → **逐項/逐欄重推 to-be、owner 逐項 confirm、未 confirm＝`@PENDING`**；06-17「照舊」**降為 as-is 輸入、非 SRS 結論**（confirm 後可維持＝舊 或 改），**不可寫「照舊 ✅」**。已修回的 regression（REQ-004/005）維持。依據＝`decisions.md`「0921 A-4/M6 於 SRS 層 re-open」列＋`pending-register` 同列。
 
 ## 1. 背景 / 目的
 撥貸流程前段：承辦輸入撥貸明細（撥貸金額/日期/費用/擔保完工日…）並對借款人/共借人做撥貸前**檢核**，通過後進 0922 彙總授權。〔PM: 業務目標一句話〕
@@ -36,17 +36,20 @@
 載入該案撥貸明細、可保存（Save）。
 - **as-is**：✅ 既有（`EPROIS_0921`）。**強制點**：BE。〔PM: 列必填/可編欄位〕
 
-### REQ-002 借款人/共借人檢核（A-4，照舊）
+### REQ-002 借款人/共借人檢核（A-4）— ⚠️ owner re-open（不沿用「照舊」為定案）
 撥貸前檢核 `CheckMainBorr`/`CheckCoBorr`：身分、sector、account、`DATA_SEQ` 順序、business-section；`info CO_CHECK` 判定；law firm 顯示條件；address 來源。
-- **as-is**：🟡 各檢核新舊有分歧（`CO_CHECK ='Y'` vs 舊 `!='N'`、Finished gate 未驗 `mbCheck`、law firm `IS_SHOW` 版本條件、address `UPD_DATE` 來源）。
-- **三判**：(a) **owner 06-17 裁＝照舊系統處理**（差異視為 regression、對齊舊判據）→ RD/Codex 逐項坐實舊+對齊。
-- **強制點**：BE。**acceptance**：各檢核行為＝舊系統判據（逐項 §7 TBD-001 追）。
+- **結論方式（Option B）**：各檢核項**逐項重推 to-be**——①原系統判據為 as-is（引 `file:line`）②SRS 提 to-be 提案③**owner 逐項 confirm**；未 confirm＝`@PENDING`（金錢/檢核，ADR-0002）。**不可寫「照舊 ✅」**。
+- **as-is 證據（待逐項坐實、≠結論，confirm 後可維持＝舊 或 改）**：新舊分歧 `CO_CHECK ='Y'` vs 舊 `!='N'`、Finished gate 未驗 `mbCheck`、law firm `IS_SHOW` 版本條件、address `UPD_DATE` 來源。
+- **re-open 依據**：`decisions.md`「0921 A-4/M6 於 SRS 層 re-open（06-20 owner）」；06-17「照舊」降為 as-is 輸入。
+- **逐項清單（各需 as-is 坐實＋to-be 提案＋owner confirm）**：`CO_CHECK` 判定、`mbCheck` gate（→REQ-006）、law firm `IS_SHOW` 條件、address `UPD_DATE` 來源、`DATA_SEQ` 順序、business-section。
+- **強制點**：BE。**@PENDING**：每項未 owner-confirm 前皆 @PENDING（§7 TBD-001）。
 
-### REQ-003 擔保完工日寫入（M6/D-1，照舊）
+### REQ-003 擔保完工日寫入（M6/D-1）— ⚠️ owner re-open（不沿用「照舊」為定案）
 collateral 完工日寫 `EST_COM_DATE`/`OTHER_EST_COM_DATE`（**非 null**）。
-- **as-is**：🔴 現況 `setEstComDate(null)`/`setOtherEstComDate(null)`＝資料遺失（request DTO 無日期值來源）。
-- **三判**：(a) regression → **owner 06-17 裁照舊**：完工日照舊系統來源接回（RD trace legacy FE/衍生點寫回非 null）。
-- **強制點**：BE。**acceptance**：兩欄寫入非 null、值＝舊來源。→ §7 TBD-002（RD 接值）。
+- **結論方式（Option B）**：兩欄值來源**重推 to-be**——①原系統來源為 as-is（RD trace legacy FE／衍生點 `file:line`）②SRS 提 to-be（來源＋寫回時機）③**owner confirm**；未 confirm＝`@PENDING`（金錢，ADR-0002）。
+- **as-is 證據（≠結論，confirm 後可維持＝舊來源 或 改）**：🔴 現況 `setEstComDate(null)`/`setOtherEstComDate(null)`＝資料遺失（request DTO 無日期值來源）。
+- **re-open 依據**：`decisions.md`「0921 A-4/M6 於 SRS 層 re-open（06-20 owner）」。
+- **強制點**：BE。**@PENDING**：to-be 值來源未 owner-confirm 前 @PENDING（§7 TBD-002）。
 
 ### REQ-004 費用處理（fee 公式 / cleanup）
 facility fee＝loan amount × FEE_1；資料返回時 fee cleanup **只刪 `CON_TYPE=FN`**。
@@ -59,11 +62,12 @@ facility fee＝loan amount × FEE_1；資料返回時 fee cleanup **只刪 `CON_
 - **as-is**：✅ 已修（M4 加 `isFinish` guard，舊僅 Finished 寫）。
 - **強制點**：BE。**acceptance**：未 Finished 不寫 RECEIVED_DATE。
 
-### REQ-006 Finished gate
+### REQ-006 Finished gate — ⚠️ owner re-open（A-4，不沿用「照舊」為定案）
 資料完成（Finished）的判定條件。
-- **as-is**：🟡 新 Finished gate 未驗 `mbCheck`（A-4）。
-- **三判**：(a) 照舊→補驗 `mbCheck`〔待 TBD-001 坐實舊判據〕。
-- **強制點**：BE。
+- **結論方式（Option B）**：Finished 判定條件**重推 to-be**——as-is（舊判據，含是否驗 `mbCheck`）→ SRS 提案 → **owner confirm**；未 confirm＝`@PENDING`。**不可寫「照舊 ✅」**。
+- **as-is 證據（≠結論）**：🟡 新 Finished gate 未驗 `mbCheck`（A-4）。confirm 後決定是否補驗。
+- **re-open 依據**：`decisions.md`「0921 A-4/M6 於 SRS 層 re-open（06-20 owner）」。
+- **強制點**：BE。**@PENDING**：§7 TBD-001（`mbCheck` gate 項）。
 
 ## 5. 錯誤回應
 > ⚠️ as-is 多為裸名碼；要 gateⒺ 守承載改 `MSG_*`。〔PM/RD: 補檢核失敗/保存失敗錯誤碼表〕
@@ -85,8 +89,8 @@ facility fee＝loan amount × FEE_1；資料返回時 fee cleanup **只刪 `CON_
 ## 7. TBD（不自裁；附 owner）
 | TBD | 內容 | owner |
 |---|---|---|
-| TBD-001 | A-4 各檢核（CO_CHECK 判定/mbCheck gate/law firm IS_SHOW/address UPD_DATE/DATA_SEQ）逐項坐實舊判據+對齊（已裁照舊→執行）| 撥貸 domain + RD |
-| TBD-002 | M6 完工日舊來源 trace + 寫回非 null（已裁照舊→執行）| RD |
+| TBD-001 | **A-4 各檢核逐項重推 to-be＋owner 逐項 confirm**（re-open；CO_CHECK 判定／mbCheck gate／law firm IS_SHOW／address UPD_DATE／DATA_SEQ；as-is 坐實舊判據→to-be 提案→confirm；未 confirm＝@PENDING）| 撥貸 domain（confirm）＋ RD/Codex（as-is 坐實）|
+| TBD-002 | **M6 完工日值來源重推＋owner confirm**（re-open；舊來源 trace as-is→to-be→confirm；未 confirm＝@PENDING）| 撥貸 domain（confirm）＋ RD（trace）|
 
 ## 8. maxlength / 必要
 〔PM/RD: 由 refactor-spec `04_rules/field_rule.md` 抽〕

@@ -72,6 +72,8 @@
 
 | T24 於 SRS 層 re-open（2026-06-20, owner）| owner「產 SRS 應以 SRS 結論、再看原本 T24 處理」→ 裁 **Option B＝重開 T24**：產 `EPROISU0922` T24 SRS 時，**不沿用「T24 照舊」為定案**；改以**原 T24 逐欄/逐段處理為 as-is（引 `file:line`）→ SRS 逐欄重推 to-be → owner 逐欄 confirm**（每欄未 confirm＝`@PENDING`，金錢/交易 ADR-0002 升級觸發）。**supersede**：06-16「T24 都照舊系統規格」**降為 SRS 層的 as-is 輸入之一、非 SRS 結論**（code parity-fix `3d6f446`＝as-is 證據，confirm 後可維持或改）。**scope＝T24（0922 REQ-004）**；其餘撥貸「照舊」決策（A-4 檢核/M6 完工日/KHR/B-1）**仍 Option A 帶入為約束、未 re-open**（除非 owner 另裁）。落點：`pending-register`（T24 逐欄 re-confirm 開回）＋`prd-to-srs-codex-dispatch §鐵則`（re-open 分支）＋`prd-drafts/...EPROISU0922` REQ-004。原則一般式仍是 ADR-0002（既有決策當約束）；本列＝owner 對 T24 的明示例外。|
 
+| 0921 A-4/M6 於 SRS 層 re-open（2026-06-20, owner）| owner 裁 **A-4＋M6 都 re-open**（比照 T24 Option B）→ 產 `EPROISU0921` SRS 時 **A-4 檢核（REQ-002/006）＋ M6 完工日（REQ-003）逐項/逐欄重推 to-be、owner 逐項 confirm**（未 confirm＝`@PENDING`，金錢/檢核 ADR-0002 升級）。**supersede**：06-17「A-4/M6 照舊」**降為 SRS 層 as-is 輸入、非結論**（已修部分 code＝as-is 證據，confirm 後可維持＝舊 或 改）。scope＝0921 REQ-002/003/006；**已修回 regression（REQ-004/005＝M4/M7/M10）維持**。落點：`pending-register`（0921 A-4/M6 re-open 列）＋`prd-to-srs-codex-dispatch §鐵則`（re-open 現況加 0921）＋0921 draft REQ-002/003/006＋SoT 註＋§7 TBD-001/002。與 T24 re-open 同屬 owner 對撥貸域「照舊」的明示例外；一般式仍 ADR-0002（既有決策當約束、不重議）。|
+
 ## 二、待確認項目（用 Codex 在實際專案查證後回填）
 
 ### 環境 / 版本
