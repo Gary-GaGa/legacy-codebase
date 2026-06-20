@@ -171,7 +171,7 @@ Error-code contract: business authorization failure returns `FORBIDDEN_ACTION`; 
 | REQ-004 | R4, R8 | QA-016, QA-017, QA-018, QA-019, QA-019A, QA-020, QA-030, QA-037, QA-038, QA-039, QA-039A |
 | REQ-005 | R5, R9 | QA-020A, QA-021, QA-021A, QA-022, QA-022A, QA-023, QA-024, QA-025, QA-026, QA-040, QA-041, QA-042 |
 | REQ-006 | R6, R9 | QA-020B, QA-027, QA-027A, QA-028, QA-029, QA-031, QA-032, QA-032A, QA-033, QA-040, QA-041, QA-042 |
-| REQ-007 | R7, R9 | QA-034, QA-034A, QA-035, QA-036, QA-036A, QA-042 |
+| REQ-007 | R7, R9 | QA-034, QA-034A, QA-035, QA-036, QA-036A, QA-036B, QA-036C, QA-036D, QA-036E, QA-042 |
 
 ## NFR
 - Security: backend authorization must reject direct API calls for roles without action permission; `TB_API_AUTH` seed was verified for the eight final `epl-*` API IDs against `OVSLXLON02` on 2026-06-20. Any future seed drift is a regression, not an open SRS owner-decision pending item.

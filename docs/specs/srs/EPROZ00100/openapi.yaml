@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: EPROZ00100 To Do List API
   version: 0.1.0
-  description: Draft SRS contract for EPROZ00100. Not approved.
+  description: SRS contract for EPROZ00100. Approved 2026-06-20 (RD/DBA contract closeout); authoritative status in spec.md.
 paths:
   /epl-init-z0-todolist:
     post:
