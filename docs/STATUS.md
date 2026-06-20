@@ -1,7 +1,7 @@
 # STATUS — 重構總彙整 Dashboard（單一入口）
 
 > **🔄 新 session / context 中斷後從這接回**（狀態全在 repo·已併 main，非對話記憶——心法見 `verification/verification-execution.md`「真相存 doc 不存記憶」）：
-> 讀序＝① `CLAUDE.md`（憲法）② **本檔**（一眼看進度/剩什麼/卡誰）③ `pending-register.md`（待決+owner）④ `build-tasks/` 各卡（**待派 prompt 在卡裡**）⑤ `decisions.md`（流水帳）。**下一步優先序見 §六**。
+> 讀序＝① `CLAUDE.md`（憲法）② **本檔**（一眼看進度/剩什麼/卡誰）③ `pending-register.md`（待決+owner）④ `build-tasks/` 各卡（**待派 prompt 在卡裡**）⑤ `decisions.md`（流水帳）。**下一步優先序見 §六**。〔**最近 session 接回卡＝`build-tasks/session-handoff-2026-06-20.md`**：spec 軌收尾＋三向驗證，下一步＝owner 裁 00100-Z001/00118-001 或掛 source 交 Codex〕
 > ⚠️ Codex 在母資料夾產的 findings 是 untracked → **push 上來才進 repo**（同 AUD-10/KHR）。
 > 2026-06-17 更新：T24 B-group parity fix 已套用並產出 `build-tasks/done/t24-bgroup-legacy-parity-fix-findings.md`；`E21` 依 A-5 USD+KHR-only 邊界 keep、`G4`/`G10`/`H8` 換匯欄幣別**來源 06-17 owner 裁照舊**（坐實舊 `DISBURSEMENT_CURRENCY`、收窄/rounding 仍 keep）。**金錢/截斷欄 pre-push 最嚴人審已過 → code 已 commit/push（product repo，commit `3d6f446`，06-17 10:41，已在 origin/master）**；剩端到端/T24 接收驗證（Phase V/UAT）。
 
