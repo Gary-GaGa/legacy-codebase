@@ -9,6 +9,30 @@
 
 ---
 
+## 進度（2026-06-20, RD 母資料夾回報；本 repo 無 source → 未獨立碼驗、以 file:line 為憑）
+> **狀態：8/13 deliverable code 落地（compile/ng build pass）；contract 軸尚未全 PASS、未升 Approved。** 剩＝A1/B1 DBA seed apply＋B2/B3/B4 RD 端點＋各項 acceptance/regression 測試證據。
+
+| 項 | deliverable | 狀態 | 證據（母資料夾 product repo）／待辦 |
+|---|---|---|---|
+| A1 | 00118 `TB_API_AUTH` 四 seed | ⏳ **待 DBA apply** | 未跑任何 INSERT；SELECT-only precheck＝`c0-authz-sql-findings.md` |
+| A2 | 00118 save guard（non-AO/CR reject＋cross-side tamper reject＋BE 重算 riskLevel/actionDate/score；FE 只送可寫側 map）| ✅ code 落地 | `CsuCorporateScorecardServiceImpl.java:168`、`save.model.ts:19` |
+| A3 | 00118 `epl-info` 回 `mainBorrowerName`＋`checkpointStatus` | ✅ code 落地 | `GetCorporateScorecardInfoResponse.java:9` |
+| A4 | 00118 `parseScore` fail-fast `MSG_QUERY_FAIL` | ✅ code 落地 | `FunctionServiceImpl.java:3725` |
+| A5 | 00118 `scoreDatetime` 顯式 Asia/Taipei | ✅ code 落地 | `FunctionServiceImpl.java:3725` |
+| A6 | 00118 `CUR_RATIO` integer-only（BE＋FE）| ✅ code 落地 | `SaveCorporateScorecardRequest.java:103`、`validate-rule.ts:8` |
+| B1 | 00100 `TB_API_AUTH` seed（去 `403`＋補缺 row）| ⏳ **待 DBA apply** | 未跑 INSERT |
+| B2 | 00100 `epl-init-z0-todolist` | ⏳ **待 RD（下一張）** | 未實作；repo 無可安全沿用 provider |
+| B3 | 00100 proposal download token | ⏳ **待 RD（下一張）** | 未實作；repo 無 token provider |
+| B4 | 00100 session bridge | ⏳ **待 RD（下一張）** | 未實作；repo 無 session bridge provider |
+| B5 | 00100 delete/close `reasonList[]`＋`D99/C99` otherReason＋transaction | ✅ code 落地 | `ToDoListServiceImpl.java:253` |
+| B6 | 00100 CAD decision-date ≤ 6 months guard | ✅ code 落地 | `ToDoListServiceImpl.java:175` |
+| B7 | 00100 response `docNo1`＝`DOC_NO_REGISTER_NO`（FE 優先吃 `docNo1`）| ✅ code 落地 | `ToDoList.java:57`、`to-do-list.ts:125` |
+
+> **RD 回報之驗證**：`git diff --check` pass（僅 CRLF）；`mvn compiler:compile` 成功（強制重編 1482 Java source）；`ng build` 成功（Node v16.20.2，既有 bundle budget/selector warnings）；`mvn clean package/repackage` 被本機 `epro-svc.jar` 檔鎖擋、**未列為通過依據**＝**compile/build 過、完整 package/regression 未證**。
+> **⇒ 即使 8 項 code 落地，contract 軸 PASS 仍需**：① A1/B1 DBA seed apply 證據；② B2/B3/B4 實作（下一張 RD 卡）；③ 各 deliverable acceptance/regression 測試證據（compile≠test，尤其 A2 QA-021A cross-side/same-side tamper、A4 負向 seed、B6 超 6 月）。**未滿足前不升 Approved。**
+
+---
+
 ## A. EPROC00118（Corporate Scorecard）
 
 ### A1. `TB_API_AUTH` 四端點 seed — **部署最硬閘（`PENDING-012` 第一層，before ANY testing deployment）**
