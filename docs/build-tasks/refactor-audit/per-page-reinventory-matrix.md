@@ -130,13 +130,29 @@
 |---|---|---|---|---|
 | `EPROZ00100` | z0 shared | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md` | approved | `docs/specs/srs/EPROZ00100/` |
 | `EPROC00118` | T1 corporate | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` | approved | `docs/specs/srs/EPROC00118/` |
-| `EPROC00120` | T1 企金線 | — | not-started | — |
-| `EPROCSU0170` | T1 企金線 | — | not-started | — |
-| 企金線 T2/T3 餘頁 | T2/T3 企金線 | — | not-started（佔位·待拆列）| 頁列舉見 `c0-legacy-parity-recheck.md` |
-| `EPROISU0920/0921/0922`＋T24 | 撥貸 | — | not-started（佔位·待拆列）| 現只 escalations/triage |
-| `EPROZ00800` | 00800 重產 | —（v0.9 PRD 已封存、待新版）| not-started | v0.9 SRS 封存 `archive/` |
+| `EPROC00120` | T1 企金線(先) | — | not-started | 待 parity 碼驗餵入(i0-mirror·無 refactor baseline) |
+| `EPROCSU0170` | T1 企金線(先) | — | not-started | 待 parity 碼驗餵入 |
+| `EPROC00110` | T1 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROC00112` | T1 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROC00114` | T1 企金線 | — | not-started | 待 parity 碼驗餵入(grandfathered §6.1) |
+| `EPROC00115` | T1 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROC00116` | T1 企金線 | — | not-started | 待 parity 碼驗餵入(有 calc) |
+| `EPROC00117` | T1 企金線 | — | not-started | 待 parity 碼驗餵入(business-only·較穩) |
+| `EPROC00119` | T1 企金線 | — | not-started | 待 parity 碼驗餵入(i0-mirror·無 refactor baseline) |
+| `EPROCSU0110` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROCSU0120` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROCSU0130` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROCSU0150` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROCSU0160` | T2 企金線 | — | not-started | 待 parity 碼驗餵入(+AUD-11 routing) |
+| `EPROCSU0171` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROCSU0172` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROCSU0173` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
+| `EPROISU0920` | 撥貸 T1 | — | not-started | 差異源已備(triage/db-diff)·只缺 PRD |
+| `EPROISU0921` | 撥貸 T1 | — | not-started | 差異源已備·A-4 等已裁照舊→入 SRS 當已決 delta |
+| `EPROISU0922`(+T24) | 撥貸 T1 | — | not-started | 差異源已備·A-1✅/T24 照舊✅·B-1 待 RD |
+| `EPROZ00800` | 00800 重產 | —（v0.9 PRD 已封存、待新版）| not-started | v0.9 SRS 封存 `archive/`；REBUILD |
 | 主流程 ISU/i0/z0 增量 | 增量 | — | not-started（佔位·待拆列）| — |
-> ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**多頁列（T2/T3 餘頁、撥貸群、ISU/i0/z0 增量）＝佔位、非派工單位**，PRD 進場須先**拆成一 funcId 一列**才可 `prd-ready`（orchestrator 不可直接 pick 佔位列）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`（本表先列 risk-tier 前段，餘隨 PRD 進場補列）。
+> ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**2026-06-20 回填**：決策頁（企金線 18 + 撥貸 3 + 00800 ≈22，＝有未決差異需 owner 裁者）已**拆成逐 funcId 列**（規劃視圖＝`docs/srs-production-queue-2026-06-20.md`，含各頁「要餵的輸入」），仍 `not-started`（待 PRD 才升 `prd-ready`；orchestrator 只 pick `prd-ready`，故 not-started 列不影響迭代）。**僅剩 `主流程 ISU/i0/z0 增量`＝佔位**（KEEP/增量、無待裁差異、非派工單位，隨 PRD 進場再拆）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`。⚠️ 企金線各列 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗結果餵入 as-is parity 軸，否則 SRS 漏載對舊 cs/cu 差異。
 
 ## 派工（填實本矩陣）
 - **企金線對舊 parity**（Codex 帶 source）：擴 `c0-legacy-parity-recheck.md` 涵蓋範圍 → c0 評分 **+ CSU 主流程**；risk-tier 00118/00120/0170 先。
