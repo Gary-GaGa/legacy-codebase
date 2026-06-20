@@ -12,7 +12,7 @@
 |---|---|---|
 | **REBUILD** | 1（`EPROZ00800`）| 重寫，SRS＝重建上游 |
 | **parity-gated 企金線** | 18（c0 評分 9 + CSU 主流程 9）| 鏡像個金 i0/ISU 建、**從未對舊企金 cs/cu 碼比** → 差異未現形、未裁 |
-| **撥貸金錢核心** | 3（`EPROISU0920/0921/0922`，T24 併入 0922）| 目前只有 escalation/triage、無正式規格 → owner 無乾淨決策面 |
+| **撥貸金錢核心** | 3（`EPROISU0920/0921/0922`，T24 併入 0922）| 只有 escalation/triage、無正式規格；**T24（0922）+ A-4/M6（0921）06-20 owner re-open → to-be 走 §5b 梯裁（refactor-spec 決定、非照舊）** → owner 需乾淨決策面 |
 
 > KEEP/FIX-done 頁（撥貸批次層、z0 已修群、ISU/i0/deputy）**不在本佇列**：差異已驗對等或已修裁畢，無待裁差異。
 
@@ -23,12 +23,12 @@
 > **status** 對齊 matrix ledger：`not-started`｜`prd-ready`（PRD 已放 `docs/specs/prd/`）｜`in-review`（SRS 產出+gate+N 軸 PASS）｜`approved`。
 > **要餵的輸入**＝產出帶實質差異的 SRS 之前，該頁還缺什麼。
 
-### 撥貸（差異輸入已備，**最快能產出帶差異的 SRS**）
+### 撥貸（PRD 差異源已備；**T24/A-4/M6 re-open 後另需 refactor-spec（母資料夾-local）走 §5b 梯裁**）
 | funcId | disposition | SRS 現況 | 要餵的輸入 | 卡在誰 |
 |---|---|---|---|---|
 | `EPROISU0920` | FIX(domain-gated) | 無 | **PRD** | owner 出 PRD |
-| `EPROISU0921` | FIX(A-4 已裁照舊) | 無 | **PRD**（差異源：escalation/triage/db-diff 已備；A-4/M6/B-1/G·H 已裁照舊→入 SRS 當已決 delta）| owner 出 PRD |
-| `EPROISU0922`(+T24) | FIX+UAT | 無 | **PRD**（A-1✅、T24 B-group 照舊✅、B-1 接值待 RD）| owner 出 PRD |
+| `EPROISU0921` | FIX(A-4/M6 re-open) | 無 | **PRD + refactor-spec**（A-4/M6 06-20 re-open→走 §5b 梯裁：核心舊 baseline、僅 db-diff/refactor-spec 命中 delta 才改；refactor-spec 母資料夾-local，搆不到→disclaim「待母資料夾複核」）| owner PRD + Codex（母資料夾）|
+| `EPROISU0922`(+T24) | FIX+UAT(T24 re-open) | 無 | **PRD + refactor-spec**（A-1✅；T24 06-20 re-open→to-be 偏新使用方式、走梯裁；refactor-spec 母資料夾-local，搆不到→disclaim）| owner PRD + Codex（母資料夾）|
 
 ### 00800 重產（差異輸入已備）
 | funcId | disposition | SRS 現況 | 要餵的輸入 | 卡在誰 |
@@ -56,7 +56,7 @@
 
 **建議取捨**：
 1. **先 pilot 一頁走通**（risk 最高且差異輸入相對完整）＝`EPROC00118` 的後續（已 Approved，補 E1/E2 + parity 碼驗的 `@PENDING`）或 `EPROC00120`（金錢欄、i0-mirror）。
-2. **撥貸 3 頁**緊接（差異已裁照舊、SRS 主要formalize → owner 裁量小、產出快、金錢風險高值得正式化）。
+2. **撥貸 3 頁**緊接（**T24/A-4/M6 06-20 re-open → 非單純 formalize**：to-be 走 §5b 梯裁、需 refactor-spec（母資料夾），owner 逐欄/逐項 confirm；金錢風險高、值得正式化。注意 refactor-spec 前置同企金線之 parity 前置）。
 3. **企金線其餘**：**並行啟動 `c0-legacy-parity-recheck` 碼驗**（這是企金線 SRS 有意義的前置），碼驗結果回填後再逐頁產 SRS。
 4. **00800 重產**：待 owner 出新版 PRD。
 
@@ -89,8 +89,8 @@
 ### Batch 1（建議先做：輸入已備、無 parity 前置）— 4 份
 | 順 | funcId | PRD 檔名 | 差異輸入來源（作 PRD 時引）| 備註 |
 |---|---|---|---|---|
-| 1 | `EPROISU0921` | `PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md` | `disbursement-triage.md`/`disbursement-domain-escalations.md`（A-4 已裁照舊）+db-diff | 撥貸 Data Input |
-| 2 | `EPROISU0922` | `PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | 同上（A-1✅/T24 照舊✅/B-1 接值）+T24 組檔 | 撥貸 Summary/T24 |
+| 1 | `EPROISU0921` | `PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md` | `disbursement-triage.md`/`disbursement-domain-escalations.md`（A-4/M6 06-20 re-open→走 §5b 梯裁）+db-diff+**refactor-spec（母資料夾）** | 撥貸 Data Input |
+| 2 | `EPROISU0922` | `PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | 同上（A-1✅；T24 06-20 re-open→to-be 偏新、走梯裁；B-1/T24_COMPANY 屬 T24 欄）+T24 組檔+**refactor-spec（母資料夾）** | 撥貸 Summary/T24 |
 | 3 | `EPROISU0920` | `PRD-CDC-EPRO-0001-EPROISU0920-v1.0.md` | 同上（頁框，domain-gated）| 撥貸 Process |
 | 4 | `EPROZ00800` | `PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md` | Bible v1.1 BR-014~017/SC-002~005 + 封存 `archive/EPROZ00800-v0.9-superseded/`（RP1-10/SR-B1/B2/RP8/RP11 為輸入）| REBUILD、新版 PRD 取代 v0.9 |
 
