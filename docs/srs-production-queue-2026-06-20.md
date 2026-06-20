@@ -24,6 +24,7 @@
 > **要餵的輸入**＝產出帶實質差異的 SRS 之前，該頁還缺什麼。
 
 ### 撥貸（PRD 差異源已備；**T24/A-4/M6 re-open 後另需 refactor-spec（母資料夾-local）走 §5b 梯裁**）
+> 派工 overlay（頁別具體值＋ re-open override，疊在通用 dispatch 上）＝**`build-tasks/disbursement-reopen-srs-dispatch.md`**。
 | funcId | disposition | SRS 現況 | 要餵的輸入 | 卡在誰 |
 |---|---|---|---|---|
 | `EPROISU0920` | FIX(domain-gated) | 無 | **PRD** | owner 出 PRD |
