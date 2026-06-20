@@ -19,7 +19,7 @@
 | 上游 | Bible v1.1（撥貸個金 only，Q-002 企金待確認）；舊頁 `EPROIS_0922` / `EPROIS_0922-t24` |
 | as-is 來源 | 撥貸 triage/escalations（本機 `legacy-extract/*-compare.md` gitignore）|
 
-> **SoT 原則（ADR-0002）＋ T24 re-open（owner 06-20, Option B）**：以 Rn 為結論（SRS 即權威）。**T24＝owner 明示 re-open** → 段 A–H **逐欄重推 to-be、owner 逐欄 confirm、未 confirm＝`@PENDING`**；「照舊」與「code 已 push `3d6f446`」**僅 as-is 證據、非定案**（confirm 後可維持＝舊或改）。**不可寫「照舊 ✅」**。其餘（非 T24）既有決策（A-4/M6/KHR/B-1）仍帶入為約束（未 re-open）。先 SRS 結論、再以原 T24 處理佐證。依據＝`decisions.md`「T24 於 SRS 層 re-open」＋`pending-register` 同列。
+> **SoT 原則（ADR-0002／§5b）＋ T24 re-open（owner 06-20）**：以 Rn 為結論（SRS 即權威）。**T24＝owner 明示 re-open**，to-be **走 §5b SoT 梯裁**：as-is baseline＝舊系統 T24（撥貸核心還原舊版）→ 比對 `db-diff`＋`refactor-spec` → **refactor-spec 有 T24 調整(三判 b)＝refactor 贏、to-be＝新使用方式＋`REF-Dn` delta**（**非 default 照舊**）→ 無從裁＝`@PENDING` → owner 逐欄 confirm。「照舊」「code `3d6f446`」**僅 as-is baseline、非定案**。**不可寫「照舊 ✅」**。`refactor-spec`＝SRS 必讀來源（母資料夾/產品側）。其餘（非 T24）既有決策（KHR/B-1）仍帶入為約束（未 re-open）。依據＝`decisions.md`「T24 於 SRS 層 re-open」＋「撥貸 re-open 的 to-be＝走 §5b SoT 梯裁」。
 
 ## 1. 背景 / 目的
 撥貸流程末端：承辦在 0921 輸入撥貸資料後，於本頁 **彙總檢視 → 授權（authorize，含換匯）→ 產生 T24 介面檔 → 提交覆核者（checker）**。金錢核心、與 T24 外部系統整合。〔PM: 補業務目標一句話、北極星對應〕
@@ -50,13 +50,14 @@ authorize 成功＝寫 `TB_DISBUR_DATE` ＋ `TB_EXCHANGE_RATE`，**同一 `@Tran
 - **as-is**：✅（A-1 conformance 確認兩表同交易）。
 - **強制點**：BE。**acceptance**：兩表同交易；失敗不留半筆。〔PM: 確認 authorize 後狀態流轉/CASE_PROGRESS〕
 
-### REQ-004 組 T24 介面檔（段 A–H）— ⚠️ owner re-open（不沿用「照舊」為定案）
-**結論方式（SRS 為準，Option B）**：T24 段 A–H **逐欄/逐段重推 to-be**——每欄：①以**原 T24 處理為 as-is**（引舊 spec／碼 `file:line`）②SRS 提 to-be 提案③**owner 逐欄 confirm**；未 confirm 欄＝`@PENDING`（金錢/交易，ADR-0002）。**不可寫「照舊 ✅」**。
-- **re-open 依據**：`decisions.md`「T24 於 SRS 層 re-open（06-20 owner）」＋`pending-register`「T24 SRS re-open」列。06-16「T24 照舊」**降為 as-is 輸入之一、非 SRS 結論**。
-- **as-is 證據（待逐欄坐實、≠結論，confirm 後可維持＝舊 或 改）**：現碼行為（parity-fix `3d6f446`，已對齊舊）＋逐欄 findings `t24-bgroup-legacy-parity-fix-findings.md` ＋舊 spec `EPROIS_0922-t24.md` `file:line`。
-- **逐欄清單（各需 as-is 坐實＋to-be 提案＋owner confirm）**：A15/A16/A31/A52、B 段、C12/C13/C20/C26、D 段、E14–E23/E21、G4/G7/G10/G11–G12、H1–H8。**換匯欄 `G4`/`G10`/`H8` + KHR 來源風險最高、先**。
+### REQ-004 組 T24 介面檔（段 A–H）— ⚠️ owner re-open；to-be 走 §5b SoT 梯裁（偏新使用方式）
+**結論方式（SRS 為準）**：T24 段 A–H 逐欄 to-be **由 §5b SoT 梯裁產生、非 default 照舊**——每欄：①**as-is baseline＝原系統 T24 處理**（撥貸核心還原舊版；引舊 spec／碼 `file:line`）②**比對 `db-diff` + `refactor-spec`**（過 `legacy-parity-sop` 三判）③(b) 刻意演進 → **to-be＝新使用方式（refactor 本層贏）＋留 `REF-Dn` delta**；(a) regression → 維持舊 baseline；無從裁 → `@PENDING` ④**owner 逐欄 confirm**。**不可寫「照舊 ✅」**。
+- **方向（owner 06-20 釐清）**：舊系統 T24 在實際重構案已調整/優化、`refactor-spec` 有對應 T24 調整 → **T24 to-be 偏新使用方式（refactor-wins, REF-Dn）**；此修正 06-16「T24 都照舊」之過度簡化（誤把 (b) 刻意演進當 (a) regression）。依據＝`decisions.md`「撥貸 re-open 的 to-be＝走 §5b SoT 梯裁」＋「T24 於 SRS 層 re-open」；權威＝`spec-architecture §5b`／`ADR-0002`。
+- **必讀來源**：`refactor-spec`（母資料夾/產品側，本 repo 無）＝T24 新使用方式之 SoT；`db-diff`＝物理欄真相；舊系統 T24＝as-is baseline。
+- **as-is 證據（baseline、≠結論）**：現碼行為（parity-fix `3d6f446`，已對齊舊）＋逐欄 findings `t24-bgroup-legacy-parity-fix-findings.md` ＋舊 spec `EPROIS_0922-t24.md` `file:line`。
+- **逐欄清單（各：as-is baseline → 比對 refactor-spec/db-diff → to-be(新/舊/REF-Dn) → owner confirm）**：A15/A16/A31/A52、B 段、C12/C13/C20/C26、D 段、E14–E23/E21、G4/G7/G10/G11–G12、H1–H8。**換匯欄 `G4`/`G10`/`H8` + KHR 來源風險最高、先**。
 - **強制點**：BE（金錢/交易）。
-- **@PENDING**：每欄 to-be 未 owner-confirm 前皆 @PENDING（§7 TBD-006 逐欄 confirm；TBD-007 換匯/KHR 欄；TBD-008 T24 端到端/接收 UAT；`T24_COMPANY` 接值＝TBD-002）。
+- **@PENDING**：每欄 to-be 未 owner-confirm 前皆 @PENDING（§7 TBD-006 逐欄走梯裁+confirm；TBD-007 換匯/KHR 欄；TBD-008 T24 端到端/接收 UAT；`T24_COMPANY` 接值＝TBD-002）。
 
 ### REQ-005 提交覆核（submit）
 authorize 後提交：**通知選定 checker**（mail）、寫處理 history。
@@ -101,7 +102,7 @@ T24 `B8`/`C9` 取 `TB_BRANCH_PROFILE.T24_COMPANY`（schema＝`OVSLXLON01`）。
 | TBD-003 | `t24DealResult` 非 `0000`/無 done flag 是否更新 summary 狀態（C-2）| 撥貸 domain |
 | TBD-004 | `IS_CONTRACT`/`IS_CONTR` persist 目標、contract-source NPE 防護、空 `APPLICATION_NO` 行為（C-2）| RD |
 | TBD-005 | authorize 後 CASE_PROGRESS/狀態流轉（Bible `TB_PROCESS_CODE` 對照）| PM/domain |
-| TBD-006 | **T24 段 A–H 逐欄 to-be 重推＋owner 逐欄 confirm**（re-open；as-is 坐實→to-be 提案→confirm；未 confirm＝@PENDING）| 撥貸 domain（confirm）＋ RD/Codex（as-is 坐實）|
+| TBD-006 | **T24 段 A–H 逐欄 to-be 走 §5b 梯裁＋owner 逐欄 confirm**（re-open；as-is baseline=舊→比對 refactor-spec/db-diff→to-be 新/舊/REF-Dn→confirm；T24 偏新使用方式；未 confirm＝@PENDING）| 撥貸 domain（confirm）＋ RD/Codex（as-is 坐實＋讀 refactor-spec）|
 | TBD-007 | 換匯欄 `G4`/`G10`/`H8` ＋ KHR 來源（坐實舊 `DISBURSEMENT_CURRENCY`；re-open 子項、風險最高先 confirm）| 撥貸 domain ＋ Codex |
 | TBD-008 | T24 端到端/接收 UAT（逐欄 confirm 後）| RD/UAT |
 

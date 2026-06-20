@@ -74,6 +74,8 @@
 
 | 0921 A-4/M6 於 SRS 層 re-open（2026-06-20, owner）| owner 裁 **A-4＋M6 都 re-open**（比照 T24 Option B）→ 產 `EPROISU0921` SRS 時 **A-4 檢核（REQ-002/006）＋ M6 完工日（REQ-003）逐項/逐欄重推 to-be、owner 逐項 confirm**（未 confirm＝`@PENDING`，金錢/檢核 ADR-0002 升級）。**supersede**：06-17「A-4/M6 照舊」**降為 SRS 層 as-is 輸入、非結論**（已修部分 code＝as-is 證據，confirm 後可維持＝舊 或 改）。scope＝0921 REQ-002/003/006；**已修回 regression（REQ-004/005＝M4/M7/M10）維持**。落點：`pending-register`（0921 A-4/M6 re-open 列）＋`prd-to-srs-codex-dispatch §鐵則`（re-open 現況加 0921）＋0921 draft REQ-002/003/006＋SoT 註＋§7 TBD-001/002。與 T24 re-open 同屬 owner 對撥貸域「照舊」的明示例外；一般式仍 ADR-0002（既有決策當約束、不重議）。|
 
+| 撥貸 re-open 的 to-be＝走 §5b SoT 梯裁（owner 釐清，2026-06-20）| owner 釐清 re-open 的 to-be **不是自由重推、也不 default 照舊**，而是走既有 **§5b 來源優先序**：**①撥貸核心還原舊版為 as-is baseline**（parity-fix `3d6f446`＝正確 baseline）→ **②比對 `db-diff` + `refactor-spec`** → **③refactor-spec 有對應調整且過 `legacy-parity-sop` 三判 (b) 刻意演進＝refactor 本層贏、to-be＝新使用方式＋留 `REF-Dn` delta**（不 silent drop）→ **④無從裁＝列 `@PENDING`**。**T24 具體**：舊系統 T24 在實際重構案已有調整/優化、`refactor-spec` 有對應 T24 調整 → **T24 to-be＝新使用方式（refactor-wins, REF-Dn）、非照舊**；此**修正 06-16「T24 都照舊」之過度簡化**（當時把 refactor-spec 的 (b) 刻意演進誤當 (a) regression／parity-default）。**核心（A-4/M6 等）**：baseline＝還原舊版，僅在 db-diff/refactor-spec 命中 delta 時才改、否則維持舊。**refactor-spec＝SRS 必讀來源**（在母資料夾/產品側，本規劃 repo 無）。落點：`prd-to-srs-codex-dispatch §鐵則`（re-open to-be 來源）＋0922 REQ-004（T24 新）＋0921 REQ-002/003/006（核心舊 baseline＋梯裁）。權威＝`spec-architecture §5b`／`ADR-0002`。|
+
 ## 二、待確認項目（用 Codex 在實際專案查證後回填）
 
 ### 環境 / 版本

@@ -117,7 +117,11 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
   契約 → 辨識並標 to-be 或 @PENDING。
 - 不臆造 file:line；未證標「待 RD 核對」。
 - **既有決策＝ provenance 帶進 Rn（SRS 為結論），非凍結為 done**：原系統處理／「code 已 push」＝**as-is 證據墊底、≠ SRS 已定版**；**讀 SRS 即見結論**，不必回翻決策檔（決策只當 provenance 連結）。金錢/交易/安全面凡未逐欄坐實或有缺口 → `@PENDING`、不標 ✅（ADR-0002 升級觸發：金額/交易/安全；先 SRS 結論、再以原系統處理為 as-is 佐證）。
-- **⚠️ owner 明示 re-open 的決策＝不沿用為定案（現況：①T24＝0922 REQ-004；②0921 A-4/M6＝REQ-002/003/006。見 `decisions.md`「T24 於 SRS 層 re-open」＋「0921 A-4/M6 於 SRS 層 re-open」＋`pending-register` 同二列）**：該域 SRS **逐欄/逐項重推 to-be**（as-is＝原系統處理 `file:line`）、**每欄/每項 → `@PENDING` 待 owner 逐項 confirm**、原 parity-fix／已修 code 僅 as-is 證據（confirm 後可維持或改），**不可寫成「照舊 ✅」**。一般決策仍照上條（帶入為約束、不重議）；本條限 owner 點名 re-open 者。
+- **⚠️ owner 明示 re-open 的決策＝不沿用為定案（現況：①T24＝0922 REQ-004；②0921 A-4/M6＝REQ-002/003/006。見 `decisions.md`「T24 於 SRS 層 re-open」＋「0921 A-4/M6 於 SRS 層 re-open」＋「撥貸 re-open 的 to-be＝走 §5b SoT 梯裁」＋`pending-register` 同列）**：該域 SRS 不寫「照舊 ✅」；**to-be 由 §5b SoT 梯裁產生、非自由心證、亦非 default 照舊**：
+  - **as-is baseline＝原系統處理（撥貸核心還原舊版；`file:line`）**；原 parity-fix／已修 code 僅 as-is 證據。
+  - **比對 `db-diff` + `refactor-spec`** → 過 `legacy-parity-sop` 三判：(b) 刻意演進 → **refactor 本層贏、to-be＝新使用方式＋留 `REF-Dn` delta**（不 silent drop）；(a) regression → 維持舊 baseline；無從裁 → `@PENDING` 待 owner confirm。
+  - **T24（0922）＝refactor-spec 有對應調整 → to-be 偏新使用方式（refactor-wins）**；**核心（0921 A-4/M6）＝baseline 舊，僅 db-diff/refactor-spec 命中 delta 才改**。`refactor-spec`＝**SRS 必讀來源**（母資料夾/產品側）。
+  - 一般決策仍照上條（帶入為約束、不重議）；本條限 owner 點名 re-open 者。權威＝`spec-architecture §5b`／`ADR-0002`。
 
 【DoD（Approved 前必過，含批判輪教訓）】
 - 每 PRD REQ ≥1 Rn；每 Rn ≥1 QA covers + 強制點；完整性/安全的驗證 BE 有且權威。
