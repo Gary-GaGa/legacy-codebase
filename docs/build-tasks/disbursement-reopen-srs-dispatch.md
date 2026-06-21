@@ -20,6 +20,26 @@
   **風險最高先**：換匯 `G4`/`G10`/`H8` ＋ KHR 來源 ＋ B-1 `T24_COMPANY`→`B8`/`C9`。
 - **方向**：舊系統 T24 在重構案已調整、refactor-spec 有對應 T24 調整 → **to-be 偏新（三判 b、留 `REF-Dn`）**；**非 default 照舊、勿寫「照舊 ✅」**。
 
+#### 逐欄 re-open worksheet（as-is 已坐實者；證據＝`done/t24-bgroup-legacy-parity-fix-findings.md` + 舊 `EPRO_IS0922.java`）
+> 用法：每欄 ① as-is 舊值＝下表(已坐實、commit `3d6f446` 現碼已對齊) ② **比對母資料夾 `refactor-spec/02_modules/EPROISU0922.md` + `03_artifacts/.../EPROISU0922/`**（填「refactor 有無對應調整」）③ 三判→to-be(新/舊/`REF-Dn`) ④ owner confirm。下表「refactor 待比 / to-be」＝母資料夾跑 SRS 時填。
+
+| 欄 | as-is 舊值（baseline，舊 `file:line`）| 現碼（`3d6f446` 後）| refactor 對應調整？（待母資料夾填）| to-be（三判→confirm，待填）|
+|---|---|---|---|---|
+| `A16` | `NORMAL.LAON`（`:92-96/249-254/496`）| =舊 | ☐ | ☐ |
+| `C12` | 讀 `TB_COLL_VALUE_INFO.SUG_VAL`（`:660-662/729`）| =舊 | ☐ | ☐ |
+| `C13` | `lonSummaryInfo.DECISION_DATE`（`:642/650/729`）| =舊 | ☐ | ☐ |
+| `A15` | 空值保留 `""`（`:307/493-494`）| =舊 | ☐ | ☐ |
+| `G11`/`G12` | 舊 fee remark 文案+note 號（`:1031-1049/1096`）| =舊 | ☐ | ☐ |
+| `A31` | `AGREEMENT_NO` 後 16 碼（`:301-302/505`）| =舊 | ☐ | ☐ |
+| `G7` | `AGREEMENT_NO` 後 16 碼（`:1072-1073/1093-1094`）| =舊 | ☐ | ☐ |
+| 行尾 | CRLF `\r\n`（`:70/176/555/1052/1170`）| =舊 | ☐ | ☐ |
+| `C26` | 依 `COLL_DATA_SEQ` 過濾 title deed（`:529-550/702-716/738`）| =舊 | ☐ | ☐ |
+| `E21` | 非 USD/KHR→`0`（A-5 收窄 keep；舊全換匯 `:934-940`）| keep（A-5 邊界）| ☐ | ☐ |
+| `G4`/`G10`/`H8` | 換匯欄幣別來源（`:1076-1085/1090-1094/1133-1138/1154-1156`）| keep（A-5 邊界、RD 跟）| ☐（**KHR 最高風險先**）| ☐ |
+| `T24_COMPANY`（B-1） | `OVSLXLON01`（06-17 裁）→`B8`/`C9` 接值 | 待 RD entity 映射 | ☐ | ☐ |
+> **未在上表但屬 REQ-004 清單者**（`A52`/`C20`/B 段/D 段/`E14–E23`/`G7`外 G 欄/`H1–H7`）＝parity-fix 未動/已對齊 → as-is **待母資料夾逐欄坐實** `file:line` 後比 refactor-spec，同流程。
+
+
 ### `EPROISU0921` — **核心還原舊版 baseline、僅 delta 才改**
 - **PRD**：`docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md`
 - **refactor-spec／db-diff**：同慣例（`<funcId>`＝`EPROISU0921`）
