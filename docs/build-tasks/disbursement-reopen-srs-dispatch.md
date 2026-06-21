@@ -49,6 +49,20 @@
 - **方向**：撥貸核心 as-is baseline＝舊；**僅 `db-diff`/`refactor-spec` 命中 delta（三判 b）才改＋`REF-Dn`**，否則維持舊；owner 逐項 confirm。
 - **不 re-open**：REQ-004（fee M7/M10）、REQ-005（RECEIVED_DATE M4）＝已修 regression，當約束帶入。
 
+#### 逐項 re-open worksheet（A-4＋M6；證據＝`disbursement-domain-escalations.md` A-4/D-1 + 0921 draft REQ-002/003/006）
+> ⚠️ 與 T24 worksheet 不同：0921 的 **as-is 舊判據/來源尚未坐實**（A-4＝TBD-001 待逐項坐實舊判據、M6＝TBD-002 待 RD trace 舊來源）→ 下表「as-is 舊」欄為**待母資料夾坐實的目標、非已證值**（已知者＝新舊**分歧描述**）。流程：① 坐實舊判據/來源 `file:line` ② 比 refactor-spec/db-diff ③ 三判（核心預設舊 baseline、僅 delta 才改）④ owner confirm。
+
+| 項/欄 | 現碼狀態（已知）| as-is 舊判據/來源（待坐實）| refactor 對應調整？（待母資料夾）| to-be（三判→confirm，待填）|
+|---|---|---|---|---|
+| `CO_CHECK` 判定（REQ-002）| 新 `='Y'` | 舊 `!='N'`（待坐實 `file:line`）| ☐ | ☐（核心預設舊）|
+| `mbCheck` gate（REQ-006）| 新 Finished gate **未驗** `mbCheck` | 舊有驗（待坐實舊判據）| ☐ | ☐ |
+| law firm `IS_SHOW`（REQ-002）| 新版本顯示條件 | 舊版本條件（待坐實）| ☐ | ☐ |
+| address `UPD_DATE` 來源（REQ-002）| 新來源 | 舊來源（待坐實）| ☐ | ☐ |
+| `DATA_SEQ` 順序 / business-section（REQ-002）| 新順序/分段 | 舊（待坐實）| ☐ | ☐ |
+| `EST_COM_DATE`（REQ-003/M6）| 🔴 `setEstComDate(null)`＝資料遺失 | 舊系統來源（待 RD trace）→ 寫回非 null | ☐ | ☐ |
+| `OTHER_EST_COM_DATE`（REQ-003/M6）| 🔴 `setOtherEstComDate(null)` | 舊系統來源（待 RD trace）→ 寫回非 null | ☐ | ☐ |
+
+
 ### `EPROISU0920` — 撥貸 Process（頁框，domain-gated；**未 re-open**）
 - 無 re-open 衝突 → 走**通用** base prompt；尚無 draft skeleton（待 PM 起 PRD，或先建骨架見本卡 §3）。
 
