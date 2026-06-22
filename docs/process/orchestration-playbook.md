@@ -46,7 +46,7 @@
 | **G. 可測試性** | 每 Rn 的 QA 真測到精神（非掛名）；多分支 happy/error/edge 齊（補 gate⑤「≥1」假綠）| QA 充數 |
 - **真獨立**：各軸獨立 session、不同指示、最好跨模型；同質多個＝theater、不算 N 軸 PASS。
 - **A 廣度兜底、C–G 深度窮舉**：A（含 spec-reviewer 6 紅旗）與 C/D/E 在錯誤碼/安全/reconcile 上**刻意重疊＝雙保險**（跨模型反 correlated-blindness），非互推皮球；專軸逐項窮舉、A 顧整體一致——**跑了 A 不替代專軸**。
-- **規模調配**：低風險頁（z0 KEEP）可只跑 A＋E＋G；**risk-tier T1（金錢/計分/checkpoint/授權）或 refactor 覆蓋缺頁，A–G 全跑**（owner「易疏漏處多開 sub-agent」）。
+- **規模調配**：低風險頁（z0 KEEP）可只跑 A＋E＋G；**risk-tier T1（金錢/計分/checkpoint/授權）或 refactor 覆蓋缺頁，A–G 全跑**（owner「易疏漏處多開 sub-agent」）。**⚠️ 軸選擇綁欄位內容、非僅頁 tier**（2026-06-22）：頁即使分類低風險，**只要觸及金錢/精度/授權欄，F 軸（金錢/精度/截斷）＋ D 軸（授權/安全）不可省**——F 軸＝現流程最空白、風險最高（pilot 單跑靠跨模型 F 軸抓到 `nfix-card` C-B1~B3 精度/截斷/缺 `TB_API_AUTH`，機械閘門看不到）。
 - **仍 ≠ 人審**：N 軸是強化自驗，orchestration 仍停在等人審／等裁 TBD。
 - **落地**：Claude 主 session 用 Agent 工具各 spawn 一軸；Codex 同（部署見 §7；**briefs 權威＝本表**）。axis A＝既有 `spec-reviewer`。
 
@@ -80,6 +80,7 @@
 ```
 - **drain 到底，但仍序列一次一頁**：允許多頁同時 `prd-ready`；orchestrator **逐頁序列**處理（每頁各自過 gate＋N 軸＋ledger 回填），**一頁達標即接下一頁、不在每頁停**——checkpoint 從「每頁停」改為「**整批 prd-ready 清空後停一次**」(batch checkpoint)。序列(非並行)＝保 context 衛生＋避免 correlated 錯。
 - **終點仍是 in-review、非 approved**：drain 只把 `prd-ready`→`in-review`（產出+gate+N 軸無 Blocker，含 open @PENDING/TBD）；**升 approved 仍須人裁 TBD**（C 類不碰）。安全網不變、只是把人審聚到批末一次做。
+- **⚠️ T1/金錢/授權頁＝per-page checkpoint（非批末）**（2026-06-22，採納「pilot 單跑 > drain」實證）：對 risk-tier T1（金錢/計分/checkpoint/授權，含撥貸 `0920/0921/0922`+T24、c0 評分線）——drain **每頁產完即停交人審**（＝單跑紀律：全 A–G 跨模型 + 人審 + 採納修正再審一輪），**不併入批末 batch checkpoint**；只有低風險頁（z0 KEEP 等）走批末 checkpoint。理由：pilot 每頁人審/跨模型 N 軸抓到機械閘門看不到的金錢/授權 Blocker（correlated-blindness 實證，`build-tasks/done/EPROZ00100-regenerate-pilot.md:43`、`build-tasks/EPROZ00100-EPROC00118-nfix-card.md` C-B1~B3 F 軸）；drain 把人審延到批末＝整批可能帶未檢出 Blocker。**T1 批量硬上限 ≤3 頁/批**（嚴於首批 ≤5、且跨所有批非僅首批）；**最高風險頁（撥貸金錢、c0 評分）保留單跑**、不入長 drain 佇列。
 - **單頁 FAIL 不擋整批、但必須離開 prd-ready**：某頁 gate FAIL 或 N 軸殘 Blocker（需 C 類）→ `status=blocked`+原因（**不可留 prd-ready，否則同一頁會被重取＝無窮迴圈**）、續跑下一頁；批末彙總哪些頁 blocked、卡什麼。`blocked` 頁待 owner 母資料夾修（gate/N 軸可修者）或裁 C 類後，**重標 prd-ready** 才進下一批。
 - **🛑 circuit-breaker（防系統性錯擴散）**：若偵測到**系統性/重複**失敗——同一 N 軸在連續多頁出同類 Blocker、或多頁共同 local 輸入缺陷（如 `docs/db-diff/` 版本舊、reconcile 範本缺，00100/00118 曾見「schema.sql 整段待 RD」）——**暫停整批 drain、回報、不續跑**，等修根因再重啟（別讓同一個錯複製到整批）。
 - **首批放量上限（漸進）**：首次批量**建議 ≤5 頁、同 risk-tier**（低風險先）；證實人審/N 軸跟得上再擴大批量。**禁止為衝吞吐而降 N 軸**（risk-tier T1 一律全 A–G，§4b）。
