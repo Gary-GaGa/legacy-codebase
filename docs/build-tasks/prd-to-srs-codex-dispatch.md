@@ -1,8 +1,9 @@
 # PRD → SRS dispatch prompt（給 Codex；新版 Bible/PRD 用）
 
-> **用法**：在母資料夾（產品碼 + 規劃 repo 可讀 + 新版 Bible/PRD 放好）開 Codex，**一次一頁**貼下方 prompt（填 `<funcId>` / `<PRD 路徑>`）。產 SRS bundle → 過閘門 → 回填。
+> **用法**：在母資料夾（產品碼 + 規劃 repo 可讀 + 新版 Bible/PRD 放好）開 Codex。下方 prompt＝**單頁轉換單元**（填 `<funcId>` / `<PRD 路徑>`）；產 SRS bundle → 過閘門 → 回填。
+> **批量 = drain（2026-06-20）**：規模化由 SRS orchestrator（`orchestration-playbook §5b/§6b`）驅動——允許**多頁同時 `prd-ready`**，orchestrator **序列**逐頁套用本 prompt（一次一頁、每頁各自過 gate＋N 軸＋回填），**持續 drain 直到所有既有 `prd-ready` 都轉成 `in-review`** 才停（batch checkpoint）。本 prompt 本身不變、仍是單頁；改的是外層迴圈不再每頁停。
 > **依賴**：① 新版 PRD（必）+ Bible（有則接上游追溯）② 該頁產品碼（as-is）③ 規劃 repo 的 skill/SOP（prompt 已內聯關鍵，不可讀亦能跑）④ **對比輸入 md**（新舊 DB 差異/新 schema + 既有重構 spec，見 prompt 內 §5）。
-> **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24〕→ ④ `EPROZ00800` 重產（新版 PRD；v0.9 已封存）→ ⑤ 主流程 ISU/i0/z0 增量。
+> **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24；**re-open 頁別 overlay＝`disbursement-reopen-srs-dispatch.md`**〕→ ④ `EPROZ00800` 重產（新版 PRD；v0.9 已封存）→ ⑤ 主流程 ISU/i0/z0 增量。
 
 ## PRD 放置與對應（PM 貼給 Codex 前；2026-06-18 EPROZ00100 首跑實測歸納）
 > **對應鍵＝funcId**（如 `EPROZ00100`）。PRD 檔名含 funcId → SRS 自動產到 `srs/<funcId>/`、db-diff 用 table_name、refactor-spec 用 module_code（EPRO* 碼、≈funcId）反查、trace 配同 funcId。**一頁一 PRD、funcId 不重複**（同 funcId 多版會被 gateⒷ glob 同時命中、取字典序最後一個 → **只留最新一份在資料夾**）。
@@ -78,7 +79,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
       - **覆蓋先查**：refactor-spec 缺該頁→無 baseline 可 reconcile→走 i0-mirror＋`legacy-parity-sop`（標 parity 風險、不臆造 baseline）。
         已知缺＝**`EPROC00119`/`EPROC00120`**（無獨立 module/artifact、只在 `EPROC00110` 規則被引；相近 `EPROI00119`/`EPROI00120` 存在——⚠️ 勿混；risk-tier T1 先跑頁 `EPROC00118` 與此只差一碼、不同維度）；其餘額外覆蓋（如 `EPROZ0B001-0B007` 批次）依 latest map 實查。
    C. 我方既有裁定/約束（repo，勿 re-litigate）：
-      - `docs/decisions.md`＋`docs/archive/decisions-2026H1-disbursement.md`（已裁：AUD-6 精度 keep-new〔decisions〕、A-5 KHR 收窄/T24 照舊〔disbursement archive〕、頁合併 CS/CU→CSU…）
+      - `docs/decisions.md`＋`docs/archive/decisions-2026H1-disbursement.md`（已裁：AUD-6 精度 keep-new〔decisions〕、A-5 KHR 收窄、頁合併 CS/CU→CSU…）。**⚠️ 例外：T24（0922）+A-4/M6（0921）「照舊」06-20 SRS-層 re-open＝可 re-litigate（走 §5b 梯裁、見上方 re-open 鐵則），勿當凍結約束**。
       - `docs/pending-register.md`（該頁開著的 @PENDING/escalation）
       - `docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md`（該頁 disposition）
       - `docs/disbursement/disbursement-domain-escalations.md`+`disbursement-triage.md`（撥貸頁）
@@ -115,6 +116,12 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 - PRD 內若帶 legacy 細節（checkpoint key 名/現行 method/欄寬）不可原樣搬進 openapi/schema
   契約 → 辨識並標 to-be 或 @PENDING。
 - 不臆造 file:line；未證標「待 RD 核對」。
+- **既有決策＝ provenance 帶進 Rn（SRS 為結論），非凍結為 done**：原系統處理／「code 已 push」＝**as-is 證據墊底、≠ SRS 已定版**；**讀 SRS 即見結論**，不必回翻決策檔（決策只當 provenance 連結）。金錢/交易/安全面凡未逐欄坐實或有缺口 → `@PENDING`、不標 ✅（ADR-0002 升級觸發：金額/交易/安全；先 SRS 結論、再以原系統處理為 as-is 佐證）。
+- **⚠️ owner 明示 re-open 的決策＝不沿用為定案（現況：①T24＝0922 REQ-004；②0921 A-4/M6＝REQ-002/003/006。見 `decisions.md`「T24 於 SRS 層 re-open」＋「0921 A-4/M6 於 SRS 層 re-open」＋「撥貸 re-open 的 to-be＝走 §5b SoT 梯裁」＋`pending-register` 同列）**：該域 SRS 不寫「照舊 ✅」；**to-be 由 §5b SoT 梯裁產生、非自由心證、亦非 default 照舊**：
+  - **as-is baseline＝原系統處理（撥貸核心還原舊版；`file:line`）**；原 parity-fix／已修 code 僅 as-is 證據。
+  - **比對 `db-diff` + `refactor-spec`** → 過 `legacy-parity-sop` 三判：(b) 刻意演進 → **refactor 本層贏、to-be＝新使用方式＋留 `REF-Dn` delta**（不 silent drop）；(a) regression → 維持舊 baseline；無從裁 → `@PENDING` 待 owner confirm。
+  - **T24（0922）＝refactor-spec 有對應調整 → to-be 偏新使用方式（refactor-wins）**；**核心（0921 A-4/M6）＝baseline 舊，僅 db-diff/refactor-spec 命中 delta 才改**。`refactor-spec`＝**SRS 必讀來源**〔路徑慣例 `docs/refactor-spec/02_modules/<funcId>.md` ＋ `03_artifacts/{be,fe}-shared/<funcId>/`；`db-diff`＝`docs/db-diff/`；二夾皆**母資料夾-local、本規劃 repo 無**〕；**搆不到兩夾時** SRS 須顯式 disclaim「待母資料夾複核」＋列已知 delta（`check-srs-bundle` gateⓇ，非靜默留白）。
+  - 一般決策仍照上條（帶入為約束、不重議）；本條限 owner 點名 re-open 者。權威＝`spec-architecture §5b`／`ADR-0002`。
 
 【DoD（Approved 前必過，含批判輪教訓）】
 - 每 PRD REQ ≥1 Rn；每 Rn ≥1 QA covers + 強制點；完整性/安全的驗證 BE 有且權威。
@@ -143,7 +150,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 ---
 
 ## 備註
-- **一次一頁**：別一次吞整批；T1 三頁各自跑、各自過閘門、各自人審。
+- **序列一次一頁、但 drain 整批**（2026-06-20 改）：不並行吞整批；每頁各自過閘門＋N 軸＋回填，但 orchestrator **一頁達標即接下一頁、不在每頁停**，drain 完所有 `prd-ready`→`in-review` 才停在 batch checkpoint **一次交人審/裁 TBD**（非每頁人審）。終點仍是 `in-review`、不自升 approved（人裁 TBD 才升）。迴圈權威＝`orchestration-playbook §5b/§6b`。
 - **parity 與 SRS 互補**：企金線 18 頁 parity 卡（`c0-legacy-parity-recheck.md`）的 findings 餵 SRS 的 as-is 欄；兩者可並行，但同頁建議 parity 先（as-is 才實）。
 - **SRS 落點是規劃 repo**（`docs/specs/srs/`）：Codex 要能寫到規劃 repo；**Bible v1.1 已在 repo**（`docs/specs/bible/`），新版 PRD 放 `docs/specs/prd/`（舊 00800 PRD 已封存 `docs/archive/EPROZ00800-v0.9-superseded/`）。
 - **00800 重產**：v0.9 SRS 已封存（`docs/archive/EPROZ00800-v0.9-superseded/srs/`）；用新版 PRD 從新 Bible v1.1 **重產**——封存內 RP1-10 裁定 + SR-B1/B2（2 錯誤碼）+ RP8/RP11 為重產輸入，一併承載。

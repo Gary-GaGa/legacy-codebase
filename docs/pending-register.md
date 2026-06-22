@@ -5,12 +5,15 @@
 > **06-11 裁定輪**：`00800` TBD-001~007 七條全裁（五關二改追蹤），見文末 §✅ 已關。
 
 ## 🔴 擋主線（卡住才能往下走）
-> **（目前無）**——2026-06-16 owner「**T24 都照舊系統規格**」後，撥貸 domain group **大縮移 🟡**；A-1（換匯 stub+conformance）、批次層 AUD-10 全結 → **無 owner 決策擋主線**，撥貸剩**執行**（Codex T24 B-group batch-fix＋殘 domain A-4/M6/B-1/G·H〔06-17 全裁照舊〕的 Codex 收尾）+ T24 UAT。
+> **（code 主線無擋）**——A-1（換匯 stub+conformance）、批次層 AUD-10 全結、T24 B-group parity-fix（`3d6f446`）→ **code 主線無 owner 決策擋**，code 剩執行 + T24 UAT。
+> **⚠️ 但 SRS 層有 owner 待決（移 🟡）**：2026-06-20 **T24（0922）+A-4/M6（0921）SRS-層 re-open**——產 SRS 時 to-be 走 §5b 梯裁、owner 逐欄/逐項 confirm（見下方兩 re-open 列）。即「06-16/06-17 照舊」**僅 code as-is baseline、非 SRS 定案**。故撥貸 owner-decision **非全清空**：code 清、SRS 待梯裁+confirm。
 
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
 | ~~**撥貸 domain 殘**~~ ✅ **06-17 全關（照舊）**| ~~T24 欄值/格式/欄寬~~（✅ 06-16「T24 照舊規格」）、~~async~~(AUD-10)、~~A-4 檢核嚴格度~~/~~M6 完工日 DTO~~/~~B-1 `T24_COMPANY`~~/~~KHR-G·H 來源~~ → **06-17 owner 全裁＝照舊系統處理**（A-4 對齊舊判據、M6 照舊來源接回、B-1 取 `OVSLXLON01`、G·H 坐實舊 `DISBURSEMENT_CURRENCY`；A-5 收窄/rounding keep 不變）→ 轉 Codex 執行 | —（已裁，剩執行）| 撥貸 domain | 06-05→06-17 | `disbursement-domain-escalations.md` A-4/D-1/B-1/B-3＋`archive/decisions-2026H1-disbursement.md` 撥貸殘 domain 全裁列（06-17）|
+| **T24 SRS re-open**（`EPROISU0922`）| 〔06-20 owner re-open，supersede 06-16「T24 照舊」〕產 0922 T24 SRS 時不沿用「照舊」為定案 → **to-be 走 §5b SoT 梯裁**：as-is baseline=舊 T24 → 比對 `db-diff`＋`refactor-spec` → **refactor-spec 有 T24 調整(三判 b)＝to-be 偏新使用方式＋`REF-Dn`**（非 default 照舊）→ 無從裁=`@PENDING`（金錢/交易 ADR-0002）→ owner 逐欄 confirm；parity-fix `3d6f446`＝as-is baseline | `EPROISU0922` T24 段 A–H 各欄 to-be 定版 | 撥貸 domain（逐欄 confirm）＋ RD/Codex（as-is 坐實＋讀 `refactor-spec`）| 06-20 | `decisions.md`「T24 於 SRS 層 re-open」＋「撥貸 re-open to-be＝走 §5b 梯裁」＋`...EPROISU0922` REQ-004 |
+| **0921 A-4/M6 SRS re-open**（`EPROISU0921`）| 〔06-20 owner re-open，supersede 06-17「A-4/M6 照舊」〕**A-4 檢核（REQ-002/006）＋ M6 完工日（REQ-003）to-be 走 §5b 梯裁**：撥貸核心 as-is baseline=舊 → 比對 `db-diff`/`refactor-spec` → **delta(三判 b) 才改、否則維持舊 baseline** → 無從裁=`@PENDING`（金錢/檢核 ADR-0002）→ owner 逐項 confirm；regression REQ-004/005 維持 | A-4：CO_CHECK 判定／mbCheck gate／law firm IS_SHOW／address UPD_DATE／DATA_SEQ 各項 to-be 定版；M6：兩欄值來源定版 | 撥貸 domain（逐項 confirm）＋ RD/Codex（as-is 坐實／trace＋讀 `refactor-spec`）| 06-20 | `decisions.md`「0921 A-4/M6 於 SRS 層 re-open」＋「撥貸 re-open to-be＝走 §5b 梯裁」＋`...EPROISU0921` REQ-002/003/006 |
 | **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | `archive/EPROZ00800-v0.9-superseded/srs/spec.md §@PENDING`（v0.9 封存·待重產）＋**派工卡 `build-tasks/00800-rp8-rp11-rd-closeout.md`** |
 | **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | `archive/EPROZ00800-v0.9-superseded/srs/spec.md §@PENDING`（v0.9 封存·待重產）＋**派工卡 `build-tasks/00800-rp8-rp11-rd-closeout.md`** |
 | ~~**SR-B1/B2**~~ ✅ **06-17 裁＝折進重建**（00800 spec-review）| B1：R15+openapi 漏承載 PRD §6.4 `MSG_OVER_COUNT_LIMIT`/`MSG_QUERY_FAIL`（REQ-007 未完整）；B2：R15 把查詢失敗 500 誤併入輸入錯誤 400 → **owner 06-17 裁不立即小修、折進 00800 重建**（重建時 R15 補 2 碼+拆 400/500+openapi query 400/500；**gateⒺ 持續 warn＝安全網**）| —（決策定，重建承載）| RD／SA | 06-16→06-17 | `build-tasks/00800-spec-review-findings.md` |
@@ -71,4 +74,4 @@
 ---
 > 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。**裁定內容只寫來源檔（spec §@PENDING）**，本表只留 id/狀態/owner/指回——本表＝derived 視圖。
 > **機械同步**：SRS 來源列（RPn/BP-n）由 `scripts/check-srs-bundle.py` gateⓅ 對 spec §@PENDING 表自動 diff（漏登記/失步=FAIL）；非 SRS 來源列（A-1 OQ、撥貸 group、E1/E2…）仍靠人工。
-> 用途：站會/交接看這張就知道「等誰、等什麼」；**🔴 擋主線 owner 決策＝目前無**（2026-06-16 T24 全裁「照舊規格」後清空）——撥貸 A-1/批次層/T24/殘 domain（A-4/M6/B-1/G·H）全裁（06-17 全照舊）→ owner-decision **全清空**、剩 Codex 執行 + T24 UAT。
+> 用途：站會/交接看這張就知道「等誰、等什麼」；**🔴 擋 code 主線 owner 決策＝目前無**（A-1/批次層/T24 code 已落）——但 **⚠️ SRS 層有 owner 待決**：06-20 T24/A-4/M6 SRS-層 re-open（見頂部 🔴 區註 + 上方兩 🟡 re-open 列）→ 撥貸 owner-decision **非全清空**（code 清、SRS 待 §5b 梯裁+owner confirm）。

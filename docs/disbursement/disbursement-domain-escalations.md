@@ -9,11 +9,12 @@
 | ~~**A-1**~~ ✅ 已實作＋conformance PASS（`daae4c3` 06-16）| `funcGetExchangeRate` 尾端 throw-stub | **依 a1-spec OQ-1~5 補 return＋移尾端 throw、mvn 綠；Codex 唯讀碼驗 4/4 PASS**（OQ-1 `IdNo=01` `:1181`、OQ-3 非0000拋錯中止 authorize、OQ-4 throw 勿回 null、兩表同 `@Transactional`；錯誤碼＝專屬 `FAILED_E304` 非泛用 E303）。詳 `done/a1-funcGetExchangeRate-spec.md` 標頭 | ✅ 全結 | §1 P0-1 |
 | ~~**A-2**~~ ✅（06-16 owner）| `EXCHANGE_RATE` 來源 ID `OVSLXLON01`→`02` | **裁定＝先對齊舊 parity→`OVSLXLON01`**（與 OQ-1 係同一分歧，同步取舊值）。⚠️ schema-diff 證據偏「02=新庫刻意」，故為「先固定」，唯一復驗點＝新環境 T24 拒收 `01` | 換錯匯率源·已裁 | §2 / §7 line71 |
 | ~~**A-3**~~ ✅（隨 A-5）| `E21` 非 USD 非 KHR 輸出 `0` | A-5 裁 keep（只 USD/KHR、非此幣別業務不發生）→ E21 輸出 0＝by-design-unreachable、非 bug | 已裁 | A-5 |
-| ~~**A-4**~~ ✅（06-17 owner：照舊）| `0921` 檢核對等：`CheckMainBorr`/`CheckCoBorr`（身分/sector/account/`DATA_SEQ`/business-section）、`info CO_CHECK ='Y'` vs 舊 `!='N'`、Finished gate 未驗 `mbCheck`、law firm `IS_SHOW` 版本條件、address `UPD_DATE` 來源 | **裁定＝照舊系統處理**：各檢核一律**對齊舊系統**＝差異視為 regression 修齊、非刻意演進 → 轉執行（Codex 逐項坐實舊判據+對齊）| 檢核漏放/誤擋·已裁→執行 | §3 P2 |
+| ~~**A-4**~~ ✅ code 層／**⚠️ 06-20 SRS re-open**（0921 REQ-002·006 走 §5b 梯裁+owner confirm；見 decisions.md）| `0921` 檢核對等：`CheckMainBorr`/`CheckCoBorr`（身分/sector/account/`DATA_SEQ`/business-section）、`info CO_CHECK ='Y'` vs 舊 `!='N'`、Finished gate 未驗 `mbCheck`、law firm `IS_SHOW` 版本條件、address `UPD_DATE` 來源 | **裁定＝照舊系統處理**：各檢核一律**對齊舊系統**＝差異視為 regression 修齊、非刻意演進 → 轉執行（Codex 逐項坐實舊判據+對齊）| 檢核漏放/誤擋·已裁→執行 | §3 P2 |
 | ~~**A-5**~~ ✅（06-16 owner）| 幣別「收窄」（舊 non-USD 通吃→新 USD/KHR only、其他 null/0）| **owner 裁：撥貸有效幣別＝USD+KHR only（柬埔寨）→ 收窄無害、keep + 補規格**（non-USD-non-KHR 的 fee→null/E21→0 path＝**by-design-unreachable、非 bug**，不做對等修）。殘小：KHR rounding `DOWN`（keep）、G/H 幣別來源（USD/KHR 內若 disbursement≠account 幣別才有差→資料約束待 RD）| 已裁·keep | 坐実 `khr-currency-handling-recon-findings.md` |
 | **A-6** | `0922 submit` history `25`→`24` | confirm 正確序號後再定 | 狀態序·低 | §7 line72 |
 
 ## B. T24 整合 owner / T24 spec
+> **⚠️ 2026-06-20 SRS-層 re-open（owner）**：本節下方「T24 都照舊」「KHR-G·H 來源照舊」等 06-16/06-17 裁定**僅 code 層 as-is baseline（parity-fix `3d6f446` 不變）**；**產 T24 SRS（`EPROISU0922`）時 to-be 不沿用「照舊」為定案** → 走 §5b SoT 梯裁（as-is 舊 → 比對 `db-diff`+`refactor-spec` → **舊系統 T24 在重構案已調整、refactor-spec 有對應 T24 調整 → to-be 偏新使用方式（refactor-wins, REF-Dn）** → owner 逐欄 confirm；KHR-G·H/B-1 屬 T24 欄、併入）。權威＝`decisions.md`「T24 於 SRS 層 re-open」+「撥貸 re-open to-be＝走 §5b 梯裁」、`pending-register`「T24 SRS re-open」列。
 > ✅ **owner 裁定（2026-06-16）：「T24 都照舊系統規格」** → **B-2/B-3/B-4/B-5 + A-3 全收編＝照舊 parity**，轉**執行階段**（卡 `build-tasks/done/t24-bgroup-legacy-parity-fix.md`：Codex 逐欄坐実舊行為+對齊，金錢欄最嚴人審）。**邊界**：KHR 幣別分支＝**疑刻意在地化但未確認**（A-5「🟢 疑似」；新 fee rounding/E21 有 KHR 碼〔handoff §2.1:54/§2.3:85 坐実〕，惟「舊僅 USD」只指 fee rounding 分支——舊 `getExchangeRate` 仍查 `CcyCode=KHR`）→ batch-fix **先不動 KHR 分支、另派坐実+domain 確認**（不假設保留、不自動 revert）。換匯欄位置/來源/格式照舊。下表 B-2~B-5 主題保留作執行清單；裁定已定（照舊），不再逐項 owner。
 > **✅ 2026-06-17 domain 確認回填**：owner 裁 KHR 幣別 G/H **來源照舊系統處理**（`G4`/`G10`/`H8` 坐實舊 `DISBURSEMENT_CURRENCY` 源+對齊）；A-5 的 USD/KHR **收窄 keep + KHR rounding `DOWN` keep 不變**（兩軸：收窄 keep、來源照舊）→ KHR 分支「另派坐実+domain」之 domain 題**已結＝照舊**，剩 Codex 執行。
 > 2026-06-17 執行回填：`build-tasks/done/t24-bgroup-legacy-parity-fix-findings.md` 已逐欄坐實舊 `file:line`，B-2、B-3 非幣別欄、B-4、B-5 修正已套用；`E21` 依 A-5 owner keep（收窄 by-design，不做對等修）；`G4`/`G10`/`H8` 換匯欄幣別**來源**＝**06-17 owner 裁照舊**（另派 Codex 坐實舊 `DISBURSEMENT_CURRENCY` 源+對齊；收窄/rounding 仍 keep）。**金錢/截斷欄 pre-push 最嚴人審已過 → code 已 commit/push（product repo，commit `3d6f446`，06-17 10:41，已在 origin/master）**；剩端到端/T24 接收驗證（findings 註：`mvn package` 75 surefire 全過、repackage 失敗＝本機 jar-lock 環境問題、非碼問題）。
@@ -49,7 +50,7 @@
 ## D. 前端 / DTO 契約（M6 落這裡）
 | # | 主題 | 需要的決策 | 影響·信心 | 出處 |
 |---|---|---|---|---|
-| ~~**D-1**~~ ✅（06-17 owner：照舊）| **M6** `0921` collateral 完工日寫不出非 null：request DTO 只有 `estCom`/`otrEstCom` 型別欄、**無日期值來源**（現 `setEstComDate(null)`/`setOtherEstComDate(null)`） | **裁定＝照舊系統處理**：完工日照舊系統來源接回（Codex trace legacy FE/衍生點 → 寫回非 null、解 `setEstComDate(null)`/`setOtherEstComDate(null)`）→ 轉執行 | 資料遺失·已裁→執行 | §2 P1（Codex 停手升級） |
+| ~~**D-1**~~ ✅ code 層／**⚠️ 06-20 SRS re-open**（M6＝0921 REQ-003 走 §5b 梯裁+owner confirm；見 decisions.md）| **M6** `0921` collateral 完工日寫不出非 null：request DTO 只有 `estCom`/`otrEstCom` 型別欄、**無日期值來源**（現 `setEstComDate(null)`/`setOtherEstComDate(null)`） | **裁定＝照舊系統處理**：完工日照舊系統來源接回（Codex trace legacy FE/衍生點 → 寫回非 null、解 `setEstComDate(null)`/`setOtherEstComDate(null)`）→ 轉執行 | 資料遺失·已裁→執行 | §2 P1（Codex 停手升級） |
 
 ---
 ## 附：非-domain 的待辦（眼睛盯著、別漏）

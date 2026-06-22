@@ -177,8 +177,9 @@
 - 主流程（is/iu/cs/cu 0110–0173）+ 契約頁（0910–0913）+ i0 全頁 FE↔BE `epl-*` DTO/授權各跑一次。
 - z0 報表 00610/00620–00650 呈現。
 
-**③ 🟠→✅ 撥貸 domain（owner-decision 已全清空 06-17；剩執行+UAT）— 見 escalation doc**
-- ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；✅ B-1 `T24_COMPANY`→取 `OVSLXLON01`、RD 接值；✅ A-4 檢核嚴格度 / M6 完工日 / KHR G·H 來源 06-17 全裁「照舊系統處理」；✅ T24 B-group commit/push（`3d6f446`）、批次層 AUD-10 結。**殘＝Codex 執行 + T24 UAT + E1/E2（信用決策 domain）**。
+**③ 🟠 撥貸 domain（code 層決策清空 06-17；⚠️ T24/A-4/M6 SRS 層 06-20 re-open）— 見 escalation doc**
+- ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；B-1 `T24_COMPANY`→取 `OVSLXLON01`、RD 接值；A-4 檢核嚴格度 / M6 完工日 / KHR G·H 來源 06-17 裁「照舊系統處理」（code 層）；✅ T24 B-group commit/push（`3d6f446`）、批次層 AUD-10 結。
+- **⚠️ 2026-06-20 SRS-層 re-open**：上述 **T24（0922）＋ A-4/M6（0921）「照舊」僅 code as-is baseline、非 SRS 定案** → 產 SRS 時 to-be 走 §5b 梯裁（T24 偏新 per `refactor-spec`／核心 A-4/M6 預設舊 baseline、僅 db-diff/refactor-spec 命中 delta 才改）+ owner 逐欄/逐項 confirm（KHR-G·H/B-1 屬 T24 欄、併 0922）。權威＝`decisions.md`「T24/0921 於 SRS 層 re-open」＋`pending-register` 兩 re-open 列。**殘＝① code 執行 + T24 UAT ② SRS-層梯裁（母資料夾 refactor-spec 前置）+ E1/E2（信用決策 domain）**。
 
 **④ z0 半成品收尾（小修；owner：前後端）**
 - `00300` Document Checklist：✅ **recon 坐實＋FE 導回已修 06-15**（recon `done/00300-return-recon.md`；fix `40d931c`，卡歸檔 `done/00300-return-fix.md`）——BE 非缺陷、FE 導回 ToDo 已實作（共用 `goPreviousPage()`）；DIFF-011 收。Phase V 驗共用方法連帶呼叫端語意。
@@ -229,7 +230,7 @@
 4. z0 報表呈現；z0 半成品收尾（00300 return；✅ 00600 method 已修；00800 init-query method＝@PENDING 待 RD）。
 
 **Phase D — 撥貸解鎖（關鍵路徑，owner：撥貸 domain）**
-5. 🟠→✅ **撥貸解鎖**：A-1 換匯 ✅ 已實作+conformance PASS（`daae4c3`）、批次層 AUD-10 結、T24 照舊 commit/push（`3d6f446`）、殘 domain 06-17 全裁照舊 → **剩端到端/T24 UAT**（非 coding；精度 C-1 已關＝舊=新無落差）。
+5. 🟠 **撥貸解鎖**：A-1 換匯 ✅ 已實作+conformance PASS（`daae4c3`）、批次層 AUD-10 結、T24 B-group commit/push（`3d6f446`）、殘 domain 06-17 裁照舊（code 層）→ code 剩端到端/T24 UAT（精度 C-1 已關＝舊=新無落差）；**⚠️ 06-20 T24/A-4/M6 SRS-層 re-open → 產 SRS 走 §5b 梯裁（見 §③ + STATUS banner）**。
 
 **Phase E — c0 收尾 + 授權（owner：domain + DB/ops）**
 6. c0 E1/E2 escalation 裁示；新 c0 endpoint 授權列。
@@ -238,7 +239,7 @@
 7. R2 報表服務 → 0181/i0·c0 PDF/z0 PDF；檔案上傳 API；FE/BE method-mismatch sweep；map-key sweep；Logback 外部化。
 
 **Phase S — spec 層（PRD→SRS 重產；owner：PM/SA + Codex local；並行 track）**
-8. Phase S status: SRS bundle coverage **2/67**; `EPROZ00100` and `EPROC00118` are Approved after 2026-06-20 RD/DBA contract closeout. Next expansion follows risk tier (corporate line / disbursement / 00800).
+8. Phase S status: SRS bundle coverage **2/67**; `EPROZ00100` and `EPROC00118` are Approved after 2026-06-20 RD/DBA contract closeout. Next expansion follows risk tier (corporate line / disbursement / 00800). **決策頁 SRS 產出佇列（≈22 頁＋各頁要餵的輸入）＝`srs-production-queue-2026-06-20.md`（已回填 matrix ledger 逐頁列）**；企金線 18 頁 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗餵入。
 
 **關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。**spec 層（PRD→SRS 重產，Phase S）= 前置就緒、owner local 並行 track，不擋當前里程碑，但為 00800/企金線 rebuild 的上游**。
 
