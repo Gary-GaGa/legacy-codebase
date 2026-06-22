@@ -51,6 +51,8 @@ covers-prd: FR-INIT-001, FR-INIT-002, FR-INIT-003, FR-UI-004, AC-001
 
 Given a valid `applicationNo`, `epl-info-isu-summary` must return summary header, collateral, other collateral, role, current `CASE_PROGRESS`, CAD Checker option list `empList`, `t24ResultTime`, T24 status/result fields, and display data needed by the Summary page. When `CASE_PROGRESS=24` and the user has Maker role `404`, `empList` must contain active role-`405` CAD Checker employees only; inactive employees or non-405 roles must not be selectable for submit. BE must read from `TB_LON_SUMMARY_INFO`, `TB_DISBUR_DATE`, `TB_DISBUR_COLL`, `TB_DISBUR_OTHER_COLL`, `TB_T24_MAIN_BORROWER_INFO`, and `TB_T24_CO_BORROWER_INFO` as applicable. The query must not mutate state. Owner decision on 2026-06-21 closes `TBD-0922-005`: when `DISBURSING_DATE` is blank/null or the case is not at `CASE_PROGRESS=26`, return `t24ResultTime=N` and do not fail Summary initialization; return `t24ResultTime=Y` only when `CASE_PROGRESS=26`, `DISBURSING_DATE` is present, and elapsed time is greater than 10 minutes.
 
+`TB_LON_SUMMARY_INFO.SECURE_ATTRIBUTE` is carried as server-read routing and audit context for Summary. EPROISU0922 does not create a separate S/U branch inside the Summary page: upstream ISU routing and collateral-page availability already decide whether secured collateral data is applicable. BE must not accept any client-supplied secure attribute as authority, and all Summary/authorize rules in this bundle apply to both `S` and `U` individual cases unless a later PRD/SRS delta explicitly introduces an S/U split.
+
 Error-code contract: blank `applicationNo` returns `COMMON_MSG_ERROR_LON`; query/data failure returns `MSG_QUERY_FAIL`; no summary data returns `MSG_DATA_NOT_FOUND`.
 
 ### R2 Summary display and role/page auth **強制點: both**
@@ -62,6 +64,8 @@ The page must derive button and area visibility from server-provided page author
 covers-prd: AC-002, AC-003
 
 `epl-case-isu-summary-submit` must validate `applicationNo`, selected CAD Checker employee, and fresh T24 borrower/co-borrower check-date state before submit. On success, BE updates `TB_LON_SUMMARY_INFO.CASE_PROGRESS` to `25`, sets `CADC_CODE` and current handler for the checker, inserts `TB_APP_HISTORY`, and creates the notification task in `TB_NOTIFICATION_INFO` or the current notification mechanism. Owner decision on 2026-06-21 closes `TBD-0922-003`: the notification recipients must include the selected checker and any effective proxy users from `TB_EMP_PROXY`; actual email delivery, status `S/F`, template rendering, and retry are owned by the shared notification mechanism and are not synchronous success criteria for this endpoint after the task is persisted. The state update, history insert, and notification-task creation must be atomic.
+
+Submit must preserve the submit-Maker identity for the later four-eyes authorize guard. If `TB_LON_SUMMARY_INFO.CURRENT_USER_ID` is overwritten to the selected checker during submit, BE must still retain the pre-submit Maker identity through the existing state/history/audit data available to the authorize service; the authorize comparison must not accidentally compare the checker against the post-submit current handler.
 
 Error-code contract: blank `applicationNo` returns `COMMON_MSG_ERROR_LON`; stale T24 borrower/co-borrower check date on submit returns the bare legacy key `EPROIS0922_CLICK_CHECK`; other validation failure returns a 400 platform validation response; submit failure returns `MSG_SUBMIT_FAIL`.
 
@@ -77,7 +81,9 @@ covers-prd: AC-006, AC-007
 
 `epl-case-isu-summary-auth` must run as one transactional business operation around validation, T24 file generation, SFTP upload, `TB_MESS_UPLOAD_SFTP_RECORD` insert, `TB_LON_SUMMARY_INFO` update, and `TB_APP_HISTORY` insert. On successful SFTP upload, BE sets `TB_LON_SUMMARY_INFO.CASE_PROGRESS` to `26`, clears current handler, and writes `DISBURSING_DATE`. It must not move to `27` until T24 deal result is confirmed. Owner decision on 2026-06-21 closes `TBD-0922-004`: T24 file generation failure or blank `t24UpPath` returns safe category `T24_FILE_GENERATION_FAIL`; SFTP connection failure returns `SFTP_CONNECT_FAIL`; SFTP upload/file-transfer failure returns `SFTP_UPLOAD_FAIL`. These client-facing categories must not include host, user, credential, full path, stack trace, or raw customer data; the generated file name may be included for upload/file-transfer failure only. All three failure classes must stop before Summary `26`, `TB_MESS_UPLOAD_SFTP_RECORD`, and success history are committed, or must roll back to a consistent pre-authorize state.
 
-Error-code contract: blank `applicationNo` returns `COMMON_MSG_ERROR_LON`; stale T24 borrower/co-borrower check date on authorize returns the bare legacy key `EPROIS0922_AUTHORIZE_CHECK`; exchange-rate lookup failure is carried as `FAILED_E304` with bare key `EPROIS0921_UI_RAET_FIND_ERROR`; authorize failure returns `MSG_AUTHORIZE_FAIL`; T24 file generation or blank path failure returns `T24_FILE_GENERATION_FAIL`; SFTP connection failure returns `SFTP_CONNECT_FAIL`; SFTP upload/file-transfer failure returns `SFTP_UPLOAD_FAIL`.
+Before any T24 file generation or SFTP action, authorize must enforce state `CASE_PROGRESS=25`, CAD Checker role `405`, assigned-checker/case ownership, and four-eyes separation. If the authenticated checker employee id equals the Maker who submitted the case into `CASE_PROGRESS=25`, BE must reject the request with named code `EPROIS0922_SELF_APPROVAL` and leave Summary, history, T24 file, SFTP upload record, and generated file side effects unchanged. This guard is service-level mandatory even if the user has endpoint seed access, both roles in test data, or a visible button.
+
+Error-code contract: blank `applicationNo` returns `COMMON_MSG_ERROR_LON`; stale T24 borrower/co-borrower check date on authorize returns the bare legacy key `EPROIS0922_AUTHORIZE_CHECK`; self-approval/four-eyes violation returns `EPROIS0922_SELF_APPROVAL`; exchange-rate lookup failure is carried as `FAILED_E304` with bare key `EPROIS0921_UI_RAET_FIND_ERROR`; authorize failure returns `MSG_AUTHORIZE_FAIL`; T24 file generation or blank path failure returns `T24_FILE_GENERATION_FAIL`; SFTP connection failure returns `SFTP_CONNECT_FAIL`; SFTP upload/file-transfer failure returns `SFTP_UPLOAD_FAIL`.
 
 ### R6 T24 prerequisite checks **強制點: BE**
 covers-prd: AC-004, FR-INIT-005
@@ -101,6 +107,8 @@ Residual T24 re-open closeout on 2026-06-22 closes the remaining field gap: A15 
 covers-prd: role/security rules
 
 Mutating endpoints must enforce BE-side authorization for the case, role, page, and state. `TB_API_AUTH` endpoint rows are necessary but not sufficient: service methods must reject unauthorized state transitions even if a FE button is visible or a user posts directly. CAD Maker-only and CAD Checker-only operations must leave `TB_LON_SUMMARY_INFO`, `TB_APP_HISTORY`, `TB_NOTIFICATION_INFO`, `TB_MESS_UPLOAD_SFTP_RECORD`, and T24 files unchanged on rejection.
+
+Four-eyes enforcement is part of the service-level guard: a user cannot both submit as Maker and authorize as Checker for the same Summary transition, even if role mappings or endpoint seed rows would otherwise allow the direct API call.
 
 ### R9 T24 deal result refresh **強制點: BE**
 covers-prd: AC-008, AC-009
@@ -147,8 +155,10 @@ Summary PDF, transaction result report, and message code record report downloads
 ## 新舊 DB / 更動 delta
 | Delta | 三判 | SRS action | Source |
 |---|---|---|---|
-| DB-D1 `TB_LON_SUMMARY_INFO` is active/exact; key Summary state columns include `APPLICATION_NO`, `CASE_PROGRESS`, `CURRENT_USER_ID`, `CADC_CODE`, and `DISBURSING_DATE`; table note says `DISBURSING_DATE` is an auto-disbursement added field. | carried | R1/R3/R4/R5/R9 use `TB_LON_SUMMARY_INFO` as state authority; no schema rollback. | `docs/db-diff/02_tables/TB_LON_SUMMARY_INFO.md:13`-`16`, `38`, `49`, `62`, `83`-`85` |
+| DB-D1 `TB_LON_SUMMARY_INFO` is active/exact; key Summary state columns include `APPLICATION_NO`, `CASE_PROGRESS`, `CURRENT_USER_ID`, `CADC_CODE`, and `DISBURSING_DATE`; table note says `DISBURSING_DATE` is an auto-disbursement added field. | carried | R1/R3/R4/R5/R9 use `TB_LON_SUMMARY_INFO` as state authority; no schema rollback. R3/R5 also require preserving the submit-Maker identity for four-eyes authorize comparison even if `CURRENT_USER_ID` is reassigned to the checker. | `docs/db-diff/02_tables/TB_LON_SUMMARY_INFO.md:13`-`16`, `38`, `49`, `62`, `83`-`85`; Bible `docs/specs/bible/bible-eproposal.md:79`, `306`, `463` |
+| DB-D13 `TB_LON_SUMMARY_INFO.SECURE_ATTRIBUTE` is an active case-routing attribute. | carried + page-level disclaim | R1 carries it as server-read routing/audit context and explicitly disclaims any intra-0922 S/U split. | Bible `docs/specs/bible/bible-eproposal.md:230`, `326`; `schema.sql` `TB_LON_SUMMARY_INFO.SECURE_ATTRIBUTE` |
 | DB-D2 `TB_DISBUR_DATE` is active/exact and carries disbursement currency/amount, law-firm fees, exchange rates, repayment day, and T24-related values. | carried | R7/R10 use DB precision as hard limit; schema.sql includes money and rate columns with change hints. G4/H4 and G10/H8 use `DISBURSEMENT_CURRENCY` as the currency source; G10/H8 use `EX_RATE_BUY` only when that source currency is KHR. | `docs/db-diff/02_tables/TB_DISBUR_DATE.md:13`-`16`, `38`-`66` |
+| DB-D16 `TB_DISBUR_DATE.DRAWDOWN_ACCOINT` keeps the physical typo but stores drawdown account text. | DB-resolvable correction | `schema.sql` uses `VARCHAR2(25 BYTE)` and OpenAPI exposes `drawdownAccount` as string max 25. This intentionally corrects the SRS schema type from stale db-diff `DATE` evidence while preserving the physical column name. | Current entity `TBDisburDateEntity.java:60`-`61`; refactor summary artifact `epl-info-isu-summary.md:179`; FE summary artifact `eproisu0922-summary.md:177`; `schema.sql` `DRAWDOWN_ACCOINT` |
 | DB-D3 `TB_DISBUR_COLL` and `TB_DISBUR_OTHER_COLL` are active/exact, keyed by `APPLICATION_NO` plus sequence, and amount/area valuation fields are `NUMBER(17,2)`. | carried | Summary displays and T24 file generation use per-row sequence data; no FE-provided sequence may override persisted PK rows. | `docs/db-diff/02_tables/TB_DISBUR_COLL.md:13`-`16`, `38`-`67`; `docs/db-diff/02_tables/TB_DISBUR_OTHER_COLL.md:13`-`16`, `38`-`59` |
 | DB-D11 `TB_DISBUR_COLL.INS_EXPIRY_DATE` is active/exact insurance expiry date for the collateral row. | carried | R7/R10 use this column as the authoritative T24 C20 source; `INS_END_DATE` is not a valid source column. | `docs/db-diff/02_tables/TB_DISBUR_COLL.md:13`-`16`, `38`-`45` |
 | DB-D12 `TB_LOAN_CONDITION_FEE` is active/exact, keyed by `APPLICATION_NO` plus `CON_TYPE`, and carries `CBC_FEE` as `VARCHAR2(300 BYTE)`. | carried | R7/R10 use `CBC_FEE` as the E21 charge amount source. Because the DB type is text, BE must parse it only for the KHR calculation path and fail file generation on non-numeric KHR values rather than silently outputting a malformed T24 amount. | `docs/db-diff/02_tables/TB_LOAN_CONDITION_FEE.md:13`-`16`, `31`-`39`, `53` |
@@ -158,6 +168,8 @@ Summary PDF, transaction result report, and message code record report downloads
 | DB-D4 `TB_MESS_UPLOAD_SFTP_RECORD` is active/exact and stores uploaded file name, generated path, and upload execution time by `APPLICATION_NO`. | carried | R5 records SFTP upload only after generated file upload succeeds; client receives no secret SFTP credentials. | `docs/db-diff/02_tables/TB_MESS_UPLOAD_SFTP_RECORD.md:13`-`16`, `38`-`41` |
 | DB-D5 `TB_MESS_RECORD` is active/exact and stores T24 result fields `MESSAGE_CODE`, `REFERENCE_NO`, `STATUS`, `ERROR_CODE`, `VALUE_DATE`, and `REFERENCE_REMARK`. | carried | R9 persists new T24 results idempotently, must not re-insert already-recorded result rows, and drives `CASE_PROGRESS=27/C1` from result semantics after the open failure-mapping decision is closed. | `docs/db-diff/02_tables/TB_MESS_RECORD.md:13`-`16`, `38`-`45`; `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md:120` |
 | DB-D6 `TB_API_AUTH` is active/exact, note `重構新增`, and transpose method `重新寫入`. | changed | R8 requires endpoint seed rows plus service-level state/role guards. SRS does not treat auth seed rows alone as sufficient. | `docs/db-diff/02_tables/TB_API_AUTH.md:9`-`16`, `38`-`40` |
+| DB-D14 `TB_T24_MAIN_BORROWER_INFO` and `TB_T24_CO_BORROWER_INFO` are active check-date sources. | carried | R6 checks current-day `CHECK_DATE` before submit and authorize; stale rows block state mutation before T24 generation. | `schema.sql` `TB_T24_MAIN_BORROWER_INFO`, `TB_T24_CO_BORROWER_INFO`; PRD `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md:114`, `170` |
+| DB-D15 `TB_LOAN_CONDITION_DETAIL` is a referenced T24/source table for loan-condition fields. | carried | R7/R10 keep it in the T24 generation source set and schema notes so detail-derived T24 fields are not treated as client input. | PRD `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md:144`; `schema.sql` referenced source table list |
 | DB-D7 `TB_EMP_PROXY` is active/exact, keyed by `EMP_ID`, and stores proxy recipient `PROXY_ID` plus active time bounds. | carried | R3/R4 read `TB_EMP_PROXY` to include effective proxy recipients in submit/return notification tasks; EPROISU0922 does not mutate proxy rows. | `docs/db-diff/02_tables/TB_EMP_PROXY.md:13`-`16`, `31`-`41`; refactor `epl-case-isu-summary-submit.md:189`-`198`; refactor `epl-retu-isu-summary.md:186`-`193` |
 | REF-D1 Latest artifact map has six BE artifacts and one FE screen artifact for EPROISU0922. | carried | Endpoints are based on latest refactor artifacts, not legacy action names. | `docs/refactor-spec/02_modules/EPROISU0922.md:3`-`26` |
 | REF-D2 Refactor authorize flow explicitly calls check-date, exchange-rate, T24 file generation, SFTP record insert, summary update, and history insert. | carried | R5/R6/R7 keep this sequence and require transaction/rollback semantics. | `docs/refactor-spec/03_artifacts/be-individual/EPROISU0922/epl-case-isu-summary-auth.md:146`-`154`, `164`-`181` |
@@ -185,15 +197,28 @@ Historical note: `TBD-0922-001` is intentionally left as the umbrella closure re
 | PRD / source | SRS | QA |
 |---|---|---|
 | Summary initialization | R1, R2 | QA-001, QA-002, QA-003, QA-023, QA-027 |
-| Maker submit | R3, R6, R8, R11 | QA-004, QA-005, QA-006, QA-024, QA-025 |
+| Maker submit | R3, R6, R8, R11 | QA-004, QA-005, QA-006, QA-024, QA-025, QA-029 |
 | Checker return | R4, R8, R11 | QA-007, QA-008, QA-025 |
-| Checker authorize | R5, R6, R7, R8, R10, R11 | QA-009, QA-010, QA-011, QA-012, QA-013, QA-021, QA-024, QA-026, QA-028 |
+| Checker authorize | R5, R6, R7, R8, R10, R11 | QA-009, QA-010, QA-011, QA-012, QA-013, QA-021, QA-024, QA-026, QA-028, QA-029 |
 | T24 result | R9, R11 | QA-014, QA-015, QA-022 |
 | Downloads | R12 | QA-016, QA-017 |
-| DB/refactor reconcile | R1-R12 | QA-018, QA-019, QA-020, QA-028 |
+| DB/refactor reconcile | R1-R12 | QA-018, QA-019, QA-020, QA-028, QA-030 |
 
 ## NFR
 - Security: service-level authorization is mandatory for all mutating endpoints; `TB_API_AUTH` seed rows alone are not sufficient.
+- Security: Maker-Checker four-eyes separation is mandatory for authorize; the submit Maker cannot authorize the same case as Checker.
 - Data integrity: state transitions must be atomic and auditable; partial Summary/T24/SFTP/history writes are blockers.
 - Precision: money/rate values follow DB precision and T24 field policy; silent overflow, hidden truncation, or client-side-only numeric enforcement is a blocker.
 - Privacy: logs and error responses must not expose SFTP credentials, full secret paths, stack traces, or real customer data.
+
+## Verification Status
+| Gate | Result |
+|---|---|
+| Mechanical `check-srs-bundle` | PASS on 2026-06-22 for `python scripts/check-srs-bundle.py docs/specs/srs/EPROISU0922`; warning is advisory only (missing Bible-PRD trace file). |
+| N-axis A Comprehensive/spec-review | PASS after latest read-only spec-reviewer recheck; no SRS completeness blocker found, and status remains In Review/no self-Approved. |
+| N-axis B as-is parity | PASS after latest regression recheck; SRS carries Maker identity preservation, authorize state/four-eyes guards, and DB-D16 drawdown account correction. |
+| N-axis C error-code carriage | PASS after latest contract recheck; `EPROIS0922_SELF_APPROVAL` is carried in spec/OpenAPI/QA. |
+| N-axis D security/auth | FAIL for Approved implementation closeout: SRS carries SECURE_ATTRIBUTE and four-eyes requirements, but current backend evidence still lacks the service-level state `25`/assigned-checker/self-approval guard before T24/SFTP side effects and has broad request/response logging masking gaps. |
+| N-axis E DB/refactor reconcile | PASS after latest contract recheck; Summary OpenAPI carries `drawdownAccount`, `bankExpense.facilityFees`, and `bankExpense.refinancingFee`, and schema uses `DRAWDOWN_ACCOINT VARCHAR2(25 BYTE)`. |
+| N-axis F money/precision/truncation | PASS after latest regression recheck; no SRS money/precision/truncation blocker remains, while authorize remains blocked by D-axis implementation guard evidence. |
+| N-axis G testability/trace | PASS after latest spec-reviewer recheck; QA-029 and QA-030 cover the blocker fixes. |

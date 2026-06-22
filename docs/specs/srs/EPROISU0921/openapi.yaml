@@ -249,7 +249,7 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
     SaveValidationError:
-      description: "Validation or business-rule failure: COMMON_MSG_ERROR_LON, MSG_OVER_AMOUNT, EPROIS0923_BO_UNCHECK, EPROIS0923_COBO_UNCHECK, EPROISU0921_ADDRESS_LENGTH, EPROISU0921_REPAYMENT_DAY_INVALID, or EPROISU0921_LAW_FIRM_REMARK_REQUIRED."
+      description: "Validation or business-rule failure: COMMON_MSG_ERROR_LON, MSG_OVER_AMOUNT, EPROIS0923_BO_UNCHECK, EPROIS0923_COBO_UNCHECK, EPROISU0921_ADDRESS_LENGTH, EPROISU0921_REPAYMENT_DAY_INVALID, EPROISU0921_LAW_FIRM_REMARK_REQUIRED, EPROISU0921_COLL_OVER_LIMIT, EPROISU0921_ALREADY_FINISHED, or EPROISU0921_FEE_SOURCE_INVALID."
       content:
         application/json:
           schema:
@@ -297,6 +297,9 @@ components:
             - EPROISU0921_ADDRESS_LENGTH
             - EPROISU0921_REPAYMENT_DAY_INVALID
             - EPROISU0921_LAW_FIRM_REMARK_REQUIRED
+            - EPROISU0921_COLL_OVER_LIMIT
+            - EPROISU0921_ALREADY_FINISHED
+            - EPROISU0921_FEE_SOURCE_INVALID
         message:
           type: string
         details:
@@ -396,6 +399,16 @@ components:
         lawFirmAmount:
           type: string
           pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        facilityFee:
+          type: string
+          readOnly: true
+          description: Server-calculated Finished fee from approved loan amount and FEE_1.
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        refinancingFee:
+          type: string
+          readOnly: true
+          description: Server-calculated Finished fee from disbursement amount and FEE_5.
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
         lawFirmAmount01:
           type: string
           pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
@@ -437,6 +450,7 @@ components:
             $ref: '#/components/schemas/OptionItem'
         collList:
           type: array
+          maxItems: 5
           items:
             $ref: '#/components/schemas/CollateralItem'
         purPropList:
@@ -536,6 +550,16 @@ components:
           type: string
           enum: ['Y', 'N']
           maxLength: 5
+        facilityFee:
+          type: string
+          readOnly: true
+          description: Server-calculated Finished fee persisted to TB_DISBUR_DATE.FACILITY_FEE.
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        refinancingFee:
+          type: string
+          readOnly: true
+          description: Server-calculated Finished fee persisted to TB_DISBUR_DATE.REFINANCING_FEE.
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
     ReturnResponse:
       type: object
       required: [returned]

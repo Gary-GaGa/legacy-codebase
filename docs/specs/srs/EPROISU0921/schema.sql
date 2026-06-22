@@ -36,7 +36,7 @@ CREATE TABLE TB_DISBUR_DATE (
   DISBURSEMENT_CURRENCY VARCHAR2(3),
   DISBURSEMENT_AMOUNT NUMBER(17,2),
   DES_REP_DAY NUMBER(2,0),
-  DRAWDOWN_ACCOINT DATE,
+  DRAWDOWN_ACCOINT VARCHAR2(25),
   DISBURSEMENT_BY VARCHAR2(25),
   LAW_FIRM_NO VARCHAR2(5),
   LAW_FIRM_AMOUNT NUMBER(17,2),
@@ -257,7 +257,8 @@ CREATE TABLE TB_API_AUTH (
 -- 新舊對照 / reconcile notes:
 -- legacy APPLICATION_NO -> applicationNo, unchanged physical key.
 -- legacy EPORIS_0921 -> API eprois0921, physical typo preserved.
--- legacy DRAWDOWN_ACCOINT -> API drawdownAccount, physical typo preserved per db-diff.
+-- legacy DRAWDOWN_ACCOINT -> API drawdownAccount, physical typo preserved but type corrected to VARCHAR2(25) because it stores account text.
+-- TB_LON_SUMMARY_INFO.SECURE_ATTRIBUTE is carried as server-side routing/audit context; EPROISU0921 has no intra-page S/U split.
 -- legacy EST_COM_DATE -> collList[].estCom, must persist to TB_DISBUR_COLL.EST_COM_DATE.
 -- legacy OTHER_EST_COM_DATE -> purPropList[].otrEstCom, must persist to TB_DISBUR_OTHER_COLL.OTHER_EST_COM_DATE.
 -- legacy CO_CHECK/MB_CHECK -> API coCheck/mbCheck, backend authoritative for Finished.

@@ -114,6 +114,8 @@ covers-prd: Save / Finished, validation table, AC-006, AC-007, AC-008
 
 Finished success sets `TB_DISBUR_DATE.EPORIS_0921='Y'` and updates `TB_LON_SUMMARY_INFO.RECEIVED_DATE` according to the already-fixed M4 regression. Failed Finished must not leave partial completion state. Owner confirmed on 2026-06-22 that client-supplied `coCheck` is not authoritative; BE must recompute or verify against current stored T24 check state before completion.
 
+Finished is not a retryable money mutation. Before any `isFinish=Y` mutation, BE must query the current `TB_DISBUR_DATE.EPORIS_0921`; if it is already `Y`, the request must be rejected with named validation code `EPROISU0921_ALREADY_FINISHED` and no-op all mutable effects, including `RECEIVED_DATE`, `FACILITY_FEE`, `REFINANCING_FEE`, collateral rows, purchased-property rows, and T24 temporary rows. Draft saves may still update editable draft data only while the case remains in an editable Maker state, but they must not reopen or overwrite a completed Finished event.
+
 ### R7 M6 completion dates **強制點: BE**
 covers-prd: M6 completion dates, `collateralList`, `addpurchasedList`
 
@@ -138,6 +140,8 @@ covers-prd: validation table, AC-007, AC-009, fee M7/M10 non-reopened constraint
 
 Money and fee fields must follow DB precision `NUMBER(17,2)` where applicable. Disbursement amount cannot exceed approved loan amount; invalid amount restores or rejects according to the page rule. Designated repayment day must be 1-31. `LAW_FIRM_AMOUNT_90` and `LAW_FIRM_90_OTHER_REMARK` are paired: if either is supplied, both are required; remark max length is 16.
 
+`FACILITY_FEE` and `REFINANCING_FEE` are BE-computed values on Finished, not client-authoritative request values. Facility fee source is the approved loan-condition amount `TB_LOAN_CONDITION_DETAIL.LOAN_AMOUNT` for the case's current `FIN_CON_TYPE` multiplied by `TB_LOAN_CONDITION_FEE.FEE_1 / 100`. Refinancing fee source is the submitted `TB_DISBUR_DATE.DISBURSEMENT_AMOUNT` multiplied by `TB_LOAN_CONDITION_FEE.FEE_5 / 100`. Missing fee source fields persist null rather than synthesizing a value; non-numeric, overflow, or unsupported-currency fee calculation fails before Finished mutation. Rounding follows old-system parity unless a later owner decision explicitly approves a delta: USD must format to 2 decimals with the legacy `String.format("%.2f", value)` behavior and must not truncate with `RoundingMode.DOWN`; KHR keeps the accepted A-5/domain decision of scale 0 with `RoundingMode.DOWN`; any other disbursement currency remains by-design unreachable under the USD/KHR-only disbursement decision and must not silently produce a supported fee value.
+
 Collateral and purchased-property address front/back text must not exceed 65 characters combined per row. FE may provide immediate validation, but BE is authoritative for Finished and mutating saves.
 
 Owner confirmed PRD `TBD-008` on 2026-06-22: CBC Member Reference and Add Purchased Property use the same `collproSize` limit value of 5, but the counts are independent. CBC Member may have at most 5 entries, and Add Purchased Property may have at most 5 rows; the two counts must not be summed into one shared total. FE may block add actions early, but BE is authoritative for `/epl-save-isu-data-input` Save/Finished and must reject over-limit payloads instead of truncating silently.
@@ -148,6 +152,8 @@ covers-prd: security and transaction expectations
 All endpoints must require authenticated user context and service-level authorization for the application. Error responses must not expose credentials, hostnames, stack traces, production URLs, T24 raw payloads, or personal data beyond the minimum field-level result message already expected by the UI. Mutating endpoints must write existing audit/history records consistently with the workflow.
 
 `funcIsuDataInputCheckBorInfo` is an internal comparison helper, not a public OpenAPI endpoint. If an implementation exposes it behind a controller for reuse, it must be protected as internal-only and must not return raw comparison source rows beyond the fields needed by the caller.
+
+`TB_LON_SUMMARY_INFO.SECURE_ATTRIBUTE` is carried as server-read routing and audit context for the individual disbursement flow. EPROISU0921 does not create a separate S/U branch inside Data Input: upstream tab/page eligibility and collateral-page availability are decided before this page by the ISU shell/EPROISU0920 routing. BE must not trust any client-supplied secure attribute and must not use it to bypass Data Input validation; a future S/U behavior split requires a new PRD/SRS delta.
 
 ### R12 Traceability and completion interoperability **強制點: both**
 covers-prd: FR-UI-004, AC-001, AC-007, AC-008
@@ -164,6 +170,9 @@ The API contract intentionally exposes `eprois0921` while preserving physical DB
 | DB-D5 `TB_LAW_FIRM.IS_SHOW` remains physical filter field. | physical carried + confirmed `REF-D3` behavior delta | R1/R10 only expose active law firms and reject inactive direct save, superseding the old non-`02.21` all-law-firm branch per owner decision on 2026-06-22. | `docs/db-diff/02_tables/TB_LAW_FIRM.md:42`; legacy `EPROIS_0921_mod.java:300`-`311`; current `TBLawFirmRepository.java:16`-`18` |
 | DB-D6 `TB_API_AUTH` is active/exact and supports epl endpoint seed rows. | carried with security guard | R3/R11 require route auth plus service-level role/state guard. | `docs/db-diff/02_tables/TB_API_AUTH.md:38`-`40`; playbook D-axis requirement |
 | DB-D7 `TB_DISBUR_DATE.DISBURSEMENT_BY` physical length is 25. | DB-resolvable fact | OpenAPI uses `maxLength: 25`; the refactor save artifact's `String 5` signal does not override db-diff physical width because the column stores account/payment text. | `docs/db-diff/02_tables/TB_DISBUR_DATE.md:47`; `docs/refactor-spec/03_artifacts/be-individual/EPROISU0921/epl-save-isu-data-input.md:117`; `openapi.yaml` `disbursementBy` |
+| DB-D8 `TB_LON_SUMMARY_INFO.SECURE_ATTRIBUTE` is an active case-routing attribute. | carried + page-level disclaim | R11 carries it as server-read routing/audit context and explicitly disclaims any intra-0921 S/U split. | Bible `docs/specs/bible/bible-eproposal.md:230`, `326`; `schema.sql` `TB_LON_SUMMARY_INFO.SECURE_ATTRIBUTE` |
+| DB-D9 `TB_DISBUR_DATE.DRAWDOWN_ACCOINT` keeps the physical typo but stores account text. | DB-resolvable correction | `schema.sql` uses `VARCHAR2(25)` and OpenAPI exposes `drawdownAccount` as string max 25; this corrects the SRS schema type while preserving the physical column name. | Current entity `TBDisburDateEntity.java:60`-`61`; refactor save artifact `epl-save-isu-data-input.md:116`; legacy UI `EPROIS0921_JS.jsp:173`, `181` |
+| DB-D10 `TB_DISBUR_DATE.FACILITY_FEE` and `REFINANCING_FEE` are `NUMBER(17,2)` computed fields. | carried with BE-authoritative calculation | R10 defines the Finished-time formula, source tables, null/failure policy, and rounding; OpenAPI returns `facilityFee` and `refinancingFee` as server-calculated fields. USD rounding follows legacy `String.format("%.2f", value)` parity; KHR `RoundingMode.DOWN` is limited to the A-5/domain-approved KHR branch. | PRD AC-007 `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md:173`; legacy `EPROIS_0921_mod.java:451`-`459`, `470`-`477`; current backend `DataInputServiceImpl.java:882`-`905`, `1149`-`1155`; `docs/disbursement/disbursement-domain-escalations.md:13` |
 | REF-D1 Refactor latest splits legacy actions into epl-* endpoints and adds page-column authorization. | intentional contract modernization | Endpoints table and openapi use epl-* routes; legacy paths remain provenance only. | `docs/refactor-spec/02_modules/EPROISU0921.md:22`-`29`; `eproisu0921-data-input.md:167`-`181` |
 | REF-D2 Refactor carries `coCheck` in save request but does not make it backend-authoritative. | carried with confirmed BE authority constraint | R6 accepts `coCheck` for compatibility only; owner confirmed on 2026-06-22 that BE verifies current stored check state before Finished. | `eproisu0921-data-input.md:134`; legacy save request `EPROIS0921_JS.jsp:1058`-`1059`; legacy save read `EPROIS_0921_mod.java:386`-`387` |
 | REF-D3 Refactor removes the old `SYSTEM_VER` law-firm branch and always filters visible law firms by `IS_SHOW='Y'`. | confirmed intentional contract modernization | Owner adopted `REF-D3` on 2026-06-22; R1/R10 use `IS_SHOW='Y'` as to-be select and save validation rule. | legacy `EPROIS_0921_mod.java:300`-`311`; refactor `epl-sele-isu-data-input.md:210`; current `TBLawFirmRepository.java:16`-`18` |
@@ -172,6 +181,8 @@ The API contract intentionally exposes `eprois0921` while preserving physical DB
 | REG-D2 Current backend sets M6 date columns to null on save. | regression | R7 requires restoring old date round-trip. | legacy `EPROIS_0921_mod.java:416`, `422`; current `DataInputServiceImpl.java:1025`, `1095` |
 | REG-D3 Current backend Sector/Industry condition can pass unlisted product or Sector/Industry combinations by default. | regression risk against confirmed product mapping | R4 requires closed mapping: `01`/`02` -> `1001`/`1001`; `03` -> `1002`/`1001`; anything else fails. | legacy `EPROIS_0921_mod.java:698`-`713`; current `DataInputServiceImpl.java:1426`-`1430` |
 | REG-D4 Current backend does not visibly reject over-limit CBC Member or Add Purchased Property payloads before persistence. | regression risk against owner-confirmed limit rule | R10 requires BE rejection when `cbcMemberList` has more than 5 entries or `purPropList` has more than 5 rows; FE-only limits are insufficient for T1 Save/Finished. | legacy `EPROIS0921_JS.jsp:1118`-`1121`, `1143`-`1147`; refactor `EPROISU0921_Data_Input_前端系統規格書_v1.8_20251125--4c5f2248.md:372`, `582`; current `DataInputServiceImpl.java:968`-`984`, `1083`-`1088` |
+| REG-D5 Duplicate `isFinish=Y` submissions can repeat money/completion side effects unless guarded. | Bible disaster-scenario blocker | R6 requires already-finished rejection/no-op with `EPROISU0921_ALREADY_FINISHED` before updating `RECEIVED_DATE`, fees, collateral, purchased-property, or T24 temp rows. | Bible duplicate-disbursement risk `docs/specs/bible/bible-eproposal.md:246`, `463`; PRD idempotency row `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md:185` |
+| REG-D6 Current backend truncates USD facility/refinancing fee with `RoundingMode.DOWN`. | regression risk against old-system USD fee parity | R10 requires USD to follow legacy two-decimal `String.format("%.2f", value)` behavior. No owner evidence was found that approves the USD truncation delta; only KHR `DOWN` and USD/KHR currency narrowing are approved under A-5. | legacy `EPROIS_0921_mod.java:451`-`459`, `470`-`477`; current `DataInputServiceImpl.java:897`-`905`, `1149`-`1155`; `docs/build-tasks/done/khr-currency-handling-recon-findings.md:161`-`167`; `docs/disbursement/disbursement-domain-escalations.md:13` |
 
 ## @PENDING
 | ID | Status | Decision needed | Owner | Source |
@@ -195,12 +206,13 @@ The API contract intentionally exposes `eprois0921` while preserving physical DB
 | FR-UI-004 | R2, R12 | QA-004, QA-023 |
 | PRD TBD-001 / TBD-002 / TBD-003 / TBD-004 / TBD-005 | R1, R2, R12 | QA-001, QA-002, QA-003, QA-023 |
 | PRD TBD-006 / TBD-007 / TBD-008 | R4, R9, R10 | QA-006, QA-018, QA-025 |
-| Save / Finished / AC-006 / AC-007 / AC-008 | R6, R10 | QA-011, QA-012, QA-013 |
+| Save / Finished / AC-006 / AC-007 / AC-008 | R6, R10 | QA-011, QA-012, QA-013, QA-033, QA-034 |
 | M6 completion dates | R7 | QA-014, QA-015 |
 | Fee M7/M10 non-reopened constraint | R10 | QA-021 |
 | `RECEIVED_DATE` M4 non-reopened constraint | R6 | QA-012 |
 | Return / AC-010 | R9 | QA-018 |
-| Security/audit/authorization | R3, R11 | QA-005, QA-022, QA-024 |
+| Security/audit/authorization | R3, R11 | QA-005, QA-022, QA-024, QA-036 |
+| SECURE_ATTRIBUTE carry/disclaim | R11, R12 | QA-036 |
 
 ## NFR
 - Transactionality: Finished and Return must be atomic across summary, disbursement, collateral, T24 temp, and history updates.
@@ -211,11 +223,11 @@ The API contract intentionally exposes `eprois0921` while preserving physical DB
 ## Verification Status
 | Gate | Result |
 |---|---|
-| Mechanical `check-srs-bundle` | PASS on 2026-06-22 for `python scripts/check-srs-bundle.py docs/specs/srs/EPROISU0921`; pyyaml is not installed, so `$ref` deep validation was skipped by the script. |
-| N-axis A Comprehensive/spec-review | PASS after focused read-only review; PRD TBD disposition, `@PENDING`, traceability, and no-self-approved posture are coherent. |
-| N-axis B as-is parity | PASS with prior WARN fixed; address `UPD_DATE` is application-date-derived, `CO_CHECK` response is normalized to `Y/N`, and A-4/M6 evidence is seated. |
-| N-axis C error-code carriage | PASS with prior WARN fixed; R5 and QA-028 through QA-031 distinguish business mismatch from upstream/system errors and missing data. |
-| N-axis D security/auth | PASS with prior WARN fixed; QA-027 covers unauthenticated save, and service-level guards are required beyond `TB_API_AUTH` rows. |
-| N-axis E DB/refactor reconcile | PASS after focused review fixes; schema uses db-diff physical widths, collateral/purchased-property fields are carried, and DB/refactor deltas are explicit. |
-| N-axis F money/precision/truncation | PASS after independent read-only review; money precision, 16-character law-firm remark, and address length validations are covered. |
-| N-axis G testability/trace | PASS by local checklist; QA-001 through QA-032 cover R1-R12, and approval waits for owner pending decisions. |
+| Mechanical `check-srs-bundle` | PASS on 2026-06-22 for `python scripts/check-srs-bundle.py docs/specs/srs/EPROISU0921`; warnings are advisory only (`epl-auth-page-column`/`epl-contract` prose, missing Bible-PRD trace file). |
+| N-axis A Comprehensive/spec-review | PASS after latest read-only spec-reviewer recheck; no SRS completeness blocker found, and status remains In Review/no self-Approved. |
+| N-axis B as-is parity | PASS after latest regression recheck; SRS now preserves `DRAWDOWN_ACCOINT` as account text, records duplicate Finished as a blocker requirement, and treats current USD fee truncation as REG-D6 rather than target behavior. |
+| N-axis C error-code carriage | PASS after latest contract recheck; `EPROISU0921_COLL_OVER_LIMIT`, `EPROISU0921_ALREADY_FINISHED`, and `EPROISU0921_FEE_SOURCE_INVALID` are carried in OpenAPI/QA/spec. |
+| N-axis D security/auth | FAIL for Approved implementation closeout: SRS carries the SECURE_ATTRIBUTE/idempotency requirement, but current backend evidence still lacks the pre-mutation `EPORIS_0921='Y'` duplicate-Finished guard and has broad request/response logging masking gaps. |
+| N-axis E DB/refactor reconcile | PASS after latest contract recheck; `DRAWDOWN_ACCOINT` keeps the physical typo with `VARCHAR2(25)`, and fee DB deltas are explicit. |
+| N-axis F money/precision/truncation | PASS after latest regression recheck; USD fee rounding follows legacy `String.format("%.2f", value)`, KHR `DOWN` remains limited to the A-5/domain-approved branch, and current backend USD `DOWN` is recorded as REG-D6. |
+| N-axis G testability/trace | PASS after latest spec-reviewer recheck; QA-033 through QA-036 cover the blocker fixes. |

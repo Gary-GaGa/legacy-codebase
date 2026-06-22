@@ -88,7 +88,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
         '400':
-          description: COMMON_MSG_ERROR_LON or EPROIS0922_AUTHORIZE_CHECK stale T24 check-date validation
+          description: COMMON_MSG_ERROR_LON, EPROIS0922_AUTHORIZE_CHECK stale T24 check-date validation, or EPROIS0922_SELF_APPROVAL four-eyes violation
         '500':
           description: MSG_AUTHORIZE_FAIL, MSG_QUERY_FAIL, FAILED_E999 for required T24 source-data gaps, FAILED_E304 carrying EPROIS0921_UI_RAET_FIND_ERROR, T24_FILE_GENERATION_FAIL, SFTP_CONNECT_FAIL, or SFTP_UPLOAD_FAIL
   /epl-case-isu-summary-t24-result:
@@ -356,6 +356,71 @@ components:
         currentUserId:
           type: string
           maxLength: 7
+        borrowerT24No:
+          type: string
+          maxLength: 30
+        borrowerName:
+          type: string
+          maxLength: 140
+        coBorList:
+          type: array
+          items:
+            type: string
+            maxLength: 140
+        groupBorrower:
+          type: string
+          maxLength: 20
+        cbcMember:
+          type: array
+          items:
+            type: string
+            maxLength: 30
+        cubcRelatedCifNo:
+          type: string
+          maxLength: 10
+        cbcSpecial:
+          type: string
+          maxLength: 5
+        loanPurpose:
+          type: string
+          maxLength: 200
+        agreementNo:
+          type: string
+          maxLength: 30
+        loanStartDate:
+          type: string
+          maxLength: 10
+        disbursementAmount:
+          type: string
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        loanMaturityDate:
+          type: string
+          maxLength: 10
+        tenor:
+          type: string
+          maxLength: 20
+        desRepDay:
+          type: string
+          maxLength: 2
+        loanProductCode:
+          type: string
+          maxLength: 20
+        drawdownAccount:
+          type: string
+          maxLength: 25
+        disbursementBy:
+          type: string
+          maxLength: 25
+        interestRate:
+          type: string
+          maxLength: 20
+        prepaymentFee:
+          type: string
+          maxLength: 40
+        expens:
+          $ref: '#/components/schemas/SummaryExpense'
+        bankExpense:
+          $ref: '#/components/schemas/BankExpense'
         disbursingDate:
           type: string
           format: date-time
@@ -368,6 +433,37 @@ components:
         result:
           type: string
           maxLength: 20
+    SummaryExpense:
+      type: object
+      properties:
+        lawFirmName:
+          type: string
+          maxLength: 200
+        lawFirmNo:
+          type: string
+          maxLength: 5
+        expenseToLawFirm:
+          type: array
+          items:
+            type: string
+            maxLength: 80
+        creditNarrative:
+          type: string
+          maxLength: 3000
+    BankExpense:
+      type: object
+      properties:
+        cbcFee:
+          type: string
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        facilityFees:
+          type: string
+          description: Server-calculated facility fee from TB_DISBUR_DATE.FACILITY_FEE.
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        refinancingFee:
+          type: string
+          description: Server-calculated refinancing fee from TB_DISBUR_DATE.REFINANCING_FEE.
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
     EmployeeOption:
       type: object
       properties:

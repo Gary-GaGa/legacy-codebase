@@ -16,6 +16,8 @@ CREATE TABLE TB_LON_SUMMARY_INFO (
 );
 -- change-hint: active/exact; transpose_method says copy existing data and modify fields.
 -- EPROISU0922 updates CASE_PROGRESS 24/25/26/27/C1 and DISBURSING_DATE.
+-- SECURE_ATTRIBUTE is carried as server-side routing/audit context; EPROISU0922 has no intra-page S/U split.
+-- Submit must preserve the pre-submit Maker identity for authorize four-eyes comparison.
 
 CREATE TABLE TB_DISBUR_DATE (
   APPLICATION_NO VARCHAR2(30 BYTE) NOT NULL,
@@ -23,7 +25,7 @@ CREATE TABLE TB_DISBUR_DATE (
   AGREEMENT_NO VARCHAR2(30 BYTE),
   DISBURSEMENT_CURRENCY VARCHAR2(3 BYTE),
   DISBURSEMENT_AMOUNT NUMBER(17,2),
-  DRAWDOWN_ACCOINT DATE,
+  DRAWDOWN_ACCOINT VARCHAR2(25 BYTE),
   LAW_FIRM_AMOUNT NUMBER(17,2),
   FACILITY_FEE NUMBER(17,2),
   REFINANCING_FEE NUMBER(17,2),
@@ -181,6 +183,10 @@ CREATE TABLE TB_API_AUTH (
 );
 -- change-hint: active/exact; note says refactor-added and transpose_method is rewrite.
 -- Authorization seed rows do not replace BE service-level guards.
+-- Required API_ID seed set includes epl-info-isu-summary, epl-case-isu-summary-submit, epl-retu-isu-summary,
+-- epl-case-isu-summary-auth, epl-case-isu-summary-t24-result, funcConfCheckDate, funcIsuT24Authorize,
+-- epl-ppdf-isu-summary-report, epl-ppdf-isu-transaction-result-report, and epl-ppdf-isu-message-code-record-report.
+-- The authorize four-eyes guard rejects EPROIS0922_SELF_APPROVAL even when TB_API_AUTH grants endpoint access.
 
 CREATE TABLE TB_T24_MAIN_BORROWER_INFO (
   APPLICATION_NO VARCHAR2(30 BYTE) NOT NULL,
