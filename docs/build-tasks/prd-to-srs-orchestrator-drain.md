@@ -32,6 +32,7 @@
    d. SRS N 軸驗證（playbook §4b 的 A–G）：各 spawn 一 read-only sub-agent、獨立 session、不同指示、最好跨模型（risk-tier T1 全 A–G；低風險頁可 A+E+G）→ 採納修正後【再審一輪】。
    e. 達標（exit 0 + N 軸無 Blocker）→ 回填該頁 ledger status=in-review、填 srs 路徑（覆蓋計數由此衍生）→ 回 1a 取下一個 prd-ready。
    f. 未達標（gate FAIL / N 軸殘 Blocker 需 C 類裁定）→ 該頁 **status=blocked**+原因（**離開 prd-ready 集合→下輪不會被重取**；嚴禁留 prd-ready，否則同頁被無限重取）→ 回 1a 續跑下一頁（單頁失敗不擋整批）。
+   g. ⚠️ **T1/金錢/授權頁＝per-page checkpoint**（2026-06-22；撥貸 0920/0921/0922+T24、c0 評分線）：該頁達標後**停下交人審**（全 A–G 跨模型 + 人審 + 採納修正再審一輪），**不自動接下一頁**（不併批末）；只有低風險頁才走 1e 續 drain + 批末 checkpoint。**最高風險頁（撥貸金錢、c0）用單跑**、不入長 drain 佇列。**T1 批量硬上限 ≤3 頁/批**。理由＝pilot 單跑/每頁人審抓到機械閘門看不到的金錢/授權 Blocker（`done/EPROZ00100-regenerate-pilot.md:43`、`EPROZ00100-EPROC00118-nfix-card.md`）。
 
 2. 守則（不得違反）：序列非並行；每頁全程過 gate＋N 軸、不跳；終點＝in-review，【不得自宣 approved】（TBD 全關+人裁才 approved）；不得碰 C 類（裁 TBD/風險/架構/domain），只標 @PENDING；context 衛生＝每 sub-task 獨立 session、主控只收 PASS/FAIL/findings 路徑；**不中途改 ledger 排序**（要調序先停批再重啟）。
 
@@ -61,9 +62,9 @@
 | 並行? | ❌ 序列一次一頁（context 衛生） |
 | 每頁 gate+N 軸? | ✅ 全程，不跳 |
 | 自動到哪? | `in-review`（**不自升 approved**） |
-| 停點 | 整批 prd-ready 清空後一次（batch checkpoint） |
+| 停點 | 低風險頁＝整批清空後一次（batch checkpoint）；**T1/金錢/授權頁＝每頁停（per-page checkpoint），不併批末** |
 | 單頁 FAIL | 標因→**status=blocked**（離開 prd-ready，防無限重取）、續跑下一頁 |
-| 首批放量 | ≤5 頁同 risk-tier，漸進；不為吞吐降 N 軸 |
+| 首批放量 | 低風險 ≤5 頁同 risk-tier 漸進；**T1 ≤3 頁/批硬上限**；最高風險頁（撥貸金錢/c0）單跑；不為吞吐降 N 軸 |
 | 系統性/重複失敗 | 🛑 暫停整批、回報、修根因再重啟 |
 | C 類（裁定/風險/架構/domain） | ❌ 不碰，只標 @PENDING |
 
