@@ -46,7 +46,7 @@
 | **G. 可測試性** | 每 Rn 的 QA 真測到精神（非掛名）；多分支 happy/error/edge 齊（補 gate⑤「≥1」假綠）| QA 充數 |
 - **真獨立**：各軸獨立 session、不同指示、最好跨模型；同質多個＝theater、不算 N 軸 PASS。
 - **A 廣度兜底、C–G 深度窮舉**：A（含 spec-reviewer 6 紅旗）與 C/D/E 在錯誤碼/安全/reconcile 上**刻意重疊＝雙保險**（跨模型反 correlated-blindness），非互推皮球；專軸逐項窮舉、A 顧整體一致——**跑了 A 不替代專軸**。
-- **規模調配**：低風險頁（z0 KEEP）可只跑 A＋E＋G；**risk-tier T1（金錢/計分/checkpoint/授權）或 refactor 覆蓋缺頁，A–G 全跑**（owner「易疏漏處多開 sub-agent」）。**⚠️ 軸選擇綁欄位內容、非僅頁 tier**（2026-06-22）：頁即使分類低風險，**只要觸及金錢/精度/授權欄，F 軸（金錢/精度/截斷）＋ D 軸（授權/安全）不可省**——F 軸＝現流程最空白、風險最高（pilot 單跑靠跨模型 F 軸抓到 `nfix-card` C-B1~B3 精度/截斷/缺 `TB_API_AUTH`，機械閘門看不到）。
+- **規模調配（2026-06-22 起：SRS pilot/drain 一律全 A–G）**：**每頁全 A–G、每軸一隻 read-only sub-agent（可叢集 ≥3 隻）、跨模型**——drain 對齊 pilot 品質,**不因批量降軸**。〔早前「低風險頁可 A+E+G」**已棄用**;若 owner 對個別 trivial 頁明示放行才例外,且 F/D 綁欄位內容**仍不可省**。〕F 軸＝現流程最空白、風險最高(pilot 跨模型 F 軸抓到 `nfix-card` C-B1~B3 精度/截斷/缺 `TB_API_AUTH`,機械閘門看不到);D 軸＝授權/四眼(0922 N 軸抓到 Maker-Checker 缺四眼控制)。批量靠 **context 隔離+壓縮+分批**承載全軸(見 `prd-to-srs-orchestrator-drain.md §1b`)。
 - **仍 ≠ 人審**：N 軸是強化自驗，orchestration 仍停在等人審／等裁 TBD。
 - **落地**：Claude 主 session 用 Agent 工具各 spawn 一軸；Codex 同（部署見 §7；**briefs 權威＝本表**）。axis A＝既有 `spec-reviewer`。
 
@@ -83,7 +83,8 @@
 - **⚠️ T1/金錢/授權頁＝per-page checkpoint（非批末）**（2026-06-22，採納「pilot 單跑 > drain」實證）：對 risk-tier T1（金錢/計分/checkpoint/授權，含撥貸 `0920/0921/0922`+T24、c0 評分線）——drain **每頁產完即停交人審**（＝單跑紀律：全 A–G 跨模型 + 人審 + 採納修正再審一輪），**不併入批末 batch checkpoint**；只有低風險頁（z0 KEEP 等）走批末 checkpoint。理由：pilot 每頁人審/跨模型 N 軸抓到機械閘門看不到的金錢/授權 Blocker（correlated-blindness 實證，`build-tasks/done/EPROZ00100-regenerate-pilot.md:43`、`build-tasks/done/EPROZ00100-EPROC00118-nfix-card.md` C-B1~B3 F 軸）；drain 把人審延到批末＝整批可能帶未檢出 Blocker。**T1 批量硬上限 ≤3 頁/批**（嚴於首批 ≤5、且跨所有批非僅首批）；**最高風險頁（撥貸金錢、c0 評分）保留單跑**、不入長 drain 佇列。
 - **單頁 FAIL 不擋整批、但必須離開 prd-ready**：某頁 gate FAIL 或 N 軸殘 Blocker（需 C 類）→ `status=blocked`+原因（**不可留 prd-ready，否則同一頁會被重取＝無窮迴圈**）、續跑下一頁；批末彙總哪些頁 blocked、卡什麼。`blocked` 頁待 owner 母資料夾修（gate/N 軸可修者）或裁 C 類後，**重標 prd-ready** 才進下一批。
 - **🛑 circuit-breaker（防系統性錯擴散）**：若偵測到**系統性/重複**失敗——同一 N 軸在連續多頁出同類 Blocker、或多頁共同 local 輸入缺陷（如 `docs/db-diff/` 版本舊、reconcile 範本缺，00100/00118 曾見「schema.sql 整段待 RD」）——**暫停整批 drain、回報、不續跑**，等修根因再重啟（別讓同一個錯複製到整批）。
-- **首批放量上限（漸進）**：首次批量**建議 ≤5 頁、同 risk-tier**（低風險先）；證實人審/N 軸跟得上再擴大批量。**禁止為衝吞吐而降 N 軸**（risk-tier T1 一律全 A–G，§4b）。
+- **首批放量上限（漸進）**：首次批量**建議 ≤5 頁、同 risk-tier**（低風險先；T1 ≤3）；證實人審/N 軸跟得上再擴大批量。**禁止為衝吞吐而降 N 軸**（**每頁一律全 A–G、多 sub-agent、跨模型，§4b；drain 對齊 pilot、不降軸**）。
+- **Context Window（上下限）**：批量 × 全 A–G 多 sub-agent 靠**隔離+壓縮+分批**控在 context 內——主控只存 ledger+當頁 PASS/Blocker 路徑（不吞 bundle/transcript 全文）、**每頁完即丟細節**（跨頁不累積）；sub-agent 各自獨立 session **自讀原檔**（不吃摘要＝防空審）；單批頁數設上限、接近 context 上限即停輸出 ledger、靠 resume 冪等下批接續。細節＝`prd-to-srs-orchestrator-drain.md §1b/§2c`。
 - **不中途改排序**：drain 啟動後**勿改 ledger 的 risk/表序**（會使「取最前 prd-ready」跳號/重做）；要調序先停整批再重啟。
 - **resume 冪等**：中斷重跑＝再讀 ledger，`in-review`/`blocked` 頁不再 prd-ready→自動跳過；只有未完成（仍 prd-ready）頁會重做。回填順序＝**先確認 bundle 產出+gate+N 軸過，再一次寫 status+srs**；回填失敗則該頁留 prd-ready、下輪自然重做（不留中間態）。
 - **owner 控放量、orchestrator 控 drain**：佇列無期限、risk-tier 前段先；**owner 放多少 PRD（升多少 prd-ready）就 drain 多少**——「不急著轉完」指 owner 放 PRD 的步調，非 drain 本身（既有 `prd-ready` 一律 drain 到 in-review/blocked）。owner 未放 PRD 的頁＝not-started、跳過不臆造。
