@@ -5,7 +5,7 @@
 > **權威**：re-open 框架＝`decisions.md`「T24/0921 於 SRS 層 re-open」＋「撥貸 re-open 的 to-be＝走 §5b SoT 梯裁」；梯裁＝`spec-architecture §5b`／`ADR-0002`；待決＝`pending-register` 兩 re-open 列。
 
 ## 0. 開火前置（gate；缺則勿跑）
-1. **PRD 定稿**：`build-tasks/prd-drafts/PRD-…-<funcId>-v0.1-DRAFT.md` 由 PM 填完 `〔PM:…〕`＋§7 TBD → 改名 `…-v1.0.md` 移 `docs/specs/prd/` → matrix ledger 該列升 `prd-ready`（orchestrator 只 pick `prd-ready`）。
+1. **PRD 定稿（PM 提供為準）**：PM 的 PRD `PRD-…-<funcId>-v1.0.md` 放 `docs/specs/prd/` → matrix ledger 該列升 `prd-ready`（orchestrator 只 pick `prd-ready`）。〔規劃 repo 的 draft skeleton **已棄 2026-06-22**——一律以 PM PRD 為準；本卡所有 `REQ-NNN`＝內容定位用，**以 PM PRD 之 REQ-ID 為準**。〕
 2. **母資料夾備齊** `docs/refactor-spec/`＋`docs/db-diff/`（本規劃 repo 無此二夾）；**搆不到** → SRS 須顯式 disclaim「待母資料夾複核」＋列已知 delta（`check-srs-bundle` gateⓇ，非靜默留白）。
 3. **as-is 來源**＝母資料夾產品碼 ＋ 舊 T24 spec（`EPROIS_0922-t24.md`）＋ parity findings（`done/t24-bgroup-legacy-parity-fix-findings.md`，commit `3d6f446`）。
 
@@ -49,7 +49,7 @@
 - **方向**：撥貸核心 as-is baseline＝舊；**僅 `db-diff`/`refactor-spec` 命中 delta（三判 b）才改＋`REF-Dn`**，否則維持舊；owner 逐項 confirm。
 - **不 re-open**：REQ-004（fee M7/M10）、REQ-005（RECEIVED_DATE M4）＝已修 regression，當約束帶入。
 
-#### 逐項 re-open worksheet（A-4＋M6；證據＝`disbursement-domain-escalations.md` A-4/D-1 + 0921 draft REQ-002/003/006）
+#### 逐項 re-open worksheet（A-4＋M6；證據＝`disbursement-domain-escalations.md` A-4/D-1；REQ-ID 對應 PM PRD）
 > ⚠️ 與 T24 worksheet 不同：0921 的 **as-is 舊判據/來源尚未坐實**（A-4＝TBD-001 待逐項坐實舊判據、M6＝TBD-002 待 RD trace 舊來源）→ 下表「as-is 舊」欄為**待母資料夾坐實的目標、非已證值**（已知者＝新舊**分歧描述**）。流程：① 坐實舊判據/來源 `file:line` ② 比 refactor-spec/db-diff ③ 三判（核心預設舊 baseline、僅 delta 才改）④ owner confirm。
 
 | 項/欄 | 現碼狀態（已知）| as-is 舊判據/來源（待坐實）| refactor 對應調整？（待母資料夾）| to-be（三判→confirm，待填）|
