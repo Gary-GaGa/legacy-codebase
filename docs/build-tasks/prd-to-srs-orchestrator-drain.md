@@ -29,7 +29,7 @@
    a. 取 risk-tier 最前、同 risk 依表序的【一頁】（序列、一次只一頁、不並行、不一次吞整批）。
    b. spawn 獨立 sub-agent 跑 docs/build-tasks/prd-to-srs-codex-dispatch.md 的單頁 prompt（填該 funcId / PRD 路徑）→ 產 bundle 到 docs/specs/srs/<funcId>/。
    c. 機械 gate：python scripts/check-srs-bundle.py docs/specs/srs/<funcId> 必 exit 0（含 gateⓇ reconcile）。
-   d. SRS N 軸驗證（playbook §4b 的 A–G）：各 spawn 一 read-only sub-agent、獨立 session、不同指示、最好跨模型（risk-tier T1 全 A–G；低風險頁可 A+E+G）→ 採納修正後【再審一輪】。
+   d. SRS N 軸驗證（playbook §4b 全 A–G，**pilot 同級、不因批量降軸**）：**每頁一律跑全 A–G 七軸**；**每軸各 spawn 一隻 read-only、獨立 session、不同指示、跨模型 sub-agent**（A 綜合/B as-is parity/C 錯誤碼/D 安全授權/E DB reconcile/F 金錢精度截斷/G 可測試性，brief=§4b 表「只看」欄）。軸多時可叢集成 **≥3 隻**（如 A+B｜C+D+E｜F+G），但每隻仍獨立 session、跨模型——**同質多隻＝theater 不算**。各軸回 PASS/Blocker(file:line) → **採納修正後再跑受影響軸一輪**。〔不再「低風險頁減軸」；F/D 綁欄位不可省。〕
    e. 達標（exit 0 + N 軸無 Blocker）→ 回填該頁 ledger status=in-review、填 srs 路徑（覆蓋計數由此衍生）→ 回 1a 取下一個 prd-ready。
    f. 未達標（gate FAIL / N 軸殘 Blocker 需 C 類裁定）→ 該頁 **status=blocked**+原因（**離開 prd-ready 集合→下輪不會被重取**；嚴禁留 prd-ready，否則同頁被無限重取）→ 回 1a 續跑下一頁（單頁失敗不擋整批）。
    g. ⚠️ **T1/金錢/授權頁＝per-page checkpoint**（2026-06-22；撥貸 0920/0921/0922+T24、c0 評分線）：該頁達標後**停下交人審**（全 A–G 跨模型 + 人審 + 採納修正再審一輪），**不自動接下一頁**（不併批末）；只有低風險頁才走 1e 續 drain + 批末 checkpoint。**最高風險頁（撥貸金錢、c0）用單跑**、不入長 drain 佇列。**T1 批量硬上限 ≤3 頁/批**。理由＝pilot 單跑/每頁人審抓到機械閘門看不到的金錢/授權 Blocker（`done/EPROZ00100-regenerate-pilot.md:43`、`EPROZ00100-EPROC00118-nfix-card.md`）。
@@ -38,10 +38,29 @@
 
 2b. 🛑 circuit-breaker：偵測**系統性/重複**失敗——同一 N 軸在連續多頁出同類 Blocker、或多頁共同 local 輸入缺陷（如 docs/db-diff 版本舊、reconcile 範本缺）——**暫停整批 drain、回報、不續跑**，等修根因再重啟（別把同一個錯複製到整批）。
 
+2c. Context Window（上下限，批量必守）：
+   - **上限（防爆/跨頁不累積）**：主控 context **只留**＝佇列 ledger（逐頁一行 status/srs）＋當前頁各 sub-agent 回的「PASS/Blocker(file:line) 一行＋findings 檔路徑」。**絕不**把 bundle 全文/PRD 全文/sub-agent transcript 貼進主控。**一頁回填 ledger 後即丟棄該頁細節**，下一頁從乾淨 context 起。接近 context 上限 → 停在當前頁完成處、輸出 ledger、靠 resume 冪等下批接續（別硬撐到爆）。
+   - **下限（防空審/每隻吃飽）**：每隻 sub-agent **自己讀原檔**拿足量上下文＝該頁 PRD＋SRS bundle 四檔＋對應 db-diff/refactor-spec/legacy `file:line`＋該軸 §4b brief；**不可餵摘要代替原文**（摘要＝空審）。產 SRS 的 sub-agent 也要吃到 §5 reconcile 來源，不足則顯式 disclaim「待母資料夾複核」、不靜默。每隻單一職責、範圍小到能在自己 context 內窮舉。
+   - sub-agent 間**不共享 context**（各自獨立 session）；主控不轉貼 A 軸輸出給 B 軸。
+
 3. 停點＝ledger 已無 prd-ready（皆 in-review 或 blocked）才停＝batch checkpoint。彙總回報：每頁一行（in-review / blocked=gate-fail 或 待裁 C 類）+ bundle/findings 路徑，整批一起交人審/裁 TBD。
 ```
 
 ---
+
+## 步驟 1b — Context Window 管理（為何批量 × 全 A–G 不會爆）
+> 「批次多頁」×「每頁全 A–G 多 sub-agent」會放大 context；靠**隔離 + 壓縮 + 分批**控在上下限內,品質不打折。
+
+| 維度 | 上限（防爆） | 下限（防空審） |
+|---|---|---|
+| **主控 orchestrator** | 只存 ledger 行 + 當頁 sub-agent 的 PASS/Blocker(file:line)+findings 路徑；不吞 bundle/PRD/transcript 全文 | 保有佇列 ledger 全貌（知道還有哪些頁、排序） |
+| **每頁** | 回填 ledger 後**丟棄該頁細節**→ 跨頁不累積 | 該頁的 sub-agent 各拿到完整一頁材料 |
+| **sub-agent** | 各自獨立 session、不共享、只回精簡 verdict | **自己讀原檔**（PRD+bundle 四檔+db-diff/refactor-spec/legacy file:line+軸 brief）、不吃摘要 |
+| **批量** | 單批頁數上限（低風險 ≤5、T1 ≤3）；接近 context 上限即停、輸出 ledger | 長佇列分多批、**resume 冪等**（§5b）接續，不漏頁 |
+
+- **隔離**：每隻 sub-agent 的 context 不計入主控 → 全 A–G × 多頁的 token 重擔落在「用完即拋」的子 session,不堆在主控。
+- **壓縮**：每頁終態只壓成 ledger 一行（status/srs/blocker 因）；主控隨時可在「已完成頁=ledger、未完成頁=prd-ready」的乾淨狀態重入。
+- **分批**：owner 放量 + 單批上限雙重節流;一批爆不了就靠 resume 接下一批（中斷安全）。
 
 ## 步驟 2 — batch checkpoint（人）
 - 全批停在 `in-review` 後，逐頁人審 + 裁 open `@PENDING`/TBD（C 類 owner/RD/DBA/domain）。
@@ -51,7 +70,7 @@
 
 ### 首批放量（漸進，別一次全放）
 - **首次批量建議 ≤5 頁、同 risk-tier**（低風險先）；證實人審 + N 軸跟得上、circuit-breaker 沒被觸發，再擴大批量。
-- **禁止為衝吞吐而降 N 軸**：risk-tier T1（金錢/計分/checkpoint/授權）一律全 A–G（§4b）；只有低風險頁可 A+E+G。
+- **禁止為衝吞吐而降 N 軸**：**每頁一律全 A–G、多 sub-agent、跨模型（drain 對齊 pilot 品質，2026-06-22 起不再低風險減軸）**；T1 另加 per-page checkpoint。
 - owner 一次標的 `prd-ready` 數＝該批 drain 範圍——**owner 即放量節流閥**（標少＝小批）。
 
 ---
@@ -60,7 +79,8 @@
 | 項 | 值 |
 |---|---|
 | 並行? | ❌ 序列一次一頁（context 衛生） |
-| 每頁 gate+N 軸? | ✅ 全程，不跳 |
+| 每頁 gate+N 軸? | ✅ 全程不跳；**N 軸＝全 A–G、每軸一隻 sub-agent（可叢集 ≥3）、跨模型、獨立 session（pilot 同級，不降軸）；採納修正後再審一輪** |
+| Context Window | 主控只存 ledger+當頁 PASS/Blocker 路徑、每頁完丟細節；sub-agent 獨立 session 自讀原檔（不吃摘要）；批量上限（低風險≤5/T1≤3）、長佇列分批 resume 冪等 |
 | 自動到哪? | `in-review`（**不自升 approved**） |
 | 停點 | 低風險頁＝整批清空後一次（batch checkpoint）；**T1/金錢/授權頁＝每頁停（per-page checkpoint），不併批末** |
 | 單頁 FAIL | 標因→**status=blocked**（離開 prd-ready，防無限重取）、續跑下一頁 |
