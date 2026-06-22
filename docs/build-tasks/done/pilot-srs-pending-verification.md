@@ -10,7 +10,7 @@ Re-run command:
 & 'C:\Users\00596357\Documents\project\kh\epro\epro-db\new.cmd' '@C:\project\legacy-codebase\docs\build-tasks\pilot-srs-pending-verification.sql'
 ```
 
-SQL source: `docs/build-tasks/pilot-srs-pending-verification.sql`.
+SQL source: `docs/build-tasks/done/pilot-srs-pending-verification.sql`.
 
 ## Closure Status
 

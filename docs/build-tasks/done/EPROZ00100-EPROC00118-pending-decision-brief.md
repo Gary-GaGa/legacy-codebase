@@ -48,4 +48,4 @@
 3. **DBA ＋ Codex（帶 source）** → 解 §4 三條 DB-resolvable（provenance 回填、不留判斷 pending）。
 4. 裁定逐條回填各 `spec.md §@PENDING` ＋ `decisions.md`；本 digest 歸檔（`done/`）。
 
-> **不變式**：本檔零裁定權（裁定在 owner）、零 SSOT 權（細節在 spec.md）；只把「散在兩束 28 條」整理成「先裁哪 2 條、哪些一次裁、哪些是查 DB 不是判斷」。對應追蹤載具＝`build-tasks/EPROZ00100-EPROC00118-nfix-card.md`（In Review→Approved 迴圈）。
+> **不變式**：本檔零裁定權（裁定在 owner）、零 SSOT 權（細節在 spec.md）；只把「散在兩束 28 條」整理成「先裁哪 2 條、哪些一次裁、哪些是查 DB 不是判斷」。對應追蹤載具＝`build-tasks/done/EPROZ00100-EPROC00118-nfix-card.md`（In Review→Approved 迴圈）。
