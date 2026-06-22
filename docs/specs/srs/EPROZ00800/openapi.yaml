@@ -1,0 +1,393 @@
+openapi: 3.0.3
+info:
+  title: EPROZ00800 Revised Item API
+  version: 0.1.0
+  description: SRS contract for EPROZ00800. Status is in-review candidate; authoritative status is in spec.md.
+paths:
+  /api/eproposal/eproz00800/prompt:
+    get:
+      operationId: promptEproz00800
+      summary: Initialize Revised Item page context
+      parameters:
+        - in: query
+          name: applicationNo
+          required: true
+          schema:
+            type: string
+            maxLength: 30
+        - in: query
+          name: lonTypeCode
+          required: false
+          description: Legacy prompt echo only; backend must resolve authoritative case type from TB_LON_SUMMARY_INFO.LON_TYPE_CODE. 03=Renew, 04=Change Condition; EPROZ00800 supports only 03/04.
+          schema:
+            type: string
+            maxLength: 5
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitRevisedItemEnvelope'
+        '400':
+          description: COMMON_MSG_ERROR_LON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: ACCESS_DENIED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_INITIAL_FAIL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-case-query-reviseditem:
+    get:
+      operationId: eplCaseQueryReviseditem
+      summary: Query Revised Item state and options
+      parameters:
+        - in: query
+          name: applicationNo
+          required: true
+          schema:
+            type: string
+            maxLength: 30
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryRevisedItemEnvelope'
+        '400':
+          description: COMMON_MSG_ERROR_LON or MSG_OVER_COUNT_LIMIT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: ACCESS_DENIED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_QUERY_FAIL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-case-insert-reviseditem:
+    post:
+      operationId: eplCaseInsertReviseditem
+      summary: Save Revised Item and update dependent state
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsertRevisedItemRequest'
+      responses:
+        '200':
+          description: COMMON_MSG_SAVE_SUCCESS
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsertRevisedItemEnvelope'
+        '400':
+          description: COMMON_MSG_ERROR_LON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: ACCESS_DENIED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: COMMON_MSG_SAVE_FAIL
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          maxLength: 50
+          description: MSG_INITIAL_FAIL, COMMON_MSG_ERROR_LON, MSG_DATA_NOT_FOUND, MSG_OVER_COUNT_LIMIT, MSG_QUERY_FAIL, COMMON_MSG_SAVE_FAIL, or ACCESS_DENIED.
+        message:
+          type: string
+          maxLength: 200
+        data:
+          nullable: true
+          description: Optional platform validation details, including mapped ErrorInputException field messages.
+    InitRevisedItemEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 50
+        message:
+          type: string
+          maxLength: 200
+        data:
+          $ref: '#/components/schemas/InitRevisedItemResponse'
+    QueryRevisedItemEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 50
+        message:
+          type: string
+          maxLength: 200
+        data:
+          $ref: '#/components/schemas/QueryRevisedItemResponse'
+    InsertRevisedItemEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 50
+          description: COMMON_MSG_SAVE_SUCCESS may be carried by the platform response envelope.
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: object
+          nullable: true
+          additionalProperties: true
+          description: BP4 target does not require borrower flags or page-menu keys; FE re-calls epl-auth-tab-control after save. Legacy/current BE may include extra data but clients must not treat it as authoritative.
+    InitRevisedItemResponse:
+      type: object
+      required:
+        - attrMap
+      properties:
+        attrMap:
+          type: object
+          additionalProperties: true
+          description: Page attributes including editability, case family, and CU/secured predicates.
+        lonTypeCode:
+          type: string
+          maxLength: 5
+          description: Authoritative TB_LON_SUMMARY_INFO.LON_TYPE_CODE case-type code. 03=Renew, 04=Change Condition; EPROZ00800 supports only 03/04.
+    QueryRevisedItemResponse:
+      type: object
+      required:
+        - revisedType
+        - revisedTypeSize
+        - lonTypeCode
+        - secureAttribute
+        - isCorporateUnsecured
+        - item1
+        - item2
+        - item3
+        - item4
+        - item5
+        - item6
+        - item7
+        - item8
+        - item9
+        - item10
+        - item11
+        - item12
+        - item13
+        - item14
+      properties:
+        revisedType:
+          type: object
+          additionalProperties:
+            type: string
+          description: Key is MSG_OPTION and value is display name.
+        revisedTypeSize:
+          type: integer
+          minimum: 0
+        lonTypeCode:
+          type: string
+          maxLength: 5
+          description: Authoritative TB_LON_SUMMARY_INFO.LON_TYPE_CODE case-type code. 03=Renew, 04=Change Condition; EPROZ00800 supports only 03/04.
+        secureAttribute:
+          type: string
+          maxLength: 2
+        isCorporateUnsecured:
+          type: boolean
+          description: Backend-computed CU predicate for R6. True only when TB_LON_SUMMARY_INFO.LON_ATTRIBUTE='C' and SECURE_ATTRIBUTE='U'; FE must not infer this from secureAttribute alone.
+        item1:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item2:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item3:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item4:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item5:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item6:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item7:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item8:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item9:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item10:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item11:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item12:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item13:
+          $ref: '#/components/schemas/QueryItemFlag'
+        item14:
+          $ref: '#/components/schemas/QueryItemFlag'
+        reasonMemo:
+          type: string
+          maxLength: 4000
+          description: Existing DB value may be wider than execute input.
+        updDate:
+          type: string
+          maxLength: 10
+    InsertRevisedItemRequest:
+      type: object
+      required:
+        - applicationNo
+        - isNotSame
+        - isFinish
+        - itemMap
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        isNotSame:
+          type: boolean
+        isFinish:
+          type: boolean
+        itemMap:
+          $ref: '#/components/schemas/RevisedItemInputMap'
+    RevisedItemInputMap:
+      type: object
+      required:
+        - item1
+        - item2
+        - item3
+        - item4
+        - item5
+        - item6
+        - item7
+        - item8
+        - item9
+        - item10
+        - item11
+        - item12
+        - item13
+        - item14
+        - reasonMemo
+      properties:
+        item1:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item2:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item3:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item4:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item5:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item6:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item7:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item8:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item9:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item10:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item11:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item12:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item13:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        item14:
+          $ref: '#/components/schemas/ExecuteItemFlag'
+        reasonMemo:
+          type: string
+          minLength: 1
+          maxLength: 3000
+    InsertRevisedItemResponse:
+      type: object
+      deprecated: true
+      description: Legacy/current BE extra payload. Target clients re-call epl-auth-tab-control after save and must not require this shape.
+      properties:
+        isAnyGuar:
+          type: string
+          maxLength: 2
+          enum:
+            - Y
+            - N
+        isAnyCollProv:
+          type: string
+          maxLength: 2
+          enum:
+            - Y
+            - N
+        pageMenuCondition:
+          type: object
+          additionalProperties:
+            type: string
+            enum:
+              - Y
+              - N
+    QueryItemFlag:
+      type: string
+      maxLength: 1
+      enum:
+        - Y
+        - N
+        - ''
+    ExecuteItemFlag:
+      type: string
+      maxLength: 1
+      enum:
+        - Y
+        - N

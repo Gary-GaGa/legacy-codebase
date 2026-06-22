@@ -1,21 +1,18 @@
 # 待決登記表（Pending Register）
 
 > **單一視圖**：把散落在各 SRS `@PENDING`、escalation、A-1 OQ、架構待議的**開著的決策**聚一處——「**誰欠我們裁定、卡什麼、開了多久**」。
-> 來源仍各自為準（改在來源檔、這裡同步）。**最後更新＝2026-06-20**。狀態：🔴 擋主線 ／ 🟡 擋單頁/子集 ／ ⚪ 非阻擋/暫緩。
+> 來源仍各自為準（改在來源檔、這裡同步）。**最後更新＝2026-06-21**。狀態：🔴 擋主線 ／ 🟡 擋單頁/子集 ／ ⚪ 非阻擋/暫緩。
 > **06-11 裁定輪**：`00800` TBD-001~007 七條全裁（五關二改追蹤），見文末 §✅ 已關。
 
 ## 🔴 擋主線（卡住才能往下走）
-> **（code 主線無擋）**——A-1（換匯 stub+conformance）、批次層 AUD-10 全結、T24 B-group parity-fix（`3d6f446`）→ **code 主線無 owner 決策擋**，code 剩執行 + T24 UAT。
-> **⚠️ 但 SRS 層有 owner 待決（移 🟡）**：2026-06-20 **T24（0922）+A-4/M6（0921）SRS-層 re-open**——產 SRS 時 to-be 走 §5b 梯裁、owner 逐欄/逐項 confirm（見下方兩 re-open 列）。即「06-16/06-17 照舊」**僅 code as-is baseline、非 SRS 定案**。故撥貸 owner-decision **非全清空**：code 清、SRS 待梯裁+confirm。
+> **（目前無）**——2026-06-16 owner「**T24 都照舊系統規格**」後，撥貸 domain group **大縮移 🟡**；A-1（換匯 stub+conformance）、批次層 AUD-10 全結 → **無 owner 決策擋主線**，撥貸剩**執行**（Codex T24 B-group batch-fix＋殘 domain A-4/M6/B-1/G·H〔06-17 全裁照舊〕的 Codex 收尾）+ T24 UAT。
 
 ## 🟡 擋單頁 / 子集（不擋主線，擋該頁定版）
 | ID | 待決 | 卡住什麼 | owner | 開立 | 來源 |
 |---|---|---|---|---|---|
 | ~~**撥貸 domain 殘**~~ ✅ **06-17 全關（照舊）**| ~~T24 欄值/格式/欄寬~~（✅ 06-16「T24 照舊規格」）、~~async~~(AUD-10)、~~A-4 檢核嚴格度~~/~~M6 完工日 DTO~~/~~B-1 `T24_COMPANY`~~/~~KHR-G·H 來源~~ → **06-17 owner 全裁＝照舊系統處理**（A-4 對齊舊判據、M6 照舊來源接回、B-1 取 `OVSLXLON01`、G·H 坐實舊 `DISBURSEMENT_CURRENCY`；A-5 收窄/rounding keep 不變）→ 轉 Codex 執行 | —（已裁，剩執行）| 撥貸 domain | 06-05→06-17 | `disbursement-domain-escalations.md` A-4/D-1/B-1/B-3＋`archive/decisions-2026H1-disbursement.md` 撥貸殘 domain 全裁列（06-17）|
-| **T24 SRS re-open**（`EPROISU0922`）| 〔06-20 owner re-open，supersede 06-16「T24 照舊」〕產 0922 T24 SRS 時不沿用「照舊」為定案 → **to-be 走 §5b SoT 梯裁**：as-is baseline=舊 T24 → 比對 `db-diff`＋`refactor-spec` → **refactor-spec 有 T24 調整(三判 b)＝to-be 偏新使用方式＋`REF-Dn`**（非 default 照舊）→ 無從裁=`@PENDING`（金錢/交易 ADR-0002）→ owner 逐欄 confirm；parity-fix `3d6f446`＝as-is baseline | `EPROISU0922` T24 段 A–H 各欄 to-be 定版 | 撥貸 domain（逐欄 confirm）＋ RD/Codex（as-is 坐實＋讀 `refactor-spec`）| 06-20 | `decisions.md`「T24 於 SRS 層 re-open」＋「撥貸 re-open to-be＝走 §5b 梯裁」＋`...EPROISU0922` REQ-004 |
+| ~~**T24 SRS re-open**（`EPROISU0922`）~~ ✅ **06-22 關** | 0922 T24 SRS re-open 已逐欄確認並折回 SRS：v1.5 為主要 T24 composition source；delimiter/CRLF/runtime-default encoding、null/default、A16、A31/G7、G11/G12、C12/C13/C20/C26/A52、E21、G4/G10/H8 已在 `docs/specs/srs/EPROISU0922/spec.md` `TBD-0922-001` 關閉。新發現欄位差異需另開 named pending。 | Done | 撥貸 domain＋RD/Codex | 06-20→06-22 | `docs/specs/srs/EPROISU0922/spec.md` `TBD-0922-001`; `decisions.md`; `...EPROISU0922` REQ-004 |
 | **0921 A-4/M6 SRS re-open**（`EPROISU0921`）| 〔06-20 owner re-open，supersede 06-17「A-4/M6 照舊」〕**A-4 檢核（REQ-002/006）＋ M6 完工日（REQ-003）to-be 走 §5b 梯裁**：撥貸核心 as-is baseline=舊 → 比對 `db-diff`/`refactor-spec` → **delta(三判 b) 才改、否則維持舊 baseline** → 無從裁=`@PENDING`（金錢/檢核 ADR-0002）→ owner 逐項 confirm；regression REQ-004/005 維持 | A-4：CO_CHECK 判定／mbCheck gate／law firm IS_SHOW／address UPD_DATE／DATA_SEQ 各項 to-be 定版；M6：兩欄值來源定版 | 撥貸 domain（逐項 confirm）＋ RD/Codex（as-is 坐實／trace＋讀 `refactor-spec`）| 06-20 | `decisions.md`「0921 A-4/M6 於 SRS 層 re-open」＋「撥貸 re-open to-be＝走 §5b 梯裁」＋`...EPROISU0921` REQ-002/003/006 |
-| **RP11 / execute DTO 形狀** | to-be `itemMap.item1..14` vs as-is 平鋪欄位 | `00800` execute 契約定版 | RD | 06-11 | `archive/EPROZ00800-v0.9-superseded/srs/spec.md §@PENDING`（v0.9 封存·待重產）＋**派工卡 `build-tasks/00800-rp8-rp11-rd-closeout.md`** |
-| **RP8**（as-is findings）| R6 `secureAttribute==='U'` vs `isCU`、R7 auth list vs `isEdit`——as-is 判據與 to-be 等價/等效性 | `00800` R6/R7 定版 + QA-023 | RD | 06-10 | `archive/EPROZ00800-v0.9-superseded/srs/spec.md §@PENDING`（v0.9 封存·待重產）＋**派工卡 `build-tasks/00800-rp8-rp11-rd-closeout.md`** |
 | ~~**SR-B1/B2**~~ ✅ **06-17 裁＝折進重建**（00800 spec-review）| B1：R15+openapi 漏承載 PRD §6.4 `MSG_OVER_COUNT_LIMIT`/`MSG_QUERY_FAIL`（REQ-007 未完整）；B2：R15 把查詢失敗 500 誤併入輸入錯誤 400 → **owner 06-17 裁不立即小修、折進 00800 重建**（重建時 R15 補 2 碼+拆 400/500+openapi query 400/500；**gateⒺ 持續 warn＝安全網**）| —（決策定，重建承載）| RD／SA | 06-16→06-17 | `build-tasks/00800-spec-review-findings.md` |
 | **c0 escalation E1** | CU-return checkpoint 只清 CS、無 CU 分流（`:2985`） | c0 評分決策生命週期正確性 | 信用決策 domain | 06-05 | `feature-inventory §⑤`＋**派工卡 `build-tasks/c0-crediteval-e1-e2-escalation.md`** |
 | **c0 escalation E2** | `crScoreCardCompleted` 整欄覆寫 `"NN"`（`:2890`） | 同上 | 信用決策 domain | 06-05 | `verification-handoff §1`＋派工卡（同上）|
@@ -46,11 +43,6 @@
 
 | ID | 待決（Bible 有、PRD/SRS 落空） | 卡住什麼 | owner | 開立 |
 |---|---|---|---|---|
-| **BP-1** | 案件類型 gating：EPROZ00800 **僅展期/展變顯示**（Bible BR-014、決策準則、**災難情境「不該顯示卻顯示」**、SC-002）→ PRD 無 REQ、SRS R1 無顯示條件 Rn/@PENDING | `00800` 顯示條件無 Rn/QA 承載（Bible 點名要測） | PM/SA | 06-10 |
-| **BP-2** | 兩 type 軸未對清：Bible「案件類型(新/展期/展變)」(SC-001) vs PRD/SRS「`LON_TYPE_CODE`(03/04)」——關係未定義、未標 @PENDING | `00800` 案件類型欄位來源；R5 語意基礎 | SA | 06-10 |
-| **BP-3** | 展期 vs 展變「不同案件類型、目前共用驗證」(BR-015/016、SC-005) → PRD/SRS 全未提、無 @PENDING | 是否該分流驗證；回歸測試範圍 | SA | 06-10 |
-| **BP-4** | 下游頁映射：Bible「影響 `EPROISU0150`、顯示於 `EPROISU0173`」(BR-017、SC-003/004) → SRS re-process 清單(0210~0290)不含 0150/0173；0173 既未覆蓋也未在 Non-Goals disclaim | `00800` 下游影響的命名級追溯 | SA/RD | 06-10 |
-| **BP-5** | 用詞消歧：PRD「共用頁籤」(跨 IS/IU/CS/CU 屬性) vs Bible「條件式頁籤」(跨案件類型)——PRD 未消歧、易誤讀為所有案件必走 | 文件一致性（🟢 nit） | PM | 06-10 |
 | **BP-7** ✅ **已收口（06-10）** | ~~Bible→PRD 漂移無 gate~~ → 控制點：trace sidecar（`specs/prd/trace-<docId>-<funcId>.md`，表 A 缺對應必標 BP/@PENDING）+ `check-srs-bundle.py` **gateⒷ**（covers-prd 懸空=FAIL、trace 缺漏=warn） | —（漂移仍會發生，但**會被登記/警示**；裁定仍須人） | 流程/SA | 06-10 |
 
 ## ✅ 已關（保留 30 天供交接，之後可清；**裁定內容單一出處＝來源 spec §@PENDING**，本表只留 verdict token）
@@ -62,6 +54,13 @@
 | **TBD-007 / RP5** ✅ | 維持現狀（僅持久化、無側效）→ R13.7 定版 | 同 |
 | **TBD-002 / RP7** ✅ | `Finshed`→`Finished` 定版 | 同 |
 | **RP10** ✅（06-12）| checkpoint key＝`TB_CHECK_POINTS_{IS,IU,CS,CU}` 欄位（新 funcId 形，DDL 機械枚舉；R14 表名同步修正）→ R14 定版、殘差實作＝rimat F8 | 同 |
+| **RP11** ✅（06-21）| execute DTO final shape＝`applicationNo` + required `isFinish` + required `isNotSame` + `itemMap.item1..14/reasonMemo`；legacy/PRD `checkPointMap` 不作為 client-authoritative to-be input，checkpoint/page-menu 由 backend 推導；殘差實作＝current DTO required validation gap | `00800 spec.md` R11 / REF-D3 / QA-017 |
+| **BP-1** ✅（06-21）| EPROZ00800 visibility gate＝backend-owned `LON_TYPE_CODE in ('03','04')`；unsupported cases 由 tab-control/prompt 隱藏，direct query/save 在讀取 Revised Item 或 DB mutation 前以 `ACCESS_DENIED`/forbidden-page envelope 擋下；BP-2/BP-3 已分別裁定 terminology/split semantics | `00800 spec.md` R1 / R16 / QA-002 / QA-043 |
+| **BP-2** ✅（06-21）| Bible case-type axis＝backend-owned `TB_LON_SUMMARY_INFO.LON_TYPE_CODE`：`01=New`、`02=Additional`、`03=Renew/展期`、`04=Change Condition/展變`、`05=Restructure` when present；`LON_ATTRIBUTE`/`SECURE_ATTRIBUTE`/`caseCategory` 只作 customer/security/checkpoint family，不可替代案件類型 | `00800 spec.md` R1 / R5 / R13.3 / R14 / QA-044 |
+| **BP-3** ✅（06-21）| Renew(03) / Change Condition(04) 共用 Revised Item validation；不拆兩套 validation。03 特例＝R5 `item1` 強制 Y；04 特例＝R13.3 `item12` fee delete side effect；未來若要拆分需新 PRD/source-backed owner change | `00800 spec.md` R4 / R5 / R13.3 / QA-045 |
+| **BP-4** ✅（06-21）| 下游映射拆成兩層：`EPROISU0150`/`EPROCSU0150` 僅在 active checkpoint 實體有欄位時由 00800 更新（IS/CS；IU/CU 不合成 0150）；`EPROISU0173`/`EPROCSU0173` 是摘要顯示/讀取追溯，歸 0173 bundles 驗證，不作為 00800 checkpoint/page-menu key；save 後 FE 重新打 `epl-auth-tab-control` | `00800 spec.md` R14 / REF-D5 / QA-046 |
+| **BP-5** ✅（06-21）| `shared` / `common` 只表示 EPROZ00800 是共用模組與 tab config 分類，不代表所有案件必顯示或必完成；實際顯示/必填仍限 backend-owned `LON_TYPE_CODE in ('03','04')` 的展期/展變，非 03/04 不顯示且 direct query/save 需被擋 | `00800 spec.md` Scope / R1 / QA-047 |
+| **RP8** ✅（06-21）| R6 定版為 backend-owned corporate-unsecured predicate：`LON_ATTRIBUTE='C' AND SECURE_ATTRIBUTE='U'` / `isCorporateUnsecured`，不接受 `secureAttribute='U'` alone；R7 接受 granular FE page-column/button auth 作 UI model，但 RD closeout 必須補 config mapping evidence 與 backend service-level page/edit guard，`TB_API_AUTH` alone 不足 | `00800 spec.md` R6 / R7 / R16 / QA-006 / QA-007 / QA-042 |
 | **RP9** ✅（06-16 RD/架構）| init-query＝GET（Follow PRD §6.1；method recon 全站 280/282 POST 仍依 PRD 走 RESTful）→ R2/Endpoints/openapi 定版、get-body #3 解鎖 | `00800 spec.md §@PENDING` |
 | **AUD-6** ✅（06-16 DBA/domain）| 接受財評精度縮減（`(28,2)→(20,2)`、利率 6→2 位；新 DB 為準不還原）⚠️ 利率 2 位 caveat | `schema-diff-findings.md` |
 | **AUD-9** ✅（06-16）| deputy 已對齊複合 PK（`@EmbeddedId` EMP_ID+STR_TIME）＝無 bug，早期單鍵係文件假設錯、碼對 | `00700-deputy-pk-reverify-findings.md` |
@@ -74,4 +73,10 @@
 ---
 > 維護：新 `@PENDING`/escalation/OQ 開立 → 加一列；**關閉時**在來源檔裁定 + 本表移除/標 ✅ + 回填 `feature-inventory.md`。**裁定內容只寫來源檔（spec §@PENDING）**，本表只留 id/狀態/owner/指回——本表＝derived 視圖。
 > **機械同步**：SRS 來源列（RPn/BP-n）由 `scripts/check-srs-bundle.py` gateⓅ 對 spec §@PENDING 表自動 diff（漏登記/失步=FAIL）；非 SRS 來源列（A-1 OQ、撥貸 group、E1/E2…）仍靠人工。
-> 用途：站會/交接看這張就知道「等誰、等什麼」；**🔴 擋 code 主線 owner 決策＝目前無**（A-1/批次層/T24 code 已落）——但 **⚠️ SRS 層有 owner 待決**：06-20 T24/A-4/M6 SRS-層 re-open（見頂部 🔴 區註 + 上方兩 🟡 re-open 列）→ 撥貸 owner-decision **非全清空**（code 清、SRS 待 §5b 梯裁+owner confirm）。
+> 用途：站會/交接看這張就知道「等誰、等什麼」；**🔴 擋主線 owner 決策＝目前無**（2026-06-16 T24 全裁「照舊規格」後清空）——撥貸 A-1/批次層/T24/殘 domain（A-4/M6/B-1/G·H）全裁（06-17 全照舊）→ owner-decision **全清空**、剩 Codex 執行 + T24 UAT。
+
+## Active Implementation Closeout Blockers
+
+| ID | Pending | Blocks | owner | Opened | Evidence |
+|---|---|---|---|---|---|
+| **00800 R7 page-column backfill** | SELECT-only proof found `TB_PAGE_COLUMN_AUTH_DETAIL` has `revised.item` and `button.butSave/butFinish`, but lacks `reason.item`; backend guard now requires `reason.item`, so current DB config blocks full implementation closeout until DBA/RD applies `docs/build-tasks/00800-contract-closeout-authz-backfill.sql` or equivalent and re-runs `docs/build-tasks/00800-contract-closeout-authz.sql`. | EPROZ00800 save/edit authorization closeout | DBA/RD | 2026-06-21 | `docs/build-tasks/00800-implementation-closeout-findings.md` |

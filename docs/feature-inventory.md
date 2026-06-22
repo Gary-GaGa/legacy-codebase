@@ -127,7 +127,7 @@
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅ F-12 已修（product `5a47038`，FE endpoint 改 CAD）→ 復稱 CR 範本；Phase V 實測查詢一條 |
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；**DB 複合 PK 已對齊**（06-16 reverify，`@EmbeddedId` EMP_ID+STR_TIME，AUD-9 關）|
-| EPROZ00800 | Revised Item | 🟡 | ✅ | 既有 BE ✅（`88328f9`+`5580eb7`）；**SRS v0.9 封存→disposition=REBUILD，待新 PRD（Bible v1.1）重產**；殘 RP8/RP11（派工卡 `00800-rp8-rp11-rd-closeout`）+ SR-B1/B2（折進重建）為重產輸入；Phase V 待測沿用 BE |
+| EPROZ00800 | Revised Item | 🟡 | ✅ | SRS bundle 重產已進 `in-review`；RP8/RP11/BP1-5 已裁入 SRS。Implementation closeout：GET query、`isCorporateUnsecured`、backend mutation guard 已實作並測過；`TB_API_AUTH` query/save SELECT-only PASS；剩 R7 `TB_PAGE_COLUMN_AUTH_DETAIL.reason.item` backfill 待 DBA/RD 套用/複查。 |
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
 
 ### 2F. 撥貸 `EPROISU0920/0921/0922` + T24（🔴 唯一真未完成區塊）
@@ -156,7 +156,7 @@
 | R7 | **權限三表遷移**（`TB_FUNCTION_AUTH`/`TB_API_AUTH`/`TB_ROLE_TASK`）| 🟡 進行 | c0 endpoint 授權列 **SQL 已備齊**（`c0-authz-sql`）、**剩 ops 套 `OVSLXLON02`**（見 §4⑥）|
 | R8 | CBC 聯徵資料接入 | 🟢 **釐清：非獨立 adapter** | CBC = 頁內 banking relationship（i0 已做；c0 FE 缺）；**無外部 adapter track** |
 | — | **檔案上傳/下載 API** | ⏸ **待設計** | collateral 0150、審批 0170/0171/0173 上傳 |
-| — | **FE/BE HTTP method 不一致** | ✅ sweep 收齊 | `48e687f`：00600/00640 對齊；00600 Phase V 補修 GET body regression；00800 init-query 列 @PENDING 待裁定 |
+| — | **FE/BE HTTP method 不一致** | ✅ sweep 收齊 | `48e687f`：00600/00640 對齊；00600 Phase V 補修 GET body regression；00800 init-query 已改為 GET query |
 
 ---
 
@@ -177,9 +177,8 @@
 - 主流程（is/iu/cs/cu 0110–0173）+ 契約頁（0910–0913）+ i0 全頁 FE↔BE `epl-*` DTO/授權各跑一次。
 - z0 報表 00610/00620–00650 呈現。
 
-**③ 🟠 撥貸 domain（code 層決策清空 06-17；⚠️ T24/A-4/M6 SRS 層 06-20 re-open）— 見 escalation doc**
-- ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；B-1 `T24_COMPANY`→取 `OVSLXLON01`、RD 接值；A-4 檢核嚴格度 / M6 完工日 / KHR G·H 來源 06-17 裁「照舊系統處理」（code 層）；✅ T24 B-group commit/push（`3d6f446`）、批次層 AUD-10 結。
-- **⚠️ 2026-06-20 SRS-層 re-open**：上述 **T24（0922）＋ A-4/M6（0921）「照舊」僅 code as-is baseline、非 SRS 定案** → 產 SRS 時 to-be 走 §5b 梯裁（T24 偏新 per `refactor-spec`／核心 A-4/M6 預設舊 baseline、僅 db-diff/refactor-spec 命中 delta 才改）+ owner 逐欄/逐項 confirm（KHR-G·H/B-1 屬 T24 欄、併 0922）。權威＝`decisions.md`「T24/0921 於 SRS 層 re-open」＋`pending-register` 兩 re-open 列。**殘＝① code 執行 + T24 UAT ② SRS-層梯裁（母資料夾 refactor-spec 前置）+ E1/E2（信用決策 domain）**。
+**③ 🟠→✅ 撥貸 domain（owner-decision 已全清空 06-17；剩執行+UAT）— 見 escalation doc**
+- ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；✅ B-1 `T24_COMPANY`→取 `OVSLXLON01`、RD 接值；✅ A-4 檢核嚴格度 / M6 完工日 / KHR G·H 來源 06-17 全裁「照舊系統處理」；✅ T24 B-group commit/push（`3d6f446`）、批次層 AUD-10 結。**殘＝Codex 執行 + T24 UAT + E1/E2（信用決策 domain）**。
 
 **④ z0 半成品收尾（小修；owner：前後端）**
 - `00300` Document Checklist：✅ **recon 坐實＋FE 導回已修 06-15**（recon `done/00300-return-recon.md`；fix `40d931c`，卡歸檔 `done/00300-return-fix.md`）——BE 非缺陷、FE 導回 ToDo 已實作（共用 `goPreviousPage()`）；DIFF-011 收。Phase V 驗共用方法連帶呼叫端語意。
@@ -188,7 +187,8 @@
 **④b 🟠 `00800` Revised Item（owner：RD 實作＋SA 取數）**
 - ✅ D1–D5 硬缺陷已修（`88328f9`；卡 `done/00800-fix-step1-tbd-independent.md`）。
 - ✅ TBD-001~007 全裁（06-11）；✅ **RI-MAT 修復包 F1–F9 落地**（`5580eb7`，06-12 審過；卡 `done/00800-rimat-fix.md`）。
-- 仍開：**RP8/RP11**（RP9 已 06-16 關＝GET）——**裁定原文在封存 `archive/EPROZ00800-v0.9-superseded/srs/spec.md` §@PENDING**（v0.9，待重產；RD 派工卡 `00800-rp8-rp11-rd-closeout`）；取證證據＝`build-tasks/done/00800-pending-recon-findings.md`。
+- SRS 重產：`docs/specs/srs/EPROZ00800/` 已回填 `in-review`；RP8/RP11/BP1-5 已裁入。
+- Implementation closeout：code/test/build 已通；`TB_API_AUTH` final query/save rows SELECT-only PASS。仍開：R7 page-column DB config 缺 `reason.item`，待 DBA/RD 套 `docs/build-tasks/00800-contract-closeout-authz-backfill.sql` 或等價修正後重跑 `docs/build-tasks/00800-contract-closeout-authz.sql`。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 
@@ -199,7 +199,7 @@
 **⑧ 已裁**：`CS 0240` → **不開發**（2026-06-06 確認新系統無使用）。
 
 **⑨ Tech-debt / ops**（✅ 靜態 sweep 三批已收齊，2026-06-09；prompt 全歸檔 `done/`）
-- ✅ **FE/BE method sweep**（`48e687f`）：00600/00640 FE→GET 對齊 BE；00600 Phase V 已補 GET query 無 body；00800 init-query＝@PENDING 待裁。
+- ✅ **FE/BE method sweep**（`48e687f`）：00600/00640 FE→GET 對齊 BE；00600 Phase V 已補 GET query 無 body；00800 init-query 已在 implementation closeout 改為 GET query。
 - ✅ **map-key 大小寫 sweep**（`709f65c`）：讀端對齊大寫；SELECT * Map 不靜態猜。⚠️ **A 修正 runtime-silent → Phase V 必複測**（compile 抓不到）。
 - ✅ **Logback `D:\temp` 外部化**（`bbc4492`）：改 `${LOG_API_PATH:${LOG_PATH:logs}}` 等跨平台預設，appender/pattern/level 未動；連帶解掉 full `mvn clean package` 卡 D:\temp。
 - ✅ **c0 staff 端點 cleanup**（`dcd9602`）：刪 staff controller/DTO/serviceImpl；**保留** 00117 用的 sele/business、00120 table-fi；i0 未碰。詳 `done/c0-staff-endpoints-cleanup.md`。
@@ -227,10 +227,10 @@
 
 **Phase V — 整合驗證（即刻，可與 Phase F 並行；owner：整合測試）**
 3. 契約對齊 sweep：主流程 + i0 全頁 + 契約頁 FE↔BE DTO（真資料/真授權）。
-4. z0 報表呈現；z0 半成品收尾（00300 return；✅ 00600 method 已修；00800 init-query method＝@PENDING 待 RD）。
+4. z0 報表呈現；z0 半成品收尾（00300 return；✅ 00600 method 已修；00800 init-query method 已修；00800 R7 `reason.item` DB backfill 待 RD/DBA）。
 
 **Phase D — 撥貸解鎖（關鍵路徑，owner：撥貸 domain）**
-5. 🟠 **撥貸解鎖**：A-1 換匯 ✅ 已實作+conformance PASS（`daae4c3`）、批次層 AUD-10 結、T24 B-group commit/push（`3d6f446`）、殘 domain 06-17 裁照舊（code 層）→ code 剩端到端/T24 UAT（精度 C-1 已關＝舊=新無落差）；**⚠️ 06-20 T24/A-4/M6 SRS-層 re-open → 產 SRS 走 §5b 梯裁（見 §③ + STATUS banner）**。
+5. 🟠→✅ **撥貸解鎖**：A-1 換匯 ✅ 已實作+conformance PASS（`daae4c3`）、批次層 AUD-10 結、T24 照舊 commit/push（`3d6f446`）、殘 domain 06-17 全裁照舊 → **剩端到端/T24 UAT**（非 coding；精度 C-1 已關＝舊=新無落差）。
 
 **Phase E — c0 收尾 + 授權（owner：domain + DB/ops）**
 6. c0 E1/E2 escalation 裁示；新 c0 endpoint 授權列。

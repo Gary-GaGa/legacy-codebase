@@ -26,7 +26,7 @@
 | EPROISU0922 Summary/T24 | IS 0922 | ✅/🟡 | 🔶(A-1✅·B-1 開) | **FIX**+UAT | ⟳需產 |
 | T24 組檔(A–H) | createTransferA–H | —/✅ | 🔶(B-group 照舊修畢) | **FIX done**+UAT | ⟳需產 |
 | 批次 B001–B008 | `EPROZ0_B00x` | —/✅ | 🟡(AUD-10:6 FOUND·B005 inline·B008 ops) | **KEEP**(碼驗過)；B008 ops | N/A |
-> 撥貸**無 rebuild 候選**：全 FIX/KEEP + UAT。殘 domain A-4/M6/B-1/G·H 06-17 裁照舊（code 層）→Codex 收尾。**⚠️ 06-20 T24（0922）+A-4/M6（0921）SRS-層 re-open**：產 SRS 時 to-be 走 §5b 梯裁（T24 偏新 per refactor-spec／核心舊 baseline）+owner confirm（見 `decisions.md` re-open 列、`STATUS` banner）；code baseline（`3d6f446`）不變。
+> 撥貸**無 rebuild 候選**：全 FIX/KEEP + UAT。殘 domain A-4/M6/B-1/G·H 已 06-17 全裁照舊→Codex 收尾。
 
 ### c0 評分線（🔑 parity-recheck 重點；reopen）
 | 頁 | 舊對應 | FE/BE | parity vs 舊 | disposition | SRS |
@@ -148,9 +148,9 @@
 | `EPROCSU0172` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
 | `EPROCSU0173` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
 | `EPROISU0920` | 撥貸 T1 | — | not-started | 差異源已備(triage/db-diff)·只缺 PRD |
-| `EPROISU0921` | 撥貸 T1 | — | not-started | ⚠️ A-4/M6 06-20 SRS re-open→走 §5b 梯裁(核心舊 baseline)；需 PRD+refactor-spec(母資料夾) |
-| `EPROISU0922`(+T24) | 撥貸 T1 | — | not-started | ⚠️ T24 06-20 SRS re-open→to-be 偏新 per refactor-spec；A-1✅；需 PRD+refactor-spec(母資料夾) |
-| `EPROZ00800` | 00800 重產 | —（v0.9 PRD 已封存、待新版）| not-started | v0.9 SRS 封存 `archive/`；REBUILD |
+| `EPROISU0921` | 撥貸 T1 | — | not-started | 差異源已備·A-4 等已裁照舊→入 SRS 當已決 delta |
+| `EPROISU0922`(+T24) | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | in-review | `docs/specs/srs/EPROISU0922/` |
+| `EPROZ00800` | 00800 重產 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md`| in-review | `docs/specs/srs/EPROZ00800/` |
 | 主流程 ISU/i0/z0 增量 | 增量 | — | not-started（佔位·待拆列）| — |
 > ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**2026-06-20 回填**：決策頁（企金線 18 + 撥貸 3 + 00800 ≈22，＝有未決差異需 owner 裁者）已**拆成逐 funcId 列**（規劃視圖＝`docs/srs-production-queue-2026-06-20.md`，含各頁「要餵的輸入」），仍 `not-started`（待 PRD 才升 `prd-ready`；orchestrator 只 pick `prd-ready`，故 not-started 列不影響迭代）。**僅剩 `主流程 ISU/i0/z0 增量`＝佔位**（KEEP/增量、無待裁差異、非派工單位，隨 PRD 進場再拆）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`。⚠️ 企金線各列 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗結果餵入 as-is parity 軸，否則 SRS 漏載對舊 cs/cu 差異。
 
