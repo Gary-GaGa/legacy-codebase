@@ -1,6 +1,6 @@
 # Build Task — `EPROZ00800` Revised Item：TBD-無關硬缺陷修正（D1–D5）
 
-> 載具：Codex（後端為主，D5 含一處前端）。**規格來源＝SRS bundle** `docs/golden-template/boundary-bundle/EPROZ00800/`（`spec.md` 的 `Rn` + `openapi.yaml` + `qa-cases.md`）；**as-is 證據＝** `docs/build-tasks/00800-verification-findings.md`（file:line）。
+> 載具：Codex（後端為主，D5 含一處前端）。**規格來源＝SRS bundle** `docs/golden-template/boundary-bundle/EPROZ00800/`（`spec.md` 的 `Rn` + `openapi.yaml` + `qa-cases.md`）；**as-is 證據＝** `docs/build-tasks/done/00800-verification-findings.md`（file:line）。
 > **落地**：master-direct；**單一 commit、build 綠、報 diff 等審**。
 > ⚠️ **只修「與 TBD 無關的硬缺陷」**（D1–D5）。**RI-MAT 側效引擎（R13 / findings S1–S8）整批不准動**——受 PRD `TBD-006`（是否保留 legacy 側效）+ `§5.6` + SA 裁定控制，現在改＝賭 TBD 不翻盤。
 

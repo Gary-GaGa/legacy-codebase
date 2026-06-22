@@ -1,7 +1,7 @@
 # GET Body Contract Sweep Findings
 
 > Scope: grep / inventory only. No source changes. Date: 2026-06-15.
-> Task source: `docs/build-tasks/get-body-contract-sweep.md`.
+> Task source: `docs/build-tasks/done/get-body-contract-sweep.md`.
 
 ## Summary
 

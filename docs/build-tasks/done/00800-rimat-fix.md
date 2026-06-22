@@ -1,6 +1,6 @@
 # Build Task — `EPROZ00800` Revised Item：RI-MAT 修復包（RP1=A 解鎖項，step 2）
 
-> 載具：Codex（後端為主，F6/F7 前端）。**規格權威＝SRS bundle** `docs/specs/srs/EPROZ00800/`（`spec.md` 的 `Rn`＋`openapi.yaml`＋`qa-cases.md`）；**as-is 證據＝** `docs/build-tasks/00800-verification-findings.md`（file:line）。
+> 載具：Codex（後端為主，F6/F7 前端）。**規格權威＝SRS bundle** `docs/specs/srs/EPROZ00800/`（`spec.md` 的 `Rn`＋`openapi.yaml`＋`qa-cases.md`）；**as-is 證據＝** `docs/build-tasks/done/00800-verification-findings.md`（file:line）。
 > **裁定依據**：RP1=A（保留側效＋修 bug＋audit）等裁定**內容一律見 `spec.md` §@PENDING（單一出處）**——本 prompt 只引 id、不複述理由。
 > **前置**：step 1（D1–D5）已落地 `88328f9`——execute 已是 POST＋單一 `@Transactional`；本包全部修正都發生在**這個 transaction 邊界內**。
 > **落地**：master-direct（沿 step1 慣例）；**BE 一個 commit（F1–F5）＋ FE 一個 commit（F6–F7）**，各 build 綠、**報 diff 等審後才推**。

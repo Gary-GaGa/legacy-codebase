@@ -38,6 +38,6 @@
 ## 7. pilot 實跑結果（2026-06-18）
 **跑了 2 頁**（owner 母資料夾用最終 pipeline 重產 `EPROZ00100`＋`EPROC00118`、push 回 main、ledger 2/67 in-review）：
 - **機械**：兩頁 `check-srs-bundle` exit 0（全 gate + gateⓇ）；gate② 正解（`role:3`，無 false-positive）。
-- **跨模型 N 軸（4 agent, opus+sonnet, A–G）抓到單一 pass 漏的真 Blocker** → 修正清單＝**`docs/build-tasks/EPROZ00100-EPROC00118-nfix-card.md`**：00100 🔴 R4 legacy page-id 當 to-be route（違 Bible `EPROISU/CSU`）；00118 🔴 F 軸金錢/精度（CUR_RATIO/debtRatio/_SCR）+ D authZ seed。
+- **跨模型 N 軸（4 agent, opus+sonnet, A–G）抓到單一 pass 漏的真 Blocker** → 修正清單＝**`docs/build-tasks/done/EPROZ00100-EPROC00118-nfix-card.md`**：00100 🔴 R4 legacy page-id 當 to-be route（違 Bible `EPROISU/CSU`）；00118 🔴 F 軸金錢/精度（CUR_RATIO/debtRatio/_SCR）+ D authZ seed。
 - **Option-1 安全閥（§6）實際命中**：① **fact/policy**：`PENDING-Z001` 把 role-name **fact**（DB-resolvable）與 action-permission **policy** 混在一起（Z-S1）＝「fact/policy 誤判」實證、fact 本該直接解。② **provenance**：用 `docs/db-diff/02_tables/TB_*.md:line`（**非** `[DB:table@date]` 格式）——可 grep、實質達成、惟與 §4 期望格式不同。→ 兩者都是「prose 非機械 gate」的真實案例，可評估補 `check-srs-bundle` 機械 gate（`ADR-0002 Consequences` 伏筆）。
 - **結論**：`一次一頁 + 跨模型 N 軸 + 人審` 紀律**有效**（correlated-blindness 實證）。**先修 nfix-card → 重驗 → TBD 人裁 → Approved → 才放大其餘 funcId**（見 `decisions` 重產 pilot 驗收列）。
