@@ -8,6 +8,8 @@
 
 | 項目 | 內容 |
 |---|---|
+| 0922 T24_COMPANY new DB reverify (2026-06-22, Codex follow-up) | New DB snapshot confirms `TB_BRANCH_PROFILE.T24_COMPANY` as `VARCHAR2(5 BYTE)`, `T24_BRANCH_CODE` as `VARCHAR2(20 BYTE)`, `T24_DEPT_CODE` as `VARCHAR2(5 BYTE)`, and PK as `BRANCH_CODE` + `DEPT_CODE`; `TBBranchProfileEntity.t24Company` annotation is tightened to `length = 5`. This was schema-model alignment only; at that checkpoint `TBD-0922-007` still awaited owner signoff, which is superseded by the next row. Evidence: `epro-db/out/legacy_schema_reverify_new02_columns.tsv:31`-`39`, `epro-db/out/legacy_schema_reverify_new02_pk.tsv:9`-`10`. |
+| 0922 T24_COMPANY owner follow-legacy signoff (2026-06-22) | Owner instruction: follow the legacy/current source for EPROISU0922 T24 B8/C9, with no separate T24 contract override. Final to-be feeds both B8 and C9 from the disbursing department's `TB_BRANCH_PROFILE.T24_COMPANY`; missing branch-profile row or blank/missing `T24_COMPANY` keeps the explicit `FAILED_E999` path, not silent blank fallback. This closes `TBD-0922-007`; T1 page remains review-checkpointed and is not auto-approved. |
 | 開發環境 | Windows + VSCode + Codex CLI + GitHub Copilot（產品碼開發側）。~~不使用 Claude 產品~~ → **superseded by ADR-0001（2026-06-09）**：Claude Code 用於本 repo 規劃/規格/審查（雙軌）；本 repo 僅作規劃與樣板 |
 | 重構方向 | 全端（Java 8 + JSP）→ 前後端分離 |
 | repo 結構 | **monorepo**：`backend/` + `frontend/`；指令檔分資料夾自動套用 |
@@ -78,6 +80,18 @@
 
 | 0922/00800 SRS bundle 驗證 + drain 調整（2026-06-22, 多 agent 唯讀審）| owner 帶入 PM PRD（0922/00800 v1.0）+ 產出 SRS bundle（`docs/specs/srs/EPROISU0922`、`EPROZ00800`）後,4 agent 並行驗。**結論**：① **00800＝🟢 忠實**（RP11/BP-1/SR-B1B2 正確落地、機械 PASS、R7 page-column backfill 正確留 in-review）② **0922＝🔴 closure 過早**：機械閘門曾 FAIL（3 個 `epl-ppdf-*` report endpoint 未具名於 spec→**已補名修正、now PASS**）、re-open worksheet 欄 `A15`/`T24_COMPANY`(B8/C9,B-1 最高風險)/segments `B`/`D`/`H1–H7` 未覆蓋卻關傘狀 TBD→**開 `TBD-0922-007/008`(open)、`pending-register` 0922 列重開 🟡 partial**；〔一 agent 報「provenance 杜撰」＝**誤報**:它在規劃 repo 跑、看不到母資料夾 source,實則 spec 引母資料夾 refactor-spec(正常流)且有 disclaim〕。③ **pilot 單跑 > drain 品質**＝實證(correlated-blindness;pilot 全 A–G 跨模型+每頁人審抓到機械看不到的金錢/授權 Blocker)→ **drain 調整**:T1/金錢/授權頁改 **per-page checkpoint**(不併批末)、**T1 批量 ≤3 硬上限**、最高風險頁保留單跑、**F/D 軸綁欄位內容不可省**。落點:`orchestration-playbook §4b/§5b`＋`prd-to-srs-orchestrator-drain.md`(守則速查/步驟1g)＋`spec.md 0922 TBD-007/008`＋`pending-register`。`check-srs-bundle EPROISU0922` now PASS、parity exit 0。done 盤點:`EPROZ00100-EPROC00118-pending-decision-brief.md`→`done/`。|
 | 0922 T24 residual re-open closeout（2026-06-22, Codex §5b pass）| 針對上列 re-open 殘欄逐欄補跑 §5b：**A15 關欄**，v1.5 `funcisut24authorize` 與 legacy/current backend 都是 `HOUSING_PROJECT_CODE` null/blank → `""`，非 `N/A`。**`TBD-0922-008` 關欄**：segments `B`/`D`/`H1-H7` 已用可見 v1.5 shared-rule + legacy/backend `file:line` 坐實；未找到 v1.5-visible intentional delta，因此非 B8/C9 欄維持 legacy/backend field order，H8 仍由既有 G4/G10/H8 決策承接。**只保留 `TBD-0922-007`**：`T24_COMPANY`→T24 `B8`/`C9` 是 B-1 最高風險 identity/routing 欄；DB-live `schema-diff-findings.md:246-249` 已解 DB fact（`TB_BRANCH_PROFILE.T24_COMPANY` 實存），current backend native-map path 也已讀 `T24_COMPANY`，但 generated db-diff snapshot 已標 stale/omissive 且 `TBBranchProfileEntity` 未 map，故只停交 RD entity/schema-model alignment + owner signoff（是否另有 T24 contract override），不是重開 DB fact/runtime fact；pending-register 0922 列縮小為 partial（殘 B8/C9），不自升 Approved。|
+| 0922 `T24_COMPANY` entity closeout（2026-06-22, Codex T1 checkpoint）| 針對 `TBD-0922-007` 的 RD/entity 子項收口：`TBBranchProfileEntity` 已補 `@Column(name = "T24_COMPANY")`，並依 DB reverify 對齊 `T24_BRANCH_CODE` 長度；repository 仍維持 native `SELECT * FROM TB_BRANCH_PROFILE` 回 `Map`，所以不破壞現有 B8/C9 native-map 路徑；`SummaryServiceImpl` B8/C9 改為 required `T24_COMPANY`，缺 branch-profile row 或缺/空 `T24_COMPANY` 都走既有 `FAILED_E999` T24 authorize error path，不再靜默 fallback blank。to-be 坐實為：T24 B8 與 C9 都取撥貸部門 `TB_BRANCH_PROFILE.T24_COMPANY`。此頁仍是 T1 per-page checkpoint，**不升 Approved**；`TBD-0922-007` 僅剩 owner 問題：「EPROISU0922 T24 B8/C9 是否可直接使用 `TB_BRANCH_PROFILE.T24_COMPANY`，且無另設 T24 contract override？」|
+| 0921 A-4/M6 SRS checkpoint（2026-06-22, Codex §5b pass）| 產出 `docs/specs/srs/EPROISU0921/` 四檔，`check-srs-bundle` PASS。坐實 A-4：無共借預設 `CO_CHECK=Y`，有共借則人數、`CHECK_SUCCESS`、當日 `CHECK_DATE`、`DATA_SEQ`、business-section 都需通過；Finished 的 `mbCheck`/`coCheck` 必須 BE authority；address `UPD_DATE` 由 `APPLICATION_DATE` 導出，`CASE_PROGRESS=24` 更新 `DISBURSING_DATE` 只保留為初始化副作用。Law firm 命中 `REF-D3` 偏新：舊版非 `SYSTEM_VER=02.21` 查全部、`02.21` 才 `IS_SHOW='Y'`，refactor/current 一律 `IS_SHOW='Y'`。M6 命中 `REF-D4` 偏新：舊 wire `dd/MM/yyyy`，refactor/current DTO 採 `MM/YYYY`；physical `EST_COM_DATE`/`OTHER_EST_COM_DATE` 仍需 query/save round-trip，current backend 寫 null 屬 regression。Product Code→Sector/Industry mapping 已裁定採 PRD 權威規則；Return cleanup scope 已裁定採舊系統/refactor SQL1-SQL12 DB cleanup；`collproSize` 已裁定為同一上限值 5、CBC Member 與 Add Purchased Property 各自計數。此頁為 T1 per-page checkpoint，**不升 Approved**；`TBD-0921-001`～`TBD-0921-005` 已於 owner 逐項裁定後關閉，仍需 separate human approval/spec-reviewer sign-off。|
+| 0921 `CO_CHECK` 無共借裁定（2026-06-22, owner）| owner 逐項確認第一項：**照舊**。PRD/refactor-spec 只有描述有共同借款人時的檢核與 `CO_CHECK=Y/N`，未明示「無共同借款人」要改成 N 或 blank；依 0921 re-open 鐵則，未命中 intentional delta 時維持舊 baseline。結論：無共同借款人時 `CO_CHECK=Y`，Finished 不因共同借款人檢核阻擋；current backend 回 blank 屬 regression。`TBD-0921-001` 保留其他 A-4 子項待確認。|
+| 0921 `CO_CHECK` 有共借裁定（2026-06-22, owner）| owner 逐項確認第二項：**照舊**。有共同借款人時，`CO_CHECK=Y` 必須符合舊版 A-4 判據：共同借款人筆數與 T24 暫存檢核結果筆數一致、每筆 `CHECK_SUCCESS` 成功、每筆 `CHECK_DATE` 為當日，且以 `DATA_SEQ` 對應同一筆共同借款人。PRD/refactor-spec 支持「所有共借皆成功才通過」方向，未命中 intentional delta，因此以舊版較完整判據收斂。`TBD-0921-001` 移除此 `CO_CHECK` 子項，保留 Finished BE gate、law firm、address、business-section 等待逐項確認。|
+| 0921 Finished `mbCheck`/`coCheck` BE gate 裁定（2026-06-22, owner）| owner 逐項確認第三項：**是**。Finished 時採「舊前端 gate + 後端強制驗證」：FE 可保留 `MB_CHECK=Y`、`CO_CHECK=Y` 的提示與阻擋，但 `/epl-save-isu-data-input` 在 `isFinish=Y` 時必須由 BE 重新查驗目前儲存的 T24 檢核狀態，client-supplied `coCheck` 僅作相容輸入、不可作完成依據。此裁定補足前後端分離 direct-call/stale payload 風險，`TBD-0921-001` 移除此子項，保留 law firm、address、business-section 等待逐項確認。|
+| 0921 law firm `REF-D3` 裁定（2026-06-22, owner）| owner 逐項確認第四項：**採 `REF-D3`**。舊系統 law firm 查詢有 `SYSTEM_VER` 分支：非 `02.21` 查全部、`02.21` 才篩 `IS_SHOW='Y'`；refactor-spec/current backend 一律使用 `IS_SHOW='Y'`。依 §5b 與 0921 re-open 鐵則，此項命中 refactor-spec intentional delta，to-be 採偏新：select/init 只回傳 `TB_LAW_FIRM.IS_SHOW='Y'`，save/Finished 直接送 inactive law firm code 時 BE 必須拒絕。`TBD-0921-001` 移除此子項，保留 address、business-section 等待逐項確認。|
+| 0921 address `UPD_DATE` 來源裁定（2026-06-22, owner）| owner 逐項確認第五項：**照舊**。舊系統 `CASE_PROGRESS=24` 先更新 `TB_LON_SUMMARY_INFO.DISBURSING_DATE`，但 `getdisDate()` 實際以 `APPLICATION_DATE` 查地址版本 `UPD_DATE`；refactor-spec 僅要求回傳 `updDate` 給 common address APIs，未命中改用 `DISBURSING_DATE` 的 intentional delta。結論：address `UPD_DATE` 由 `APPLICATION_DATE` derive；`CASE_PROGRESS=24` 更新 `DISBURSING_DATE` 只作初始化副作用且需 transaction/audit 安全。`TBD-0921-001` 移除此子項，保留 business-section 等待逐項確認。|
+| 0921 business-section comparison 裁定（2026-06-22, owner）| owner 逐項確認第六項：**照舊**。舊系統以 `DATA_SEQ` 對應共同借款人 T24 暫存列，並以 `BUSINESS_SEC_CODE` 參與 main/co-borrower 檢核；PRD/refactor-spec 支持 borrower/co-borrower sector、industry、business-section 檢核方向，未命中取消或放寬 business-section comparison 的 intentional delta。結論：business-section comparison 維持 mandatory；不一致時相關 borrower check 失敗，Finished 由 BE authority 阻擋。`TBD-0921-001` A-4 子項全部關閉，後續保留 `TBD-0921-002`～`TBD-0921-005`。|
+| 0921 M6 completion date `REF-D4` 裁定（2026-06-22, owner）| owner 逐項確認第七項：**採 `REF-D4`**。舊系統 M6 完工日有 `EST_COM_DATE` / `OTHER_EST_COM_DATE` 查詢與儲存，wire 為 `dd/MM/yyyy`；refactor-spec/current DTO 命中 intentional delta，to-be wire 改為 `MM/YYYY`，physical DB 仍為 DATE。結論：API request/response 使用 `MM/YYYY`，BE 必須 query/save month-year round-trip 到 `TB_DISBUR_COLL.EST_COM_DATE`、`TB_DISBUR_OTHER_COLL.OTHER_EST_COM_DATE`；current backend 有值仍寫 null 屬 regression。`TBD-0921-002` 關閉，後續保留 `TBD-0921-003`～`TBD-0921-005`。|
+| 0921 Product Code→Sector/Industry mapping 裁定（2026-06-22, owner）| owner 逐項確認第八項：**採 PRD 現列 mapping 為權威**。Product Code 來源為 `TB_LON_SUMMARY_INFO.PRODUCT_CODE`；舊系統以 `01`/`02` 對 `1001`/`1001`、`03` 對 `1002`/`1001`，其他 product 或不符合組合皆 `CHECK_SUCCESS=N`；refactor-spec 坐實 productCode 仍由 SQL5/`TB_LON_SUMMARY_INFO` 取得，未提供更完整新 mapping。結論：R4 採 PRD mapping，未列 product code 或未列 Sector/Industry 組合不可默認通過。`TBD-0921-003` 關閉，後續保留 `TBD-0921-004`～`TBD-0921-005`。|
+| 0921 Return cleanup scope 裁定（2026-06-22, owner）| owner 逐項確認第九項：**好，採舊系統/refactor 完整 SQL1-SQL12 cleanup**。Return 必須在同一 transaction 內更新 summary 回前一狀態、寫 `TB_APP_HISTORY`、更新 `TB_CONTR_DATA.CONTR_STATUS='R'`，並刪除 `TB_T24_MAIN_BORROWER_INFO`、`TB_T24_CO_BORROWER_INFO`、`TB_MAIN_BORROWER_ACC`、`TB_DISBUR_COLL`、`TB_DISBUR_OTHER_COLL`、`TB_DISBUR_DATE`、`TB_CONTR_AUTO_FILE_PTH`、`TB_LOAN_CONDITION_FEE`/`TB_LOAN_CONDITION_DETAIL` 中 `CON_TYPE='FN'` 的 DB rows。此裁定不要求刪除實體檔，除非後續 owner 另裁。`TBD-0921-004` 關閉，後續保留 `TBD-0921-005`。|
+| 0921 `collproSize` limit 裁定（2026-06-22, owner）| owner 逐項確認第十項：**好，採同一上限值 5，但 CBC Member 與 Add Purchased Property 各自計數**。舊系統單一 `top.collproSize` 同時供 Add Purchased Property 與 CBC Member 使用，但兩個 click handler 分別用自己的清單長度判斷，不合併總數；refactor-spec v1.8 也分別寫 CBC Member 最多 5 個輸入框、Purchased Property 最多 5 筆。結論：R10 要求 `cbcMemberList <= 5` 且 `purPropList <= 5`，可同時 5+5；BE 必須拒絕超限 Save/Finished，不可靜默截斷。`TBD-0921-005` 關閉，0921 re-open owner 逐項裁定全關閉；頁面仍為 In Review，不自升 Approved。|
 
 ## 二、待確認項目（用 Codex 在實際專案查證後回填）
 
@@ -110,42 +124,59 @@
 
 ### 指令檔（已起草，含 TODO）
 - [x] `AGENTS.md`（完整規範，階層式 root/backend/frontend）已起草，自包含可複製到實際 repo〔原並列的 .github/copilot-instructions.md 精簡版已隨 GitHub Copilot 第三軌移除（2026-06-16，見 §一 Copilot 移除列）→ 回歸 Claude↔Codex 雙軌〕
-- [x] `AGENTS.md` TODO 已全部填補（B2/B3/C2/版本/認證皆補入）；CORS 收斂與 OpenAPI 導入列為「正式環境/實作建議」
-- [x] repo 結構：**monorepo**（`backend/` + `frontend/`）→ 指令檔採階層式：root `AGENTS.md`(共用) + `backend/AGENTS.md` + `frontend/AGENTS.md`（Codex 依資料夾階層式自動套用；Claude 側＝`CLAUDE.md`）。〔Copilot repo-wide .github/copilot-instructions.md + .github/instructions/* 已隨第三軌移除，2026-06-16，見 §一 Copilot 移除列〕
+- [x] `AGENTS.md` # SRS - EPROISU0922 Individual Summary
 
-### 舊專案 JSP
-- [x] JSP 清單、共用版型機制、JSTL/EL/自訂 tag、前端 JS — **D1 完成**，見 `migration-backlog.md`
-- [x] 一個代表頁面的端到端鏈路（Servlet→Service/DAO→資料表）— **D2 完成**：選定 `EPROZ0_0700`，build spec 見 `archive/phase1-eproz0_0700-spec.md`
-- [ ] 遷移清單每頁加一欄「對應 Adobe XD 畫面/連結」作為視覺依據與驗收基準（D1/D2 時一併）
+## Metadata
+| Field | Value |
+|---|---|
+| funcId | EPROISU0922 |
+| Status | In Review |
+| Source PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` |
+| Bundle | `docs/specs/srs/EPROISU0922/` |
+| Generated | 2026-06-21 |
+| Review stop | SRS orchestrator stops at `in-review`; open decisions require PM/SA/RD review before approval. |
 
-#### 舊系統(EPRO) 架構事實（D1）
-- 自製框架 **`HttpDispatcher` + `@CallMethod`**（非 Spring MVC）；版型靠 `<%@ include %>`（無 Tiles/tag files）。
-- taglib：JSTL + 自訂 `CXL`/`cathaybk`（TLD 在 jar，不在 repo）。前端 jQuery + 自家 JS 元件。
-- 認證 **MIS/SSO**（`SSOFilter`/`SSOUtils`）✅ 與新後端 JWT+MIS 一致；報表 **JasperReports 3.5.2**；檔案走 commons-fileupload 內部服務。
-- ≈250 JSP，但結構為 9 模組 × 兩平行流程（申請/覆核），`is↔iu`、`cs↔cu` 平行 → **重用度高，遷移單位是模組流程**。
-- 主流程 shell 為**兩層**（D3）：外層「流程頁籤」由後端 `pageMap`(`EPRO_Z0Z006.formatIS/IU`)驅動、切頁 server 重查；內層「區塊頁籤」僅主借款人頁 client 切換。主鍵 **`APPLICATION_NO`**；**IS=有擔、IU=無擔**（差 collateral 頁）。目標：一套 shell + 多份 config（見 `module-is-iu-shell.md`、`golden-template` §八）。
-- 企金 cs/cu（B3）：**重用外層 shell 機制**（有 `formatCS/CU`），但差異需每模組 descriptor config + 企金內層元件；**內層 tabs 為每頁可選**（企金 `0110` 單頁、多 tab 在 `0250`）；企金特有 **c0 評分/檢核橋接層**（`EPROC0_0110` 掛入 pageMap）→ c0 與主流程綁定。PageDescriptor 加 `group`/`sections?`/`checkStatus?`。
-- i0/c0（D6）：**可共用 shell + config**（i0↔c0 平行，各頁 trx/DAO/SQL/表分開）；子頁**多為輸入表單**（非唯讀），唯 FinStatement `0116/0119/0216/0219` 有 printPDF（R2）。c0 評分經 `pageCheckMap`/checkpoint 綁主流程（`getTabsCheckPage`→`isAllTabsCheck`→外層 done）→ **維持綁定**。CBC=外部資料接入 track（**R8**）。共用資產：tab shell + pageCheckMap 回寫 + done 聚合 + print/open 封裝。
-- 新 DB schema（Excel HOME，~71 表，表名同舊、無 schema 限定；~~無 `EPRO_` 前綴~~ **06-12 實查更正：舊庫表名本即 `TB_*`、無前綴可去**——`EPRO_TB_*` 為舊 Java VO **類名**慣例，非表名）：解 **B4**（`TB_APP_NO_SEQ`=APPLICATION_NO 序號）、shell 來源（`TB_PAGE_MENU`=pageMap）、**R7**（`TB_FUNCTION_AUTH`/`TB_API_AUTH`/`TB_ROLE_TASK`/`TB_ROLE_DEFINE` 已建表）；checkpoint 改名 `TB_CHECK_POINTS_IS/IU/CS/CU`。✅ CBC/財報/財務評估/Scorecard 表**全在同一 Excel**（先前 HOME 輸出截斷誤判）；i0/c0 schema 來源確定。Excel ~70+ sheet、一表一 sheet → **一律用「指定表名」Prompt B 抽**（HOME 會截斷）。詳見 `db-schema-catalog.md`。
-- B1 基礎建設表（Prompt B）：**`TB_PAGE_MENU`** = shell pageMap 來源，鍵 = `LON_ATTRIBUTE`×`SECURE_ATTRIBUTE`×`PRODUCT_CODE`×`LON_TYPE_CODE` → `PAGE_CODE`（多 product/lontype 兩軸）；**`TB_APP_NO_SEQ`** = 案號序號（日期+類型+貸放類型+MAX_SEQ）；**權限三層**（R7 落地）：`TB_FUNCTION_AUTH`(FUNCTION_ID→ROLE)、`TB_API_AUTH`(API_ID→ROLE+`REF_FUNCTION_ID`，filter 讀此)、`TB_ROLE_TASK`(PAGE_CODE+FUNCTION→ROLE 編輯權)、`TB_ROLE_DEFINE`(角色主檔)。詳見 `db-schema-catalog.md` §4。
-- 前後端 cross-check 對齊（✅）：30% 缺口 = ① **6 個企金評分頁**（`EPROC00115-00120`）缺後端 controller（鏡像 i0 補）② **撥貸 `EPROISU0920`** 缺後端 ③ **7 個 z0/共用前端頁**（後端已就緒，含 `EPROZ00700`=`DeputyController`）。
-  > ⚠️ **2026-06-06 翻案（以 `feature-inventory.md` §2D 為準）**：①的 c0 評分**前端**當時被當「已就緒」，實則 **corporate 評分容器+8 子頁整組缺** → 現 Phase F 鏡像 i0 補建中。即「c0 缺口」不只後端 controller，前端也缺。**後端 API 慣例 = RPC 式 `epl-{verb}-{scope}-{feature}`（非 REST）**；phase1 spec 的 `/api/emp-proxy` 為理想化、實際以 `DeputyController` 為準。詳見 `page-mapping.md` §2。
-- Phase 1 entity 定稿（Prompt B）：✅ A1 關閉（註：`EPROZ00700` 後端已存在為 `DeputyController`，本頁實作只缺前端）。**⚠️ `TB_EMP_PROXY` 新 DB PK = `EMP_ID` 單鍵**（與舊 DAO 複合鍵不一致 → 一人一筆代理、存檔為 upsert）→ 待業務確認。`STR_TIME` NOT NULL；`RETURN_CASE_TO_CA` default 'N'；~~新 DB 無 `T24_COMPANY`~~ **→ ⚠️ 已推翻（2026-06-16，DB 通後重驗）：`TB_BRANCH_PROFILE.T24_COMPANY` 實存於兩 schema（`schema-diff-findings.md:246`、escalations B-1）；原推斷係 DB 未通時之誤。其餘三表欄/PK 以 DB DDL（`schema-diff-findings`）為準**。
-- ⚠️ 舊系統 DB **歷史配置標示 DB2**（`DB2PoolSvc.xml`）→ 原以跨引擎遷移立論；**2026-06-12 實連更正：現行舊庫實例＝Oracle（新舊皆 Oracle、皆可連、皆唯讀開放 agent）**——R1 重新定性為「舊 schema→新 schema」遷移，方言改寫視舊源 SQL 實況（見 migration-backlog R1）。
-- 權限（A2）：`AuthManager` **source=db**，function→role 在 `TB_FUNCTION_INFO`+`TB_FUNCTION_AUTH`(FUNC_ID/USER_ROLE)；funcId = bean 名**去底線**（`EPROZ0_0700`→`EPROZ00700`）。與新 `APIAuthorizationFilter`(apiPath+roleId) **同型** → 整系統權限為「搬資料 + `FUNC_ID↔apiPath`」（R7），實際 roleId 為 runtime DB 內容。
+## Scope
+- Covers the Individual Disbursement Process Summary page: summary query, CAD Maker submit, CAD Checker return, CAD Checker authorize, T24 file generation/upload, T24 deal result refresh, and three report downloads.
+- The contract is brownfield: existing refactor endpoints are kept as RPC-style POST endpoints, and legacy/T24 details are evidence for parity and delta triage, not automatic public API fields.
+- Out of scope: EPROISU0920/0921 data-entry authoring, async batch scheduler ownership, and final T24 field-by-field signoff beyond the deltas listed here.
 
-#### 待確認決策（D1 浮現）
-- [x] **R1 已定：DB→Oracle**（06-12 更正：舊庫實例亦 Oracle，原依 `DB2PoolSvc.xml` 誤判跨引擎）。實質＝舊 schema→新 schema 對映；舊源殘留 DB2 方言照改、已是 Oracle 方言仍須對 schema 改名/型別調整。
-- [x] **R2 已定：改用新報表服務**（汰換 Jasper，獨立 track）；含報表/列印頁初期暫緩、不納入 Phase 1～初期模組。
-- [x] **Phase 1 切片已定：z0 單純查詢/管理頁**（避開 Jasper/多頁籤）→ 下一步 D2 鎖定具體頁。
+## Sources
+| Source | Evidence |
+|---|---|
+| PRD snapshot | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` |
+| Legacy controller | `legacy-epro/JavaSource/com/cathaybk/epro/is/trx/EPROIS_0922.java:53`, `144`, `178`, `215`, `261`, `302`, `343` |
+| Legacy T24 helper | `legacy-epro/JavaSource/com/cathaybk/epro/is/module/EPRO_IS0922.java:774`, `982`, `994`, `1090`, `1154` |
+| Refactor artifact map | `docs/refactor-spec/02_modules/EPROISU0922.md:20`-`26` |
+| Refactor authorize flow | `docs/refactor-spec/03_artifacts/be-individual/EPROISU0922/epl-case-isu-summary-auth.md:146`-`154`, `164`-`181` |
+| Refactor T24 function | Primary T24 composition source per owner decision 2026-06-21: `docs/refactor-spec/03_artifacts/be-individual/EPROISU0922/funcisut24authorize.md:6`, `10`-`13`, `31`, `144`-`149`, `160`-`188` |
+| Current backend endpoints | `backend/src/main/java/khd/svc/epro/controller/individual/SummaryController.java:43`, `56`, `82`, `95`, `108`, `121` |
+| Current backend service | `backend/src/main/java/khd/svc/epro/service/individual/impl/SummaryServiceImpl.java:197`, `684`, `719`, `801`, `887`, `2359` |
+| Legacy module errors | `legacy-epro/JavaSource/com/cathaybk/epro/is/module/EPROIS_0922_mod.java:707`, `714`, `972`, `979`, `1112`; `backend/src/main/java/khd/svc/epro/service/common/impl/FunctionServiceImpl.java:1192`, `1222` |
+| Current FE calls | `frontend/src/app/pages/case-edition/sub-pages/individual/disbursement-process/services/api.service.ts:112`-`134` |
+| DB snapshot | `docs/db-diff/02_tables/TB_LON_SUMMARY_INFO.md:38`-`85`, `docs/db-diff/02_tables/TB_DISBUR_DATE.md:38`-`66`, `docs/db-diff/02_tables/TB_LOAN_CONDITION_FEE.md:38`-`59`, `docs/db-diff/02_tables/TB_MESS_RECORD.md:38`-`45`, `docs/db-diff/02_tables/TB_MESS_UPLOAD_SFTP_RECORD.md:38`-`41` |
+| Pending register | `docs/pending-register.md:14` |
+| Disbursement decisions | `docs/disbursement/disbursement-triage.md:17`-`30`, `78` |
 
-## 三、待決架構議題
+## Endpoints
+| Endpoint | Method | Purpose | Covers |
+|---|---|---|---|
+| `epl-info-isu-summary` | POST | Summary page initialization. | R1, R2, R11 |
+| `epl-case-isu-summary-submit` | POST | CAD Maker submits Summary to CAD Checker. | R3, R8, R11 |
+| `epl-retu-isu-summary` | POST | CAD Checker returns Summary to Maker. | R4, R8, R11 |
+| `epl-case-isu-summary-auth` | POST | CAD Checker authorizes disbursement, generates T24 file, uploads SFTP, and moves case to T24 waiting state. | R5, R6, R7, R8, R9, R11 |
+| `epl-case-isu-summary-t24-result` | POST | Target contract for T24 deal result refresh; maps the legacy `t24DealResult` action. | R9, R11 |
+| `funcConfCheckDate` | POST | Internal function to check T24 borrower/co-borrower check date freshness. | R6 |
+| `funcIsuT24Authorize` | POST | Internal function to compose the T24 import file and return `t24UpPath`. | R7, R9, R10 |
+| `epl-ppdf-isu-summary-report` | POST | Summary PDF download. | R12 |
+| `epl-ppdf-isu-transaction-result-report` | POST | Transaction-result PDF download. | R12 |
+| `epl-ppdf-isu-message-code-record-report` | POST | Message-code-record PDF download. | R12 |
 
-> 共同主軸：既有前後端在開發機上其實都**部分繞過 Nexus**（前端預設 registry=公開 npmjs、後端=Maven Central）。Phase 0 的核心工作即用 `docs/env/` 樣板把建置環境標準化，使一切走內網。
+### R1 Summary initialization **強制點: both**
+covers-prd: FR-INIT-001, FR-INIT-002, FR-INIT-003, FR-UI-004, AC-001
 
-- [x] **後端 Maven 來源合規（✅ 2026-06-12 已部署）**：`docs/env/maven-settings.xml` 已安裝至 `%USERPROFILE%\.m2\settings.xml`（maven-public group 代理 Central，全走內網）。
-- [x] **npm 預設 registry 政策（✅ 2026-06-12 已採用）**：`docs/env/frontend.yarnrc` 已部署至前端專案 `.yarnrc`（預設 registry＝`npm-all`，公開+企業套件全走內網）。
-- [x] 認證模式（已定案，依既有後端）：**Spring Security + JWT，STATELESS**（非 cookie+CSRF）；外部整合 MIS token/session verifier；前端 interceptor 附 Bearer
-- [ ] 過渡期 reverse proxy 路由規劃（/legacy、/app、/api）
-- [ ] DB schema 是否維持凍結（初期建議凍結）
-- [x] **agent DB 存取政策（2026-06-12 已定，DB 連線打通同日；同日補：新舊兩庫皆 Oracle、皆可連）**：AI agent（Codex/Claude）僅配**唯讀帳號（新舊兩庫各一）**；帳密走環境變數、不進 repo（CLAUDE.md §7）；**任何 DML/DDL 一律產 SQL 檔交人審執行**（同 `c0-authz-sql` 卡模式；舊庫無寫入情境、純查證）；Codex 端 DB 指令 approval 設 ask。**MCP 暫不導入**——Phase V 需要 agent 自主驗 DB 驗證點時再評（先 SQL CLI 唯讀即可）。
+Given a valid `applicationNo`, `epl-info-isu-summary` must return summary header, collateral, other collateral, role, current `CASE_PROGRESS`, CAD Checker option list `empList`, `t24ResultTime`, T24 status/result fields, and display data needed by the Summary page. When `CASE_PROGRESS=24` and the user has Maker role `404`, `empList` must contain active role-`405` CAD Checker employees only; inactive employees or non-405 roles must not be selectable for submit. BE must read from `TB_LON_SUMMARY_INFO`, `TB_DISBUR_DATE`, `TB_DISBUR_COLL`, `TB_DISBUR_OTHER_COLL`, `TB_T24_MAIN_BORROWER_INFO`, and `TB_T24_CO_BORROWER_INFO` as applicable. The query must not mutate state. Owner decision on 2026-06-21 closes `TBD-0922-005`: when `DISBURSING_DATE` is blank/null or the case is not at `CASE_PROGRESS=26`, return `t24ResultTime=N` and do not fail Summary initialization; return `t24ResultTime=Y` only when `CASE_PROGRESS=26`, `DISBURSING_DATE` is present, and elapsed time is greater than 10 minutes.
+
+Error-code contract: blank `applicationNo` returns `COMMON_MSG_ERROR_LON`; query/data failure returns `MSG_QUERY_FAIL`; no summary data returns `MSG_DATA_NOT_FOUND`.
+
+### R

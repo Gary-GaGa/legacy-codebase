@@ -22,7 +22,7 @@
 | 頁/單位 | 舊對應 | FE/BE | parity vs 舊 | disposition | SRS |
 |---|---|---|---|---|---|
 | EPROISU0920 Disbursement(頁框) | IS 0920 | ✅/✅ | 🟡 | **FIX**(domain-gated) | ⟳需產 |
-| EPROISU0921 Data Input | IS 0921 | ✅/✅ | 🔶(7P/15F/5U;A-4 開) | **FIX**(A-4 照舊·已裁) | ⟳需產 |
+| EPROISU0921 Data Input | IS 0921 | ✅/✅ | 🔶(7P/15F/5U;A-4/M6/Product/Return/collproSize closed) | **FIX**(SRS in-review) | `docs/specs/srs/EPROISU0921/` |
 | EPROISU0922 Summary/T24 | IS 0922 | ✅/🟡 | 🔶(A-1✅·B-1 開) | **FIX**+UAT | ⟳需產 |
 | T24 組檔(A–H) | createTransferA–H | —/✅ | 🔶(B-group 照舊修畢) | **FIX done**+UAT | ⟳需產 |
 | 批次 B001–B008 | `EPROZ0_B00x` | —/✅ | 🟡(AUD-10:6 FOUND·B005 inline·B008 ops) | **KEEP**(碼驗過)；B008 ops | N/A |
@@ -148,7 +148,7 @@
 | `EPROCSU0172` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
 | `EPROCSU0173` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
 | `EPROISU0920` | 撥貸 T1 | — | not-started | 差異源已備(triage/db-diff)·只缺 PRD |
-| `EPROISU0921` | 撥貸 T1 | — | not-started | 差異源已備·A-4 等已裁照舊→入 SRS 當已決 delta |
+| `EPROISU0921` | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md` | in-review | `docs/specs/srs/EPROISU0921/` |
 | `EPROISU0922`(+T24) | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | in-review | `docs/specs/srs/EPROISU0922/` |
 | `EPROZ00800` | 00800 重產 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md`| in-review | `docs/specs/srs/EPROZ00800/` |
 | 主流程 ISU/i0/z0 增量 | 增量 | — | not-started（佔位·待拆列）| — |

@@ -36,7 +36,7 @@
 | `C26` | 依 `COLL_DATA_SEQ` 過濾 title deed（`:529-550/702-716/738`）| =舊 | ☐ | ☐ |
 | `E21` | 非 USD/KHR→`0`（A-5 收窄 keep；舊全換匯 `:934-940`）| keep（A-5 邊界）| ☐ | ☐ |
 | `G4`/`G10`/`H8` | 換匯欄幣別來源（`:1076-1085/1090-1094/1133-1138/1154-1156`）| keep（A-5 邊界、RD 跟）| ☐（**KHR 最高風險先**）| ☐ |
-| `T24_COMPANY`（B-1） | `OVSLXLON01`（06-17 裁）→`B8`/`C9` 接值 | 待 RD entity 映射 | ☐ | ☐ |
+| `T24_COMPANY`（B-1） | `OVSLXLON01`（06-17 裁）→`B8`/`C9` 接值 | RD entity 映射已補且 T24 欄位長度已依 new DB reverify 對齊；缺 branch-profile row 或缺/空 `T24_COMPANY` 走 `FAILED_E999`，不落空白；owner 06-22 confirms follow legacy/current source with no separate T24 contract override | ✅ | ✅ |
 > **未在上表但屬 REQ-004 清單者**（`A52`/`C20`/B 段/D 段/`E14–E23`/`G7`外 G 欄/`H1–H7`）＝parity-fix 未動/已對齊 → as-is **待母資料夾逐欄坐實** `file:line` 後比 refactor-spec，同流程。
 
 

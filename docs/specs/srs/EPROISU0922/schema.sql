@@ -212,4 +212,9 @@ CREATE TABLE TB_CLO_REASON (
 -- TB_COLL_INFO.SUG_VAL is an invalid-source comparison note only: db-diff TB_COLL_INFO has no SUG_VAL; T24 C12 source is TB_COLL_VALUE_INFO.SUG_VAL.
 -- TB_MAIN_BORROWER_ACC (comparison-only: current backend branches G10/H8 on CURRENCY, but target contract uses TB_DISBUR_DATE.DISBURSEMENT_CURRENCY)
 -- TB_BRANCH_PROFILE
+--   PK columns: BRANCH_CODE, DEPT_CODE.
+--   T24 source columns required by R7/TBD-0922-007:
+--     T24_COMPANY is VARCHAR2(5 BYTE) by new DB reverify and feeds T24 B8/C9.
+--     T24_BRANCH_CODE is VARCHAR2(20 BYTE) by DB reverify and feeds transaction branch.
+--     T24_DEPT_CODE is VARCHAR2(5 BYTE) by DB reverify.
 -- TB_PROCESS_CODE

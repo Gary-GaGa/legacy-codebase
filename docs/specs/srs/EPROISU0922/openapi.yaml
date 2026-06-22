@@ -90,7 +90,7 @@ paths:
         '400':
           description: COMMON_MSG_ERROR_LON or EPROIS0922_AUTHORIZE_CHECK stale T24 check-date validation
         '500':
-          description: MSG_AUTHORIZE_FAIL, MSG_QUERY_FAIL, FAILED_E304 carrying EPROIS0921_UI_RAET_FIND_ERROR, T24_FILE_GENERATION_FAIL, SFTP_CONNECT_FAIL, or SFTP_UPLOAD_FAIL
+          description: MSG_AUTHORIZE_FAIL, MSG_QUERY_FAIL, FAILED_E999 for required T24 source-data gaps, FAILED_E304 carrying EPROIS0921_UI_RAET_FIND_ERROR, T24_FILE_GENERATION_FAIL, SFTP_CONNECT_FAIL, or SFTP_UPLOAD_FAIL
   /epl-case-isu-summary-t24-result:
     post:
       operationId: eplCaseIsuSummaryT24Result
@@ -153,7 +153,7 @@ paths:
         '400':
           description: COMMON_MSG_ERROR_LON validation failure
         '500':
-          description: MSG_AUTHORIZE_FAIL, MSG_QUERY_FAIL, FAILED_E304 carrying EPROIS0921_UI_RAET_FIND_ERROR, or T24_FILE_GENERATION_FAIL
+          description: MSG_AUTHORIZE_FAIL, MSG_QUERY_FAIL, FAILED_E999 for required T24 source-data gaps, FAILED_E304 carrying EPROIS0921_UI_RAET_FIND_ERROR, or T24_FILE_GENERATION_FAIL
   /epl-ppdf-isu-summary-report:
     post:
       operationId: eplPpdfIsuSummaryReport
