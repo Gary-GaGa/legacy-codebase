@@ -430,10 +430,12 @@ components:
           maxLength: 2
         disbursementBy:
           type: string
-          maxLength: 5
+          maxLength: 25
+          description: Maps TB_DISBUR_DATE.DISBURSEMENT_BY; DB physical length is 25.
         lawFirmNo:
           type: string
           maxLength: 36
+          description: Law-firm account/reference value from the law-firm option source; distinct from DataInputMain.lawFirmNo, which maps TB_DISBUR_DATE.LAW_FIRM_NO.
         facilityFee:
           type: string
           readOnly: true
@@ -528,7 +530,7 @@ components:
             $ref: '#/components/schemas/CoBorrowerCheckResult'
     SaveIsuDataInputRequest:
       type: object
-      required: [applicationNo, isFinish, borrowerT24No, cbcMemberList, agreementNo, disbursementCurrency, disbursementAmount, drawdownAccount]
+      required: [applicationNo, isFinish, borrowerT24No, agreementNo, disbursementCurrency, disbursementAmount, drawdownAccount]
       properties:
         applicationNo:
           type: string
@@ -556,7 +558,6 @@ components:
         cbcMemberList:
           type: array
           maxItems: 5
-          minItems: 1
           items:
             type: string
             maxLength: 10
@@ -581,10 +582,12 @@ components:
           maxLength: 25
         disbursementBy:
           type: string
-          maxLength: 5
+          maxLength: 25
+          description: Maps TB_DISBUR_DATE.DISBURSEMENT_BY; DB physical length is 25.
         lawFirmNo:
           type: string
           maxLength: 36
+          description: Law-firm account/reference value from the law-firm option source; distinct from DataInputMain.lawFirmNo, which maps TB_DISBUR_DATE.LAW_FIRM_NO.
         expenseToLawFirm:
           $ref: '#/components/schemas/ExpenseToLawFirm'
         collList:
@@ -668,6 +671,7 @@ components:
         lawFirmNo:
           type: string
           maxLength: 5
+          description: Maps TB_DISBUR_DATE.LAW_FIRM_NO, the stored law-firm code.
         lawFirmAmount:
           type: string
           pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
@@ -909,11 +913,14 @@ components:
           maxLength: 10
     CoBorrowerCheckInput:
       type: object
-      required: [dataSeq, coBorT24No]
+      required: [dataSeq, recid, coBorT24No]
       properties:
         dataSeq:
           type: string
           maxLength: 3
+        recid:
+          type: string
+          maxLength: 10
         coBorT24No:
           type: string
           maxLength: 30

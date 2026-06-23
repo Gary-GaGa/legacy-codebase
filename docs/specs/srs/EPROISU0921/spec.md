@@ -196,22 +196,22 @@ The API contract intentionally exposes `eprois0921` while preserving physical DB
 ## Traceability Matrix
 | PRD / source | SRS | QA |
 |---|---|---|
-| FR-INIT-001 / AC-001 | R1, R2 | QA-001, QA-002 |
-| FR-INIT-002 / AC-002 | R2 | QA-002 |
-| FR-INIT-003 / AC-003 / AC-004 | R4 | QA-006, QA-007 |
-| FR-INIT-004 / AC-005 / AC-008 | R5, R8 | QA-008, QA-009, QA-010, QA-017 |
-| FR-INIT-005 / PRD TBD-005 | R1 | QA-003 |
-| FR-UI-001 / FR-UI-002 | R3, R11 | QA-005, QA-022 |
-| FR-UI-003 | R4, R5 | QA-007, QA-010 |
-| FR-UI-004 | R2, R12 | QA-004, QA-023 |
-| PRD TBD-001 / TBD-002 / TBD-003 / TBD-004 / TBD-005 | R1, R2, R12 | QA-001, QA-002, QA-003, QA-023 |
-| PRD TBD-006 / TBD-007 / TBD-008 | R4, R9, R10 | QA-006, QA-018, QA-025 |
-| Save / Finished / AC-006 / AC-007 / AC-008 | R6, R10 | QA-011, QA-012, QA-013, QA-033, QA-034 |
-| M6 completion dates | R7 | QA-014, QA-015 |
-| Fee M7/M10 non-reopened constraint | R10 | QA-021 |
-| `RECEIVED_DATE` M4 non-reopened constraint | R6 | QA-012 |
+| FR-INIT-001 / AC-001 | R1, R2 | QA-001, QA-002, QA-030, QA-031 |
+| FR-INIT-002 / AC-002 | R2 | QA-002, QA-031 |
+| FR-INIT-003 / AC-003 / AC-004 | R4 | QA-006, QA-007, QA-028 |
+| FR-INIT-004 / AC-005 / AC-008 | R5, R8 | QA-008, QA-009, QA-010, QA-016, QA-017, QA-026, QA-029, QA-032 |
+| FR-INIT-005 / PRD TBD-005 | R1 | QA-003, QA-030 |
+| FR-UI-001 / FR-UI-002 | R3, R11 | QA-005, QA-022, QA-027 |
+| FR-UI-003 | R4, R5 | QA-007, QA-010, QA-026, QA-028, QA-029 |
+| FR-UI-004 | R2, R12 | QA-004, QA-023, QA-031 |
+| PRD TBD-001 / TBD-002 / TBD-003 / TBD-004 / TBD-005 | R1, R2, R12 | QA-001, QA-002, QA-003, QA-023, QA-030, QA-031 |
+| PRD TBD-006 / TBD-007 / TBD-008 | R4, R9, R10 | QA-006, QA-018, QA-019, QA-020, QA-025, QA-028, QA-032 |
+| Save / Finished / AC-006 / AC-007 / AC-008 | R6, R10 | QA-011, QA-012, QA-013, QA-019, QA-020, QA-027, QA-032, QA-033, QA-034, QA-035 |
+| M6 completion dates | R7 | QA-014, QA-015, QA-032 |
+| Fee M7/M10 non-reopened constraint | R10 | QA-021, QA-033, QA-035 |
+| `RECEIVED_DATE` M4 non-reopened constraint | R6 | QA-012, QA-034 |
 | Return / AC-010 | R9 | QA-018 |
-| Security/audit/authorization | R3, R11 | QA-005, QA-022, QA-024, QA-036 |
+| Security/audit/authorization | R3, R11 | QA-005, QA-022, QA-024, QA-027, QA-036 |
 | SECURE_ATTRIBUTE carry/disclaim | R11, R12 | QA-036 |
 
 ## NFR

@@ -132,11 +132,11 @@
 | `EPROC00118` | T1 corporate | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` | approved | `docs/specs/srs/EPROC00118/` |
 | `EPROC00120` | T1 企金線(先) | — | not-started | 待 parity 碼驗餵入(i0-mirror·無 refactor baseline) |
 | `EPROCSU0170` | T1 企金線(先) | — | not-started | 待 parity 碼驗餵入 |
-| `EPROC00110` | T1 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROC00112` | T1 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROC00114` | T1 企金線 | — | not-started | 待 parity 碼驗餵入(grandfathered §6.1) |
-| `EPROC00115` | T1 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROC00116` | T1 企金線 | — | not-started | 待 parity 碼驗餵入(有 calc) |
+| `EPROC00110` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md` | in-review | `docs/specs/srs/EPROC00110/` |
+| `EPROC00112` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md` | in-review | `docs/specs/srs/EPROC00112/` |
+| `EPROC00114` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00114-v1.0.md` | in-review | `docs/specs/srs/EPROC00114/` |
+| `EPROC00115` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00115-v1.0.md` | in-review | `docs/specs/srs/EPROC00115/` |
+| `EPROC00116` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00116-v1.0.md` | in-review | `docs/specs/srs/EPROC00116/` |
 | `EPROC00117` | T1 企金線 | — | not-started | 待 parity 碼驗餵入(business-only·較穩) |
 | `EPROC00119` | T1 企金線 | — | not-started | 待 parity 碼驗餵入(i0-mirror·無 refactor baseline) |
 | `EPROCSU0110` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |

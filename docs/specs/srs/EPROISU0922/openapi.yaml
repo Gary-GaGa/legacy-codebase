@@ -74,6 +74,7 @@ paths:
     post:
       operationId: eplCaseIsuSummaryAuth
       summary: Authorize Summary and upload T24 file
+      description: Caller identity, including checker empId, is resolved from the authenticated session/JWT context and must not be supplied in the request body.
       requestBody:
         required: true
         content:
