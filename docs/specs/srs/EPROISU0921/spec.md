@@ -5,12 +5,12 @@
 |---|---|
 | funcId | `EPROISU0921` |
 | Page | Individual Disbursement - Data Input |
-| Spec status | In Review |
-| Implementation status | Not asserted |
+| Spec status | Approved |
+| Implementation status | Conformant — D-axis backend closeout verified 2026-06-23 (mother-folder build/test PASS; N-axis A–G PASS) |
 | Risk tier | T1 money/checkpoint/auth |
 | Source PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md` |
 | Bundle | `docs/specs/srs/EPROISU0921/` |
-| Checkpoint | Per-page owner re-open decisions are closed; do not promote to Approved before separate human approval/spec-reviewer sign-off. |
+| Checkpoint | Per-page owner re-open decisions are closed; owner sign-off granted 2026-06-23 after mechanical PASS + N-axis A–G PASS + cross-model spec-reviewer recheck (0 Blocker / 0 Should-fix). Promoted to Approved. |
 
 ## Scope
 This bundle defines the to-be contract for `EPROISU0921` Data Input: select/init data, query, main borrower and co-borrower T24/CIF checks, save/finish, return, page authorization, and EPROISU0920 Summary gating through `EPORIS_0921`.
