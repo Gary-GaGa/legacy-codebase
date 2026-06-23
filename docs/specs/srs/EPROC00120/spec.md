@@ -4,6 +4,7 @@
 | Field | Value |
 |---|---|
 | Status | In Review / draft-for-review; no owner stamp |
+| N-axis review | single-round spec-reviewer (axis A) on 2026-06-23: 0🔴 on bundle; mechanical `check-srs-bundle.py` PASS; 1🟢 nit (`MSG_OVER_COUNT_LIMIT` carried in R7/openapi but no QA case). Remains draft-for-review, blocked on P-009/P-011/P-012/P-013 (all block Approval); approval needs a re-review round after those @PENDING close. Full A–G + cross-model review still required per Risk tier before owner approval. |
 | funcId | EPROC00120 |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00120-v1.0.md` |
 | Bundle | `docs/specs/srs/EPROC00120/` |
