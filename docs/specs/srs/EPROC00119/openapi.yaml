@@ -1,0 +1,470 @@
+openapi: 3.0.3
+info:
+  title: EPROC00119 Financial Statement FI API
+  version: 1.0.0
+  description: >
+    In Review contract for C0 Financial Statement FI. All business operations
+    use POST RPC endpoints. Binary exports use file responses with JSON error envelopes.
+servers:
+  - url: /
+paths:
+  /epl-sele-c0-financial-statement-comments:
+    post:
+      operationId: seleC0FinancialStatementComments
+      summary: Load shared C0 financial statement option lists.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectRequest'
+      responses:
+        '200':
+          description: Option envelope; business errors include E102, FAILED_E116, FAILED_E126, COMMON_MSG_ERROR_LON, MSG_QUERY_FAIL.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/OptionEnvelope'
+                  - $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /epl-info-c0-financial-statement-cmts-fi:
+    post:
+      operationId: infoC0FinancialStatementCmtsFi
+      summary: Query current Financial Statement FI data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+      responses:
+        '200':
+          description: Returns current flat FI data; errors include E102, FAILED_E116, FAILED_E126, COMMON_MSG_ERROR_LON, MSG_DATA_NOT_FOUND, MSG_OVER_COUNT_LIMIT, MSG_QUERY_FAIL.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/StatementFiEnvelope'
+                  - $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /epl-quer-c0-financial-statement-cmts-fi:
+    post:
+      operationId: querC0FinancialStatementCmtsFi
+      summary: Query previous application FI data for copy.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReferenceQueryRequest'
+      responses:
+        '200':
+          description: Returns copyable FI data or business messages such as MSG_QUERY_SUCCESS, MSG_ERROR_APPLICATION_NO, MSG_OVER_COUNT_LIMIT, MSG_QUERY_FAIL, COMMOM_MSG_NO_DATA, COMMON_MSG_NO_DATA.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/StatementFiEnvelope'
+                  - $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /epl-calc-c0-financial-statement-cmts-fi:
+    post:
+      operationId: calcC0FinancialStatementCmtsFi
+      summary: Calculate FI Balance, Income, and Cashflow rows.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalcRequest'
+      responses:
+        '200':
+          description: Returns calculated FI lists; business errors include COMMON_MSG_FIELD_CALCULATED, COMMON_MSG_TOTAL_FAIL, COMMON_MSG_ERROR_LON, EPROI0_0160_MSG_ERRO_CURRENCY.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/CalcEnvelope'
+                  - $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /epl-save-c0-financial-statement-cmts-fi:
+    post:
+      operationId: saveC0FinancialStatementCmtsFi
+      summary: Save draft or Finished FI statement data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveRequest'
+      responses:
+        '200':
+          description: Success or business error; codes include COMMON_MSG_SAVE_SUCCESS, COMMON_MSG_SAVE_FAIL, COMMON_MSG_ERROR_LON, MSG_OVER_COUNT_LIMIT, MSG_ERROR_APPLICATION_NO, EPROI0_0160_MSG_ERRO_CURRENCY.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SaveEnvelope'
+                  - $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /epl-pxls-c0-financial-statement-cmts-fi:
+    post:
+      operationId: pxlsC0FinancialStatementCmtsFi
+      summary: Export Financial Statement FI Excel.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: Excel stream or JSON error; codes include MSG_EXPORT_SUCCESS and COMMON_MSG_PRINT_FAIL.
+          content:
+            application/vnd.ms-excel:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /epl-ppdf-c0-financial-statement-cmts-fi:
+    post:
+      operationId: ppdfC0FinancialStatementCmtsFi
+      summary: Export Financial Statement FI PDF.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportRequest'
+      responses:
+        '200':
+          description: PDF stream or JSON error; codes include COMMON_MSG_DOWNLOAD_SUCCESS and COMMON_MSG_DOWNLOAD_FAIL.
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+components:
+  responses:
+    AuthError:
+      description: Platform authentication or authorization failure; no mutation or file creation occurs.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BusinessErrorEnvelope'
+  schemas:
+    SelectRequest:
+      type: object
+      required:
+        - applicationNo
+        - langType
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        langType:
+          type: string
+          maxLength: 10
+    QueryRequest:
+      type: object
+      required:
+        - applicationNo
+        - isQuery
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        isQuery:
+          type: boolean
+    ReferenceQueryRequest:
+      type: object
+      required:
+        - applicationNo
+        - isQuery
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+          description: Current DTO field; for the reference-query endpoint this is the reference application's application number.
+        isQuery:
+          type: boolean
+    CalcRequest:
+      type: object
+      required:
+        - applicationNo
+        - balanceList
+        - incomeList
+        - cashflowList
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        balanceList:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementRow'
+        incomeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementRow'
+        cashflowList:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementRow'
+    SaveRequest:
+      type: object
+      required:
+        - applicationNo
+        - isFinish
+        - currency
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        isFinish:
+          type: boolean
+        companyName:
+          type: string
+          maxLength: 200
+        currency:
+          type: string
+          maxLength: 3
+        currencyUnit:
+          type: string
+          maxLength: 2
+        balanceList:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementRow'
+        incomeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementRow'
+        cashflowList:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatementRow'
+        loanRepayment:
+          type: string
+          maxLength: 6000
+        finSituation:
+          type: string
+          maxLength: 6000
+        businessRisk:
+          type: string
+          maxLength: 6000
+        borrowerRisk:
+          type: string
+          maxLength: 6000
+        summary:
+          type: string
+          maxLength: 6000
+    ExportRequest:
+      type: object
+      required:
+        - applicationNo
+        - langType
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        langType:
+          type: string
+          maxLength: 10
+    MainStatement:
+      type: object
+      properties:
+        currency:
+          type: string
+          maxLength: 3
+        ccyUnit:
+          type: string
+          maxLength: 2
+        companyName:
+          type: string
+          maxLength: 200
+        criteria1:
+          type: string
+          maxLength: 1
+        criteria2:
+          type: string
+          maxLength: 1
+        criteria3:
+          type: string
+          maxLength: 1
+        auditFirm:
+          type: string
+          maxLength: 50
+        opinionMemo:
+          type: string
+          maxLength: 500
+        financialHighlights:
+          type: array
+          items:
+            type: string
+    StatementRow:
+      type: object
+      properties:
+        dataSeq:
+          type: integer
+          minimum: 1
+        year:
+          type: string
+          maxLength: 10
+        periods:
+          type: string
+          maxLength: 3
+        typeOfYear:
+          type: string
+          maxLength: 1
+      additionalProperties: true
+    OptionEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 4
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: object
+          additionalProperties: true
+    StatementFiEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 4
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: object
+          properties:
+            haveData:
+              type: string
+              maxLength: 1
+            companyName:
+              type: string
+              maxLength: 200
+            currency:
+              type: string
+              maxLength: 3
+            currencyUnit:
+              type: string
+              maxLength: 2
+            balanceList:
+              type: array
+              items:
+                $ref: '#/components/schemas/StatementRow'
+            incomeList:
+              type: array
+              items:
+                $ref: '#/components/schemas/StatementRow'
+            cashflowList:
+              type: array
+              items:
+                $ref: '#/components/schemas/StatementRow'
+            loanRepayment:
+              type: string
+              maxLength: 6000
+            finSituation:
+              type: string
+              maxLength: 6000
+            businessRisk:
+              type: string
+              maxLength: 6000
+            borrowerRisk:
+              type: string
+              maxLength: 6000
+            summary:
+              type: string
+              maxLength: 6000
+            check:
+              type: string
+              maxLength: 2
+    CalcEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 4
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: object
+          properties:
+            balanceList:
+              type: array
+              items:
+                $ref: '#/components/schemas/StatementRow'
+            incomeList:
+              type: array
+              items:
+                $ref: '#/components/schemas/StatementRow'
+            cashflowList:
+              type: array
+              items:
+                $ref: '#/components/schemas/StatementRow'
+            resultMsg:
+              type: array
+              items:
+                type: string
+    SaveEnvelope:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          maxLength: 4
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: object
+          additionalProperties: true
+    BusinessErrorEnvelope:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          maxLength: 4
+        message:
+          type: string
+          maxLength: 200
+        data:
+          nullable: true

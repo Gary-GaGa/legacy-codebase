@@ -1,0 +1,350 @@
+openapi: 3.0.3
+info:
+  title: EPROC00117 Financial Evaluation GI API
+  version: 1.0.0
+  description: >
+    In Review contract for C0 Financial Evaluation GI. All business operations
+    use POST RPC endpoints and return the platform EPRO response envelope.
+servers:
+  - url: /
+paths:
+  /epl-sele-c0-financial-list:
+    post:
+      operationId: seleC0FinancialList
+      summary: Load option lists for Financial Evaluation GI.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectRequest'
+      responses:
+        '200':
+          description: Option-list envelope; validation/business errors such as E102, FAILED_E116, FAILED_E126, MSG_QUERY_FAIL may also use HTTP 200.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SelectEnvelope'
+                  - $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /epl-info-c0-financial-business:
+    post:
+      operationId: infoC0FinancialBusiness
+      summary: Query business financial list and GI ratios.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InfoRequest'
+      responses:
+        '200':
+          description: Success returns financialList and ratios; business errors include E102, FAILED_E116, FAILED_E126, COMMON_MSG_ERROR_LON, MSG_QUERY_FAIL, COMMON_MSG_TOTAL_FAIL.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InfoEnvelope'
+                  - $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+  /epl-save-c0-financial-business:
+    post:
+      operationId: saveC0FinancialBusiness
+      summary: Save draft or Finished Financial Evaluation GI rows.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveRequest'
+      responses:
+        '200':
+          description: Success returns an empty data list/object; save does not accept client-submitted GI ratio rows. Business errors include E102, FAILED_E116, FAILED_E126, COMMON_MSG_ERROR_LON, COMMON_MSG_SAVE_SUCCESS, COMMON_MSG_SAVE_FAIL, COMMON_MSG_LIMIT, COMMON_MSG_ONE_DATA.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SaveEnvelope'
+                  - $ref: '#/components/schemas/BusinessErrorEnvelope'
+        '401':
+          $ref: '#/components/responses/AuthError'
+components:
+  responses:
+    AuthError:
+      description: Platform authentication or authorization failure such as E401/E405/E498; no mutation occurs.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BusinessErrorEnvelope'
+  schemas:
+    SelectRequest:
+      type: object
+      required:
+        - applicationNo
+        - langType
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        langType:
+          type: string
+          maxLength: 10
+    InfoRequest:
+      type: object
+      required:
+        - applicationNo
+        - isQuery
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        isQuery:
+          type: boolean
+    SaveRequest:
+      type: object
+      required:
+        - applicationNo
+        - isFinish
+        - currency
+        - financialList
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        isFinish:
+          type: boolean
+        currency:
+          type: string
+          maxLength: 3
+        mExistInstallmentAmt:
+          type: string
+        mEstInstallmentAmt:
+          type: string
+        monExpenditureRatio:
+          type: string
+        debtServiceRatio:
+          type: string
+        totalDebtRatio:
+          type: string
+        totalRemainingCashRatio:
+          type: string
+        debtToNetIncomeRatio:
+          type: string
+        financialList:
+          type: array
+          items:
+            $ref: '#/components/schemas/FinancialInfo'
+    FinancialInfo:
+      type: object
+      properties:
+        dataSeq:
+          type: integer
+          minimum: 1
+        applicantName:
+          type: string
+          maxLength: 50
+        applicantCombineId:
+          type: string
+          maxLength: 60
+        isMainBorrower:
+          type: string
+          maxLength: 2
+        incomeFixAmt:
+          type: string
+        incomeNonfixAmt:
+          type: string
+        expenseMAmt:
+          type: string
+        expenseDebtMAmt:
+          type: string
+        totalDebitBalAmt:
+          type: string
+    GiRatio:
+      type: object
+      properties:
+        dataSeq:
+          type: integer
+          minimum: 1
+        ratiosDate:
+          type: string
+          maxLength: 10
+        curRatio:
+          type: string
+          maxLength: 12
+        quickRatio:
+          type: string
+          maxLength: 12
+        interestCoverage:
+          type: string
+          maxLength: 12
+        leverage:
+          type: string
+          maxLength: 12
+        deRatio:
+          type: string
+          maxLength: 12
+        fixedRatio:
+          type: string
+          maxLength: 12
+        fixedLtRatio:
+          type: string
+          maxLength: 12
+        ownCapitalRatio:
+          type: string
+          maxLength: 12
+        arTurnover:
+          type: string
+          maxLength: 12
+        daysForAr:
+          type: string
+          maxLength: 12
+        inventoryTurnover:
+          type: string
+          maxLength: 12
+        numOfDaysForInventory:
+          type: string
+          maxLength: 12
+        apTurnover:
+          type: string
+          maxLength: 12
+        daysForAp:
+          type: string
+          maxLength: 12
+        cashConversionCycle:
+          type: string
+          maxLength: 12
+        totalAssetTurnover:
+          type: string
+          maxLength: 12
+        grossProfitMargin:
+          type: string
+          maxLength: 12
+        opProfitMargin:
+          type: string
+          maxLength: 12
+        netProfitMargin:
+          type: string
+          maxLength: 12
+        returnOnEquity:
+          type: string
+          maxLength: 12
+        returnOnAssets:
+          type: string
+          maxLength: 12
+        revenueCreditRatio:
+          type: string
+          maxLength: 12
+        inOutRatio:
+          type: string
+          maxLength: 12
+        cashFlowRatio:
+          type: string
+          maxLength: 12
+        ltInvestDivTotalEquity:
+          type: string
+          maxLength: 12
+        ltInvestDivTotalAssets:
+          type: string
+          maxLength: 12
+        revenueGrowth:
+          type: string
+          maxLength: 12
+        netProfitGrowth:
+          type: string
+          maxLength: 12
+        arGrowth:
+          type: string
+          maxLength: 12
+        borrowingGrowth:
+          type: string
+          maxLength: 12
+    SelectEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 4
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: object
+          additionalProperties: true
+    InfoEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 4
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: object
+          properties:
+            currency:
+              type: string
+              maxLength: 3
+            mExistInstallmentAmt:
+              type: string
+            mEstInstallmentAmt:
+              type: string
+            monExpenditureRatio:
+              type: string
+            debtServiceRatio:
+              type: string
+            totalDebtRatio:
+              type: string
+            totalRemainingCashRatio:
+              type: string
+            debtToNetIncomeRatio:
+              type: string
+            financialList:
+              type: array
+              items:
+                $ref: '#/components/schemas/FinancialInfo'
+            ratios:
+              type: array
+              items:
+                $ref: '#/components/schemas/GiRatio'
+    SaveEnvelope:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          maxLength: 4
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: array
+          items:
+            type: object
+    BusinessErrorEnvelope:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          maxLength: 4
+        message:
+          type: string
+          maxLength: 200
+        data:
+          nullable: true
