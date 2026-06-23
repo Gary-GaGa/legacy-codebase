@@ -4,6 +4,7 @@
 | Field | Value |
 |---|---|
 | Status | In Review / draft-for-review; wait for controller gate and N-axis review |
+| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 3🔴 + 7🟡. 🔴 = (1) checkpoint Y/N semantics contradict across openapi/PRD/schema default; (2) BE-driven tab visibility has no contract carrier (PageMap holds completion only, not visibility) vs R5 both-enforced; (3) `EPROCSU0160` orphan checkpoint column (no upstream/rule/trace). Not Approvable until 🔴 resolved + re-review. |
 | funcId | EPROC00110 |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md` |
 | Bundle | `docs/specs/srs/EPROC00110/` |

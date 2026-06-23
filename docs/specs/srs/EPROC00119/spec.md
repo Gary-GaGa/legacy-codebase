@@ -5,6 +5,7 @@
 |---|---|
 | FuncId | EPROC00119 |
 | Status | In Review / draft-for-controller-gate; awaiting corporate refactor baseline, parity, and human review |
+| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 0🔴 + 7🟡. Top 🟡 = SaveRequest/info contract missing main criteria/audit/highlight fields (conflicts R7 Finished validation) + orphan `MainStatement` schema (no endpoint ref); Phase V check "GI-sele vs FI businessType F branch" not carried in spec. Remains In Review; blocked on RP40–RP54. |
 | Owner | SA / Credit decision domain / RD |
 | Upstream PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00119-v1.0.md` |
 | As-is source | Legacy `EPROC0_0119` + `EPROC0_0219`; current corporate implementation anchors below; formal corporate refactor baseline UNFOUND |

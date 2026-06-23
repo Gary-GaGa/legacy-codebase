@@ -1,6 +1,7 @@
 # SRS - EPROC00114 Collateral Assessment
 
 Status: 規格定版=draft；實作完成=draft  
+N-axis review: spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 3🔴 + 7🟡; verdict = refine, do NOT regenerate. 🔴 = (1) phantom `epl-calc-c0-collateral-assessment` in openapi vs PENDING-007 (no c0 calc; score via save); (2) NUMBER(7,2) precision has no positive QA case (truncation/silent-corruption risk); (3) `langType` required but no PRD req/Rn/QA. Structure & traceability meet DoD; promote to In Review after 🔴 fixes + edge cases (boundary/CVer-default/map-key strictness).  
 funcId: EPROC00114  
 PRD: `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00114-v1.0.md`  
 Bundle: `docs/specs/srs/EPROC00114/`

@@ -96,15 +96,15 @@
 > **確認**：c0 後端齊（`controller/corporate/*`）；corporate 前端評分容器原本**完全未建**。→ ✅ **整組 c0 評分 FE 已建齊＝1 容器 + 8 子頁**（**Phase F 收工 2026-06-09**；c0 無 00111/00113）。原本次盤點**最大缺口、現已補齊**。
 | 新頁 | 名稱 | FE | BE | 對接 c0 endpoint（BE 已齊）|
 |---|---|:--:|:--:|---|
-| EPROC00110 | 評分容器（corporate credit-investigation）| ✅ | ✅ | `epl-info/save-c0-credit-investigation-tab`（`CsuCreditInvestigationController`；Step 1 容器，BE 驅動動態 tab）|
-| EPROC00112 | CBC Banking Relationship | ✅ | ✅ | `epl-info/save-c0-cbc-banking-relationship`（`7e8aaf7`）|
-| EPROC00114 | Collateral Assessment | 🟡 | ✅ | `epl-sele/info/save-c0-collateral-assessment`（`62ec62f`；無 c0 calc→隱 Calc 鈕、分數 BE save 算）；audit F-7：calc handler 空 return——**Phase V 驗鈕真隱→可降回 ✅** |
-| EPROC00115 | Borrower Group Exposure | ✅ | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`（Step 1 BGE pilot）；授權列 |
-| EPROC00116 | Financial Statement GI | ✅ | ✅ | `epl-*-c0-financial-statement-comments`（`524d8dc`；calc 保留、export POST-blob 兩邊一致、無 00640 式不符）；授權列；export 模板沿用 i0？|
+| EPROC00110 | 評分容器（corporate credit-investigation）| ✅ | ✅ | `epl-info/save-c0-credit-investigation-tab`（`CsuCreditInvestigationController`；Step 1 容器，BE 驅動動態 tab）；SRS in-review：`docs/specs/srs/EPROC00110/`（gate PASS；N 軸 2026-06-23 **3🔴**/7🟡：checkpoint Y/N 語意矛盾、tab 顯隱無契約載體、`EPROCSU0160` 孤兒欄；待修不可升）|
+| EPROC00112 | CBC Banking Relationship | ✅ | ✅ | `epl-info/save-c0-cbc-banking-relationship`（`7e8aaf7`）；SRS in-review：`docs/specs/srs/EPROC00112/`（gate PASS；N 軸 2026-06-23 0🔴/6🟡，方向可推進；待人審）|
+| EPROC00114 | Collateral Assessment | 🟡 | ✅ | `epl-sele/info/save-c0-collateral-assessment`（`62ec62f`；無 c0 calc→隱 Calc 鈕、分數 BE save 算）；audit F-7：calc handler 空 return——**Phase V 驗鈕真隱→可降回 ✅**；SRS **draft**：`docs/specs/srs/EPROC00114/`（gate PASS；N 軸 2026-06-23 3🔴/7🟡，**判定細修不重產**：幽靈 calc 端點、NUMBER(7,2) 精度無正向 QA、`langType` required 零覆蓋；修 B1–B3 後升 in-review）|
+| EPROC00115 | Borrower Group Exposure | ✅ | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`（Step 1 BGE pilot）；授權列；SRS in-review：`docs/specs/srs/EPROC00115/`（gate PASS；N 軸 2026-06-23 **1🔴**/6🟡：`COMMON_MSG_TOTAL_FAIL` 契約⊥R9；orphan 錯誤碼；save 授權 deferred RP20；待修）|
+| EPROC00116 | Financial Statement GI | ✅ | ✅ | `epl-*-c0-financial-statement-comments`（`524d8dc`；calc 保留、export POST-blob 兩邊一致、無 00640 式不符）；授權列；export 模板沿用 i0？；SRS in-review：`docs/specs/srs/EPROC00116/`（gate PASS；N 軸 2026-06-23 **2🔴**/5🟡：BR-006 重算/隱 Print 失蹤、AC-005/007 Finished 平衡無 QA；待修）|
 | EPROC00117 | Financial Evaluation GI | ✅ | ✅ | **business-only ✅**（`b14ae05`，決策 B）：接 `epl-sele-c0-financial-list`、`epl-info/save-c0-financial-business`；未接 `-financial-staff`（cleanup）；SRS in-review：`docs/specs/srs/EPROC00117/`（RP26-RP38 open，gate+AG PASS，待人審）；授權列 |
 | EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`; SRS Approved after 2026-06-20 RD/DBA contract closeout: four TB_API_AUTH rows direct-applied/rechecked, info DTO/status, save guard, parseScore fail-fast, UTC+8 scoreDatetime, numeric guard implemented. |
 | EPROC00119 | Financial Statement FI | ✅ | ✅ | ✅ F-8 已修（`6919da5`，options 接 `epl-sele-c0-financial-statement-comments`）；SRS in-review：`docs/specs/srs/EPROC00119/`（RP40-RP54 open，gate+AG PASS，待人審）；**Phase V 必驗**：下拉有值+save 帶值+GI-sele 對 FI（businessType F）無分支影響；授權列；export 模板沿用 i0？|
-| EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`；i0 FI list 不消費→`getMenu()`回`of({})`；未接 `-staff-fi`（cleanup）；授權列 |
+| EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`；i0 FI list 不消費→`getMenu()`回`of({})`；未接 `-staff-fi`（cleanup）；授權列；SRS in-review：`docs/specs/srs/EPROC00120/`（gate PASS；N 軸 2026-06-23 0🔴/4🟡，方向可推進；blocked on P-009/11/12/13）|
 > **範本＝i0 `individual/credit-investigation`**（容器動態載 tab、各子頁 `components/<name>/{component,services}`；c0 鏡像、改 `-c0-` endpoint + corporate DTO）。
 > ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。
 > ⚠️ audit（06-11）：舊源有 `EPROC0_0211/0213`（展期限定 FinEvalTable/Scorecard），新系統 FE/BE 全無→**AUD-2 待裁**（是否由 00116-00120 涵蓋；`refactor-audit/M7a-c0-00110-00115.md`）。

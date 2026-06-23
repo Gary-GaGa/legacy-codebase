@@ -4,6 +4,7 @@
 | Field | Value |
 |---|---|
 | Status | In Review / draft-for-review |
+| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 0🔴 + 6🟡 (Approvable direction). Top 🟡 = reverify-TSV provenance is repo-external (add "待母資料夾複核" disclaim); R7 cites un-finalized isFinish polarity as current fact; `pageCheckMap` required vs backend-authoritative tension. Remains In Review; re-review after 🟡 adoption. |
 | funcId | EPROC00112 |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md` |
 | Bundle | `docs/specs/srs/EPROC00112/` |

@@ -6,6 +6,7 @@
 |---|---|
 | FuncId | `EPROCSU0170` |
 | Status | In Review - T1 approval hub checkpoint; mechanical gate PASS; N-axis review found open RP blockers |
+| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 0🔴 + 4🟡. Top 🟡 = Traceability QA-047 misplaced under REQ-007 (it covers R17, belongs REQ-006/008) + QA-021 missing named error code (`EPROIS0170_UI_MSG_ERROR_DEVIATION`). Remains In Review; blocked on RP12–RP24. |
 | Owner | SA / credit decision domain / RD |
 | Upstream PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0170-v1.0.md` |
 | Upstream PRD status | v1.0, 2026-06-15 |

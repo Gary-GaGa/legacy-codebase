@@ -5,6 +5,7 @@
 |---|---|
 | FuncId | EPROC00116 |
 | Status | In Review / draft-for-controller-gate; awaiting human approval |
+| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 2🔴 + 5🟡. 🔴 = (1) BR-006 (recalc + hide Print/PDF after amount edit) absent — no Rn, no disclaim; (2) AC-005/AC-007 Finished balance-gate has no QA case. Confirmed OK: calc retained + export POST-blob; export-template-i0 properly pending. Not Approvable until 🔴 resolved. |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00116-v1.0.md` |
 | Legacy source | `EPROC0_0116`, `EPROC0_0216`, `EPROC00116.jsp`, `EPROC00216.jsp`, GI financial statement DAOs |
 | Output files | `spec.md`, `openapi.yaml`, `schema.sql`, `qa-cases.md` |
