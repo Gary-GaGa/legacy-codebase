@@ -351,25 +351,61 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OptionItem'
+        cbcSpecialNoteList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionItem'
+        disbursementByList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionItem'
+        insCompanyList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionItem'
+        insTypeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionItem'
         provinceList:
           type: array
           items:
             $ref: '#/components/schemas/OptionItem'
-        fieldOptions:
-          type: object
-          additionalProperties:
-            type: array
-            items:
-              $ref: '#/components/schemas/OptionItem'
+        titlePurcProList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionItem'
+        purOfLoanNbcList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionItem'
+        purProTypeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionItem'
+        acctList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionItem'
     InfoIsuDataInputResponse:
       type: object
-      required: [applicationNo, eprois0921, mbCheck, coCheck, collList, purPropList, coBorList]
+      required: [eprois0921, mbCheck, coCheck, collList, purPropList, coBorList]
       properties:
-        applicationNo:
+        mbCheck:
           type: string
-          maxLength: 30
-        caseProgress:
+          enum: ['Y', 'N', '']
+          maxLength: 5
+        coCheck:
           type: string
+          enum: ['Y', 'N']
+          maxLength: 5
+          description: Normalized server result; no-co-borrower old baseline returns Y, not blank.
+        defLoanAmount:
+          type: string
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        eprois0921:
+          type: string
+          enum: ['Y', 'N', '']
           maxLength: 5
         borrowerT24No:
           type: string
@@ -390,15 +426,14 @@ components:
           type: string
           maxLength: 25
         desRepDay:
-          type: integer
-          minimum: 1
-          maximum: 31
-        lawFirmNo:
+          type: string
+          maxLength: 2
+        disbursementBy:
           type: string
           maxLength: 5
-        lawFirmAmount:
+        lawFirmNo:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          maxLength: 36
         facilityFee:
           type: string
           readOnly: true
@@ -409,45 +444,25 @@ components:
           readOnly: true
           description: Server-calculated Finished fee from disbursement amount and FEE_5.
           pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
-        lawFirmAmount01:
-          type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
-        lawFirmAmount02:
-          type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
-        lawFirmAmount03:
-          type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
-        lawFirmAmount90:
-          type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
-        lawFirm90OtherRemark:
-          type: string
-          maxLength: 16
         cubcRelatedCifNo:
           type: string
           maxLength: 10
-        eprois0921:
-          type: string
-          enum: ['Y', 'N', '']
-          maxLength: 5
-        mbCheck:
-          type: string
-          enum: ['Y', 'N', '']
-          maxLength: 5
-        coCheck:
-          type: string
-          enum: ['Y', 'N']
-          maxLength: 5
-          description: Normalized server result; no-co-borrower old baseline returns Y, not blank.
-        updDate:
-          type: string
-          maxLength: 10
-          description: Case application-date-derived address version, format yyyy-MM-dd.
-        acctList:
+        cbcMemberList:
           type: array
           items:
-            $ref: '#/components/schemas/OptionItem'
+            type: string
+            maxLength: 10
+        cbcSpecial:
+          type: string
+          maxLength: 5
+        loanPurpose:
+          type: string
+          maxLength: 200
+        agreementNo:
+          type: string
+          maxLength: 30
+        expenseToLawFirm:
+          $ref: '#/components/schemas/ExpenseToLawFirm'
         collList:
           type: array
           maxItems: 5
@@ -461,7 +476,7 @@ components:
         coBorList:
           type: array
           items:
-            $ref: '#/components/schemas/CoBorrowerInput'
+            $ref: '#/components/schemas/DataInputCoBorrowerItem'
     CheckMbRequest:
       type: object
       required: [applicationNo, borrowerT24No]
@@ -490,12 +505,12 @@ components:
             $ref: '#/components/schemas/OptionItem'
     CheckCoRequest:
       type: object
-      required: [applicationNo, coBorList]
+      required: [applicationNo, coBorT24List]
       properties:
         applicationNo:
           type: string
           maxLength: 30
-        coBorList:
+        coBorT24List:
           type: array
           items:
             $ref: '#/components/schemas/CoBorrowerCheckInput'
@@ -513,22 +528,65 @@ components:
             $ref: '#/components/schemas/CoBorrowerCheckResult'
     SaveIsuDataInputRequest:
       type: object
-      required: [applicationNo, isFinish, dataInput, collList, purPropList]
+      required: [applicationNo, isFinish, borrowerT24No, cbcMemberList, agreementNo, disbursementCurrency, disbursementAmount, drawdownAccount]
       properties:
         applicationNo:
           type: string
           maxLength: 30
         isFinish:
-          type: string
-          enum: ['Y', 'N']
-          maxLength: 1
+          type: boolean
         coCheck:
           type: string
           enum: ['Y', 'N', '']
           maxLength: 5
           description: Compatibility input; backend must verify current stored check state.
-        dataInput:
-          $ref: '#/components/schemas/DataInputMain'
+        borrowerT24No:
+          type: string
+          maxLength: 30
+        groupBorrower:
+          type: string
+          maxLength: 20
+        cubcRelatedCifNo:
+          type: string
+          maxLength: 10
+        coBorList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SaveCoBorrowerInput'
+        cbcMemberList:
+          type: array
+          maxItems: 5
+          minItems: 1
+          items:
+            type: string
+            maxLength: 10
+        cbcSpecial:
+          type: string
+          maxLength: 5
+        agreementNo:
+          type: string
+          maxLength: 30
+        disbursementCurrency:
+          type: string
+          maxLength: 3
+          enum: [USD, KHR]
+        disbursementAmount:
+          type: string
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        desRepDay:
+          type: string
+          maxLength: 2
+        drawdownAccount:
+          type: string
+          maxLength: 25
+        disbursementBy:
+          type: string
+          maxLength: 5
+        lawFirmNo:
+          type: string
+          maxLength: 36
+        expenseToLawFirm:
+          $ref: '#/components/schemas/ExpenseToLawFirm'
         collList:
           type: array
           items:
@@ -538,10 +596,6 @@ components:
           maxItems: 5
           items:
             $ref: '#/components/schemas/PurchasedPropertyItem'
-        coBorList:
-          type: array
-          items:
-            $ref: '#/components/schemas/CoBorrowerInput'
     SaveIsuDataInputResponse:
       type: object
       required: [eprois0921]
@@ -562,10 +616,7 @@ components:
           pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
     ReturnResponse:
       type: object
-      required: [returned]
-      properties:
-        returned:
-          type: boolean
+      properties: {}
     DataInputMain:
       type: object
       properties:
@@ -638,14 +689,55 @@ components:
         cubcRelatedCifNo:
           type: string
           maxLength: 10
+    ExpenseToLawFirm:
+      type: object
+      properties:
+        registrationFee:
+          type: string
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        deRegisterFee:
+          type: string
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        dueDiligentFee:
+          type: string
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        ownershipChange:
+          type: string
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        otherFee:
+          type: string
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        otherRemark:
+          type: string
+          maxLength: 16
     CollateralItem:
       type: object
-      required: [collDataSeq]
+      required: [collDataSeq, insurance, propertyColl]
       properties:
         collDataSeq:
-          type: integer
-          minimum: 1
-          maximum: 999
+          type: string
+          maxLength: 2
+        insurance:
+          type: string
+          maxLength: 1
+        insCompany:
+          type: string
+          maxLength: 10
+        insType:
+          type: string
+          maxLength: 5
+        insStartDate:
+          type: string
+          maxLength: 10
+        insExpiryDate:
+          type: string
+          maxLength: 10
+        policyNumber:
+          type: string
+          maxLength: 30
+        insAmount:
+          type: string
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         propertyColl:
           type: string
           maxLength: 1
@@ -684,27 +776,24 @@ components:
         purOfLoanNbcOther:
           type: string
           maxLength: 210
-        estComType:
-          type: string
-          maxLength: 7
         priceProperty:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         priceLand:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
-        sugVal:
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        appPricePurProp:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         builtWidth:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         buildArea:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         landArea:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         builtFloor:
           type: string
           maxLength: 5
@@ -713,12 +802,11 @@ components:
           maxLength: 5
     PurchasedPropertyItem:
       type: object
-      required: [otherCollDataSeq]
+      required: [otrCollDataSeq]
       properties:
-        otherCollDataSeq:
-          type: integer
-          minimum: 1
-          maximum: 999
+        otrCollDataSeq:
+          type: string
+          maxLength: 2
         otrCollProvinceCode:
           type: string
           maxLength: 5
@@ -754,27 +842,24 @@ components:
         otrPurOfLoanNbcOther:
           type: string
           maxLength: 210
-        otrEstComType:
-          type: string
-          maxLength: 7
         otrPriceProperty:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         otrPriceLand:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
-        otrSugVal:
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        otrAppPricePurProp:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         otrBuiltWidth:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         otrBuildArea:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         otrLandArea:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          pattern: '^[0-9]{1,15}(\\.[0-9]{1,2})?$'
         otrBuiltFloor:
           type: string
           maxLength: 5
@@ -798,27 +883,46 @@ components:
         checkSuccess:
           type: string
           maxLength: 5
-    CoBorrowerCheckInput:
+    DataInputCoBorrowerItem:
       type: object
-      required: [dataSeq, recid]
       properties:
         dataSeq:
-          type: integer
-          minimum: 1
-          maximum: 99
+          type: string
+          maxLength: 3
+        coBorrowerName:
+          type: string
+          maxLength: 140
         recid:
           type: string
           maxLength: 10
+        status:
+          type: string
+          maxLength: 5
+    SaveCoBorrowerInput:
+      type: object
+      properties:
+        dataSeq:
+          type: string
+          maxLength: 3
+        recid:
+          type: string
+          maxLength: 10
+    CoBorrowerCheckInput:
+      type: object
+      required: [dataSeq, coBorT24No]
+      properties:
+        dataSeq:
+          type: string
+          maxLength: 3
+        coBorT24No:
+          type: string
+          maxLength: 30
     CoBorrowerCheckResult:
       type: object
       properties:
-        dataSeq:
-          type: integer
-          minimum: 1
-          maximum: 99
-        recid:
+        coBorT24No:
           type: string
-          maxLength: 10
+          maxLength: 30
         status:
           type: string
           enum: ['Y', 'N']

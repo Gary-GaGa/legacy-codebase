@@ -21,7 +21,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SummaryInfoResponse'
+                $ref: '#/components/schemas/SummaryInfoApiResponse'
         '400':
           description: COMMON_MSG_ERROR_LON validation failure
         '404':
@@ -107,7 +107,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/T24DealResultResponse'
+                $ref: '#/components/schemas/T24DealResultApiResponse'
         '400':
           description: COMMON_MSG_ERROR_LON or authorization validation failure
         '500':
@@ -128,7 +128,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CheckDateResponse'
+                $ref: '#/components/schemas/CheckDateApiResponse'
         '400':
           description: COMMON_MSG_ERROR_LON validation failure
         '500':
@@ -149,7 +149,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/T24AuthorizeResponse'
+                $ref: '#/components/schemas/T24AuthorizeApiResponse'
         '400':
           description: COMMON_MSG_ERROR_LON validation failure
         '500':
@@ -170,7 +170,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReportDownloadResponse'
+                $ref: '#/components/schemas/ReportDownloadApiResponse'
         '400':
           description: COMMON_MSG_ERROR_LON validation failure
         '500':
@@ -191,7 +191,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReportDownloadResponse'
+                $ref: '#/components/schemas/ReportDownloadApiResponse'
         '400':
           description: COMMON_MSG_ERROR_LON validation failure
         '500':
@@ -212,7 +212,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ReportDownloadResponse'
+                $ref: '#/components/schemas/ReportDownloadApiResponse'
         '400':
           description: COMMON_MSG_ERROR_LON validation failure
         '500':
@@ -250,13 +250,55 @@ components:
           maxLength: 30
         empId:
           type: string
-          maxLength: 7
+          maxLength: 10
     ApiResponse:
       type: object
+      required:
+        - code
+        - message
+        - data
       properties:
-        result:
+        code:
           type: string
-          maxLength: 20
+        message:
+          type: string
+        data:
+          type: object
+    SummaryInfoApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/SummaryInfoResponse'
+    CheckDateApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/CheckDateResponse'
+    T24AuthorizeApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/T24AuthorizeResponse'
+    T24DealResultApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/T24DealResultResponse'
+    ReportDownloadApiResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/ReportDownloadResponse'
     CheckDateResponse:
       type: object
       required:
@@ -324,38 +366,6 @@ components:
     SummaryInfoResponse:
       type: object
       properties:
-        role:
-          type: string
-          maxLength: 10
-        summaryQuery:
-          $ref: '#/components/schemas/SummaryDetail'
-        collateralQuery:
-          type: array
-          items:
-            $ref: '#/components/schemas/CollateralSummary'
-        disburOtherCollQuery:
-          type: array
-          items:
-            $ref: '#/components/schemas/OtherCollateralSummary'
-        empList:
-          type: array
-          items:
-            $ref: '#/components/schemas/EmployeeOption'
-    SummaryDetail:
-      type: object
-      properties:
-        applicationNo:
-          type: string
-          maxLength: 30
-        caseProgress:
-          type: string
-          maxLength: 5
-        cadcCode:
-          type: string
-          maxLength: 7
-        currentUserId:
-          type: string
-          maxLength: 7
         borrowerT24No:
           type: string
           maxLength: 30
@@ -392,7 +402,8 @@ components:
           maxLength: 10
         disbursementAmount:
           type: string
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          maxLength: 40
+          description: Display amount with disbursement currency prefix, matching backend Summary response.
         loanMaturityDate:
           type: string
           maxLength: 10
@@ -417,6 +428,19 @@ components:
         prepaymentFee:
           type: string
           maxLength: 40
+        role:
+          type: string
+          maxLength: 5
+          description: Current authenticated employee role id.
+        caseProgress:
+          type: string
+          maxLength: 5
+          description: Current TB_LON_SUMMARY_INFO.CASE_PROGRESS.
+        empList:
+          type: array
+          description: Active role-405 CAD Checker options, populated only for Maker role 404 at CASE_PROGRESS=24.
+          items:
+            $ref: '#/components/schemas/EmployeeOption'
         expens:
           $ref: '#/components/schemas/SummaryExpense'
         bankExpense:
@@ -433,6 +457,14 @@ components:
         result:
           type: string
           maxLength: 20
+        collList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralSummary'
+        purPropList:
+          type: array
+          items:
+            $ref: '#/components/schemas/OtherCollateralSummary'
     SummaryExpense:
       type: object
       properties:
@@ -459,41 +491,131 @@ components:
         facilityFees:
           type: string
           description: Server-calculated facility fee from TB_DISBUR_DATE.FACILITY_FEE.
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          maxLength: 40
         refinancingFee:
           type: string
           description: Server-calculated refinancing fee from TB_DISBUR_DATE.REFINANCING_FEE.
-          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+          maxLength: 40
     EmployeeOption:
       type: object
       properties:
-        empId:
-          type: string
-          maxLength: 7
-        empName:
+        label:
           type: string
           maxLength: 80
+        value:
+          type: string
+          maxLength: 7
     CollateralSummary:
       type: object
       properties:
-        applicationNo:
+        collCode:
+          type: string
+          maxLength: 80
+        collDesc:
+          type: string
+          maxLength: 200
+        nominalValue:
+          type: string
+          maxLength: 40
+        propertyNo:
+          type: string
+          maxLength: 200
+        insCompany:
+          type: string
+          maxLength: 80
+        insType:
+          type: string
+          maxLength: 80
+        insStartDate:
+          type: string
+          maxLength: 10
+        insExpiryDate:
+          type: string
+          maxLength: 10
+        policyNumber:
           type: string
           maxLength: 30
-        collDataSeq:
-          type: integer
-          maximum: 999
-        sugVal:
-          type: number
-          multipleOf: 0.01
+        insAmount:
+          type: string
+          maxLength: 40
+        addr:
+          type: string
+          maxLength: 500
+        titlePurcPro:
+          type: string
+          maxLength: 80
+        purOfLoanNbc:
+          type: string
+          maxLength: 250
+        purProType:
+          type: string
+          maxLength: 80
+        estCom:
+          type: string
+          maxLength: 20
+        priceProperty:
+          type: string
+          maxLength: 40
+        priceLand:
+          type: string
+          maxLength: 40
+        appPricePurProp:
+          type: string
+          maxLength: 40
+        builtWidth:
+          type: string
+          maxLength: 40
+        buildArea:
+          type: string
+          maxLength: 40
+        landArea:
+          type: string
+          maxLength: 40
+        builtFloor:
+          type: string
+          maxLength: 5
+        builtBedroom:
+          type: string
+          maxLength: 5
     OtherCollateralSummary:
       type: object
       properties:
-        applicationNo:
+        otrAddr:
           type: string
-          maxLength: 30
-        otherCollDataSeq:
-          type: integer
-          maximum: 999
-        otherSugVal:
-          type: number
-          multipleOf: 0.01
+          maxLength: 500
+        otrTitlePurcPro:
+          type: string
+          maxLength: 80
+        otrPurOfLoanNbc:
+          type: string
+          maxLength: 250
+        otrPurProType:
+          type: string
+          maxLength: 80
+        otrEstCom:
+          type: string
+          maxLength: 20
+        otrPriceProperty:
+          type: string
+          maxLength: 40
+        otrPriceLand:
+          type: string
+          maxLength: 40
+        otrAppPricePurProp:
+          type: string
+          maxLength: 40
+        otrBuiltWidth:
+          type: string
+          maxLength: 40
+        otrBuildArea:
+          type: string
+          maxLength: 40
+        otrLandArea:
+          type: string
+          maxLength: 40
+        otrBuiltFloor:
+          type: string
+          maxLength: 5
+        otrBuiltBedroom:
+          type: string
+          maxLength: 5
