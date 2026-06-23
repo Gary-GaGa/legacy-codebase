@@ -6,7 +6,7 @@
 |---|---|
 | FuncId | `EPROCSU0170` |
 | Status | In Review - T1 approval hub checkpoint; mechanical gate PASS; N-axis review found open RP blockers |
-| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 0🔴 + 4🟡. Top 🟡 = Traceability QA-047 misplaced under REQ-007 (it covers R17, belongs REQ-006/008) + QA-021 missing named error code (`EPROIS0170_UI_MSG_ERROR_DEVIATION`). Remains In Review; blocked on RP12–RP24. |
+| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 0🔴 + 4🟡. Top 🟡 = Traceability QA-047 misplaced under REQ-007 (it covers R17, belongs REQ-006/008) + QA-021 missing named error code (`EPROIS0170_UI_MSG_ERROR_DEVIATION`). 🟡 fix applied 2026-06-23: QA-047 moved from REQ-007 to REQ-006/REQ-008 rows (re-review pending). Remains In Review; blocked on RP12–RP24. |
 | Owner | SA / credit decision domain / RD |
 | Upstream PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0170-v1.0.md` |
 | Upstream PRD status | v1.0, 2026-06-15 |
@@ -293,9 +293,9 @@ Not yet a valid EPROCSU0170 contract endpoint:
 | REQ-003 | R3 | QA-007, QA-008, QA-009 |
 | REQ-004 | R4 | QA-010, QA-011, QA-012 |
 | REQ-005 | R5 | QA-013, QA-014, QA-015 |
-| REQ-006 | R6, R16, R17 | QA-016, QA-017, QA-018, QA-046, QA-048, QA-050, QA-051, QA-052, QA-053, QA-054, QA-055, QA-056 |
-| REQ-007 | R7, R16 | QA-019, QA-020, QA-021, QA-047, QA-049 |
-| REQ-008 | R8, R17 | QA-022, QA-023, QA-024 |
+| REQ-006 | R6, R16, R17 | QA-016, QA-017, QA-018, QA-046, QA-047, QA-048, QA-050, QA-051, QA-052, QA-053, QA-054, QA-055, QA-056 |
+| REQ-007 | R7, R16 | QA-019, QA-020, QA-021, QA-049 |
+| REQ-008 | R8, R17 | QA-022, QA-023, QA-024, QA-047 |
 | REQ-009 | R9 | QA-025, QA-026, QA-027 |
 | REQ-010 | R10 | QA-028, QA-029, QA-030 |
 | REQ-011 | R11 | QA-031, QA-032, QA-033 |

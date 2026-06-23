@@ -286,7 +286,6 @@ components:
             - MSG_QUERY_FAIL
             - COMMON_MSG_ERROR_LON
             - COMMON_MSG_SAVE_FAIL
-            - COMMON_MSG_TOTAL_FAIL
         message:
           type: string
         data:

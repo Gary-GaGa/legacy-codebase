@@ -5,7 +5,7 @@
 |---|---|
 | FuncId | EPROC00117 |
 | Status | In Review / draft-for-controller-gate; awaiting parity and human review |
-| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 1🔴 + 5🟡. 🔴 = `MSG_QUERY_FAIL` declared in openapi errors but no Rn/QA carries it. (A prior schema.sql corruption 🔴 — qa-cases content prepended to the file — was fixed in commit d4326d7.) Remains In Review; re-review required after 🔴 fix + RP26–RP38 close. |
+| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 1🔴 + 5🟡. 🔴 = `MSG_QUERY_FAIL` declared in openapi errors but no Rn/QA carries it. (A prior schema.sql corruption 🔴 — qa-cases content prepended to the file — was fixed in commit d4326d7.) 🔴 fix applied 2026-06-23: `MSG_QUERY_FAIL` now carried in R1 + new QA-017 + traceability matrix (re-review pending). Remains In Review; blocked on RP26–RP38. |
 | Owner | SA / Credit decision domain / RD |
 | Upstream PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00117-v1.0.md` |
 | As-is source | Legacy `EPROC0_0117` + `EPROC0_0217`; current corporate implementation and refactor artifacts listed below |
@@ -42,7 +42,7 @@
 ## Rules
 
 ### R1 Load option and current-case context - 強制點: both - covers-prd: PRD §5.1/§5.3
-When the EPROC00117 page is opened, the client shall call the option endpoint and the info endpoint with a server-recognized `applicationNo` and `isQuery`. The backend shall reject missing `applicationNo` or `isQuery` with controlled EPRO validation errors, and shall return the borrower/business financial list plus GI ratios in the EPRO envelope.
+When the EPROC00117 page is opened, the client shall call the option endpoint and the info endpoint with a server-recognized `applicationNo` and `isQuery`. The backend shall reject missing `applicationNo` or `isQuery` with controlled EPRO validation errors, and shall return the borrower/business financial list plus GI ratios in the EPRO envelope. A query/data-access failure during option or info retrieval shall surface as `MSG_QUERY_FAIL` in the EPRO envelope without performing any partial ratio write.
 
 As-is: legacy `initQuery` loaded ccyMap and then either persisted or computed GI ratio data. To-be: the page uses `epl-sele-c0-financial-list` and `epl-info-c0-financial-business`; compatibility for legacy `getTotal/getExist` is not assumed and is tracked by `RP26` and `RP34`.
 
@@ -128,7 +128,7 @@ This rule intentionally keeps the bundle in `In Review`. It does not close `docs
 ## Traceability Matrix
 | PRD area | Rules | QA |
 |---|---|---|
-| Page load / initQuery | R1, R2 | QA-001, QA-002, QA-003 |
+| Page load / initQuery | R1, R2 | QA-001, QA-002, QA-003, QA-017 |
 | GI ratio calculation | R2, R3 | QA-004, QA-005, QA-006 |
 | DSR/business financial list | R4 | QA-007, QA-008, QA-015 |
 | Save / Finished / transaction | R5, R6 | QA-009, QA-010, QA-011, QA-016 |

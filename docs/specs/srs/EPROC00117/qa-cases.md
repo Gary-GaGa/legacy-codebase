@@ -19,6 +19,7 @@
 | QA-014 | R8 | Review | Old corporate c0 source evidence is not attached. | Review this bundle against `EPROC0_0117` and `EPROC0_0217`. | Any unverified behavior stays "待 parity 碼驗 / 待 RD 核對"; bundle remains In Review, not Approved. |
 | QA-015 | R4 | Edge | Only one DSR/business financial item remains. | Attempt to delete the final item, then attempt to save an empty `financialList`. | FE shows `COMMON_MSG_ONE_DATA` and does not delete; backend rejects empty `financialList` if submitted. |
 | QA-016 | R5/R7 | Error | Save request has blank or missing `applicationNo`. | POST `/epl-save-c0-financial-business`. | Backend returns `COMMON_MSG_ERROR_LON` or platform validation equivalent before mutation; no business financial, GI ratio, or checkpoint rows are written. |
+| QA-017 | R1 | Error | Backend data access / query fails during option or info retrieval. | POST `/epl-info-c0-financial-business`. | Backend returns `MSG_QUERY_FAIL` in the EPRO envelope; no partial ratio write or mutation occurs. |
 
 ## Pending QA
 | Case ID | Covers | Pending ID | Owner | Required Evidence |
