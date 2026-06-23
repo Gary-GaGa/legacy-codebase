@@ -1,18 +1,45 @@
 %% 未來 AI 工作流 — AI-native SDLC pipeline（brownfield 版）
 %% 在 GitHub / Mermaid Live (mermaid.live) 直接 render；可編輯。本檔＝AI Flow 唯一來源（不再維護 .svg 快取——2026-06-11 健檢刪除；需要圖檔時臨時 render）。
+%% 2026-06-23：QA-Agent / RD-Agent 由單節點攤成子流程（主幹＋oracle 化／as-is 驗證），對齊 docs/process/orchestration-playbook.md §4。
 flowchart LR
   Legacy[("Legacy 系統<br/>既有碼 · DB · JSP")] -->|EPRO Expert AI<br/>反推 · 證據接地| Bible
   Bible["<b>Bible 業務聖經</b><br/>user story · 北極星 · 黃金旅程"] -->|PM/PO + AI| PRD
   PRD["<b>PRD</b><br/>what / why · REQ-nnn"] -->|SA + AI| SRS
 
-  %% ★brownfield：頁已存在 → 先驗 migrated 碼，findings 當 as-is 餵 SRS（這條是 70% 既有碼的必經路）
+  %% ★brownfield as-is（第一次）：頁已存在 → SRS 撰寫前先驗 migrated 碼，findings 當 as-is 餵 SRS（70% 既有碼的必經路）
   Legacy -.->|"頁已存在：as-is 驗證<br/>migrated 碼 vs 舊系統/PRD"| Findings
   Findings["<b>as-is findings</b><br/>結構在 ≠ 行為對等<br/>★regression vs 刻意演進<br/>file:line 證據"] -.->|as-is 輸入| SRS
 
   SRS["<b>SRS</b><br/>spec(Rn·強制點FE/BE) · OpenAPI · schema<br/>as-is/to-be · @PENDING"] --> SRSCHK
-  SRSCHK["<b>SRS 自驗</b>（定稿前）<br/>機械 check-srs-bundle ①②⑤<br/>+ spec-reviewer 語意（唯讀·不改）"] -->|無 Blocker → Approved| QA
-  QA["<b>QA cases 1~∞</b><br/>可跑驗收 · covers Rn"] --> RD
-  RD["<b>RD-Agent</b><br/>開發 + 測試<br/>Code → CICD"] --> GATE
+  SRSCHK["<b>SRS 自驗</b>（定稿前）<br/>機械 check-srs-bundle ①②⑤<br/>+ spec-reviewer 語意（唯讀·不改）"] -->|無 Blocker → Approved| QA_IN
+
+  %% ═══════════ QA-Agent：SRS→可跑 oracle（軌性格：活語料 1~∞、反壓上游） ═══════════
+  subgraph QAA["QA-Agent — 文件→可判真假的 oracle"]
+    direction TB
+    QA_IN["<b>輸入閘</b><br/>Rn 有 acceptance+強制點？openapi/schema 在？<br/>否 → 退回 SRS（不替 SA 補意圖）"]
+    QA_DEC["<b>拆 case</b>：每條 Rn → happy / error / edge"]
+    QA_ORA["<b>oracle 化</b>：given · when · then · 判官<br/>error 由 openapi 錯誤碼反推（一碼≥一 case）<br/>edge 溯 schema 約束 / 量化詞（非湊數）"]
+    QA_BE["<b>強制點施測層</b><br/>BE-enforced → 額外『繞過 FE 直打端點』negative case（N 軸 axis D）"]
+    QA_OUT["<b>qa-cases.md</b> · covers Rn · 確定性 oracle"]
+    QA_IN --> QA_DEC --> QA_ORA --> QA_BE --> QA_OUT
+  end
+
+  QA_OUT --> RD_IN
+
+  %% ═══════════ RD-Agent：SRS(Approved)→ code（主路徑＝驗 migrated 碼，非從零寫） ═══════════
+  subgraph RDA["RD-Agent — 規格→碼（brownfield 主路徑：as-is 驗證）"]
+    direction TB
+    RD_IN["<b>輸入閘</b><br/>SRS Approved？N 軸無 Blocker、@PENDING 都有 owner"]
+    RD_SPLIT{"頁有<br/>migrated 碼？"}
+    RD_ASIS["<b>as-is 驗證（第二次）</b><br/>對位 Rn↔method:line（MISSING 不臆測）<br/>契約/行為/資料 三面比對 → drift<br/>★drift 分 regression（改回）vs 刻意演進（留·要 REF-Dn 依據）"]
+    RD_GREEN["<b>greenfield</b>（無鏡像，如撥貸 0920）<br/>先唯讀盤點舊鏈路 + 計畫 → 等人審<br/>（不直接開做：backend/AGENTS.md §6）"]
+    RD_WORK["<b>拆工 BE / FE</b>（依 Rn 強制點）<br/>openapi.yaml 鎖契約＝唯一真相<br/>backend / frontend 各獨立 session（context 衛生）"]
+    RD_IN --> RD_SPLIT
+    RD_SPLIT -->|有| RD_ASIS --> RD_WORK
+    RD_SPLIT -->|無| RD_GREEN --> RD_WORK
+  end
+
+  RD_WORK --> GATE
 
   subgraph GATE["DoD 閘門牆 — RD 通過 SA/QA 邊界"]
     direction TB
@@ -22,26 +49,30 @@ flowchart LR
     G4["④ QA 驗收 · 跑 QA cases<br/>（Testcontainers oracle-xe；橋接 specs/qa-to-test.md）"]
     G5["⑤ 覆蓋率 · ID 對表"]
     G6["⑥ Build 綠"]
-    G7["⑦ LLM 語意審查 · advisory（code 階段）<br/>※SRS 階段的 spec-reviewer＝blocking（見 SRSCHK）"]
+    G7["⑦ LLM 語意審查 · advisory（code 階段）<br/>三軸 contract / scope / regression（read-only·真獨立·跨模型）<br/>※SRS 階段的 spec-reviewer＝blocking（見 SRSCHK）"]
     G1 ~~~ G2 ~~~ G3 ~~~ G4 ~~~ G5 ~~~ G6 ~~~ G7
   end
 
   GATE -->|①–⑥ 全綠| Done["✅ Done"]
-  GATE -.->|❌ FAIL → 修，重跑| RD
+  GATE -.->|❌ FAIL → 修，重跑| RD_WORK
   Done --> Issue["Issue<br/>bug → 回歸 case"]
-  Issue -.->|新 QA case · 回歸 1~∞| QA
+  Issue -.->|新 QA case · 回歸 1~∞| QA_DEC
 
   %% ★判斷題不自行裁定：TBD / 模糊 / 既有碼行為 → human 裁定 → 關閉後回流
-  SRS -.->|"TBD / 模糊 / 判斷題"| Decide
-  RD  -.->|"escalation（既有碼/領域，如 E1/E2）"| Decide
+  SRS    -.->|"TBD / 模糊 / 判斷題"| Decide
+  QA_ORA -.->|"寫不出 oracle / Rn 互斥（＝SRS 漏）"| Decide
+  RD_ASIS-.->|"escalation（算法無法 1:1 鏡像 / 改既有 i0·DTO 契約變，如 E1/E2）"| Decide
   Decide{{"human 裁定<br/>PM/SA/RD/domain/DBA<br/>關 @PENDING / TBD"}} -.->|關閉後續做| SRS
 
-  SRS -. 定義 ①②③ .-> GATE
-  QA  -. 定義 ④⑤ .-> GATE
+  SRS    -. 定義 ①②③ .-> GATE
+  QA_OUT -. 定義 ④⑤ .-> GATE
 
   %% 追溯 ID 骨幹：funcId(例 EPROC00118) 串 Bible→PRD→SRS→QA→code/test
   %% 原則：↑可追溯 ↓可驗證（①–⑥ deterministic 可信 / ⑦ LLM 只輔助）★Bible 證據接地
+  %% as-is 出現兩次別混：Findings＝SRS 撰寫前 as-is(餵 as-is/to-be)；RD_ASIS＝SRS Approved 後驗 migrated 碼行為對等
   %% brownfield 鐵律：migrated 碼「結構在≠行為對等」→ 必經 as-is 驗證；舊系統≠絕對正確 → 分 regression vs 刻意演進
+  %% QA 軌鐵律：oracle 寫不出＝SRS 漏 → 反壓退回（不硬湊 coverage theater）；error 由 openapi 反推、edge 溯 schema/量化詞；BE-enforced 必有繞過 FE 的 negative case
+  %% RD 軌鐵律：對位 MISSING 不臆測（zero-based）；無鏡像頁先盤點+計畫等審；判斷題（算法/既有碼/DTO 契約）→ backend/AGENTS.md §6.6 升級
   %% 判斷題鐵律：PRD TBD / legacy 行為一律 @PENDING + owner，不自行裁定、不把 legacy 當已核准需求（含 PRD 內帶的 as-is 細節）
   %% 動手前鐵律：頁開做前先唯讀盤點實際完成度 + 確認 mirror/算法來源（防「未做其實已完成」「假設錯來源」）
   %% as-is 驗證最低深度：每個 DB 寫入有 return/commit？每個 stub/TODO/throw？每條 error 分支？跨頁副作用？（防 throw-stub 漏網）
@@ -62,6 +93,8 @@ flowchart LR
   classDef chk fill:#E0F7FA,stroke:#00ACC1,color:#006064;
   classDef decide fill:#FCE4EC,stroke:#D81B60,color:#880E4F;
   class Legacy legacy; class Bible biz; class PRD prod; class SRS spec;
-  class QA qa; class RD rd; class Done done; class Issue issue;
+  class Done done; class Issue issue;
   class Findings findings; class SRSCHK chk; class Decide decide;
+  class QA_IN,QA_DEC,QA_ORA,QA_BE,QA_OUT qa;
+  class RD_IN,RD_SPLIT,RD_ASIS,RD_GREEN,RD_WORK rd;
   class G1,G2,G3,G4,G5,G6,G7 gate;
