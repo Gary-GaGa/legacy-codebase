@@ -5,7 +5,7 @@
 |---|---|
 | FuncId | EPROC00117 |
 | Status | In Review / draft-for-controller-gate; awaiting parity and human review |
-| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 1🔴 + 5🟡. 🔴 = `MSG_QUERY_FAIL` declared in openapi errors but no Rn/QA carries it. (A prior schema.sql corruption 🔴 — qa-cases content prepended to the file — was fixed in commit d4326d7.) 🔴 fix applied 2026-06-23: `MSG_QUERY_FAIL` now carried in R1 + new QA-017 + traceability matrix (re-review pending). Remains In Review; blocked on RP26–RP38. |
+| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 1🔴 + 5🟡. 🔴 = `MSG_QUERY_FAIL` declared in openapi errors but no Rn/QA carries it. (A prior schema.sql corruption 🔴 — qa-cases content prepended to the file — was fixed in commit d4326d7.) 🔴 fixed + re-review PASS 2026-06-23: `MSG_QUERY_FAIL` carried in R1 + new QA-017 + traceability matrix; re-review tightening applied same day (QA-017 now drives both option+info endpoints with simulated fault wording; R5 cross-refs SAVE-006 split). Remains In Review; blocked on RP26–RP38. |
 | Owner | SA / Credit decision domain / RD |
 | Upstream PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00117-v1.0.md` |
 | As-is source | Legacy `EPROC0_0117` + `EPROC0_0217`; current corporate implementation and refactor artifacts listed below |
@@ -64,7 +64,7 @@ When the user deletes DSR/business financial items, the client shall prevent del
 As-is: PRD notes the legacy UI effectively fixed DSR currency to USD while still loading `ccyMap`. To-be: backend and product owner must confirm currency policy before Approved; this remains `RP32`.
 
 ### R5 Save draft or Finished as full replacement in one transaction - 強制點: BE - covers-prd: PRD §6.4/NFR
-When the user saves EPROC00117, the backend shall validate `applicationNo` and `isFinish`, load the case summary, delete existing business financial rows for that case, insert the submitted `financialList` and aggregate DSR fields, and update the active checkpoint in one transaction. Blank `applicationNo` on save shall return `COMMON_MSG_ERROR_LON` and shall not write data. Any failure after delete shall roll back the prior persisted state. The save request shall not accept client-submitted GI ratio rows; ratio persistence is owned by the info compute branch in R2.
+When the user saves EPROC00117, the backend shall validate `applicationNo` and `isFinish`, load the case summary, delete existing business financial rows for that case, insert the submitted `financialList` and aggregate DSR fields, and update the active checkpoint in one transaction. Blank `applicationNo` on save shall return `COMMON_MSG_ERROR_LON` and shall not write data. Any failure after delete shall roll back the prior persisted state. The save request shall not accept client-submitted GI ratio rows; ratio persistence is owned by the info compute branch in R2. Per PRD SAVE-006, transaction failure shall roll back and return `COMMON_MSG_SAVE_FAIL`; SAVE-006's query-failure half (`MSG_QUERY_FAIL`) is carried on the read path by R1.
 
 To-be: the backend is authoritative for `applicationNo`, `DATA_SEQ`, and checkpoint state. Client-supplied detail keys are not trusted as authority. Current implementation partially rewrites parent `applicationNo` but page-specific key/entity parity remains `RP31` and `RP35`.
 

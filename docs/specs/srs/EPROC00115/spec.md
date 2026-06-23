@@ -5,7 +5,7 @@
 |---|---|
 | FuncId | EPROC00115 |
 | Status | In Review / draft-for-controller-gate; awaiting human approval |
-| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 1🔴 + 6🟡. 🔴 = `COMMON_MSG_TOTAL_FAIL` listed in openapi error enum but R9 forbids modeling it for these endpoints (contract ⊥ rule). Top 🟡 = orphan error codes E130/E201/E999/E498; save authz (pilot core) deferred to RP20. 🔴 fix applied 2026-06-23: `COMMON_MSG_TOTAL_FAIL` removed from openapi error enum to match R9 (re-review pending). Still not Approvable: orphan-code 🟡 + RP20 authz open. |
+| N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 1🔴 + 6🟡. 🔴 = `COMMON_MSG_TOTAL_FAIL` listed in openapi error enum but R9 forbids modeling it for these endpoints (contract ⊥ rule). Top 🟡 = orphan error codes E130/E201/E999/E498; save authz (pilot core) deferred to RP20. 🔴 fixed + re-review PASS 2026-06-23: `COMMON_MSG_TOTAL_FAIL` removed from openapi error enum to match R9; re-review surfaced symmetric 🟡 (`COMMON_MSG_SAVE_SUCCESS` modeled in save 200 description) — fixed same day per R9. Still not Approvable: orphan-code 🟡 (E130/E201/E999/E498) + RP20 authz open. |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00115-v1.0.md` |
 | Legacy source | `EPROC0_0115`, `EPROC0_0215`, `EPROC00115.jsp`, `EPROC00215.jsp`, `EPRO_TB_GROUP_EXPOSURE` |
 | Output files | `spec.md`, `openapi.yaml`, `schema.sql`, `qa-cases.md` |

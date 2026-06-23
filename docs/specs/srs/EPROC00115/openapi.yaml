@@ -66,7 +66,7 @@ paths:
               $ref: '#/components/schemas/SaveRequest'
       responses:
         '200':
-          description: EPRO envelope. Success carries COMMON_MSG_SAVE_SUCCESS; business errors such as E102, E126, E130, COMMON_MSG_SAVE_FAIL, or MSG_QUERY_FAIL return ErrorResponse in the same envelope.
+          description: EPRO envelope. Success returns code=0000, message=Success, empty data (legacy COMMON_MSG_SAVE_SUCCESS is a UI message, not an API body per R9); business errors such as E102, E126, E130, COMMON_MSG_SAVE_FAIL, or MSG_QUERY_FAIL return ErrorResponse in the same envelope.
           content:
             application/json:
               schema:
