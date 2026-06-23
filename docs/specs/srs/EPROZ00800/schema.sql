@@ -11,7 +11,7 @@
 -- DB-D5 carried: TB_COMMON_FIELD_OPTIONS and TB_MULTI_LANG provide REVISED_ITEM display names; no code-table maintenance in this page.
 -- DB-D6 carried: downstream side-effect tables are dependencies, not owned by this bundle.
 -- DB-D7 verified: SELECT-only closeout found both final TB_API_AUTH query/save rows with REF_FUNCTION_ID=EPROZ00800.
--- R7/R16 blocker remains outside TB_API_AUTH: TB_PAGE_COLUMN_AUTH_DETAIL currently lacks reason.item and needs DBA/RD backfill or equivalent fix.
+-- R7/R16 page-column auth: TB_PAGE_COLUMN_AUTH_DETAIL reason.item row backfilled (DBA/RD-applied 2026-06-23); closeout re-run PAGE_COLUMN_RESULT=PASS, MATCHED_ROWS=4. No blocker remains.
 -- External dependency tables referenced for side effects and verification: TB_MAIN_BORROWER_PERSONAL_INFO, TB_MAIN_BORROWER_INFO_CORP,
 -- TB_GUARANTOR_INFO, TB_GUARANTOR_INFO_CORP, TB_COLL_INFO, TB_COLL_VALUE_INFO, TB_COLL_LTV, TB_COLL_PROVIDER_INFO,
 -- TB_COLL_TITLE_DETAIL, TB_COLL_VALUE_DETAIL, TB_COLL_TITLE_REGIS_OWNER, TB_COLL_SITE_VISIT, TB_INSPE_AO,
