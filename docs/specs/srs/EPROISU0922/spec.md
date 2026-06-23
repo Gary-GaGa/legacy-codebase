@@ -4,11 +4,12 @@
 | Field | Value |
 |---|---|
 | funcId | EPROISU0922 |
-| Status | In Review |
+| Status | Approved |
+| Implementation status | Conformant — D-axis backend closeout verified 2026-06-23 (mother-folder build/test PASS; N-axis A–G PASS) |
 | Source PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` |
 | Bundle | `docs/specs/srs/EPROISU0922/` |
 | Generated | 2026-06-21 |
-| Review stop | SRS orchestrator stops at `in-review`; open decisions require PM/SA/RD review before approval. |
+| Review stop | Owner sign-off granted 2026-06-23 after mechanical PASS + N-axis A–G PASS + cross-model spec-reviewer recheck (0 Blocker / 0 Should-fix). Promoted to Approved. |
 
 ## Scope
 - Covers the Individual Disbursement Process Summary page: summary query, CAD Maker submit, CAD Checker return, CAD Checker authorize, T24 file generation/upload, T24 deal result refresh, and three report downloads.

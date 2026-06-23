@@ -137,7 +137,7 @@
 | ✅ **A-1 換匯 stub（+conformance PASS）** | **已實作＋碼驗（product `daae4c3`，06-16；mvn 綠）** | `funcGetExchangeRate` 補 return → authorize 換匯打通；**Codex conformance 4/4 PASS**（OQ-1 `OVSLXLON01`／OQ-3 `FAILED_E304` 中止／OQ-4 throw／兩表同交易）；規格/recon `done/` |
 | ✅ B-1 `T24_COMPANY`（06-22 closed）| **RD 已接值＋owner 確認沿用** | 新庫 `TB_BRANCH_PROFILE.T24_COMPANY` 實存（OVSLXLON01/02 兩 schema，new DB reverify=`VARCHAR2(5)`）；entity 已補映射並對齊 T24 欄位長度，B8/C9 已接值且缺 row/缺值不落空白；owner 06-22 確認無另設 T24 contract override，沿用 legacy/current source |
 | ✅ T24 B-group parity（06-17） | **code 已 commit/push（`3d6f446`，origin/master，06-17 10:41；金錢/截斷欄人審過）；剩端到端/T24 接收驗證** | B-2、B-3 非幣別欄、B-4、B-5 已照舊；`E21`、`G4`/`G10`/`H8` 依 A-5 USD+KHR-only 邊界 keep。findings：`build-tasks/done/t24-bgroup-legacy-parity-fix-findings.md` |
-| 🟡 撥貸 domain | code 已裁／SRS In Review | A-4/M6/B-1 `T24_COMPANY`/KHR G·H code 已裁；**06-20 T24/A-4/M6 SRS-層 re-open → 06-22 SRS 已產收口（0921/0922 bundle、gate PASS、In Review、未升 approved）：0922 T24_COMPANY entity 對齊+FAILED_E999、0921 core 舊+law firm REF-D3/M6 REF-D4 偏新**；剩 T24 UAT + spec-reviewer + E1/E2。 |
+| 🟢 撥貸 domain | code 已裁／SRS Approved | A-4/M6/B-1 `T24_COMPANY`/KHR G·H code 已裁；**06-20 T24/A-4/M6 SRS-層 re-open → 06-22 SRS 產收口 → 06-23 0921/0922 兩 bundle Approved（gate PASS、N 軸 A–G PASS、cross-model spec-reviewer 0/0、D 軸 backend closeout 驗、owner stamp）：0922 T24_COMPANY entity 對齊+FAILED_E999、0921 core 舊+law firm REF-D3/M6 REF-D4 偏新**；剩 T24 端到端 UAT + E1/E2。 |
 | ✅ **批次層 B001–B008** | **AUD-10 結（06-16，app 層完整）** | ✅ **6 FOUND**（新批次**重編號**≠legacy；B001-B007 對映見 findings）；✅ **B005 銷案**（inline 換匯取代每日批次、`TB_EXCHANGE_RATE` write-only）；⚪ **B008 log＝ops**。詳 `done/aud10-batch-layer-reverify-findings.md` |
 | 整合測確認點 | 待驗 | 〔A-1 spec-conformance ✅ PASS 06-16〕M7 facility fee 值、M9 district name join、撥貸端到端（含批次層）|
 > **完整歷史裁定見 [`disbursement-domain-escalations.md`](disbursement/disbursement-domain-escalations.md)。** ✅ **A-1 stub 已實作（`daae4c3`）→ 機械修正不再 inert、authorize 可端到端跑**；B-1 `T24_COMPANY`、A-4/M6 domain、KHR G/H 來源皆已裁定並落文件；剩撥貸真完成＝T24 B-group 端到端/T24 接收驗證（code 已 push `3d6f446`）與 UAT。
@@ -179,7 +179,7 @@
 
 **③ 🟡 撥貸 domain（code 決策清 06-17；T24/A-4/M6 06-20 SRS-層 re-open → 06-22 SRS 已產收口 In Review）— 見 escalation doc + pending 列 14/15**
 - ✅ A-1 換匯 stub 已實作+conformance PASS（`daae4c3` 06-16）；✅ A-2 換匯源 ID＝`OVSLXLON01`；✅ B-1 `T24_COMPANY`→B8/C9 沿用 `TB_BRANCH_PROFILE.T24_COMPANY`、RD 已接值（entity 對齊+FAILED_E999）且 owner 06-22 確認無另設 override；A-4 檢核 / M6 完工日 / KHR G·H 來源 06-17 code 裁照舊；✅ T24 B-group commit/push（`3d6f446`）、批次層 AUD-10 結。
-- **⚠️ 06-20 SRS-層 re-open → 06-22 已產 0921/0922 SRS bundle**（`check-srs-bundle` PASS、**In Review checkpoint、未升 approved**）：0922 T24 殘欄 TBD-007/008 closed（T24_COMPANY entity 對齊）；0921 core 維持舊 baseline、law firm `REF-D3`/M6 `REF-D4` 命中偏新。**殘＝T24 UAT + spec-reviewer/人審升 approved + E1/E2（信用決策 domain）**。
+- **06-20 SRS-層 re-open → 06-22 產 0921/0922 SRS bundle → 06-23 兩 bundle Approved**（`check-srs-bundle` PASS、N 軸 A–G PASS、cross-model spec-reviewer 0 Blocker/0 Should-fix、D 軸 backend closeout 驗、owner stamp）：0922 T24 殘欄 TBD-007/008 closed（T24_COMPANY entity 對齊）；0921 core 維持舊 baseline、law firm `REF-D3`/M6 `REF-D4` 命中偏新。**殘＝T24 端到端 UAT + E1/E2（信用決策 domain）**。
 
 **④ z0 半成品收尾（小修；owner：前後端）**
 - `00300` Document Checklist：✅ **recon 坐實＋FE 導回已修 06-15**（recon `done/00300-return-recon.md`；fix `40d931c`，卡歸檔 `done/00300-return-fix.md`）——BE 非缺陷、FE 導回 ToDo 已實作（共用 `goPreviousPage()`）；DIFF-011 收。Phase V 驗共用方法連帶呼叫端語意。
@@ -240,7 +240,7 @@
 7. R2 報表服務 → 0181/i0·c0 PDF/z0 PDF；檔案上傳 API；FE/BE method-mismatch sweep；map-key sweep；Logback 外部化。
 
 **Phase S — spec 層（PRD→SRS 重產；owner：PM/SA + Codex local；並行 track）**
-8. Phase S status: SRS bundle coverage **2/67**; `EPROZ00100` and `EPROC00118` are Approved after 2026-06-20 RD/DBA contract closeout. Next expansion follows risk tier (corporate line / disbursement / 00800). **決策頁 SRS 產出佇列（≈22 頁＋各頁要餵的輸入）＝`srs-production-queue-2026-06-20.md`（已回填 matrix ledger 逐頁列）**；企金線 18 頁 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗餵入。
+8. Phase S status: SRS bundle coverage **4/67**; `EPROZ00100`, `EPROC00118`, `EPROISU0921`, and `EPROISU0922` are Approved (0921/0922 owner-stamped 2026-06-23 after N-axis A–G PASS + cross-model spec-reviewer 0/0). Next expansion follows risk tier (corporate line / 00800). **決策頁 SRS 產出佇列（≈22 頁＋各頁要餵的輸入）＝`srs-production-queue-2026-06-20.md`（已回填 matrix ledger 逐頁列）**；企金線 18 頁 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗餵入。
 
 **關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。**spec 層（PRD→SRS 重產，Phase S）= 前置就緒、owner local 並行 track，不擋當前里程碑，但為 00800/企金線 rebuild 的上游**。
 
