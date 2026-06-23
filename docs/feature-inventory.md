@@ -67,7 +67,7 @@
 | EPROCSU0130 | 0130+0230 | Guarantor | ✅ | ✅ | **✅ 2026-06-05 收尾（ng build 綠）** |
 | EPROCSU0150 | 0150+0250 | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| ✅ | ✅ | ✅ FE 補建 G2（`14b254e`）；⏸ 檔案 API；Phase V 待測 |
 | EPROCSU0160 | 0160+0260 | Loan Condition（+0261 popup）| ✅ | ✅ | ✅ FE 補建 G1（`809d25d`，pilot；+0261 popup）；Phase V 待測 |
-| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | ✅ FE 補建 G3（`646e178`；+0174/0175 popup）；Phase V 待測（❓ 審批段細節 B1、CSU download route 無）|
+| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | ✅ FE 補建 G3（`646e178`；+0174/0175 popup）；SRS in-review：`docs/specs/srs/EPROCSU0170/`（RP12-RP24 open，gate+AG PASS，待人審）；Phase V 待測（❓ 審批段細節 B1、CSU download route 無）|
 | EPROCSU0171 | 0171 | Loan Committee Conclusion | ✅ | ✅ | ✅ FE 補建 G4（`8badefc`）；Phase V 待測（檔案 upload/download 無 CSU route）|
 | EPROCSU0172 | 0172 | Approved Loan Condition | ✅ | ✅ | ✅ FE 補建 G5（`0ff2140`）；⏸ 列印 R2；Phase V 待測 |
 | EPROCSU0173 | 0173 | Credit Evaluation Old | ✅ | ✅ | ✅ FE 補建 G6（`4429551`）；Phase V 待測 |
@@ -101,9 +101,9 @@
 | EPROC00114 | Collateral Assessment | 🟡 | ✅ | `epl-sele/info/save-c0-collateral-assessment`（`62ec62f`；無 c0 calc→隱 Calc 鈕、分數 BE save 算）；audit F-7：calc handler 空 return——**Phase V 驗鈕真隱→可降回 ✅** |
 | EPROC00115 | Borrower Group Exposure | ✅ | ✅ | `epl-sele/info/save-c0-borrower-group-exposure`（Step 1 BGE pilot）；授權列 |
 | EPROC00116 | Financial Statement GI | ✅ | ✅ | `epl-*-c0-financial-statement-comments`（`524d8dc`；calc 保留、export POST-blob 兩邊一致、無 00640 式不符）；授權列；export 模板沿用 i0？|
-| EPROC00117 | Financial Evaluation GI | ✅ | ✅ | **business-only ✅**（`b14ae05`，決策 B）：接 `epl-sele-c0-financial-list`、`epl-info/save-c0-financial-business`；未接 `-financial-staff`（cleanup）；授權列 |
+| EPROC00117 | Financial Evaluation GI | ✅ | ✅ | **business-only ✅**（`b14ae05`，決策 B）：接 `epl-sele-c0-financial-list`、`epl-info/save-c0-financial-business`；未接 `-financial-staff`（cleanup）；SRS in-review：`docs/specs/srs/EPROC00117/`（RP26-RP38 open，gate+AG PASS，待人審）；授權列 |
 | EPROC00118 | Corporate Scorecard | ✅ | ✅ | `epl-{sele(-list)/info/calc/save}-c0-corporateScorecard`; SRS Approved after 2026-06-20 RD/DBA contract closeout: four TB_API_AUTH rows direct-applied/rechecked, info DTO/status, save guard, parseScore fail-fast, UTC+8 scoreDatetime, numeric guard implemented. |
-| EPROC00119 | Financial Statement FI | ✅ | ✅ | ✅ F-8 已修（`6919da5`，options 接 `epl-sele-c0-financial-statement-comments`）；**Phase V 必驗**：下拉有值+save 帶值+GI-sele 對 FI（businessType F）無分支影響；授權列；export 模板沿用 i0？|
+| EPROC00119 | Financial Statement FI | ✅ | ✅ | ✅ F-8 已修（`6919da5`，options 接 `epl-sele-c0-financial-statement-comments`）；SRS in-review：`docs/specs/srs/EPROC00119/`（RP40-RP54 open，gate+AG PASS，待人審）；**Phase V 必驗**：下拉有值+save 帶值+GI-sele 對 FI（businessType F）無分支影響；授權列；export 模板沿用 i0？|
 | EPROC00120 | Financial Evaluation FI | ✅ | ✅ | **business-only ✅**（`6b084fb`，決策 B）：接 `epl-info/save-c0-financial-evaluation-table-fi`；i0 FI list 不消費→`getMenu()`回`of({})`；未接 `-staff-fi`（cleanup）；授權列 |
 > **範本＝i0 `individual/credit-investigation`**（容器動態載 tab、各子頁 `components/<name>/{component,services}`；c0 鏡像、改 `-c0-` endpoint + corporate DTO）。
 > ⚠️ **G/F businessType 分頁**：FE 容器須吃 BE 回的 `businessType`+`pageMap`（預設 G→移除 00119/00120、F→移除 00116/00117；save 依 businessType 更 checkpoint，`CsuCreditInvestigationServiceImpl:129/264/279/366`）。i0 容器本就動態（tabControl 來自 BE）→ 鏡像即自然涵蓋。

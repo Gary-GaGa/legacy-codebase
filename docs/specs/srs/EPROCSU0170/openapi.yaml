@@ -1,0 +1,674 @@
+openapi: 3.0.3
+info:
+  title: EPROCSU0170 Credit Evaluation and Credit Decision RPC Contract
+  version: 0.1.0-in-review
+  description: >
+    Current EPROCSU0170 RPC contract grounded by controller/refactor-spec.
+    This contract is not Approved; print/cascade/checkpoint gaps remain pending.
+servers:
+  - url: https://example.com/api
+    description: Placeholder base URL; real deployment URL is environment-owned.
+tags:
+  - name: EPROCSU0170
+paths:
+  /epl-sele-csu-cr-dec:
+    post:
+      tags: [EPROCSU0170]
+      summary: Load dropdown and bootstrap options
+      operationId: seleCsuCrDec
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationRequest'
+      responses:
+        '200':
+          description: EPRO envelope with dropdown/options payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Authorization denied for page/options access.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-info-csu-cr-dec:
+    post:
+      tags: [EPROCSU0170]
+      summary: Query main page aggregate
+      operationId: infoCsuCrDec
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationRequest'
+      responses:
+        '200':
+          description: EPRO envelope with main credit evaluation aggregate.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Authorization denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-save-csu-cr-dec:
+    post:
+      tags: [EPROCSU0170]
+      summary: Save credit evaluation draft
+      operationId: saveCsuCrDec
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveCreditDecisionRequest'
+      responses:
+        '200':
+          description: EPRO envelope indicating save success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Authorization denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-case-csu-cr-dec-submit:
+    post:
+      tags: [EPROCSU0170]
+      summary: Execute submit/return/cancel/agreed/LLC/LC workflow action
+      operationId: caseCsuCrDecSubmit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitCreditDecisionRequest'
+      responses:
+        '200':
+          description: EPRO envelope indicating workflow action success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: >
+            Validation error, including COMMON_MSG_ERROR_LON,
+            COMMON_MSG_RELATED_YET, EPROI00113_MSG_ERROR_LEVEL,
+            EPROIS0170_UI_MSG_ERROR_DEVIATION.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Authorization denied or current-handler/state guard failed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Case state conflict or stale workflow transition.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-info-csu-cr-dec-retu:
+    post:
+      tags: [EPROCSU0170]
+      summary: Query return information
+      operationId: infoCsuCrDecRetu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationRequest'
+      responses:
+        '200':
+          description: EPRO envelope with return information.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-save-csu-cr-dec-retu:
+    post:
+      tags: [EPROCSU0170]
+      summary: Save return information
+      operationId: saveCsuCrDecRetu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReturnInfoRequest'
+      responses:
+        '200':
+          description: EPRO envelope indicating return save success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON and EPROCS0170_MSG_009.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Authorization denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-case-csu-cr-dec-del-retu:
+    post:
+      tags: [EPROCSU0170]
+      summary: Delete return information
+      operationId: caseCsuCrDecDelRetu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteReturnInfoRequest'
+      responses:
+        '200':
+          description: EPRO envelope indicating delete success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Authorization denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-info-csu-cr-dec-cancel:
+    post:
+      tags: [EPROCSU0170]
+      summary: Query cancel reason options and current cancel state
+      operationId: infoCsuCrDecCancel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationRequest'
+      responses:
+        '200':
+          description: EPRO envelope with cancel options.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-save-csu-cr-dec-cancel:
+    post:
+      tags: [EPROCSU0170]
+      summary: Save cancel reason
+      operationId: saveCsuCrDecCancel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelCaseRequest'
+      responses:
+        '200':
+          description: EPRO envelope indicating cancel save success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON and EPROZ00100_MSG_REASON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Authorization denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-case-csu-cr-dec-upload:
+    post:
+      tags: [EPROCSU0170]
+      summary: Upload LLC meeting file
+      operationId: caseCsuCrDecUpload
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadFileRequest'
+      responses:
+        '200':
+          description: EPRO envelope with uploaded file metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Authorization denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server-side file write failure; DB file metadata must be rolled back or compensated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-case-csu-cr-dec-del-file:
+    post:
+      tags: [EPROCSU0170]
+      summary: Delete LLC meeting file
+      operationId: caseCsuCrDecDelFile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteFileRequest'
+      responses:
+        '200':
+          description: EPRO envelope indicating file delete success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EproResponse'
+        '400':
+          description: Validation error, including COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Authorization denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ApplicationRequest:
+      type: object
+      required: [applicationNo]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        caseDomain:
+          type: string
+          enum: [CS, CU]
+          description: Optional navigation hint only; backend derives authoritative domain.
+        caseScenario:
+          type: string
+          enum: ['0170', '0270']
+          description: Optional navigation hint only; backend derives authoritative scenario.
+      additionalProperties: false
+    SaveCreditDecisionRequest:
+      type: object
+      required: [applicationNo, suggestedTermList, sugLoan, sugFee, sugCbcFee]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        suggestedTermList:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/SuggestedTerm'
+        sugLoan:
+          $ref: '#/components/schemas/SuggestedLoan'
+        sugFee:
+          $ref: '#/components/schemas/SuggestedFee'
+        sugLtv:
+          type: number
+          maximum: 999.99
+          minimum: 0
+          multipleOf: 0.01
+        sugCbcFee:
+          type: string
+          maxLength: 300
+        sugOtherFee:
+          type: string
+          maxLength: 9999
+        llcCmnts:
+          type: string
+          maxLength: 9999
+        llcDateMeeting:
+          type: string
+          maxLength: 10
+          description: DD/MM/YYYY as current DTO text field.
+        cmnt:
+          type: string
+          maxLength: 9999
+        crApprLv:
+          type: string
+          maxLength: 4
+        sysApprLv:
+          type: string
+          maxLength: 4
+      additionalProperties: false
+    SubmitCreditDecisionRequest:
+      type: object
+      required: [applicationNo, newCaseProgress]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        newCaseProgress:
+          type: string
+          maxLength: 5
+          enum: ['06', '08', '09', '95', '96', '97', '98', '99']
+        suggestedTermList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SuggestedTerm'
+        sugLoan:
+          $ref: '#/components/schemas/SuggestedLoan'
+        sugFee:
+          $ref: '#/components/schemas/SuggestedFee'
+        sugLtv:
+          type: number
+          maximum: 999.99
+          minimum: 0
+          multipleOf: 0.01
+        sugCbcFee:
+          type: string
+          maxLength: 300
+        sugOtherFee:
+          type: string
+          maxLength: 9999
+        llcCmnts:
+          type: string
+          maxLength: 9999
+        llcDateMeeting:
+          type: string
+          maxLength: 10
+        cmnt:
+          type: string
+          maxLength: 9999
+        crApprLv:
+          type: string
+          maxLength: 4
+        sysApprLv:
+          type: string
+          maxLength: 4
+      additionalProperties: false
+    SuggestedTerm:
+      type: object
+      properties:
+        seqno:
+          type: string
+          maxLength: 3
+        loanPurpose:
+          type: string
+          maxLength: 2
+        subLoanPurpose:
+          type: string
+          maxLength: 2
+        loanAmountCurrency:
+          type: string
+          maxLength: 3
+        loanAmount:
+          type: number
+          maximum: 999999999999999.99
+          minimum: 0
+          multipleOf: 0.01
+        loanType:
+          type: string
+          maxLength: 2
+        facilityType:
+          type: string
+          maxLength: 2
+        repaymentMode:
+          type: string
+          maxLength: 2
+        repaymentFrequency:
+          type: string
+          maxLength: 150
+        gracePeriod:
+          type: integer
+          minimum: 0
+          maximum: 999
+        tenor:
+          type: integer
+          minimum: 0
+          maximum: 999
+        fixRate:
+          type: number
+          minimum: 0
+          maximum: 99.99
+          multipleOf: 0.01
+        tierRate1:
+          type: number
+          minimum: 0
+          maximum: 99.99
+          multipleOf: 0.01
+        tierRate2:
+          type: number
+          minimum: 0
+          maximum: 99.99
+          multipleOf: 0.01
+        tierRate3:
+          type: number
+          minimum: 0
+          maximum: 99.99
+          multipleOf: 0.01
+        loanSectorCode:
+          type: string
+          maxLength: 3
+        loanSubSectorCode:
+          type: string
+          maxLength: 5
+        loanSectionCode:
+          type: string
+          maxLength: 7
+      additionalProperties: false
+    SuggestedLoan:
+      type: object
+      description: Aggregate loan amount fields must be server-verifiable; RP23 closes exact calculation ownership.
+      properties:
+        totalLoanAmount:
+          type: number
+          maximum: 99999999999999999.99
+          minimum: 0
+          multipleOf: 0.01
+      additionalProperties: false
+    SuggestedFee:
+      type: object
+      properties:
+        fee1:
+          type: number
+          minimum: 0
+          maximum: 9.99
+          multipleOf: 0.01
+        fee2:
+          type: number
+          minimum: 0
+          maximum: 9.99
+          multipleOf: 0.01
+        fee22:
+          type: number
+          minimum: 0
+          maximum: 9.99
+          multipleOf: 0.01
+        fee23:
+          type: number
+          minimum: 0
+          maximum: 9.99
+          multipleOf: 0.01
+        fee3:
+          type: number
+          minimum: 0
+          maximum: 9.99
+          multipleOf: 0.01
+        fee4:
+          type: number
+          minimum: 0
+          maximum: 9.99
+          multipleOf: 0.01
+        fee5:
+          type: number
+          minimum: 0
+          maximum: 9.99
+          multipleOf: 0.01
+      additionalProperties: false
+    ReturnInfoRequest:
+      type: object
+      required: [applicationNo, retuStatus, retuCodeList]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        retuStatus:
+          type: string
+          maxLength: 1
+        retuCodeList:
+          type: array
+          minItems: 1
+          description: Values are joined with semicolons before writing RETURN_CODE; joined length must be <= 1000.
+          x-joinedMaxLength: 1000
+          items:
+            type: string
+            maxLength: 50
+        amendDocMemo:
+          type: string
+          maxLength: 3333
+        amendPropInfoMemo:
+          type: string
+          maxLength: 3333
+      additionalProperties: false
+    DeleteReturnInfoRequest:
+      type: object
+      required: [applicationNo, seqno]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        seqno:
+          type: string
+          maxLength: 3
+      additionalProperties: false
+    CancelCaseRequest:
+      type: object
+      required: [applicationNo, cancelCodeList]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        cancelCodeList:
+          type: array
+          minItems: 1
+          description: Values are joined with semicolons before writing REASON_CODE; joined length must be <= 100.
+          x-joinedMaxLength: 100
+          items:
+            type: string
+            maxLength: 50
+        othReason:
+          type: string
+          maxLength: 100
+      additionalProperties: false
+    UploadFileRequest:
+      type: object
+      required: [applicationNo, uploadFile]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        uploadFile:
+          type: string
+          format: binary
+      additionalProperties: false
+    DeleteFileRequest:
+      type: object
+      required: [applicationNo, llcDataSeq]
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        llcDataSeq:
+          type: string
+          maxLength: 2
+      additionalProperties: false
+    EproResponse:
+      type: object
+      properties:
+        rtnCode:
+          type: string
+        rtnMsg:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+    ErrorResponse:
+      type: object
+      properties:
+        rtnCode:
+          type: string
+        rtnMsg:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+      additionalProperties: true
