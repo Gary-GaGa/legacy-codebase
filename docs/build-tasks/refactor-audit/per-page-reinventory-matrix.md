@@ -152,7 +152,7 @@
 | `EPROISU0922`(+T24) | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | in-review | `docs/specs/srs/EPROISU0922/` |
 | `EPROZ00800` | 00800 重產 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md`| in-review | `docs/specs/srs/EPROZ00800/` |
 | 主流程 ISU/i0/z0 增量 | 增量 | — | not-started（佔位·待拆列）| — |
-> ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**2026-06-20 回填**：決策頁（企金線 18 + 撥貸 3 + 00800 ≈22，＝有未決差異需 owner 裁者）已**拆成逐 funcId 列**（規劃視圖＝`docs/srs-production-queue-2026-06-20.md`，含各頁「要餵的輸入」），仍 `not-started`（待 PRD 才升 `prd-ready`；orchestrator 只 pick `prd-ready`，故 not-started 列不影響迭代）。**僅剩 `主流程 ISU/i0/z0 增量`＝佔位**（KEEP/增量、無待裁差異、非派工單位，隨 PRD 進場再拆）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`。⚠️ 企金線各列 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗結果餵入 as-is parity 軸，否則 SRS 漏載對舊 cs/cu 差異。
+> ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**2026-06-20 回填**：決策頁（企金線 18 + 撥貸 3 + 00800 ≈22，＝有未決差異需 owner 裁者）已**拆成逐 funcId 列**（規劃展開視圖已歸檔＝`docs/archive/srs-production-queue-2026-06-20.md`，2026-06-20 快照；本 ledger 為 live SSOT），含各頁「要餵的輸入」，仍 `not-started`（待 PRD 才升 `prd-ready`；orchestrator 只 pick `prd-ready`，故 not-started 列不影響迭代）。**僅剩 `主流程 ISU/i0/z0 增量`＝佔位**（KEEP/增量、無待裁差異、非派工單位，隨 PRD 進場再拆）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`。⚠️ 企金線各列 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗結果餵入 as-is parity 軸，否則 SRS 漏載對舊 cs/cu 差異。
 
 ## 派工（填實本矩陣）
 - **企金線對舊 parity**（Codex 帶 source）：擴 `c0-legacy-parity-recheck.md` 涵蓋範圍 → c0 評分 **+ CSU 主流程**；risk-tier 00118/00120/0170 先。
