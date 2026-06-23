@@ -1,0 +1,271 @@
+openapi: 3.0.3
+info:
+  title: EPROC00120 Corporate Financial Evaluation FI API
+  version: 0.1.1
+  description: >
+    Draft-for-review SRS contract for EPROC00120. The main schema contains
+    current/parity-confirmed DTO keys only. PRD-only parent-progress fields
+    and unconfirmed capital-ratio additions are tracked as P-012/P-010 deltas
+    in spec.md, not asserted as the current API contract.
+servers:
+  - url: https://example.com/api
+    description: Placeholder base URL; deployment URL is environment-specific.
+tags:
+  - name: EPROC00120
+paths:
+  /epl-info-c0-financial-evaluation-table-fi:
+    post:
+      tags:
+        - EPROC00120
+      summary: Load corporate FI financial-evaluation ratios
+      operationId: infoCsuFinancialEvaluationTableFi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InfoFinancialEvaluationFiRequest'
+      responses:
+        '200':
+          description: >
+            Platform envelope for success or business error. Business error
+            codes include MSG_DATA_NOT_FOUND, MSG_OVER_COUNT_LIMIT,
+            MSG_QUERY_FAIL, COMMON_MSG_ERROR_LON, and ErrorInputException
+            where validation is mapped from legacy/PRD.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoFinancialEvaluationFiResponseEnvelope'
+        '401':
+          description: ACCESS_DENIED / E405 when authentication or TB_API_AUTH mapping is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-save-c0-financial-evaluation-table-fi:
+    post:
+      tags:
+        - EPROC00120
+      summary: Save or finish corporate FI financial-evaluation ratios
+      operationId: saveCsuFinancialEvaluationTableFi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveFinancialEvaluationFiRequest'
+      responses:
+        '200':
+          description: >
+            Platform envelope for COMMON_MSG_SAVE_SUCCESS or business error.
+            Business error codes include COMMON_MSG_ERROR_LON,
+            COMMON_MSG_SAVE_FAIL, MSG_DATA_NOT_FOUND, MSG_QUERY_FAIL,
+            ErrorInputException, and validation ReturnEnum codes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveFinancialEvaluationFiResponseEnvelope'
+        '401':
+          description: ACCESS_DENIED / E405 when authentication or TB_API_AUTH mapping is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    InfoFinancialEvaluationFiRequest:
+      type: object
+      required:
+        - applicationNo
+        - isQuery
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+          description: TB_LON_SUMMARY_INFO.APPLICATION_NO.
+        isQuery:
+          type: boolean
+          description: true reads saved historical rows; false prepares editable recalculation.
+      additionalProperties: false
+    SaveFinancialEvaluationFiRequest:
+      type: object
+      required:
+        - applicationNo
+        - isFinish
+        - financialList
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+          description: TB_LON_SUMMARY_INFO.APPLICATION_NO.
+        isFinish:
+          type: boolean
+          description: false saves draft; true enforces Finished validation and checkpoint completion.
+        financialList:
+          type: array
+          minItems: 0
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/FinancialEvaluationFiRow'
+      additionalProperties: false
+    InfoFinancialEvaluationFiResponseEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 20
+          description: Platform response code; nonzero still uses HTTP 200 for business errors.
+        message:
+          type: string
+          maxLength: 200
+        data:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/InfoFinancialEvaluationFiResponse'
+      additionalProperties: false
+    InfoFinancialEvaluationFiResponse:
+      type: object
+      required:
+        - financialList
+      properties:
+        financialList:
+          type: array
+          items:
+            $ref: '#/components/schemas/FinancialEvaluationFiRow'
+      additionalProperties: false
+    FinancialEvaluationFiRow:
+      type: object
+      x-pending-runtime-fields:
+        cetOneCapitalRatio:
+          maxLength: 12
+          mapsToCurrentEntityColumn: CET_ONE_CAPITAL
+          pending: P-010
+        totalCapitalRatio:
+          maxLength: 12
+          mapsToCurrentEntityColumn: TOTAL_CAPITAL
+          pending: P-010
+      required:
+        - dataSeq
+        - ratiosDate
+      properties:
+        dataSeq:
+          type: string
+          maxLength: 2
+        ratiosDate:
+          type: string
+          maxLength: 10
+          description: Page date string; legacy displayed dd/MM/yyyy while DB stores VARCHAR2(10).
+        nplRatios:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB NPL.
+        loanLossReserves:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB LLR.
+        loanLossReserveOverNpl:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB LLR_OVER_NPL.
+        growthOfGrossLoans:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB GGL.
+        aggregateLargeExposureRatio:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB AGREE_LARGE_EXPOSURE.
+        creditExposureToSingleBeneficiary:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB CREDIT_EXPOSURE_TO_SB.
+        relatedPartyExposure:
+          type: string
+          maxLength: 12
+          nullable: true
+        unhedgedForeignCurrencyRatio:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB UNHEDGED_FOREIGN_CURR.
+        netInterestMargin:
+          type: string
+          maxLength: 12
+          nullable: true
+        cost:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB COST_INCOME.
+        roa:
+          type: string
+          maxLength: 12
+          nullable: true
+        roe:
+          type: string
+          maxLength: 12
+          nullable: true
+        loans:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB LOANS_DEPOSITS.
+        liquidityCoverageRatio:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB LIQUIDITY_COVERAGE.
+        solvencyRatio:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB SOLVENCY.
+        tier1CapitalRatio:
+          type: string
+          maxLength: 12
+          nullable: true
+          description: API key for DB TIER_ONE_CAPITAL.
+      additionalProperties: false
+    SaveFinancialEvaluationFiResponseEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 20
+          description: COMMON_MSG_SAVE_SUCCESS on success; nonzero for business errors.
+        message:
+          type: string
+          maxLength: 200
+        data:
+          type: object
+          nullable: true
+          additionalProperties: false
+      additionalProperties: false
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          maxLength: 50
+          description: ACCESS_DENIED / E405 for authorization failures.
+        message:
+          type: string
+          maxLength: 500
+      additionalProperties: true

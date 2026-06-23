@@ -1,0 +1,36 @@
+# QA Cases - EPROC00116 Financial Statement GI
+
+## Coverage Matrix
+| Case ID | Covers | Type | Preconditions | Steps | Expected Result |
+|---|---|---|---|---|---|
+| QA-001 | R1 | Positive | User has C0 page access; current case has main and three GI detail groups. | POST `/epl-sele-c0-financial-statement-comments`, then POST `/epl-info-c0-financial-statement-comments` with `applicationNo` and `isQuery=false`. | Select returns `CCY`, `CCY_UNIT`, `TYPE_OF_YEAR`; info returns `haveData=Y`, mainMap, balanceMap, incomeMap, and cashflowMap. |
+| QA-002 | R1 | Negative | Current case exists but is missing Balance or Income rows. | POST info endpoint. | Response is controlled EPRO output with `haveData=N` or documented no-data behavior; no print/export action is enabled from this result. Cashflow-only missing behavior is pending under QA-P11. |
+| QA-003 | R2 | Positive | Reference application meets allowed status criteria and has main plus all three GI detail groups. | POST `/epl-quer-c0-financial-statement-comments` with `reApplicationNo`. | Response returns reference main/detail maps; current case DB rows and checkpoint remain unchanged until save. |
+| QA-004 | R2 | Negative | Reference application is missing loan-date/status eligibility or one GI detail group. | POST reference query endpoint. | Response carries `E116` / `FAILED_E116`, `MSG_ERROR_APPLICATION_NO`, or mapped no-data key such as `COMMOM_MSG_NO_DATA`; current case DB rows remain unchanged. |
+| QA-005 | R3 | Positive | Save payload contains mainMap with five highlight text areas up to 6000 characters each. | POST save endpoint as draft and then query info. | Main data persists; each highlight text is restored from split `_1`/`_2` columns without truncation through 6000 characters. |
+| QA-006 | R4 | Calculation | Balance payload contains component asset/liability/equity values. | POST calc endpoint with balanceMap, incomeMap, and cashflowMap. | `balanceCMap` contains `TOTAL_ASSETS`, `TOTAL_LIAB_EQUITY`, `DIFFERENCE`, and other derived balance fields; unbalanced rows produce result messages. |
+| QA-007 | R5 | Calculation | Income payload contains revenue, cost, operating, non-operating, tax, profit, and minority fields. | POST calc endpoint. | `incomeCMap` returns `GROSS_PROFIT`, `OPERATING_EXPENSES`, `OPERATING_PROFIT`, `PROFIT_BEFORE_TAX`, and `ATTRIBUTED_TO_PARENT_COMP` using SRS formulas. |
+| QA-008 | R6 | Calculation | Cashflow payload contains net cash increase, opening balance, investing, financing, and Balance cash equivalent. | POST calc endpoint. | `cashflowCMap` returns `OPENING_BALANCE`, `END_BALANCE`, and `OPERATING_NET_CASHFLOW`; mismatch between `END_BALANCE` and `CASH_EQUIVALENT` produces result messages. |
+| QA-009 | R7 | Positive | Current case has existing GI detail rows; user saves a smaller payload as draft. | POST save endpoint with `isFinish=false`. | Existing Balance/Income/Cashflow rows for the case are deleted and replaced by submitted rows; `TB_CHECK_POINTS_CS/CU.EPROC00116` is `Y`; no partial writes occur. |
+| QA-010 | R7 | Negative | Current case has existing GI detail rows; submitted Finished payload fails validation during detail insert or checkpoint update. | POST save endpoint with `isFinish=true` and simulate one failing DB write. | Main/detail/checkpoint changes roll back; previous persisted rows remain unchanged; response maps to `COMMON_MSG_SAVE_FAIL` or controlled validation error. |
+| QA-011 | R8 | Positive | Current case has main plus all three GI detail groups. | POST `/epl-ppdf-c0-financial-statement-comments`. | PDF response or file envelope is returned; no unsaved UI values are used. |
+| QA-012 @PENDING | R8 | Pending | Current case has main plus all three GI detail groups and authorized Excel endpoint seed exists. | POST `/epl-pxls-c0-financial-statement-comments` after the auth seed gap is closed. | Excel binary response or file envelope is returned; missing data returns `E116` / `FAILED_E116`. | Blocked by PENDING-EPROC00116-PXLS-AUTHZ-SEED |
+| QA-013 | R9 | Cross-module | Save/Finished succeeds for a GI case. | Open downstream Financial Evaluation GI or query its data source. | Downstream reads the same `DATA_SEQ`-ordered Balance/Income/Cashflow rows saved by EPROC00116. |
+| QA-014 | R10 | Security | User lacks platform permission for one endpoint. | POST each endpoint without required API authorization. | Endpoint returns HTTP 401 platform authorization error such as `E405`/`E498`; mutating endpoint performs no DB writes. |
+| QA-015 | R10 | Validation | Request is missing `applicationNo`, has empty calc lists, invalid numeric/date formats, or missing Finished fields. | POST relevant info/calc/save endpoints. | EPRO response envelope carries controlled validation/business codes such as `E102`, `E116`, `E126`, `E130`, `COMMON_MSG_ERROR_LON`, `COMMON_MSG_TOTAL_FAIL`, or `COMMON_MSG_SAVE_FAIL` as applicable; no sensitive payload is logged. |
+
+## Pending QA
+| Case ID | Covers | Pending ID | Owner | Required Decision / Evidence |
+|---|---|---|---|---|
+| QA-P01 @PENDING | R11 | PENDING-EPROC00116-REFERENCE-STATUS-CODES | PM / SA | Confirm official business meaning of `APP_CON_TYPE` blank and `CASE_PROGRESS in 08,09,14`. |
+| QA-P02 @PENDING | R11 | PENDING-EPROC00116-LEGACY-ACTION-AND-MESSAGE-COMPAT | SA / RD | Decide whether new system must expose/translate legacy `inti`, `COMMOM_MSG_NO_DATA`, and `EPROI00119_MSG_VALIDATE_004`. |
+| QA-P03 @PENDING | R11 | PENDING-EPROC00116-FIVE-YEAR-REQUIREDNESS | PM / SA / QA | Decide whether Finished requires all five yearly rows or at least one nonblank year. |
+| QA-P04 @PENDING | R11 | PENDING-EPROC00116-FIELD-TYPO-MAPPING | DBA / SA / RD | Approve mapping for typo physical columns before changing API/entity names. |
+| QA-P05 @PENDING | R11 | PENDING-EPROC00116-HIGHLIGHT-MIGRATION | DBA / SA / RD | Define migration and escaping for legacy pipe-delimited `HIGHLIGHT`, split columns, and `HIGHLIGHT_CLOB`. |
+| QA-P06 @PENDING | R11 | PENDING-EPROC00116-REPORT-TEMPLATE-OWNERSHIP | SA / RD / QA | Confirm whether c0 GI exports intentionally use i0 template paths and names. |
+| QA-P07 @PENDING | R11 | PENDING-EPROC00116-CALC-CHECKPOINT-SIDE-EFFECT | SA / RD | Decide whether calc endpoint may update checkpoint or must be read-only. |
+| QA-P08 @PENDING | R11 | PENDING-EPROC00116-PXLS-AUTHZ-SEED | RD / Security / Ops | Provide or approve `TB_API_AUTH` seed for `epl-pxls-c0-financial-statement-comments`. |
+| QA-P09 @PENDING | R11 | PENDING-EPROC00116-SAVE-LIST-BE-VALIDATION | RD | Decide and implement controlled validation for missing/empty save maps and lists. |
+| QA-P10 @PENDING | R11 | PENDING-EPROC00116-PARITY-CODE-VERIFY | RD / QA / Controller | Complete c0 code-vs-legacy parity evidence; pending parent-folder recheck. |
+| QA-P11 @PENDING | R1 | PENDING-EPROC00116-HAVEDATA-CASHFLOW-PARITY | SA / RD / QA | Decide whether `haveData` must include Cashflow completeness or document the current main/Balance/Income-only flag. |
+| QA-P12 @PENDING | R10 | PENDING-EPROC00116-SERVICE-AUTHZ | RD / Security | Prove or implement backend case/edit authorization before save/checkpoint writes and export access. |

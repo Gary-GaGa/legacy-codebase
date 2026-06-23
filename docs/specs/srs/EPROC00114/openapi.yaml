@@ -1,0 +1,472 @@
+openapi: 3.0.3
+info:
+  title: EPROC00114 Collateral Assessment API
+  version: 0.1.0
+  description: Draft SRS contract for EPROC00114 using current/refactor epl-* endpoints.
+servers:
+  - url: /
+paths:
+  /epl-sele-c0-collateral-assessment:
+    post:
+      operationId: selectCollateralAssessmentOptions
+      summary: Load collateral assessment option lists
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectRequest'
+      responses:
+        '200':
+          description: 0000 option lists loaded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelectResponse'
+        '400':
+          description: E102 validation failure or COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: E498 authorization failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: MSG_OVER_COUNT_LIMIT query limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_QUERY_FAIL unexpected option query failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-info-c0-collateral-assessment:
+    post:
+      operationId: getCollateralAssessmentInfo
+      summary: Query collateral assessment data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InfoRequest'
+      responses:
+        '200':
+          description: 0000 collateral assessment data loaded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+        '400':
+          description: E102 validation failure or COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: E498 authorization failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND no application data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: MSG_OVER_COUNT_LIMIT query limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_QUERY_FAIL unexpected query failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-calc-c0-collateral-assessment:
+    post:
+      operationId: calculateCollateralAssessmentRate
+      summary: Calculate collateral assessment score and risk level
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalcRequest'
+      responses:
+        '200':
+          description: 0000 rate calculated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalcResponse'
+        '400':
+          description: E102 validation failure or COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: E498 authorization failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND no application data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: COMMON_MSG_RATE_FAIL rate calculation failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-save-c0-collateral-assessment:
+    post:
+      operationId: saveCollateralAssessment
+      summary: Save or finish collateral assessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveRequest'
+      responses:
+        '200':
+          description: 0000 and COMMON_MSG_SAVE_SUCCESS save completed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveResponse'
+        '400':
+          description: E102 validation failure or COMMON_MSG_ERROR_LON.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: E498 authorization failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND no application data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_QUERY_FAIL unexpected save failure or COMMON_MSG_RATE_FAIL score phase failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          maxLength: 64
+          example: MSG_QUERY_FAIL
+        message:
+          type: string
+          maxLength: 300
+    SelectRequest:
+      type: object
+      required:
+        - applicationNo
+        - langType
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        langType:
+          type: string
+          maxLength: 10
+    SelectResponse:
+      type: object
+      required:
+        - code
+        - districtList
+        - documentList
+        - areaList
+        - classificationList
+        - loathsomeList
+        - landShapeList
+        - incomeList
+        - addressList
+      properties:
+        code:
+          type: string
+          maxLength: 4
+          example: '0000'
+        districtList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        documentList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        areaList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        classificationList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        loathsomeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        landShapeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        incomeList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+        addressList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValueLabel'
+    ValueLabel:
+      type: object
+      required:
+        - value
+        - label
+      properties:
+        value:
+          type: string
+          maxLength: 8
+        label:
+          type: string
+          maxLength: 180
+    InfoRequest:
+      type: object
+      required:
+        - applicationNo
+        - isQuery
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        isQuery:
+          type: boolean
+    InfoResponse:
+      type: object
+      required:
+        - code
+        - applicationNo
+        - assistMap
+        - reviewerMap
+      properties:
+        code:
+          type: string
+          maxLength: 4
+          example: '0000'
+        applicationNo:
+          type: string
+          maxLength: 30
+        mainBorrowerName:
+          type: string
+          maxLength: 100
+        applicationDate:
+          type: string
+          format: date-time
+        checkpointStatus:
+          type: string
+          maxLength: 2
+        reviewComment:
+          type: string
+          maxLength: 3000
+        reviewCommentDate:
+          type: string
+          maxLength: 20
+        assistMap:
+          $ref: '#/components/schemas/AssessmentMap'
+        reviewerMap:
+          $ref: '#/components/schemas/AssessmentMap'
+    CalcRequest:
+      type: object
+      required:
+        - applicationNo
+        - codeMap
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        codeMap:
+          $ref: '#/components/schemas/CalcCodeMap'
+    CalcResponse:
+      type: object
+      required:
+        - code
+        - riskLevel
+        - scoreDatetime
+        - totalScore
+      properties:
+        code:
+          type: string
+          maxLength: 4
+          example: '0000'
+        riskLevel:
+          type: string
+          maxLength: 7
+        scoreDatetime:
+          type: string
+          maxLength: 19
+        totalScore:
+          type: string
+          maxLength: 10
+          description: Numeric string fitting TB_COLL_ASS AO_SCORE/CR_SCORE NUMBER(7,2); overflow is COMMON_MSG_RATE_FAIL.
+        districtScore:
+          type: string
+          maxLength: 3
+        documentScore:
+          type: string
+          maxLength: 3
+        areaScore:
+          type: string
+          maxLength: 3
+        classificationScore:
+          type: string
+          maxLength: 3
+        loathsomeScore:
+          type: string
+          maxLength: 3
+        landShapeScore:
+          type: string
+          maxLength: 3
+        incomeScore:
+          type: string
+          maxLength: 3
+        addressScore:
+          type: string
+          maxLength: 3
+    SaveRequest:
+      type: object
+      required:
+        - applicationNo
+        - isFinish
+        - assistMap
+        - reviewerMap
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+        isFinish:
+          type: boolean
+        reviewComment:
+          type: string
+          maxLength: 3000
+        assistMap:
+          $ref: '#/components/schemas/AssessmentMap'
+        reviewerMap:
+          $ref: '#/components/schemas/AssessmentMap'
+    SaveResponse:
+      type: object
+      required:
+        - code
+        - message
+        - isAllTabsCheck
+      properties:
+        code:
+          type: string
+          maxLength: 4
+          example: '0000'
+        message:
+          type: string
+          maxLength: 100
+          example: COMMON_MSG_SAVE_SUCCESS
+        isAllTabsCheck:
+          type: boolean
+    AssessmentMap:
+      type: object
+      properties:
+        riskLevel:
+          type: string
+          maxLength: 7
+        actionDate:
+          type: string
+          maxLength: 20
+        districtCode:
+          type: string
+          maxLength: 5
+        classificationCode:
+          type: string
+          maxLength: 3
+        incomeCode:
+          type: string
+          maxLength: 3
+        addressCode:
+          type: string
+          maxLength: 3
+        areaCode:
+          type: string
+          maxLength: 3
+        loathsomeCode:
+          type: string
+          maxLength: 3
+        landShapeCode:
+          type: string
+          maxLength: 3
+        documentCode:
+          type: string
+          maxLength: 3
+    CalcCodeMap:
+      type: object
+      required:
+        - districtCode
+        - areaCode
+        - classificationCode
+        - loathsomeCode
+        - landShapeCode
+        - incomeCode
+      properties:
+        districtCode:
+          type: string
+          maxLength: 5
+        documentCode:
+          type: string
+          maxLength: 3
+        areaCode:
+          type: string
+          maxLength: 3
+        classificationCode:
+          type: string
+          maxLength: 3
+        loathsomeCode:
+          type: string
+          maxLength: 3
+        landShapeCode:
+          type: string
+          maxLength: 3
+        incomeCode:
+          type: string
+          maxLength: 3
+        addressCode:
+          type: string
+          maxLength: 3

@@ -1,0 +1,252 @@
+openapi: 3.0.3
+info:
+  title: EPROC00110 Corporate Credit Investigation Frame API
+  version: 0.1.0
+  description: >
+    Draft-for-review SRS contract for EPROC00110. Evidence:
+    docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md:420-429 and
+    backend/src/main/java/khd/svc/epro/controller/corporate/CsuCreditInvestigationController.java:32-50.
+servers:
+  - url: https://example.com/api
+    description: Placeholder base URL; deployment URL is environment-specific.
+tags:
+  - name: EPROC00110
+paths:
+  /epl-info-c0-credit-investigation-tab:
+    post:
+      tags:
+        - EPROC00110
+      summary: Load corporate credit-investigation business type and page map
+      operationId: getCsuCreditInvestigationTab
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetCreditInvestigationTabRequest'
+      responses:
+        '200':
+          description: Loaded current business type and page map.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCreditInvestigationTabResponseEnvelope'
+        '400':
+          description: Validation error, including blank applicationNo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND when applicationNo has no summary row.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: MSG_OVER_COUNT_LIMIT when legacy-equivalent module query limit is exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_INITIAL_FAIL or MSG_QUERY_FAIL for initial/query failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-save-c0-credit-investigation-tab:
+    post:
+      tags:
+        - EPROC00110
+      summary: Save GI/FI business type switch and reset affected data
+      operationId: saveCsuCreditInvestigationTab
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveCreditInvestigationTabRequest'
+      responses:
+        '200':
+          description: Business type saved; destructive table cleanup and checkpoint reset completed in one transaction.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmptySuccessResponse'
+        '400':
+          description: Validation error, blank businessType, invalid businessType, or pending confirmation-token policy from TBD-006.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: User has no edit permission for destructive GI/FI switch.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND when applicationNo has no summary row.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Missing, invalid, stale, or mismatched confirmationToken / version guard.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: MSG_OVER_COUNT_LIMIT when legacy-equivalent module query limit is exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_QUERY_FAIL for delete/update/checkpoint transaction failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    GetCreditInvestigationTabRequest:
+      type: object
+      required:
+        - applicationNo
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+          description: TB_LON_SUMMARY_INFO.APPLICATION_NO.
+      additionalProperties: false
+    SaveCreditInvestigationTabRequest:
+      type: object
+      required:
+        - applicationNo
+        - businessType
+        - confirmationToken
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+          description: TB_LON_SUMMARY_INFO.APPLICATION_NO.
+        businessType:
+          type: string
+          maxLength: 1
+          enum:
+            - G
+            - F
+          description: G for general industry, F for financial industry.
+        confirmationToken:
+          type: string
+          maxLength: 64
+          description: Required server-issued destructive-switch confirmation/version token; exact issuance policy remains tracked by TBD-006 / R18.
+      additionalProperties: false
+    GetCreditInvestigationTabResponseEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 20
+          description: Platform response code.
+        message:
+          type: string
+          maxLength: 400
+          description: Platform response message.
+        data:
+          $ref: '#/components/schemas/GetCreditInvestigationTabResponse'
+      additionalProperties: false
+    GetCreditInvestigationTabResponse:
+      type: object
+      required:
+        - businessType
+        - pageMap
+      properties:
+        businessType:
+          type: string
+          maxLength: 1
+          enum:
+            - G
+            - F
+        assessmentType:
+          type: string
+          maxLength: 1
+          nullable: true
+          description: Effective assessment type; default is 2 when both summary type fields are blank.
+        pageMap:
+          $ref: '#/components/schemas/PageMap'
+      additionalProperties: false
+    PageMap:
+      type: object
+      description: Child page completion map. Values use Y/N checkpoint semantics.
+      properties:
+        EPROC00112:
+          $ref: '#/components/schemas/CheckpointValue'
+        EPROC00114:
+          $ref: '#/components/schemas/CheckpointValue'
+        EPROC00115:
+          $ref: '#/components/schemas/CheckpointValue'
+        EPROC00116:
+          $ref: '#/components/schemas/CheckpointValue'
+        EPROC00117:
+          $ref: '#/components/schemas/CheckpointValue'
+        EPROC00118:
+          $ref: '#/components/schemas/CheckpointValue'
+        EPROC00119:
+          $ref: '#/components/schemas/CheckpointValue'
+        EPROC00120:
+          $ref: '#/components/schemas/CheckpointValue'
+      additionalProperties:
+        $ref: '#/components/schemas/CheckpointValue'
+    CheckpointValue:
+      type: string
+      maxLength: 1
+      enum:
+        - Y
+        - N
+      description: Y means not completed / should be worked; N means completed in legacy checkbox semantics.
+    EmptySuccessResponse:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 20
+        message:
+          type: string
+          maxLength: 400
+        data:
+          type: object
+          additionalProperties: false
+      additionalProperties: false
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          maxLength: 40
+          description: >
+            Platform error code or legacy message key carrier. This API carries
+            MSG_INITIAL_FAIL, MSG_DATA_NOT_FOUND, MSG_QUERY_FAIL, and MSG_OVER_COUNT_LIMIT
+            where applicable.
+        message:
+          type: string
+          maxLength: 400
+        details:
+          type: object
+          nullable: true
+          additionalProperties: true
+      additionalProperties: false

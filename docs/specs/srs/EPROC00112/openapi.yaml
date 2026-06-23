@@ -1,0 +1,389 @@
+openapi: 3.0.3
+info:
+  title: EPROC00112 CBC Banking Relationship API
+  version: 0.1.0
+  description: >
+    Draft-for-review API contract for EPROC00112. Endpoint names follow current
+    controller and FE evidence at backend/src/main/java/khd/svc/epro/controller/corporate/CbcBankingCorpRelationshipController.java:31-46
+    and frontend/src/app/pages/case-edition/sub-pages/corporate/credit-investigation/components/banking-relationship/service/api.service.ts:18-42.
+paths:
+  /epl-info-c0-cbc-banking-relationship:
+    post:
+      operationId: eplInfoC0CbcBankingRelationship
+      summary: Load EPROC00112 BBL, BGL, and GBGL data.
+      description: >
+        Loads CBC banking relationship data for applicationNo and isQuery. Covers
+        PRD REQ-001 and source evidence docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md:104.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InfoRequest'
+      responses:
+        '200':
+          description: >
+            Success response containing BBL, BGL, and GBGL sections with USD/KHR totals.
+            May carry COMMON_MSG_SAVE_SUCCESS only after save flows; info failures carry message codes below.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfoResponse'
+        '400':
+          description: COMMON_MSG_ERROR_LON or validation error for missing or invalid applicationNo.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND when no source data is available.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: MSG_OVER_COUNT_LIMIT when source query exceeds legacy-safe limits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_QUERY_FAIL or COMMON_MSG_TOTAL_FAIL for query/calculation failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /epl-save-c0-cbc-banking-relationship:
+    post:
+      operationId: eplSaveC0CbcBankingRelationship
+      summary: Save EPROC00112 CBC banking relationship data.
+      description: >
+        Full replacement save for BBL, BGL, and GBGL rows, then checkpoint update.
+        Covers PRD REQ-005, REQ-007, REQ-008, and REQ-009.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveRequest'
+      responses:
+        '200':
+          description: COMMON_MSG_SAVE_SUCCESS after successful transactional replacement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveResponse'
+        '400':
+          description: COMMON_MSG_ERROR_LON, E130, or request validation error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid authorization token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Query-only, old-case, or non-edit session is not allowed to mutate CBC data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: COMMON_MSG_SAVE_FAIL or MSG_QUERY_FAIL; rollback required by SRS R6.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    InfoRequest:
+      type: object
+      required:
+        - applicationNo
+        - legacyFunctionId
+        - isQuery
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+          description: Required case number; DTO evidence backend/src/main/java/khd/svc/epro/dto/request/corporate/csuCbcBankingCorpRelationship/InfoCsuCbcBankingCorpRelationshipInfoRequest.java:12-15.
+        legacyFunctionId:
+          $ref: '#/components/schemas/LegacyFunctionId'
+          description: Required to preserve 0112/0212 parent-tab and checkpoint split per PRD.
+        isQuery:
+          type: boolean
+          description: Required page-mode flag; DTO evidence backend/src/main/java/khd/svc/epro/dto/request/corporate/csuCbcBankingCorpRelationship/InfoCsuCbcBankingCorpRelationshipInfoRequest.java:18-19.
+    SaveRequest:
+      type: object
+      required:
+        - applicationNo
+        - legacyFunctionId
+        - isFinish
+        - pageCheckMap
+        - bBL
+        - bGL
+        - gBGL
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+          description: Required case number; DTO evidence backend/src/main/java/khd/svc/epro/dto/request/corporate/csuCbcBankingCorpRelationship/SaveCsuCbcBankingCorpRelationshipInfoRequest.java:16-19.
+        legacyFunctionId:
+          $ref: '#/components/schemas/LegacyFunctionId'
+          description: Required to select EPROC0_0110 or EPROC0_0210 parent progress semantics.
+        isFinish:
+          type: boolean
+          description: >
+            Submit mode flag. Legacy check polarity is pending in spec R14;
+            current backend writes checkpoint value from isFinish at backend/src/main/java/khd/svc/epro/service/corporate/impl/CbcBankingCorpRelationshipServiceImpl.java:629-644.
+        pageCheckMap:
+          $ref: '#/components/schemas/PageCheckMap'
+          description: Parent tab state equivalent to legacy getPageObj for EPROC0_0110 or EPROC0_0210.
+        bBL:
+          $ref: '#/components/schemas/BorrowerSection'
+        bGL:
+          $ref: '#/components/schemas/BorrowerSection'
+        gBGL:
+          $ref: '#/components/schemas/GuarantorSection'
+    InfoResponse:
+      type: object
+      properties:
+        bBL:
+          $ref: '#/components/schemas/BorrowerSectionWithTotals'
+        bGL:
+          $ref: '#/components/schemas/BorrowerSectionWithTotals'
+        gBGL:
+          $ref: '#/components/schemas/GuarantorSectionWithTotals'
+        messageCode:
+          type: string
+          description: MSG_DATA_NOT_FOUND, MSG_OVER_COUNT_LIMIT, MSG_QUERY_FAIL, COMMON_MSG_TOTAL_FAIL, or blank on success.
+    SaveResponse:
+      type: object
+      properties:
+        messageCode:
+          type: string
+          description: COMMON_MSG_SAVE_SUCCESS or COMMON_MSG_SAVE_FAIL.
+        isAllTabsCheck:
+          type: boolean
+          description: Parent tab completion result required by PRD REQ-009.
+    LegacyFunctionId:
+      type: string
+      enum:
+        - EPROC0_0112
+        - EPROC0_0212
+    PageCheckMap:
+      type: object
+      additionalProperties:
+        type: boolean
+      description: Parent-tab completion map passed through from the C0 frame.
+    BorrowerSection:
+      type: object
+      required:
+        - mainBorrower
+        - coBorrowerList
+      properties:
+        mainBorrower:
+          $ref: '#/components/schemas/Borrower'
+        coBorrowerList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Borrower'
+    BorrowerSectionWithTotals:
+      $ref: '#/components/schemas/BorrowerSection'
+    GuarantorSection:
+      type: object
+      required:
+        - indGuarantorList
+        - corpGuarantorList
+      properties:
+        indGuarantorList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Guarantor'
+        corpGuarantorList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Guarantor'
+    GuarantorSectionWithTotals:
+      $ref: '#/components/schemas/GuarantorSection'
+    Borrower:
+      type: object
+      required:
+        - borrowerName
+        - seqNo
+      properties:
+        borrowerName:
+          type: string
+          maxLength: 100
+        seqNo:
+          type: integer
+          maximum: 99999
+        isMainBorr:
+          type: string
+          maxLength: 1
+          enum:
+            - 'Y'
+            - 'N'
+        isReportAvailable:
+          type: string
+          maxLength: 1
+        allLoansStatus:
+          type: string
+          maxLength: 1
+        isAnyLatePayment:
+          type: string
+          maxLength: 1
+        latePaymentMonthYear:
+          type: string
+          maxLength: 7
+          description: >
+            MM/YYYY value; latest schema reverify stores length 7.
+        asOfDate:
+          type: string
+          pattern: '^[0-3][0-9]/[0-1][0-9]/[0-9]{4}$'
+          description: API/UI date string in DD/MM/YYYY; DB persists DATE.
+        note:
+          type: string
+          maxLength: 1000
+          description: >
+            Latest schema reverify stores length 1000.
+        infoList:
+          type: array
+          nullable: true
+          description: Null/missing handling remains @PENDING under R15; empty array is allowed for Save drafts.
+          items:
+            $ref: '#/components/schemas/InvestigationInfo'
+        usdTCA:
+          $ref: '#/components/schemas/UsdTotal'
+        khrTCA:
+          $ref: '#/components/schemas/KhrTotal'
+        usdTOB:
+          $ref: '#/components/schemas/UsdTotal'
+        khrTOB:
+          $ref: '#/components/schemas/KhrTotal'
+    Guarantor:
+      type: object
+      required:
+        - guarantorName
+        - seqNo
+      properties:
+        guarantorName:
+          type: string
+          maxLength: 100
+        seqNo:
+          type: integer
+          maximum: 99999
+        isInd:
+          type: string
+          maxLength: 1
+          enum:
+            - 'Y'
+            - 'N'
+        isReportAvailable:
+          type: string
+          maxLength: 1
+        allLoansStatus:
+          type: string
+          maxLength: 1
+        isAnyLatePayment:
+          type: string
+          maxLength: 1
+        latePaymentMonthYear:
+          type: string
+          maxLength: 7
+          description: MM/YYYY value; latest schema reverify stores length 7.
+        asOfDate:
+          type: string
+          pattern: '^[0-3][0-9]/[0-1][0-9]/[0-9]{4}$'
+          description: API/UI date string in DD/MM/YYYY; DB persists DATE.
+        note:
+          type: string
+          maxLength: 1000
+          description: Latest schema reverify stores length 1000.
+        infoList:
+          type: array
+          nullable: true
+          description: Null/missing handling remains @PENDING under R15; empty array is allowed for Save drafts.
+          items:
+            $ref: '#/components/schemas/InvestigationInfo'
+        usdTCA:
+          $ref: '#/components/schemas/UsdTotal'
+        khrTCA:
+          $ref: '#/components/schemas/KhrTotal'
+        usdTOB:
+          $ref: '#/components/schemas/UsdTotal'
+        khrTOB:
+          $ref: '#/components/schemas/KhrTotal'
+    InvestigationInfo:
+      type: object
+      required:
+        - infoSeqNo
+      properties:
+        infoSeqNo:
+          type: integer
+          maximum: 99999
+        bankerName:
+          type: string
+          maxLength: 20
+        creditAmountCurrency:
+          type: string
+          maxLength: 3
+        creditAmount:
+          type: string
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        outstandingBalanceCurrency:
+          type: string
+          maxLength: 3
+        outstandingBalance:
+          type: string
+          pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
+        tenor:
+          type: string
+          maxLength: 20
+        statusCode:
+          type: string
+          maxLength: 1
+        maturityDate:
+          type: string
+          maxLength: 10
+        productCode:
+          type: string
+          maxLength: 3
+        securityCode:
+          type: string
+          maxLength: 2
+        repayRecords:
+          type: string
+          maxLength: 1
+    UsdTotal:
+      type: string
+      pattern: '^-?[0-9]{1,15}\.[0-9]{2}$'
+      description: USD total rendered with fixed 2 decimal places.
+    KhrTotal:
+      type: string
+      pattern: '^-?[0-9]{1,17}$'
+      description: KHR total rendered without decimal places.
+    ErrorResponse:
+      type: object
+      properties:
+        messageCode:
+          type: string
+          enum:
+            - COMMON_MSG_ERROR_LON
+            - MSG_DATA_NOT_FOUND
+            - MSG_OVER_COUNT_LIMIT
+            - MSG_QUERY_FAIL
+            - COMMON_MSG_TOTAL_FAIL
+            - COMMON_MSG_ONE_DATA
+            - COMMON_MSG_LIMIT
+            - COMMON_MSG_SAVE_FAIL
+            - E130
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string

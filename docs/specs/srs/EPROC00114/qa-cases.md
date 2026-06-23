@@ -1,0 +1,35 @@
+# QA Cases - EPROC00114
+
+Status: draft  
+Scope: covers every non-pending SRS rule in `spec.md`.
+
+| QA id | covers | type | setup | steps | expected |
+| --- | --- | --- | --- | --- | --- |
+| QA-001 | R1 | UI/routing | Normal C0 CS case, not old-case display. | Open parent `EPROC0_0110` equivalent and navigate to collateral assessment tab. | EPROC00114 tab is available and calls `epl-*` endpoints. |
+| QA-002 | R1 | UI/routing | Renewal/change C0 CS case, not old-case display. | Open parent `EPROC0_0210` equivalent and navigate to collateral assessment tab. | Same EPROC00114 screen and contract are used; no legacy dispatcher endpoint is called. |
+| QA-003 | R2 | API | Existing application with loan summary, main borrower, and no collateral row. | POST `epl-info-c0-collateral-assessment` with `isQuery=true`. | 200/`0000`; borrower/application context and empty assessment maps are returned. |
+| QA-004 | R2 | API/error | Blank `applicationNo`. | POST info endpoint. | 400 with `E102` or `COMMON_MSG_ERROR_LON`; no DB mutation. |
+| QA-005 | R2 | API/error | Nonexistent application. | POST info endpoint with `isQuery=true`. | 404 with `MSG_DATA_NOT_FOUND`; no successful empty page state. |
+| QA-006 | R3 | API | Application date resolves to CVer `001`. | POST `epl-sele-c0-collateral-assessment`. | Lists for C_V1,C_V2,C_V3,C_V4,C_V5,C_V6,C_V7 are populated; address list is not required for rendering. |
+| QA-007 | R3 | API | Application date resolves to CVer `002`. | POST select endpoint. | Lists for C_V1,C_V3,C_V4,C_V5,C_V6,C_V8,C_V7 are populated; document list is not required for rendering. |
+| QA-008 | R3 | DB/boundary | Option row has `VAR_DESC` longer than 100 and at most 180 chars. | Load option list. | Description is returned without truncation below 180 chars. |
+| QA-009 | R4 | API/DB | Controlled `TB_SCORE_CARD_PARAM_DETAIL` seed rows exist for all selected C_V1-C_V8 codes and one collateral risk-level range; total score fits `NUMBER(7,2)`. | POST `epl-calc-c0-collateral-assessment`. | 200/`0000`; numeric-string totalScore, riskLevel, scoreDatetime, and item scores are returned; no `TB_COLL_ASS`, `TB_LON_SUMMARY_INFO`, or checkpoint rows change. |
+| QA-010 | R4 | API/error | Score function throws, nonnumeric `SCORE`, no item/risk range matches, or total score would overflow `NUMBER(7,2)`. | POST calc endpoint. | 500 with `COMMON_MSG_RATE_FAIL`; displayed existing risk fields are not overwritten. |
+| QA-011 | R5 | API/validation | AO role, `isFinish=true`, missing Rate-derived risk level/date. | POST save endpoint. | 400 `E102`; no save/finish mutation. |
+| QA-012 | R5 | API/validation | CR role, `isFinish=true`, missing reviewComment. | POST save endpoint. | 400 `E102`; no mutation. |
+| QA-013 | R5, R10 | API/auth | User lacks page authority, uses unsupported save role, or attempts protected-side tampering. | POST any EPROC00114 endpoint, then POST save with the unsupported/tampered role. | 401 `E498`; FE disabled state is not the only protection, and no scorecard/summary/checkpoint mutation occurs. |
+| QA-014 | R6 | API/DB | Draft save with complete AO map and `isFinish=false`. | POST save endpoint. | `TB_COLL_ASS` is upserted, address columns are persisted, checkpoint is `Y`, and transaction commits. |
+| QA-015 | R6 | API/DB | Force failure after `TB_COLL_ASS` write before checkpoint write. | POST save endpoint in controlled test. | Whole transaction rolls back; no partial `TB_COLL_ASS`, `TB_LON_SUMMARY_INFO`, or checkpoint update remains. |
+| QA-016 | R7 | API/DB | AO role saves after CR fields previously existed. | POST save endpoint as AO. | `CR_SCORE_CARD_COMPLETED='NN'`; AO code/score copies to CR code/score; CR score/risk/date are cleared. |
+| QA-017 | R7 | API/DB | CR role saves draft then finishes with existing first char `Y`. | POST save with `isFinish=false`, then `isFinish=true`. | First char remains `Y`; second char changes `N` then `Y`. |
+| QA-018 | R8 | API/DB | CS application, draft save then finish. | POST save endpoint with false then true. | `TB_CHECK_POINTS_CS.EPROC00114` changes `Y` then `N`; removed legacy checkpoint tables are not written. |
+| QA-019 | R8 | API | All sibling checkpoint flags are not `Y` after finish. | POST finish save endpoint. | Response includes `isAllTabsCheck=true`; if any sibling flag is `Y`, response is false. |
+| QA-020 | R9 | API/error | Query returns more than allowed count. | Trigger info/select query over limit. | `MSG_OVER_COUNT_LIMIT` is returned and no partial result list is used. |
+| QA-021 | R9 | API/error | Unexpected save exception. | POST save endpoint with fault injection. | 500 `MSG_QUERY_FAIL`; transaction rolls back. |
+| QA-022 | R9 | API/success | Valid save/finish. | POST save endpoint. | 200/`0000` with `COMMON_MSG_SAVE_SUCCESS`. |
+| QA-023 | R10 | Security | Request contains borrower name and review comment. | Execute query/save while capturing application logs. | Logs mask sensitive identity/free-text data and include only safe trace identifiers. |
+| QA-024 | R10 | Observability | Valid save request with correlation id. | POST save endpoint. | Transaction outcome can be correlated across request log and persistence audit without exposing sensitive values. |
+| QA-025 | R4, R9 | API/error | No loan summary/main borrower data exists for the requested application. | POST calc endpoint. | 404 `MSG_DATA_NOT_FOUND`; no displayed or persisted risk fields are overwritten. |
+| QA-026 | R4, R9 | API/error | Save path reaches collateral score function and it fails by nonnumeric seed/no matching range/overflow. | POST save endpoint with fault injection or controlled bad seed. | 500 `COMMON_MSG_RATE_FAIL`; whole transaction rolls back with no partial `TB_COLL_ASS`, `TB_LON_SUMMARY_INFO`, or checkpoint update. |
+| QA-027 | R2, R9 | API/error | Blank `applicationNo`. | POST select, info, calc, and save endpoints. | 400 with `E102` or `COMMON_MSG_ERROR_LON`; no query result or mutation is produced. |
+| QA-028 | R2, R3, R9 | API/error | Select or info query throws an unexpected exception. | POST select endpoint and info endpoint with fault injection. | 500 `MSG_QUERY_FAIL`; no partial option list or successful empty page state is returned. |
