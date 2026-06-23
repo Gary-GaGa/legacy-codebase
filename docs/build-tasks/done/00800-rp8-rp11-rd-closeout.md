@@ -1,6 +1,7 @@
 # Build Task — EPROZ00800 RP8 / RP11 as-is 等價性 + DTO 形狀（RD 收尾）
 
-> **性質**：兩個 `spec.md §@PENDING`（**仍開**）——皆需 **RD 對產品碼判斷**（判據等價、DTO 形狀），planning repo 解不了。**只 RD 能結。**
+> **Status: SUPERSEDED / CLOSED（2026-06-23）**——本卡寫於 06-17、針對 **v0.9 封存版**的 RP8/RP11 `@PENDING`。00800 其後已**重產為 Approved**，新 bundle 已把 **RP8 ✅ / RP11 ✅ closed**（owner/RD 裁定，見 `docs/specs/srs/EPROZ00800/spec.md:221`、`:224`、`:208`）。故本卡的 RD 收尾任務**已由重產承載、不再為 open 工作**，僅留作歷史。下方「仍開」敘述為 v0.9 時點原文，已不反映現況。
+> **性質（v0.9 時點原文）**：兩個 `spec.md §@PENDING`（**仍開**）——皆需 **RD 對產品碼判斷**（判據等價、DTO 形狀），planning repo 解不了。**只 RD 能結。**
 > **背景**：`docs/archive/EPROZ00800-v0.9-superseded/srs/spec.md §@PENDING`（RP8/RP11；**v0.9 封存·待重產**，2026-06-17）、as-is 碼位置見 `docs/build-tasks/done/00800-verification-findings.md`（產品碼在開發機）。⚠️ 00800 disposition=REBUILD：RP8/RP11 判定為重產輸入，新 SRS 產出時承載。
 > **注意**：00800 標「砍掉重建在即」（Bible/PRD 待更新）；RP8/RP11 的 as-is 判定**結果會餵進重建**，故先由 RD 坐實，不隨重建空等。
 

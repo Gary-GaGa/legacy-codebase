@@ -31,7 +31,7 @@ Status: code/test closeout implemented; DB page-column config backfill applied a
 
 SELECT-only script:
 
-- `docs/build-tasks/00800-contract-closeout-authz.sql`
+- `docs/build-tasks/done/00800-contract-closeout-authz.sql`
 
 Result excerpt:
 
@@ -50,8 +50,8 @@ Initially-missing page-column row (now backfilled):
 
 ## Re-run (2026-06-23): backfill applied, closeout PASS
 
-- `docs/build-tasks/00800-contract-closeout-authz-backfill.sql` was DBA/RD-applied to the page-column auth schema.
-- Re-ran SELECT-only `docs/build-tasks/00800-contract-closeout-authz.sql`:
+- `docs/build-tasks/done/00800-contract-closeout-authz-backfill.sql` was DBA/RD-applied to the page-column auth schema.
+- Re-ran SELECT-only `docs/build-tasks/done/00800-contract-closeout-authz.sql`:
   - `DB_D7_RESULT=PASS`, `FOUND_ROWS=2`
   - `PAGE_COLUMN_RESULT=PASS`, `MATCHED_ROWS=4` (all of `revised.item`, `reason.item`, `button.butSave`, `button.butFinish` present).
   - The backfilled `reason.item` row carries `AUTH_TYPE=aoEdit`, `CAN_EDIT=Y`, and `SECURE_ATTRIBUTE`/`LON_TYPE_CODE`/`PRODUCT_CODE`/`CASE_PROGRESS`/`SYSTEM_VER`/`OTHER_VER` aligned to the existing `revised.item` editable source row (backfill cloned the source row, per the script's `INSERT ... SELECT`).
