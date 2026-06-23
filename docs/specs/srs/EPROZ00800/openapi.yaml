@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: EPROZ00800 Revised Item API
   version: 0.1.0
-  description: SRS contract for EPROZ00800. Status is in-review candidate; authoritative status is in spec.md.
+  description: SRS contract for EPROZ00800. 規格定版 Approved (2026-06-23); authoritative status is in spec.md.
 paths:
   /api/eproposal/eproz00800/prompt:
     get:

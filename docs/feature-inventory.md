@@ -127,7 +127,7 @@
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅ F-12 已修（product `5a47038`，FE endpoint 改 CAD）→ 復稱 CR 範本；Phase V 實測查詢一條 |
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；**DB 複合 PK 已對齊**（06-16 reverify，`@EmbeddedId` EMP_ID+STR_TIME，AUD-9 關）|
-| EPROZ00800 | Revised Item | 🟡 | ✅ | SRS bundle 重產已進 `in-review`；RP8/RP11/BP1-5 已裁入 SRS。Implementation closeout：GET query、`isCorporateUnsecured`、backend mutation guard 已實作並測過；`TB_API_AUTH` query/save SELECT-only PASS；剩 R7 `TB_PAGE_COLUMN_AUTH_DETAIL.reason.item` backfill 待 DBA/RD 套用/複查。 |
+| EPROZ00800 | Revised Item | ✅ | ✅ | **SRS bundle Approved 2026-06-23**（規格定版軸；實作完成軸由 DoD 閘門牆另裁）。RP1–RP11/BP1–BP5 全 closed；機械閘門 PASS、N 軸 spec-reviewer 兩輪 0🔴/0🟡。Implementation closeout 全綠：GET query、`isCorporateUnsecured`、backend mutation guard 已實作並測過；`TB_API_AUTH` query/save SELECT-only PASS；R7 `TB_PAGE_COLUMN_AUTH_DETAIL.reason.item` backfill 06-23 DBA/RD 套用、closeout 重跑 `PAGE_COLUMN_RESULT=PASS`/`MATCHED_ROWS=4`。 |
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。
 
 ### 2F. 撥貸 `EPROISU0920/0921/0922` + T24（🔴 唯一真未完成區塊）
@@ -240,7 +240,7 @@
 7. R2 報表服務 → 0181/i0·c0 PDF/z0 PDF；檔案上傳 API；FE/BE method-mismatch sweep；map-key sweep；Logback 外部化。
 
 **Phase S — spec 層（PRD→SRS 重產；owner：PM/SA + Codex local；並行 track）**
-8. Phase S status: SRS bundle coverage **4/67**; `EPROZ00100`, `EPROC00118`, `EPROISU0921`, and `EPROISU0922` are Approved (0921/0922 owner-stamped 2026-06-23 after N-axis A–G PASS + cross-model spec-reviewer 0/0). Next expansion follows risk tier (corporate line / 00800). **決策頁 SRS 產出佇列 live＝`build-tasks/refactor-audit/per-page-reinventory-matrix.md §ledger`（逐頁列）；規劃展開視圖已歸檔 `archive/srs-production-queue-2026-06-20.md`**；企金線 18 頁 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗餵入。
+8. Phase S status: SRS bundle coverage **5/67**; `EPROZ00100`, `EPROC00118`, `EPROISU0921`, `EPROISU0922`, and `EPROZ00800` are Approved (0921/0922 owner-stamped 2026-06-23 after N-axis A–G PASS + cross-model spec-reviewer 0/0; 00800 Approved 2026-06-23 after R7 `reason.item` page-column backfill + closeout re-run PASS, mechanical gate PASS, two-round spec-reviewer 0🔴/0🟡). Next expansion follows risk tier (corporate line). **決策頁 SRS 產出佇列 live＝`build-tasks/refactor-audit/per-page-reinventory-matrix.md §ledger`（逐頁列）；規劃展開視圖已歸檔 `archive/srs-production-queue-2026-06-20.md`**；企金線 18 頁 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗餵入。
 
 **關鍵路徑（兩條，2026-06-11 audit 後更新）**：① **撥貸上線 = Phase D（先 A-1 stub）**；② **企金申貸可用 = Phase G（主流程 FE 後半段；評分 Phase F 已收工）**。其餘 = **Phase V 驗證**＋§4⑩ 小修即可收。R2/檔案 = 獨立決策 track、不擋主里程碑。**spec 層（PRD→SRS 重產，Phase S）= 前置就緒、owner local 並行 track，不擋當前里程碑，但為 00800/企金線 rebuild 的上游**。
 

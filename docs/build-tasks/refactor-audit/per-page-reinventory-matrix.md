@@ -113,7 +113,7 @@
 ---
 
 ## PRD→SRS backlog（接「新版 Bible/PRD 跑 to SRS」）
-> Current repo SRS coverage = **2/67** (`EPROZ00100` + `EPROC00118` are approved after RD/DBA contract closeout on 2026-06-20; TB_API_AUTH direct apply + SELECT-only recheck against `OVSLXLON02`; both bundles pass `check-srs-bundle`; `EPROZ00800` v0.9 remains archived for rebuild). Coverage counting remains defined by the PRD-to-SRS queue + ledger table below.
+> Current repo SRS coverage = **5/67** (`EPROZ00100` + `EPROC00118` approved after RD/DBA contract closeout on 2026-06-20; `EPROISU0921` + `EPROISU0922` approved 2026-06-23; `EPROZ00800` regenerated from v0.9 and approved 2026-06-23 after R7 `reason.item` page-column backfill + closeout re-run PASS; all bundles pass `check-srs-bundle`). Coverage counting remains defined by the PRD-to-SRS queue + ledger table below.
 > **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-diff/`+`docs/refactor-spec/`。
 > **risk-tier 產 SRS 順序**（= rebuild/fix 最需規格者先）：
 > 1. **企金線**（CSU 主流程 + c0 評分，~18 頁）—— parity 回來若判 rebuild，立即需 SRS。
@@ -148,9 +148,9 @@
 | `EPROCSU0172` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
 | `EPROCSU0173` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
 | `EPROISU0920` | 撥貸 T1 | — | not-started | 差異源已備(triage/db-diff)·只缺 PRD |
-| `EPROISU0921` | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md` | in-review | `docs/specs/srs/EPROISU0921/` |
-| `EPROISU0922`(+T24) | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | in-review | `docs/specs/srs/EPROISU0922/` |
-| `EPROZ00800` | 00800 重產 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md`| in-review | `docs/specs/srs/EPROZ00800/` |
+| `EPROISU0921` | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md` | Approved (2026-06-23) | `docs/specs/srs/EPROISU0921/` |
+| `EPROISU0922`(+T24) | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | Approved (2026-06-23) | `docs/specs/srs/EPROISU0922/` |
+| `EPROZ00800` | 00800 重產 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md`| Approved (2026-06-23) | `docs/specs/srs/EPROZ00800/` |
 | 主流程 ISU/i0/z0 增量 | 增量 | — | not-started（佔位·待拆列）| — |
 > ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**2026-06-20 回填**：決策頁（企金線 18 + 撥貸 3 + 00800 ≈22，＝有未決差異需 owner 裁者）已**拆成逐 funcId 列**（規劃展開視圖已歸檔＝`docs/archive/srs-production-queue-2026-06-20.md`，2026-06-20 快照；本 ledger 為 live SSOT），含各頁「要餵的輸入」，仍 `not-started`（待 PRD 才升 `prd-ready`；orchestrator 只 pick `prd-ready`，故 not-started 列不影響迭代）。**僅剩 `主流程 ISU/i0/z0 增量`＝佔位**（KEEP/增量、無待裁差異、非派工單位，隨 PRD 進場再拆）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`。⚠️ 企金線各列 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗結果餵入 as-is parity 軸，否則 SRS 漏載對舊 cs/cu 差異。
 
