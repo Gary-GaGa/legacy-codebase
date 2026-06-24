@@ -291,6 +291,7 @@ components:
         reviewComment:
           type: string
           maxLength: 3000
+          description: CR-only review comment. AO roles 001/002 must not write this field; SRS R10 requires BE to reject or ignore AO tamper attempts before mutation.
         assistMap:
           $ref: '#/components/schemas/AssessmentInputMap'
         reviewerMap:
@@ -336,6 +337,7 @@ components:
         totalScore:
           type: string
           maxLength: 20
+          pattern: '^-?\d{1,5}(\.\d{1,2})?$'
           description: Decimal score string preserving precision before persistence to NUMBER(7,2).
       additionalProperties: false
     AssessmentViewMap:

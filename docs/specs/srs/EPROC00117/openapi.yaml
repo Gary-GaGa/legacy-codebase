@@ -169,6 +169,52 @@ components:
           type: string
         totalDebitBalAmt:
           type: string
+        ebitCurrency:
+          type: string
+          enum:
+            - USD
+          description: INFO_CORP EBIT_CURRENCY; fixed USD for this bundle.
+        ebit:
+          $ref: '#/components/schemas/Amount17Scale2'
+        debtPaymentCurrency:
+          type: string
+          enum:
+            - USD
+          description: INFO_CORP DEBT_PAYMENT_CURRENCY; fixed USD for this bundle.
+        debtPayment:
+          $ref: '#/components/schemas/Amount17Scale2'
+        existingPaymentCurrency:
+          type: string
+          enum:
+            - USD
+          description: INFO_CORP EXISTING_PAYMENT_CURRENCY; fixed USD for this bundle.
+        existingPayment:
+          $ref: '#/components/schemas/Amount17Scale2'
+        estimatePaymentCurrency:
+          type: string
+          enum:
+            - USD
+          description: INFO_CORP ESTIMATE_PAYMENT_CURRENCY; fixed USD for this bundle.
+        estimatePayment:
+          $ref: '#/components/schemas/Amount17Scale2'
+        otherDebtPaymentCurrency:
+          type: string
+          enum:
+            - USD
+          description: INFO_CORP OTHER_DEBT_PAYMENT_CURRENCY; fixed USD for this bundle.
+        otherDebtPayment:
+          $ref: '#/components/schemas/Amount17Scale2'
+        dsrCurrency:
+          type: string
+          enum:
+            - USD
+          description: INFO_CORP DSR_CURRENCY; fixed USD for this bundle.
+        dsr:
+          $ref: '#/components/schemas/Amount17Scale2'
+    Amount17Scale2:
+      type: string
+      pattern: '^-?[0-9]{1,15}(\.[0-9]{1,2})?$'
+      description: Decimal string fitting NUMBER(17,2); currency fields for DSR/INFO_CORP amounts are fixed USD.
     GiRatio:
       type: object
       properties:

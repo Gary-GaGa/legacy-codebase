@@ -74,7 +74,7 @@ Users without edit permission must not switch business type. PRD states query/ed
 covers-prd: FR-004, FR-008  
 強制點: both
 
-For both `sourceFrame=GENERAL_0110` and `sourceFrame=RENEWAL_0210`, `visibleTabs` uses normalized refactor funcIds. GI must include `EPROC00115`, `EPROC00112`, `EPROC00116`, and `EPROC00117`; non-old cases also include `EPROC00118`, and non-old CS cases include `EPROC00114`. FI must include `EPROC00115`, `EPROC00112`, `EPROC00119`, and `EPROC00120`; non-old cases also include `EPROC00118`, and non-old CS cases include `EPROC00114`. The order must follow the legacy tab array order. PRD tab mapping is at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md:257-287`, including the 0110/0210 source-page matrix at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md:278-287`.
+For both `sourceFrame=GENERAL_0110` and `sourceFrame=RENEWAL_0210`, `visibleTabs` uses normalized refactor funcIds. GI must include `EPROC00115`, `EPROC00112`, `EPROC00116`, and `EPROC00117`; non-old cases also include `EPROC00118`, and non-old CS cases include `EPROC00114`. FI must include `EPROC00115`, `EPROC00112`, `EPROC00119`, and `EPROC00120`; non-old cases also include `EPROC00118`, and non-old CS cases include `EPROC00114`. `EPROC00114` is CS-only: CU responses must not include it in `visibleTabs`, `sourceTabMap`, or `pageMap`, because `TB_CHECK_POINTS_CU` has no `EPROC00114` checkpoint column in this bundle's schema. The order must follow the legacy tab array order. PRD tab mapping is at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md:257-287`, including the 0110/0210 source-page matrix at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md:278-287`.
 
 `pageMap` must not be the sole visibility carrier. It carries checkpoint state for known C0 child pages, while `visibleTabs` carries tab visibility and order, and `sourceTabMap` maps each normalized visible tab to its source-confirmed legacy page code. For `sourceFrame=GENERAL_0110`, `sourceTabMap` must map `EPROC00115/112/114/116/117/118/119/120` to `EPROC0_0115/0112/0114/0116/0117/0118/0119/0120`. For `sourceFrame=RENEWAL_0210`, the same normalized keys must map to `EPROC0_0215/0212/0214/0216/0217/0218/0219/0220`. Legacy JSP tab conditions support the same GI/FI, old-case, and CS branches at `legacy-epro/WebContent/html/cathaybk/system/epro/c0/EPROC0_0100/EPROC00110.jsp:169-218` and `legacy-epro/WebContent/html/cathaybk/system/epro/c0/EPROC0_0200/EPROC00210.jsp:167-215`. The current backend builds G/F maps by adding/removing pageMap keys at `backend/src/main/java/khd/svc/epro/service/corporate/impl/CsuCreditInvestigationServiceImpl.java:260-295`, and the current FE filters `pageMap` into visible tabs at `frontend/src/app/core/models/pages/case-edition/corporate/credit-investigation/credit-investigation-tab-control.ts:49-66`; that current coupling is an implementation gap against this response contract.
 
@@ -129,6 +129,8 @@ covers-prd: FR-001, FR-006, FR-007
 強制點: BE
 
 The SRS carries PRD error keys `MSG_INITIAL_FAIL`, `MSG_DATA_NOT_FOUND`, `MSG_QUERY_FAIL`, and `MSG_OVER_COUNT_LIMIT`. PRD common error mapping is at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md:460-468`, and detailed error principles are at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md:546-564`. Legacy 0110 maps initial and getPage errors at `legacy-epro/JavaSource/com/cathaybk/epro/c0/trx/EPROC0_0110.java:69-108`; legacy 0210 maps getPage errors at `legacy-epro/JavaSource/com/cathaybk/epro/c0/trx/EPROC0_0210.java:96-112`.
+
+The PRD module-error path is preserved instead of being silently collapsed into `MSG_QUERY_FAIL`: failures that correspond to `ReturnCode.ERROR_MODULE` must carry `ERROR_MODULE` plus the module message, and over-count failures must carry `ERROR_MODULE` plus `MSG_OVER_COUNT_LIMIT`. Generic query/switch failures without a module-returned message remain `ReturnCode.ERROR` plus `MSG_QUERY_FAIL`.
 
 Legacy 0210 catches `ErrorInputException` without setting a return message at `legacy-epro/JavaSource/com/cathaybk/epro/c0/trx/EPROC0_0210.java:73-78`; because PRD marks this as TBD-003 at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md:45`, the new contract must not silently preserve the empty-return behavior. R15 closes that branch as a standard `MSG_INITIAL_FAIL` initial-load error.
 
@@ -209,6 +211,12 @@ Provenance: PRD TBD-006 identifies the data-loss risk and requires stronger word
 ## Pending Register
 | ID | Rule | Owner | Impact | Evidence | Status |
 |---|---|---|---|---|---|
+| TBD-001 | R13 | PM/SA/RD | Renewal assessment-type switch ownership. | PRD TBD-001 and R13 owner decision 2026-06-24. | Closed/spec-frozen: NO_PERSONAL_ASSESSMENT_SWITCH_IN_00110 |
+| TBD-002 | R14 | RD | Required application number source and request validation. | PRD TBD-002 and R14 contract decision 2026-06-24. | Closed/spec-frozen: APPLICATION_NO_REQUIRED_FROM_CASE_CONTEXT; implementation/tests remain RD DoD |
+| TBD-003 | R15 | RD | 0210 `ErrorInputException` message behavior. | PRD TBD-003 and R15 contract decision 2026-06-24. | Closed/spec-frozen: STANDARD_INITIAL_FAIL_FOR_ERROR_INPUT; implementation/tests remain RD DoD |
+| TBD-004 | R16 | FE/RD | C0-owned title/i18n key. | PRD TBD-004 and R16 owner decision 2026-06-24. | Closed/spec-frozen: C0_OWNED_I18N_KEY |
+| TBD-005 | R17 | FE/RD | GI/FI display labels. | PRD TBD-005 and R17 owner decision 2026-06-24. | Closed/spec-frozen: GI_FI_ENGLISH_LABELS |
+| TBD-006 | R18 | FE/RD/Security | Destructive switch warning and confirmation token policy. | PRD TBD-006 and R18 owner decision 2026-06-24. | Closed/spec-frozen: SWITCH_TOKEN_AND_GENERATION_REQUIRED; implementation/tests remain RD DoD |
 
 ## Traceability
 > ⚠️ **QA 2026-06-24 暫拔除**：`qa-cases.md` 已刪。本 bundle 所有 QA-0XX 引用（下表 QA 欄、metadata closeout/驗證佐證、R 條 QA 掛鉤）均為 **dormant、不得視為已驗證**；closeout 以規格決策（owner/RD-contract）為據。REQ↔Rn 追溯仍有效；恢復 QA 後重建。

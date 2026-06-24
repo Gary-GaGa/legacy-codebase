@@ -363,11 +363,15 @@ components:
         codes. For GENERAL_0110 values must be EPROC0_011x/012x aliases; for
         RENEWAL_0210 values must be EPROC0_021x/022x aliases. Missing 021x
         aliases for RENEWAL_0210 fail R9/QA-009.
+        EPROC00114 is CS-only; CU responses must omit it from sourceTabMap,
+        pageMap, and visibleTabs even though CS responses may include it.
       properties:
         EPROC00112:
           $ref: '#/components/schemas/SourceTabCode'
         EPROC00114:
-          $ref: '#/components/schemas/SourceTabCode'
+          allOf:
+            - $ref: '#/components/schemas/SourceTabCode'
+          description: CS-only collateral-assessment tab; CU responses must omit this key.
         EPROC00115:
           $ref: '#/components/schemas/SourceTabCode'
         EPROC00116:
@@ -408,11 +412,15 @@ components:
         Y means pending / still needs work and N means completed. Hidden or
         inactive pages may have N without becoming visible. For renewal/change
         source frames, use sourceTabMap to preserve 021x source provenance.
+        EPROC00114 is CS-only; CU responses must omit it from pageMap because
+        TB_CHECK_POINTS_CU does not define the EPROC00114 checkpoint column.
       properties:
         EPROC00112:
           $ref: '#/components/schemas/CheckpointValue'
         EPROC00114:
-          $ref: '#/components/schemas/CheckpointValue'
+          allOf:
+            - $ref: '#/components/schemas/CheckpointValue'
+          description: CS-only collateral-assessment checkpoint; CU responses must omit this key.
         EPROC00115:
           $ref: '#/components/schemas/CheckpointValue'
         EPROC00116:

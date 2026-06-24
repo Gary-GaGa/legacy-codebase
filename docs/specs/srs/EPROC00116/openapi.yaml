@@ -194,6 +194,7 @@ components:
           properties:
             code:
               type: string
+              description: EPRO business or validation code. E130 is the malformed request validation code for save/calc-style payloads; MSG_OVER_COUNT_LIMIT and MSG_QUERY_FAIL are explicit PRD-compatible business error keys.
               enum:
                 - E102
                 - E116

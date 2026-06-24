@@ -153,6 +153,8 @@ CREATE TABLE TB_SCORE_CARD_PARAM_DETAIL (
   DOC_ID VARCHAR2(20) NOT NULL,
   VAR_NAME VARCHAR2(30) NOT NULL,
   VAR_CODE VARCHAR2(3) NOT NULL,
+  -- Latest schema reverify records the asymmetric physical precision below;
+  -- preserve it as source provenance instead of normalizing the range columns.
   LOW_RANGE NUMBER(11,2),
   UP_RANGE NUMBER(12,2),
   SCORE VARCHAR2(10),
