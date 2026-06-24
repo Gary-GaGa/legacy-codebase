@@ -13,7 +13,7 @@
 | Bible v1.1 | `docs/specs/bible/bible-eproposal.md` | 已在 repo |
 | **PRD 快照** | `docs/specs/prd/`（**扁平放、可一次 bulk**），名 `PRD-*<funcId>*.md`（rename 腳本 `scripts/rename-prd.ps1`）| **PM 放** |
 | trace | `docs/specs/prd/trace-*<funcId>*.md` | **prd-to-srs 產**（PM 不放）|
-| **SRS bundle** | `docs/specs/srs/<funcId>/`（spec.md/openapi.yaml/schema.sql/qa-cases.md）| **prd-to-srs 產**（PM 不放、目錄名＝funcId）|
+| **SRS bundle** | `docs/specs/srs/<funcId>/`（spec.md/openapi.yaml/schema.sql；**qa-cases.md 2026-06-24 暫拔除**）| **prd-to-srs 產**（PM 不放、目錄名＝funcId）|
 | 新 DB schema | local `docs/db-diff/`（**留母資料夾、不進規劃 repo**）| owner（dev host）|
 | 70% baseline | local `docs/refactor-spec/`（**留母資料夾**）| owner（dev host）|
 
@@ -107,8 +107,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 - openapi.yaml（真實 epl-* request/response）
 - schema.sql（涉及表/欄 DDL：型別/長度/PK/nullable；**+ 新舊對照**：舊欄→新欄、change 類型
   〔add/remove/type/precision/nullable/rename〕、三判 tag、來源 schema-diff 行）
-- qa-cases.md（每條 covers: Rn；test-ready：Given 可 seed、When 對 epl-*+method、
-  Then 有 DB 驗證點〔表/欄/期望值〕；多分支 Rn 的 happy/error/edge 各 ≥1 case）
+〔qa-cases.md 2026-06-24 暫拔除——QA 產生/驗收先移除，bundle 只產 spec/openapi/schema 三檔〕
 
 【鐵則】
 - 一條業務規則 = 一個 Rn；行為句用 EARS（普通/當…時/在…期間/若…）。
@@ -124,8 +123,8 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
   - 一般決策仍照上條（帶入為約束、不重議）；本條限 owner 點名 re-open 者。權威＝`spec-architecture §5b`／`ADR-0002`。
 
 【DoD（Approved 前必過，含批判輪教訓）】
-- 每 PRD REQ ≥1 Rn；每 Rn ≥1 QA covers + 強制點；完整性/安全的驗證 BE 有且權威。
-- gate⑤：多分支 Rn 各 happy/error/edge ≥1 case（partial 判定詞見 `check-srs-bundle.py` 檔頭）。
+- 每 PRD REQ ≥1 Rn；每 Rn 有 acceptance + 強制點；完整性/安全的驗證 BE 有且權威。〔≥1 QA covers 隨 QA 暫拔除。〕
+〔gate⑤（多分支 Rn happy/error/edge ≥1 case）2026-06-24 隨 QA 暫拔除——qa-cases 不產，gate⑤ skip。〕
 - Bible 安全/災難條件逐條對：carried(Rn) 或 disclaimed；【安全/災難類未承載 → 不得 Approved
   （連 subset 也不行）】。
 - PRD Error Response 每個錯誤碼 → 落某 Rn + openapi response（對的 HTTP status），否則明文
@@ -140,7 +139,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
 
 【過閘門（兩層，先機械再語意）】
 1. 機械：`python scripts/check-srs-bundle.py docs/specs/srs/<funcId>` 必 exit 0。
-2. 語意：**SRS N 軸驗證**（`orchestration-playbook §4b` 的 A–G 軸，七正交、各 read-only、最好跨模型；axis A＝`spec-reviewer`〔`.codex/agents/spec-reviewer.toml`＝部署後本機路徑、repo 範本 `docs/env/codex/spec-reviewer.toml`〕；risk-tier T1 全 A–G、低風險頁可 A+E+G）**全軸無未解 Blocker**；
+2. 語意：**SRS N 軸驗證**（`orchestration-playbook §4b` 的 **A–F 軸**〔G 可測試性隨 QA 2026-06-24 暫拔除〕、各 read-only、最好跨模型；axis A＝`spec-reviewer`〔`.codex/agents/spec-reviewer.toml`＝部署後本機路徑、repo 範本 `docs/env/codex/spec-reviewer.toml`〕；risk-tier T1 全跑、低風險頁可 A+E）**全軸無未解 Blocker**；
    採納修正後【再審一輪】（修正可能引入新錯）。
 
 【回填】bundle 連到 feature-inventory 該頁 + per-page-reinventory-matrix（SRS 欄）；

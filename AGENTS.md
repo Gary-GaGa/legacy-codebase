@@ -49,7 +49,7 @@
 - ⚠️ 進度提醒（2026-06-06 快照；**現況以 `docs/STATUS.md`/`feature-inventory.md` 為準**）：前端**非**全完成——**c0 評分前端（容器+8 子頁）整組缺、Phase F 鏡像 i0 補建中**；撥貸核心（換匯 stub + T24）未通。細節見 `docs/feature-inventory.md`。
 
 ## Spec workflow（PRD→SRS，雙軌 Claude/Codex）
-AI workflow＝`Bible→PRD→SRS→QA→RD`（見 `docs/assets/ai-workflow.mmd`）；funcId＝追溯 slug。**Codex 側工具**（部署 `docs/env/codex/` 範本到本機/專案 `.codex/`）：
+AI workflow＝`Bible→PRD→SRS→RD→DoD`（見 `docs/assets/ai-workflow.mmd`）；funcId＝追溯 slug。〔**QA 產生/驗收 2026-06-24 暫拔除**：原 `→QA→` 環節先移除，待主線跑順再納入。〕**Codex 側工具**（部署 `docs/env/codex/` 範本到本機/專案 `.codex/`）：
 - **Legacy→Bible**：custom prompt `.codex/prompts/legacy-to-bible.md`（範本 `docs/env/codex/prompts/legacy-to-bible.md`）→ `/legacy-to-bible <domain>`。反推業務 Bible（敘事、證據接地）到 `docs/specs/bible/bible-<domain>.md`。
 - **PRD→SRS**：custom prompt `.codex/prompts/prd-to-srs.md`（範本 `docs/env/codex/prompts/prd-to-srs.md`）→ 互動介面 `/prd-to-srs <PRD|funcId>`。產 SRS bundle 到 `docs/specs/srs/<funcId>/`（worked example 重產中〔00100/00118 已全清 2026-06-18、待重產〕；00800 v0.9 已封存；規格分層 bible→prd→srs 見 `docs/specs/README.md`）。
 - **spec 審查（唯讀）**：subagent `.codex/agents/spec-reviewer.toml`（範本 `docs/env/codex/spec-reviewer.toml`）；定稿（`Status: Approved`）前必跑（＝SRS **N 軸 axis A**，全軸 A–G 見 `docs/process/orchestration-playbook.md §4b`）。

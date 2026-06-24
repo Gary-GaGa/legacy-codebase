@@ -10,6 +10,8 @@
   gate⑤  covers：每個非-@PENDING `Rn` ≥1 QA covers；懸空 QA 引用；
          **分支覆蓋自承不完整**（Rn 雖 ≥1 但 qa 自承「僅…分支／未撰寫／RD 補／
          不可當已覆蓋」）=warn（破「≥1 假綠」；2026-06-16 升級，源 00800 批判 #3）
+         ⚠️ **2026-06-24 QA 暫拔除**：qa-cases.md 不存在時 gate⑤ skip（非 FAIL）；
+         流程收斂 Bible→PRD→SRS→RD→DoD，QA 產生/驗收待日後再納入。重加 qa-cases.md 即復活。
   gateⓈ Status↔安全/雙軸：(a) spec Status 含 Approved 但有未承載 Bible→PRD seam
          （BPn-PENDING）=warn——**未承載 Bible 安全/災難條件不得 Approved**；機械無法判是否
          安全條件→逼人確認（2026-06-16 批判輪1 #5）；(b) Status 含 Approved 但未分
@@ -43,7 +45,7 @@
 **分工**：語意正確性（規則合不合理、as-is/to-be 對不對、有沒有把 legacy 當需求、
 NFR 量化）仍由 `.claude/agents/spec-reviewer.md`（人/LLM）審。兩層互補、不重疊。
 
-對象＝`docs/specs/srs/<funcId>/`：spec.md + openapi.yaml + schema.sql + qa-cases.md。
+對象＝`docs/specs/srs/<funcId>/`：spec.md + openapi.yaml + schema.sql（qa-cases.md 自 2026-06-24 暫拔除＝optional；存在才跑 gate⑤）。
 
 用法：
   python scripts/check-srs-bundle.py <bundle-dir> [<bundle-dir> ...]
@@ -259,8 +261,12 @@ def gate5_traceability(bundle):
     fails, warns, infos = [], [], []
     sp = os.path.join(bundle, "spec.md")
     qp = os.path.join(bundle, "qa-cases.md")
-    if not (os.path.isfile(sp) and os.path.isfile(qp)):
-        return ["缺 spec.md 或 qa-cases.md（gate⑤ 無法驗）"], [], []
+    if not os.path.isfile(sp):
+        return ["缺 spec.md（gate⑤ 無法驗）"], [], []
+    if not os.path.isfile(qp):
+        # QA 產生/驗收自 2026-06-24 暫拔除（流程收斂 Bible→PRD→SRS→RD→DoD）。
+        # qa-cases.md 不存在＝gate⑤ skip（非 FAIL）；恢復＝重加 qa-cases.md，gate⑤ 自動復活。
+        return [], [], ["qa-cases.md 不存在 → gate⑤ skip（QA 暫拔除；恢復見 git history）"]
     spec = read(sp).splitlines()
     qa = read(qp).splitlines()
 

@@ -1,6 +1,8 @@
 %% 未來 AI 工作流 — AI-native SDLC pipeline（brownfield 版）
 %% 在 GitHub / Mermaid Live (mermaid.live) 直接 render；可編輯。本檔＝AI Flow 唯一來源（不再維護 .svg 快取——2026-06-11 健檢刪除；需要圖檔時臨時 render）。
 %% 2026-06-23：QA-Agent / RD-Agent 由單節點攤成子流程（主幹＋oracle 化／as-is 驗證），對齊 docs/process/orchestration-playbook.md §4。
+%% ⚠️ 2026-06-24：QA-Agent（產生/驗收）暫拔除——主線收斂為 Bible→PRD→SRS→RD→DoD（gate④QA驗收/⑤覆蓋率 隨之暫停、SRS bundle 不含 qa-cases）。
+%%   下方 QAA 子流程保留作日後恢復 QA 時的設計參考；現階段不在主幹（讀者請略過 QAA、視 SRS 自驗後直接進 RD-Agent）。
 flowchart LR
   Legacy[("Legacy 系統<br/>既有碼 · DB · JSP")] -->|EPRO Expert AI<br/>反推 · 證據接地| Bible
   Bible["<b>Bible 業務聖經</b><br/>user story · 北極星 · 黃金旅程"] -->|PM/PO + AI| PRD

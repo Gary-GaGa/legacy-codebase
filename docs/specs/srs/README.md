@@ -9,8 +9,8 @@
 <FUNC_ID>/
 ├─ spec.md        ← SA：業務規則 Rn（強制點 FE/BE）＋ §@PENDING 表（該頁待決的單一出處）
 ├─ openapi.yaml   ← SA：FE↔BE 契約（真實 epl-* RPC 的 request/response schema）
-├─ schema.sql     ← SA：BE↔DB 契約（touched 表 / 欄位 / 約束）
-└─ qa-cases.md    ← QA：每條 case 標 `covers: Rn`（test-ready 寫法，見 ../qa-to-test.md）
+└─ schema.sql     ← SA：BE↔DB 契約（touched 表 / 欄位 / 約束）
+   〔qa-cases.md ← QA：2026-06-24 暫拔除（QA 產生/驗收先移除）；恢復見 git history〕
 ```
 
 ## 兩種來源
@@ -19,7 +19,7 @@
   1. **openapi.yaml**：對既有 i0 controller 的 DTO 填**確切**欄位 + `@JsonProperty`（前端契約不可變）。
   2. **schema.sql**：列**本頁真的會讀寫**的表 + 欄位（JIT 從 `../../legacy/db-schema-catalog.md` 抽，不要全表貼）。
   3. **spec.md**：每條業務規則給 `Rn`，**引用 i0 `file:line` 當證據**（不准憑印象）。
-  4. **qa-cases.md**：每條 case 標 `covers: Rn`；未決 / escalation 寫成 `@PENDING`。
+  〔4. qa-cases.md：2026-06-24 暫拔除。〕
 
 ## 閘門編號對照（⚠️ 本表＝兩套編號的**唯一**對齊處）
 > 權威編號＝DoD 閘門牆 ①–⑦（`../../assets/ai-workflow.mmd`，code 階段）。`check-srs-bundle.py` 的 **數字** gate（①②⑤）＝牆上**同位、同義**項在 SRS 定稿階段的 pre-check（同號、不同階段）。腳本的 **SRS 階段專屬**檢查（牆上無對應格）改用**字母標**（gateⒷ/gateⓅ）+ 非數字名（xfile/doc-paths），**刻意不接續 ⑥⑦** 以免與牆上 ⑥Build/⑦LLM-advisory 撞號（2026-06-12 改）。涵蓋細節一律見**腳本檔頭**。
@@ -29,8 +29,8 @@
 | ① Contract：springdoc OpenAPI ↔ snapshot 比對 | gate①：openapi 解析 / $ref / required |
 | ② Schema：Hibernate `ddl-auto=validate` / migration | gate②：DDL 解析 + 欄長交叉 |
 | ③ 結構：`scripts/verify-c0.py --git` | —（不適用 SRS 階段）|
-| ④ QA 驗收：Testcontainers oracle-xe 跑 case（橋接 `../qa-to-test.md`）| —（寫法閘＝qa-cases **test-ready**）|
-| ⑤ 覆蓋率：ID 對表 | gate⑤：Rn↔QA covers / 懸空引用 / **分支覆蓋自承不完整=warn**（2026-06-16）|
+| ~~④ QA 驗收~~ | 〔2026-06-24 暫拔除〕 |
+| ~~⑤ 覆蓋率~~ | 〔gate⑤ skip：qa-cases 不存在；隨 QA 暫拔除〕 |
 | ⑥ Build 綠 | —（牆上 ⑥；腳本無同號項，撞號已消除）|
 | ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與牆上 ⑦ 混）＝**N 軸 axis A**；全軸 A–G 見 `../../process/orchestration-playbook.md §4b` |
 | —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、**gateⓈ** Status↔安全/雙軸〔(a) Approved+`BPn-PENDING`=warn；(b) Status 未分「規格定版/實作完成」=warn——批判輪1/輪2 2026-06-16〕、**gateⒺ** 錯誤碼承載〔PRD Error 表→spec/openapi 漏承載=warn、HTTP status 不一致=warn——批判輪3 2026-06-16，源 SR-B1/B2〕、**gateⓇ** reconcile 承載〔spec.md 須有『新舊 DB 對照/更動 delta』段否則 warn——防規模化靜默跳過 db-diff/refactor-spec reconcile，2026-06-18；段內容真確＝spec-reviewer 紅旗⑥〕、xfile 跨檔、doc-paths |

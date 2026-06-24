@@ -1,5 +1,7 @@
 # QA cases → 可跑測試（gate ④ 橋接約定）
 
+> 🟡 **2026-06-24 暫拔除**：QA 產生/驗收已從主線移除（流程收斂 Bible→PRD→SRS→RD→DoD），SRS bundle 不再含 qa-cases.md、gate④/⑤ 暫停。本檔保留作日後恢復 QA 時的對映參考；現階段不適用。恢復見 git history。
+
 > **問題**：`qa-cases.md` 是 Given/When/Then **散文**，但 flow gate ④ 要「**跑** QA cases」。這份定**散文→可跑測試**的對映，讓 ④ 從北極星變成可操作。
 > ⚠️ **真測試碼在外部產品 repo**（本規劃 repo 只放 spec/約定）；本檔是「RD 把 case 變測試」的規則，落在 build-tasks 任務單 + 產品 repo。
 

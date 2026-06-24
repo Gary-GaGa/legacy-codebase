@@ -7,7 +7,7 @@
 ## 🔁 分層 × 流程（由上往下讀＝AI flow；圖＝`assets/ai-workflow.mmd`）
 
 ```
-Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS(+QA) ──▶ ④ RD 任務單 ──▶ ⑤ 驗證/閘門 ──▶ 回填狀態
+Legacy ──反推──▶ ① Bible ──▶ ② PRD ──▶ ③ SRS ──▶ ④ RD 任務單 ──▶ ⑤ 驗證/閘門 ──▶ 回填狀態
 （repo 外）      specs/bible/  specs/prd/  specs/srs/     build-tasks/    scripts/ +        feature-
                  ＋legacy/*    （外部權威， <funcId>/      （live↔done/）  spec-reviewer     inventory.md
                   原料         此處快照）   bundle×4檔                     ＋verification/*   （SSOT）

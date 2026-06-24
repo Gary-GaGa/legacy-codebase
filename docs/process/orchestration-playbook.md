@@ -43,7 +43,7 @@
 | **D. 安全·授權** | Bible BR/SC/災難情境＋`TB_API_AUTH`/`SECURE_ATTRIBUTE` 逐條 carried/disclaimed；mutating 端點 FE-only 須有 BE 強制 Rn | 安全/災難未承載 |
 | **E. DB reconcile** | spec 有無「新舊 DB/更動 delta」段（`gateⓇ` 已 warn 段缺，本軸查**內容**）；每條附來源＋三判；`schema.sql` 真帶 change-hint 還是只寫「待 RD」| ④ db-diff/refactor-spec reconcile 漏 |
 | **F. 金錢·精度·截斷** | 精度/rounding/maxlength/截斷欄逐欄（**現流程最空白、風險最高**）；金錢欄 BE 權威＋交易一致 | ② 金錢/截斷/精度欄 |
-| **G. 可測試性** | 每 Rn 的 QA 真測到精神（非掛名）；多分支 happy/error/edge 齊（補 gate⑤「≥1」假綠）| QA 充數 |
+| ~~**G. 可測試性**~~ | 〔**2026-06-24 暫拔除**：隨 QA 產生/驗收暫停；qa-cases 不存在時本軸不適用。恢復 QA 後重啟〕 | — |
 - **真獨立**：各軸獨立 session、不同指示、最好跨模型；同質多個＝theater、不算 N 軸 PASS。
 - **A 廣度兜底、C–G 深度窮舉**：A（含 spec-reviewer 6 紅旗）與 C/D/E 在錯誤碼/安全/reconcile 上**刻意重疊＝雙保險**（跨模型反 correlated-blindness），非互推皮球；專軸逐項窮舉、A 顧整體一致——**跑了 A 不替代專軸**。
 - **規模調配（2026-06-22 起：SRS pilot/drain 一律全 A–G）**：**每頁全 A–G、每軸一隻 read-only sub-agent（可叢集 ≥3 隻）、跨模型**——drain 對齊 pilot 品質,**不因批量降軸**。〔早前「低風險頁可 A+E+G」**已棄用**;若 owner 對個別 trivial 頁明示放行才例外,且 F/D 綁欄位內容**仍不可省**。〕F 軸＝現流程最空白、風險最高(pilot 跨模型 F 軸抓到 `nfix-card` C-B1~B3 精度/截斷/缺 `TB_API_AUTH`,機械閘門看不到);D 軸＝授權/四眼(0922 N 軸抓到 Maker-Checker 缺四眼控制)。批量靠 **context 隔離+壓縮+分批**承載全軸(見 `prd-to-srs-orchestrator-drain.md §1b`)。
