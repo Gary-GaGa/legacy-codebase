@@ -13,7 +13,7 @@
    〔qa-cases.md ← QA：2026-06-24 暫拔除（QA 產生/驗收先移除）；恢復見 git history〕
 ```
 
-> **結構單一出處＝[`spec-template.md`](spec-template.md)**（canonical 段名/順序/Rn 格式）。新 bundle 複製它起手、須過 `check-srs-bundle.py` 結構檢查 warn-clean；既有 14 包標準定版前產出、漂移為已知（grandfathered）。
+> **結構單一出處＝[`spec-template.md`](spec-template.md)**（canonical 段名/順序/Rn 格式）。**一檔兩半（2026-06-24）：上半 Contract＝to-be only 契約（純掃即可開發）、下半 `Appendix — Evidence & Decisions`＝as-is/REF-Dn/provenance/決策；契約 Rn 用 `[ev→Rn]` 指到附錄 `Rule Evidence`、不內嵌佐證。** 新 bundle 複製它起手、須過 `check-srs-bundle.py` 結構檢查 warn-clean（含 Contract 純淨度 + `[ev→Rn]` 指標）；既有包標準定版前產出、漂移為已知（grandfathered，折進已排翻新再轉兩半；lint warn 標示待翻新項）。
 
 ## 兩種來源
 - **PRD（主路）**：叫 `/prd-to-srs`（帶 PRD）自動產 bundle（範本：00100/00118 重產中、待母資料夾；流程見 `../../build-tasks/prd-to-srs-codex-dispatch.md`）——規則追溯 PRD `REQ-`/`FR-` id、TBD→`@PENDING`、endpoint 寫真實 `epl-*`、頁已存在則標 as-is/to-be。

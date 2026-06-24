@@ -34,8 +34,10 @@
          真確性〔每條附來源+三判 vs 只寫『待 RD』〕＝spec-reviewer 紅旗⑥（語意層）。
          **gateⓇ PASS 僅表『段存在』、不表內容真確**（空標題/否定段亦 PASS→紅旗⑥ 兜底）。
   structure 結構（warn 級，永不 FAIL）：對 canonical 結構（單一出處＝
-         `docs/specs/srs/spec-template.md`）驗——canonical 11 段齊/命名一致、metadata 必要欄、
-         Rn 標題 `### Rn <title> - 強制點: FE|BE|both`+`covers-prd:`、不編號風格。**既有 14 包
+         `docs/specs/srs/spec-template.md`）驗——canonical 一檔兩半（上半 Contract／下半
+         `Appendix — Evidence & Decisions`）段齊/命名一致、metadata 必要欄、Rn 標題
+         `### Rn <title> - 強制點: FE|BE|both`+`covers-prd:`、Contract 純淨度（佐證不內嵌）
+         + `[ev→Rn]` 指標、不編號風格。**既有 14 包
          標準定版前產出、漂移為已知＝grandfathered（warn 不擋、exit 0 不變）；新包照 template
          寫＝warn-clean**（往後一致由此把關）。全部正規化後可升 FAIL。（2026-06-24 加）
   [--all 附帶] doc-paths：全 repo markdown 內 backtick 引用的 root-anchored 路徑
@@ -703,22 +705,29 @@ def scan_doc_paths():
 
 # ---------- structure（canonical 結構 lint；warn 級，永不 FAIL）-----------------
 # canonical 段＝docs/specs/srs/spec-template.md（結構單一出處）。本檢查只 warn：
-# 既有 14 包標準定版前產出、漂移為已知 → warn 不擋（check-srs-bundle 仍 exit 0、不破 Stop hook）；
+# 既有包標準定版前產出、漂移為已知 → warn 不擋（check-srs-bundle 仍 exit 0、不破 Stop hook）；
 # 新包照 template 寫＝warn-clean。全部正規化後可改 FAIL（見 spec-template.md 註）。
+# 結構＝一檔兩半（2026-06-24 可讀性演進）：上半 Contract（to-be only、可純掃開發）／
+# 下半 Appendix — Evidence & Decisions（as-is/REF-Dn/provenance/決策）。契約 Rn 不內嵌佐證、
+# 用 [ev→Rn] 指到 Appendix 的 Rule Evidence（1:1）。檢查只驗段「存在/命名」，不強制段序。
 # (canonical 顯示名, 別名關鍵詞[出現即「命名非 canonical」], 必要?)
 _CANON_SECTIONS = [
+    # ── Contract 半 ──
     ("Metadata", [], True),
     ("Scope", [], True),
     ("Assumptions / Dependencies / Constraints", ["Assumptions"], False),
-    ("Source Evidence", ["Sources", "Source Inputs"], True),
     ("Endpoints", [], True),
     ("Rules", ["Business Rules"], True),
     ("NFR", [], False),
+    ("Hard Boundaries", ["Hard Boundar", "硬界線"], False),
+    # ── Appendix 半 ──
+    ("Appendix — Evidence & Decisions", ["Appendix"], True),
+    ("Source Evidence", ["Sources", "Source Inputs"], True),
     ("Trade-offs", ["Trade-off"], False),
     ("DB Reconcile / Delta", ["DB ", "DB/", "DB對", "Reconcile", "Delta", "對照"], True),
     ("@PENDING", ["PENDING", "Pending", "Decision Register"], True),
+    ("Rule Evidence", ["Rule Evidence", "Evidence (per"], True),
     # Traceability Matrix 2026-06-24 移除（QA 拔除後與 Rn 的 covers-prd 重複;追溯 SoT=covers-prd、gateⒷ 驗）
-    ("Hard Boundaries", ["Hard Boundar", "硬界線"], False),
 ]
 
 
@@ -775,6 +784,32 @@ def structure_check(bundle):
                      f"（應 `### Rn <title> - 強制點: FE|BE|both`，避免粗體/括弧/無冒號）")
     if not rn_heads:
         infos.append("無 `### Rn` 規則標題（確認 Rules 段寫法）")
+
+    # 一檔兩半：Contract `## Rules` 純淨度 + [ev→Rn] 指標（warn 級）
+    r_start = next((i for i, ln in enumerate(lines) if ln.startswith("## Rules")), None)
+    if r_start is not None:
+        r_end = next((j for j in range(r_start + 1, len(lines))
+                      if lines[j].startswith("## ") or lines[j].startswith("# ")), len(lines))
+        # 排除引導/註解（`>` 行）避免誤報
+        body_lines = [ln for ln in lines[r_start + 1:r_end] if not ln.lstrip().startswith(">")]
+        body = "\n".join(body_lines)
+        noise = []
+        for label, pat in [("as-is/current code", r"(?i)current implementation|current backend|\bas-is\b"),
+                           ("決策關閉敘述", r"(?:RP|P-)\d+\s+closes|Owner decision"),
+                           ("commit SHA", r"@[0-9a-f]{7,40}\b"),
+                           ("file:line", r"\.md:\d+|\.java:\d+"),
+                           ("[CODE:]", r"\[CODE:")]:
+            if re.search(pat, body):
+                noise.append(label)
+        if noise:
+            warns.append(f"Contract `## Rules` 內含佐證噪音（{'、'.join(noise)}）；"
+                         f"canonical 兩半＝as-is/決策/provenance 移 Appendix `Rule Evidence`、契約只留 to-be")
+        blocks = re.split(r"(?m)^(?=### R\d)", body)
+        miss = sum(1 for b in blocks
+                   if re.match(r"### R\d", b) and "[ev→R" not in b and "[ev->R" not in b)
+        if rn_heads and miss:
+            warns.append(f"{miss}/{len(rn_heads)} 條 Rn 缺 `[ev→Rn]` 指標"
+                         f"（契約應指向 Appendix `Rule Evidence`）")
 
     return [], warns, infos
 
