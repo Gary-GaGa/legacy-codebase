@@ -50,7 +50,8 @@ verifier-contract（契約對齊）／verifier-scope（commit 範圍、誤動 OU
 - 回報格式照 `rd-codex-dispatch.md`【回報格式】（funcId + commit + BE/FE 檔 + DoD exit + RD 軸逐行 + ledger diff + 待 C 類彙總 + 四守則一句）。
 - 卡歸檔 `done/`：9 包 drain 跑完、回填完成後移。
 
-## 後續（9 包 rd-done 後；owner 定 2026-06-25）
-- **spec.md 兩半翻新一輪**：9 包改成 canonical 兩半（Contract/Appendix；`docs/specs/srs/spec-template.md`）、**順帶補 4 包缺的 `covers-prd`**（00110/00112/00114/SU0170）。規範/lint 已就位（warn 級），翻新＝消既有 warn。詳見 plan「SRS spec.md 可讀性 — 一檔兩半」Part B。
-- 全部被動到的包轉兩半後 → structure lint 由 warn 升 **FAIL**（硬閘門）。
-- **不在 RD 開發中插隊、不在蓋章時做**——RD 先收 9 包 rd-done，翻新另起。
+## 後續（三段序列、不交錯；owner 定 2026-06-25）
+**本卡＝段①。完成順序：① RD（本卡）→ ② SRS 兩半轉換 → ③ Phase V runtime。**
+- **② spec.md 兩半翻新一輪**（9 包 rd-done 後）：9 包改成 canonical 兩半（Contract/Appendix；`docs/specs/srs/spec-template.md`）、**順帶補 4 包缺的 `covers-prd`**（00110/00112/00114/SU0170）。規範/lint 已就位（warn 級），翻新＝消既有 warn。詳見 plan「SRS spec.md 可讀性 — 一檔兩半」Part B。全部被動到的包轉兩半後 → structure lint 由 warn 升 **FAIL**（硬閘門）。
+- **③ Phase V runtime**（②後）：110–120 FE runtime smoke（render/save、langType 筆數一致、GET-body 類）+ c0 套授權列；**FE runtime 不在 RD**（build+靜態多 agent 驗抓不到 runtime bug，RV-1/RV-2 前例）→ 歸 Phase V（`verification/verification-handoff.md`、`phase-v-api-selfverify-harness.md`）。
+- **不在 RD 中插隊、不在蓋章時做**——RD 先收 9 包 rd-done，後兩段另起。
