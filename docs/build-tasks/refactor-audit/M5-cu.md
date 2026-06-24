@@ -1,5 +1,7 @@
 # M5 `cu` Audit
 
+Status: **STALE 快照（2026-06-11 audit）** — Phase G／後續修復已補建多列原 UNFOUND；現狀 SSOT＝`docs/feature-inventory.md`、最新校正＝`drift-recheck-2026-06-19.md`。**勿據本檔回填**（會反砍成 regression）。
+
 Session: S4
 Scope: all `cu` pages and independent popup pages.
 SOURCE=old-source

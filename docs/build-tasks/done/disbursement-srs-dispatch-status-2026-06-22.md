@@ -1,5 +1,8 @@
 # 撥貸 SRS 派工狀態 + prompts（2026-06-22）
 
+> Status: **已結案（移入 done/）** — 本狀態板停在 2026-06-22；EPROISU0921/0922 SRS 已於 2026-06-23 Approved。歷史紀錄保留。
+
+
 > **用途**：撥貸 0921/0922 SRS 的「派工 hub + 接回點」。記在途狀態、owner 裁定點、兩支可貼 prompt。權威狀態仍以 `pending-register` / `STATUS` / 各 `spec.md` 為準；本卡＝操作便利。
 > **在哪跑 SRS/code**：母資料夾 Codex（產品碼 + 規劃 repo 可寫 + local `docs/refactor-spec/`+`docs/db-diff/`）。本 remote planning repo 跑不了。
 
