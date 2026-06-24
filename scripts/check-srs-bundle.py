@@ -34,7 +34,7 @@
          真確性〔每條附來源+三判 vs 只寫『待 RD』〕＝spec-reviewer 紅旗⑥（語意層）。
          **gateⓇ PASS 僅表『段存在』、不表內容真確**（空標題/否定段亦 PASS→紅旗⑥ 兜底）。
   structure 結構（warn 級，永不 FAIL）：對 canonical 結構（單一出處＝
-         `docs/specs/srs/spec-template.md`）驗——canonical 12 段齊/命名一致、metadata 必要欄、
+         `docs/specs/srs/spec-template.md`）驗——canonical 11 段齊/命名一致、metadata 必要欄、
          Rn 標題 `### Rn <title> - 強制點: FE|BE|both`+`covers-prd:`、不編號風格。**既有 14 包
          標準定版前產出、漂移為已知＝grandfathered（warn 不擋、exit 0 不變）；新包照 template
          寫＝warn-clean**（往後一致由此把關）。全部正規化後可升 FAIL。（2026-06-24 加）
@@ -717,7 +717,7 @@ _CANON_SECTIONS = [
     ("Trade-offs", ["Trade-off"], False),
     ("DB Reconcile / Delta", ["DB ", "DB/", "DB對", "Reconcile", "Delta", "對照"], True),
     ("@PENDING", ["PENDING", "Pending", "Decision Register"], True),
-    ("Traceability Matrix", ["Traceability"], True),
+    # Traceability Matrix 2026-06-24 移除（QA 拔除後與 Rn 的 covers-prd 重複;追溯 SoT=covers-prd、gateⒷ 驗）
     ("Hard Boundaries", ["Hard Boundar", "硬界線"], False),
 ]
 

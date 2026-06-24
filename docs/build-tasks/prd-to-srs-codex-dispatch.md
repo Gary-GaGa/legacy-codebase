@@ -104,7 +104,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
   Assumptions/Deps、Endpoints〔epl-*〕、業務規則 Rn〔每條 covers-prd: + 強制點 FE/BE/both +
   as-is✅⚠️🔴/to-be〕、NFR、Trade-offs、**新舊 DB 對照 + 更動 delta 清單**〔每條：來源
   〔DB-diff/decision/parity〕→ 影響 Rn → 三判 → carried(Rn)/@PENDING〕、@PENDING、
-  Traceability Matrix、硬界線 + as-is/to-be 摘要）
+  硬界線 + as-is/to-be 摘要）〔Traceability Matrix 2026-06-24 移除;追溯靠 Rn covers-prd〕
 - openapi.yaml（真實 epl-* request/response）
 - schema.sql（涉及表/欄 DDL：型別/長度/PK/nullable；**+ 新舊對照**：舊欄→新欄、change 類型
   〔add/remove/type/precision/nullable/rename〕、三判 tag、來源 schema-diff 行）

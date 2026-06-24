@@ -72,12 +72,6 @@ covers-prd: REQ-002
 |---|---|---|---|---|
 | PENDING-<funcId>-<簡述> | 待關 TBD-xxx | <owner> | Yes/No | Open |
 
-## Traceability Matrix
-> 兩欄 REQ↔Rn（QA 欄隨 QA 2026-06-24 暫拔除而移除；恢復 QA 後再加回）。
-| PRD | Rn |
-|---|---|
-| REQ-001 | R1 |
-
 ## Hard Boundaries
 - 可先修（as-is ✅/⚠️、與 @PENDING 無關）：<列 Rn 範圍>。
 - 待 TBD（涉 @PENDING）：<列 Rn 範圍 + 擋住的 TBD/PENDING id>。

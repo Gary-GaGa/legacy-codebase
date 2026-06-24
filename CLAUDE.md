@@ -42,7 +42,7 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→code/te
 | **盤點/校正** | 里程碑後重對 inventory（drift 校正回路，非主線一站）| **`/refactor-audit`** | **`/refactor-audit`** |
 
 ## 4. 品質門檻（`Status: Approved` 前必過）— DoD
-見 `prd-to-srs` skill §DoD。核心：Non-Goals 有；每個 PRD `REQ`≥1 `Rn`；每 `Rn` 有 acceptance + **強制點 FE/BE/both**；每個 `TBD` 一條 `@PENDING`+owner+blocking；Traceability Matrix 完整；endpoints 真實 `epl-*`；頁已存在則 as-is/to-be 清楚；模糊詞量化；**SRS N 軸（axis A=`spec-reviewer`，全軸 A–G 見 `docs/process/orchestration-playbook.md §4b`）過、無 Blocker**。〔**QA 暫拔除**：原「每 `Rn` ≥1 QA `covers`、happy/error/edge、gate⑤ 覆蓋率」隨 QA 產生/驗收一併暫移除；恢復見 git history。〕
+見 `prd-to-srs` skill §DoD。核心：Non-Goals 有；每個 PRD `REQ`≥1 `Rn`；每 `Rn` 有 acceptance + **強制點 FE/BE/both**；每個 `TBD` 一條 `@PENDING`+owner+blocking；每 `Rn` 有 `covers-prd` 追溯（Traceability Matrix 表 2026-06-24 移除、SoT=covers-prd）；endpoints 真實 `epl-*`；頁已存在則 as-is/to-be 清楚；模糊詞量化；**SRS N 軸（axis A=`spec-reviewer`，全軸 A–G 見 `docs/process/orchestration-playbook.md §4b`）過、無 Blocker**。〔**QA 暫拔除**：原「每 `Rn` ≥1 QA `covers`、happy/error/edge、gate⑤ 覆蓋率」隨 QA 產生/驗收一併暫移除；恢復見 git history。〕
 > **結構一致（2026-06-24）**：新 SRS bundle 結構照 canonical 範本 `docs/specs/srs/spec-template.md`，須過 `check-srs-bundle.py` 結構檢查（warn-clean）；既有 14 包標準定版前產出、漂移為已知（grandfathered、漸進正規化，不阻擋）。
 > **來源優先序（SoT precedence）**：PRD+舊系統+db-diff+refactor-spec 多源合成 SRS，衝突依 `docs/spec-architecture.md §5b` 的**來源優先序**梯裁——refactor 限本層贏（留 `REF-Dn` delta）、不蓋 DB 物理/Bible-PRD 意圖；**DB-resolvable fact 不留 Pending**（要 provenance）；命中升級觸發（Bible/PRD 衝突·regression·高風險面·同層無 upstream）→ C 類 `@PENDING` 待裁。決策＝`docs/adr/ADR-0002-srs-sot-precedence.md`。
 > **blocking vs advisory**：SRS 定稿的 `spec-reviewer`＝**blocking**（無 Blocker 才 Approved）；ai-workflow 圖上 ⑦ LLM review＝code 階段 **advisory**。兩者別混。**採納 reviewer 修正後要再審一輪**（修正可能引入新錯）。
