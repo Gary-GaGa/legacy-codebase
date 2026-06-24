@@ -4,8 +4,8 @@
 | Field | Value |
 |---|---|
 | FuncId | EPROC00116 |
-| Status | In Review / draft-for-controller-gate; awaiting human approval |
-| N-axis review | 2026-06-24 source/domain patch + Should-fix closeout PASS. Later owner/RD-contract closeout resolved all EPROC00116 R12 pending items through QA-021..QA-032, including service-level auth, runtime parity, report ownership, and DB/API mapping decisions. Mechanical gate PASS after closeout. Not Approved: Status remains In Review until owner approval and final axis-A review after this closeout. |
+| Status | 規格定版: Approved (2026-06-24, owner — axis A–F 獨立確認 Blocker 全清); 實作完成: pending RD (QA 暫拔除) |
+| N-axis review | 2026-06-24 source/domain patch + Should-fix closeout PASS. R12 pending items resolved via owner/RD-contract decisions (service-level auth, runtime parity, report ownership, DB/API mapping); QA-021..QA-032 references are dormant per 2026-06-24 QA removal, not verification evidence. Mechanical gate PASS. Axis A–F independent cross-model confirmation 2026-06-24: prior Blockers (E130 semantics, error-enum carry, pxls auth baseline-to-reconcile, provenance disclaimer) confirmed closed, no regression. Owner-approved 2026-06-24 (規格定版); implementation/tests remain RD code-stage DoD. |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00116-v1.0.md` |
 | Legacy source | `EPROC0_0116`, `EPROC0_0216`, `EPROC00116.jsp`, `EPROC00216.jsp`, GI financial statement DAOs |
 | Output files | `spec.md`, `openapi.yaml`, `schema.sql`（`qa-cases.md` 2026-06-24 隨 QA 暫拔除） |
