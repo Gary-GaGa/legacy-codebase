@@ -17,6 +17,21 @@
 
 ---
 
+## owner 決策(2026-06-24 已裁 — dev 機照此關 @PENDING、不再停問)
+
+**跨包政策(4 條)**
+1. **缺 baseline(00119 RP40 / 00120 P-009)→ code-as-baseline + parity 驗**:用 legacy(0119/0219、0120/0220)+ current code 當 as-is baseline 做 parity 碼驗,不等正式 refactor-spec artifact;parity 風險在 spec 標 disclaim + 留 commit SHA 追溯。
+2. **疑似 legacy bug → 預設修正成正確**(REF-Dn delta 標明):RP43 balance 比較、RP50 cashflow opening、RP52 borrowerRisk、00115 報表擔保品幣別等,預設 fix;除非該行為被外部依賴(那就保留+標)。對應 legacy-parity-sop 的 regression→修回。
+3. **save 授權 → 雙層**:DB `TB_API_AUTH` seed + service 層 case-edit/ownership guard(00115 RP20、00120 P-011),合 `backend/AGENTS.md` 慣例、BE 權威。
+4. **其餘 → 全採 agent 建議**(下表);agent 可自解的(a 查 DB fact / d 草 to-be 契約)直接做。
+
+**per-item 裁定(照建議)**
+- 00115:LOAN_LIMIT_TYPE 保留 current `!=2`+註假設｜第三幣別只收 USD/KHR｜row 上限先查 legacy groupSize｜blank-flag API 拒查逼補｜RC/0215 checkpoint DBA 查新表確認已併 CS/CU｜RC 舊案不分、統一允許 Finished｜報表幣別修正 COLLATERAL_CUR｜facility label 改 Group/Exposure｜route/menu 查 TB_PAGE_MENU 確認＝EPROC00115｜facilities `@NotNull`+RP20 雙層授權(agent/政策3)。
+- 00119:RP40 code-as-baseline(政策1)｜RP43 修正(政策2,QA 對真實財報規則)｜RP44 reference 資格預設 AND(照 legacy)、PM 可改｜RP50/RP52 修正(政策2)｜RP41/42/45/46/47/48/49/51/53/54 agent 查 code/schema 自解。
+- 00120:P-009 code-as-baseline(政策1)｜P-011 雙層授權(政策3)｜P-012 parent checkpoint 走獨立 endpoint、本頁 DTO 不膨脹｜P-013 rounding 照 legacy HALF_DOWN｜P-001 count mismatch STRICT 拒絕+不丟未捕例外｜P-002 PERIODS=0 回 N/A｜P-005 Finished 必填＝dataSeq+自動公式欄｜P-006 RC 舊案照 legacy(無 Finished)｜P-007 i18n 統一 EPROC00120_FUNC_NAME｜P-008 c0/i0 共表＝各自 SRS、i0 後補｜P-003/004/010 agent 自解。
+
+> dev 機:**照上述關 @PENDING**。若遇**未被上述涵蓋**的新待決,才停下出卡問 owner;否則一路執行到 gate+A–F、停在「待 owner 蓋規格定版 Approved」。
+
 ## ⬇️ 複製給 dev 機 Codex(Prompt 1 — finalize 3 包)
 
 ```
@@ -29,11 +44,11 @@
    - 00115:12 條(含孤兒碼 E130/E201/E999/E498、RP20 save authz)
    - 00119:RP40–RP54(RP40=缺 corporate refactor baseline)
    - 00120:P-009/P-011/P-012/P-013(+ 其餘 rule @PENDING)
-2. 逐項分類 a/b/c/d/e,分流:
-   - a(DB 可查 fact,有 provenance)、d(spec 側 to-be 契約)→ agent 直接關、寫進 spec.md,附來源。
-   - b(parity)/c(業務政策)/e(跨模組)/缺 baseline → 判斷題不自裁:停下、出「owner 決策卡」
-     (每項:問題+選項+影響+建議),等人裁。**00119 RP40 缺 baseline → 回報「需 owner/SA 提供
-     corporate baseline 或裁定走 i0-mirror+parity disclaim」,不得臆造 baseline。**
+2. 逐項**照上方「owner 決策(2026-06-24 已裁)」執行**:
+   - 該項在裁定表內 → 直接照裁定關(a/d 自查/草擬;b/c/e 照已裁政策)、寫進 spec.md 附來源+REF-Dn delta。
+   - **缺 baseline(RP40/P-009)= code-as-baseline + parity 驗**(政策1):用 legacy+current code 當 as-is、做 parity 碼驗、標 disclaim+commit SHA,**不臆造正式 artifact、不停問**。
+   - 疑似 bug 預設修正(政策2)、授權雙層(政策3)。
+   - **只有遇到裁定表未涵蓋的新待決,才判斷題不自裁:停下出卡問 owner**;其餘不停。
 3. 每關一項回 spec.md:去該 Rn 的 @PENDING 標籤或改 ✅ 定版;pending-register 對應列移已關。
 4. 機械 gate:python scripts/check-srs-bundle.py docs/specs/srs/<funcId> exit 0(gateⓅ 同步、去 @PENDING
    後恢復檢查;新包另含 structure warn 對照 spec-template.md,既有包 grandfathered)。
