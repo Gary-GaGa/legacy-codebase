@@ -9,7 +9,7 @@
 | Owner | SA / Credit decision domain / RD |
 | Upstream PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00117-v1.0.md` |
 | As-is source | Legacy `EPROC0_0117` + `EPROC0_0217`; current corporate implementation and refactor artifacts listed below |
-| Bundle files | `spec.md`, `openapi.yaml`, `schema.sql`, `qa-cases.md` |
+| Bundle files | `spec.md`, `openapi.yaml`, `schema.sql`（`qa-cases.md` 2026-06-24 隨 QA 暫拔除） |
 
 ## Scope
 - In scope: C0 Financial Evaluation GI option/query/save contract, GI ratio generation, DSR/business financial list persistence, checkpoint update, CS/CU checkpoint table routing, DB/refactor reconcile, and parity risk registration.
@@ -138,6 +138,7 @@ This rule intentionally keeps the bundle in `In Review`. It does not close `docs
 | RP38 | ✅ closed 2026-06-24 | PM/SA/RD | R5/R6/R8 | Closed: `KEEP_0217_OLD_CASE_SAVE_ONLY_NO_FINISH_DONE_UPDATE`. RC old cases preserve Save-only behavior; Finished is hidden/disabled and direct old-case finish must be rejected before mutation/checkpoint update; parent done and completed checkpoint are not updated. Implementation and regression tests are code-stage DoD, pending RD/QA. |
 
 ## Traceability Matrix
+> ⚠️ **QA 2026-06-24 暫拔除**：`qa-cases.md` 已刪。本 bundle 所有 QA-0XX 引用（下表 QA 欄、metadata 的 QA-017 佐證、RP26-38 closeout 的 QA 掛鉤）均為 **dormant、不得視為已驗證**；RP26-38 待決登記仍在本檔 §@PENDING 表（未遺失）。REQ↔Rn 追溯仍有效；恢復 QA 後重建。
 | PRD area | Rules | QA |
 |---|---|---|
 | Page load / initQuery | R1, R2 | QA-001, QA-002, QA-003, QA-005, QA-017, QA-018 |

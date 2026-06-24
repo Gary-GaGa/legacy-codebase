@@ -9,7 +9,7 @@
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md` |
 | Bundle | `docs/specs/srs/EPROC00110/` |
 | Source baseline | PRD v1.0 + Bible v1.1 + local db-diff + local refactor-spec + bounded source read |
-| Output files | `spec.md`, `openapi.yaml`, `schema.sql`, `qa-cases.md` |
+| Output files | `spec.md`, `openapi.yaml`, `schema.sql`（`qa-cases.md` 2026-06-24 隨 QA 暫拔除） |
 
 ## Scope
 - This SRS covers the C0 corporate credit-investigation parent frame migrated from legacy `EPROC0_0110` and `EPROC0_0210` into funcId `EPROC00110`; PRD scope names the two legacy pages and the GI/FI/checkpoint/data-clearing responsibility at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md:15-19`.
@@ -211,6 +211,7 @@ Provenance: PRD TBD-006 identifies the data-loss risk and requires stronger word
 |---|---|---|---|---|---|
 
 ## Traceability
+> ⚠️ **QA 2026-06-24 暫拔除**：`qa-cases.md` 已刪。本 bundle 所有 QA-0XX 引用（下表 QA 欄、metadata closeout/驗證佐證、R 條 QA 掛鉤）均為 **dormant、不得視為已驗證**；closeout 以規格決策（owner/RD-contract）為據。REQ↔Rn 追溯仍有效；恢復 QA 後重建。
 | PRD | Rule | QA |
 |---|---|---|
 | FR-001 | R1, R11, R14, R16 | QA-001, QA-011, QA-014, QA-016 |

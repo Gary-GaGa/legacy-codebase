@@ -201,6 +201,7 @@ Resolved source/domain note: prior `PENDING-007` is closed by source evidence. T
 | `E498` | all | Authorization/page-role failure. | 401 |
 
 ## 9. Traceability
+> ⚠️ **QA 2026-06-24 暫拔除**：`qa-cases.md` 已刪。本 bundle 所有 QA-0XX 引用（下表 QA 欄、metadata closeout/驗證佐證、R 條 QA 掛鉤）均為 **dormant、不得視為已驗證**；closeout 以規格決策（owner/RD-contract）為據。REQ↔Rn 追溯仍有效；恢復 QA 後重建。
 
 | PRD | rules | QA |
 | --- | --- | --- |

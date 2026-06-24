@@ -8,7 +8,7 @@
 | N-axis review | 2026-06-24 source/domain patch + Should-fix closeout PASS. Later owner/RD-contract closeout resolved all EPROC00116 R12 pending items through QA-021..QA-032, including service-level auth, runtime parity, report ownership, and DB/API mapping decisions. Mechanical gate PASS after closeout. Not Approved: Status remains In Review until owner approval and final axis-A review after this closeout. |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00116-v1.0.md` |
 | Legacy source | `EPROC0_0116`, `EPROC0_0216`, `EPROC00116.jsp`, `EPROC00216.jsp`, GI financial statement DAOs |
-| Output files | `spec.md`, `openapi.yaml`, `schema.sql`, `qa-cases.md` |
+| Output files | `spec.md`, `openapi.yaml`, `schema.sql`（`qa-cases.md` 2026-06-24 隨 QA 暫拔除） |
 
 ## Scope
 - In scope: C0 Financial Statement GI option lookup, current-case query, reference-application copy query, calculation, Save/Finished save, PDF/Excel export contracts, GI statement table writes, checkpoint update, and DB/schema reconcile for EPROC00116.
@@ -208,6 +208,7 @@ The following items were open owner/RD/Security/DBA decisions and are now closed
 | PENDING-EPROC00116-SERVICE-AUTHZ | RD / Security | Mutating/export endpoints need proven case/edit authorization beyond API seed rows. | Service-level guard proof UNFOUND before save/checkpoint writes and export generation; FE pageAuth is UI-only. | Closed: `SERVICE_LEVEL_CASE_PAGE_AUTH_REQUIRED` -> R10/R12. |
 
 ## Traceability
+> ⚠️ **QA 2026-06-24 暫拔除**：`qa-cases.md` 已刪。本 bundle 所有 QA-0XX 引用（下表 QA 欄、metadata「through QA-021..QA-032」closeout 佐證、R12 各列「with QA-0XX」驗證掛鉤）均為 **dormant、不得視為已驗證**；R12 closeout 以 owner/RD-contract 規格決策為據、實作+測試為 code-stage DoD。REQ↔Rn 追溯仍有效；恢復 QA 後重建。
 | PRD requirement | SRS rules | QA |
 |---|---|---|
 | FR-001 | R1, R10, R12 | QA-001, QA-002, QA-015, QA-021, QA-030, QA-031 |

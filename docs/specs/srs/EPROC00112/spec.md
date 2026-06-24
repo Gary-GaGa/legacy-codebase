@@ -9,7 +9,7 @@
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md` |
 | Bundle | `docs/specs/srs/EPROC00112/` |
 | Source baseline | PRD v1.0 + Bible + db-diff + refactor-spec + bounded legacy/new source read |
-| Output files | `spec.md`, `openapi.yaml`, `schema.sql`, `qa-cases.md` |
+| Output files | `spec.md`, `openapi.yaml`, `schema.sql`（`qa-cases.md` 2026-06-24 隨 QA 暫拔除） |
 
 ## Scope
 - This SRS covers the C0 corporate CBC banking relationship page migrated from legacy `EPROC0_0112` and `EPROC0_0212` into funcId `EPROC00112`; PRD states the single new page must carry both legacy sources and preserve checkpoint/father-tab differences at `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md:64`.
@@ -213,6 +213,7 @@ Provenance: PRD `待確認-007` says `EPROC00212.jsp` does not show Finished whe
 | SEC-001 | R9 | RD/Security | Add or verify service-level save authorization for edit/query/old-case restrictions before CBC delete/insert; FE visibility and `TB_API_AUTH` seed rows are not sufficient. | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md:305`; SEC-001 contract decision 2026-06-24 | ✅ Closed: SAVE_SERVICE_AUTH_GATE_CONTRACT |
 
 ## Traceability
+> ⚠️ **QA 2026-06-24 暫拔除**：`qa-cases.md` 已刪。本 bundle 所有 QA-0XX 引用（下表 QA 欄、metadata closeout/驗證佐證、R 條 QA 掛鉤）均為 **dormant、不得視為已驗證**；closeout 以規格決策（owner/RD-contract）為據。REQ↔Rn 追溯仍有效；恢復 QA 後重建。
 | PRD | Rule | QA |
 |---|---|---|
 | REQ-001 | R1, R8, R11 | QA-001, QA-008, QA-011 |
