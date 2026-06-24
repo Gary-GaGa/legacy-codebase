@@ -1,6 +1,6 @@
 # QA Cases - EPROC00114
 
-Status: draft  
+Status: in-review
 Scope: covers every non-pending SRS rule in `spec.md`.
 
 | QA id | covers | type | setup | steps | expected |
@@ -10,12 +10,12 @@ Scope: covers every non-pending SRS rule in `spec.md`.
 | QA-003 | R2 | API | Existing application with loan summary, main borrower, and no collateral row. | POST `epl-info-c0-collateral-assessment` with `isQuery=true`. | 200/`0000`; borrower/application context and empty assessment maps are returned. |
 | QA-004 | R2 | API/error | Blank `applicationNo`. | POST info endpoint. | 400 with `E102` or `COMMON_MSG_ERROR_LON`; no DB mutation. |
 | QA-005 | R2 | API/error | Nonexistent application. | POST info endpoint with `isQuery=true`. | 404 with `MSG_DATA_NOT_FOUND`; no successful empty page state. |
-| QA-006 | R3 | API | Application date resolves to CVer `001`. | POST `epl-sele-c0-collateral-assessment`. | Lists for C_V1,C_V2,C_V3,C_V4,C_V5,C_V6,C_V7 are populated; address list is not required for rendering. |
+| QA-006 | R3 | API | Application date resolves to CVer `001`. | POST `epl-sele-c0-collateral-assessment` with `applicationNo` and nonblank `langType`. | Lists for C_V1,C_V2,C_V3,C_V4,C_V5,C_V6,C_V7 are populated; address list is not required for rendering. |
 | QA-007 | R3 | API | Application date resolves to CVer `002`. | POST select endpoint. | Lists for C_V1,C_V3,C_V4,C_V5,C_V6,C_V8,C_V7 are populated; document list is not required for rendering. |
 | QA-008 | R3 | DB/boundary | Option row has `VAR_DESC` longer than 100 and at most 180 chars. | Load option list. | Description is returned without truncation below 180 chars. |
-| QA-009 | R4 | API/DB | Controlled `TB_SCORE_CARD_PARAM_DETAIL` seed rows exist for all selected C_V1-C_V8 codes and one collateral risk-level range; total score fits `NUMBER(7,2)`. | POST `epl-calc-c0-collateral-assessment`. | 200/`0000`; numeric-string totalScore, riskLevel, scoreDatetime, and item scores are returned; no `TB_COLL_ASS`, `TB_LON_SUMMARY_INFO`, or checkpoint rows change. |
-| QA-010 | R4 | API/error | Score function throws, nonnumeric `SCORE`, no item/risk range matches, or total score would overflow `NUMBER(7,2)`. | POST calc endpoint. | 500 with `COMMON_MSG_RATE_FAIL`; displayed existing risk fields are not overwritten. |
-| QA-011 | R5 | API/validation | AO role, `isFinish=true`, missing Rate-derived risk level/date. | POST save endpoint. | 400 `E102`; no save/finish mutation. |
+| QA-009 | R4 | API/DB | Controlled `TB_SCORE_CARD_PARAM_DETAIL` seed rows exist for all selected C_V1-C_V8 codes and one collateral risk-level range; total score fits `NUMBER(7,2)`. | POST `epl-save-c0-collateral-assessment` with a draft payload for AO or CR; save maps contain code selections only and do not contain `riskLevel`, `actionDate`, total score, item scores, or score datetime. | Save-path score phase calculates numeric-string total score, item scores, riskLevel, and actionDate/scoreDatetime before persistence; `TB_COLL_ASS` stores the calculated values and the transaction commits. |
+| QA-010 | R4 | API/error | Score function throws, nonnumeric `SCORE`, no item/risk range matches, or total score would overflow `NUMBER(7,2)`. | POST save endpoint with controlled bad seed or fault injection. | 500 with `COMMON_MSG_RATE_FAIL`; whole transaction rolls back and persisted existing risk fields are not overwritten. |
+| QA-011 | R5 | API/validation | AO role, `isFinish=true`, missing one required AO collateral code selection needed by the R4 score phase. | POST save endpoint. | 400 `E102`; no save/finish mutation. |
 | QA-012 | R5 | API/validation | CR role, `isFinish=true`, missing reviewComment. | POST save endpoint. | 400 `E102`; no mutation. |
 | QA-013 | R5, R10 | API/auth | User lacks page authority, uses unsupported save role, or attempts protected-side tampering. | POST any EPROC00114 endpoint, then POST save with the unsupported/tampered role. | 401 `E498`; FE disabled state is not the only protection, and no scorecard/summary/checkpoint mutation occurs. |
 | QA-014 | R6 | API/DB | Draft save with complete AO map and `isFinish=false`. | POST save endpoint. | `TB_COLL_ASS` is upserted, address columns are persisted, checkpoint is `Y`, and transaction commits. |
@@ -29,7 +29,11 @@ Scope: covers every non-pending SRS rule in `spec.md`.
 | QA-022 | R9 | API/success | Valid save/finish. | POST save endpoint. | 200/`0000` with `COMMON_MSG_SAVE_SUCCESS`. |
 | QA-023 | R10 | Security | Request contains borrower name and review comment. | Execute query/save while capturing application logs. | Logs mask sensitive identity/free-text data and include only safe trace identifiers. |
 | QA-024 | R10 | Observability | Valid save request with correlation id. | POST save endpoint. | Transaction outcome can be correlated across request log and persistence audit without exposing sensitive values. |
-| QA-025 | R4, R9 | API/error | No loan summary/main borrower data exists for the requested application. | POST calc endpoint. | 404 `MSG_DATA_NOT_FOUND`; no displayed or persisted risk fields are overwritten. |
+| QA-025 | R4, R9 | API/error | No loan summary/main borrower data exists for the requested application. | POST save endpoint. | 404 `MSG_DATA_NOT_FOUND`; no displayed or persisted risk fields are overwritten. |
 | QA-026 | R4, R9 | API/error | Save path reaches collateral score function and it fails by nonnumeric seed/no matching range/overflow. | POST save endpoint with fault injection or controlled bad seed. | 500 `COMMON_MSG_RATE_FAIL`; whole transaction rolls back with no partial `TB_COLL_ASS`, `TB_LON_SUMMARY_INFO`, or checkpoint update. |
-| QA-027 | R2, R9 | API/error | Blank `applicationNo`. | POST select, info, calc, and save endpoints. | 400 with `E102` or `COMMON_MSG_ERROR_LON`; no query result or mutation is produced. |
+| QA-027 | R2, R9 | API/error | Blank `applicationNo`. | POST select, info, and save endpoints. | 400 with `E102` or `COMMON_MSG_ERROR_LON`; no query result or mutation is produced. |
 | QA-028 | R2, R3, R9 | API/error | Select or info query throws an unexpected exception. | POST select endpoint and info endpoint with fault injection. | 500 `MSG_QUERY_FAIL`; no partial option list or successful empty page state is returned. |
+| QA-029 | R4 | API/DB | Controlled score seed produces total score `12.5`; `TB_COLL_ASS.AO_SCORE/CR_SCORE` physical type is `NUMBER(7,2)`. | POST save endpoint and query persisted collateral row. | Persisted score is `12.50` and is not truncated to `12` or silently rounded to an integer. |
+| QA-030 | R4 | DB/boundary | Two adjacent `COR_RISK_LV` ranges exist, for example `[0, 10)` and `[10, 20)`. | Save one payload with total score exactly equal to `LOW_RANGE`, one exactly equal to `UP_RANGE`, and one just below `UP_RANGE`. | Risk-level lookup uses `LOW_RANGE <= totalScore < UP_RANGE`: the lower-bound score matches the range, the upper-bound score moves to the next range, and just-below-upper remains in the lower range. |
+| QA-031 | R3 | API/default | No effective `C_Ver` row exists for the application date. | POST select endpoint with nonblank `langType`. | Backend defaults CVer to `001` behavior and returns the C_V1,C_V2,C_V3,C_V4,C_V5,C_V6,C_V7 option set. |
+| QA-032 | R3, R9 | API/error | Request has blank `langType`, or save maps include a BE-derived field such as `riskLevel`/`actionDate` or another unknown property not defined by `openapi.yaml`. | POST select with blank `langType`; POST save with a derived-field or extra map key. | Blank `langType` returns `E102`; unknown/derived request map key is rejected by the strict `additionalProperties: false` contract with no persisted mutation. |

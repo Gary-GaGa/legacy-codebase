@@ -16,7 +16,7 @@ paths:
     post:
       tags:
         - EPROC00110
-      summary: Load corporate credit-investigation business type and page map
+      summary: Load corporate credit-investigation source frame, business type, visible tabs, and page map
       operationId: getCsuCreditInvestigationTab
       requestBody:
         required: true
@@ -26,13 +26,13 @@ paths:
               $ref: '#/components/schemas/GetCreditInvestigationTabRequest'
       responses:
         '200':
-          description: Loaded current business type and page map.
+          description: Loaded current source frame, business type, ordered visible tabs, source aliases, and checkpoint page map.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetCreditInvestigationTabResponseEnvelope'
         '400':
-          description: Validation error, including blank applicationNo.
+          description: Validation error, including blank applicationNo or invalid sourceFrame.
           content:
             application/json:
               schema:
@@ -75,7 +75,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/EmptySuccessResponse'
         '400':
-          description: Validation error, blank businessType, invalid businessType, or pending confirmation-token policy from TBD-006.
+          description: Validation error, blank sourceFrame/businessType, invalid sourceFrame/businessType, or pending confirmation-token policy from TBD-006.
           content:
             application/json:
               schema:
@@ -116,16 +116,20 @@ components:
       type: object
       required:
         - applicationNo
+        - sourceFrame
       properties:
         applicationNo:
           type: string
           maxLength: 30
           description: TB_LON_SUMMARY_INFO.APPLICATION_NO.
+        sourceFrame:
+          $ref: '#/components/schemas/SourceFrame'
       additionalProperties: false
     SaveCreditInvestigationTabRequest:
       type: object
       required:
         - applicationNo
+        - sourceFrame
         - businessType
         - confirmationToken
       properties:
@@ -133,6 +137,8 @@ components:
           type: string
           maxLength: 30
           description: TB_LON_SUMMARY_INFO.APPLICATION_NO.
+        sourceFrame:
+          $ref: '#/components/schemas/SourceFrame'
         businessType:
           type: string
           maxLength: 1
@@ -166,9 +172,14 @@ components:
     GetCreditInvestigationTabResponse:
       type: object
       required:
+        - sourceFrame
         - businessType
+        - visibleTabs
+        - sourceTabMap
         - pageMap
       properties:
+        sourceFrame:
+          $ref: '#/components/schemas/SourceFrame'
         businessType:
           type: string
           maxLength: 1
@@ -180,12 +191,98 @@ components:
           maxLength: 1
           nullable: true
           description: Effective assessment type; default is 2 when both summary type fields are blank.
+        visibleTabs:
+          $ref: '#/components/schemas/VisibleTabs'
+        sourceTabMap:
+          $ref: '#/components/schemas/SourceTabMap'
         pageMap:
           $ref: '#/components/schemas/PageMap'
       additionalProperties: false
+    SourceFrame:
+      type: string
+      description: >
+        Source page family discriminator. GENERAL_0110 preserves legacy
+        EPROC0_0110 semantics; RENEWAL_0210 preserves legacy EPROC0_0210
+        renewal/change semantics and 021x source aliases.
+      enum:
+        - GENERAL_0110
+        - RENEWAL_0210
+    VisibleTabs:
+      type: array
+      description: >
+        Ordered tab visibility carrier using normalized refactor funcIds.
+        Order follows legacy tab assembly: borrower group exposure, CBC,
+        GI/FI statement, GI/FI evaluation, non-old corporate scorecard, and
+        non-old CS collateral assessment. Visibility must be read from this
+        field, not inferred from pageMap key presence or checkpoint value.
+        Use sourceTabMap to preserve 011x/021x legacy source aliases.
+      items:
+        $ref: '#/components/schemas/VisibleTabCode'
+      minItems: 4
+      uniqueItems: true
+    VisibleTabCode:
+      type: string
+      enum:
+        - EPROC00115
+        - EPROC00112
+        - EPROC00116
+        - EPROC00117
+        - EPROC00119
+        - EPROC00120
+        - EPROC00118
+        - EPROC00114
+    SourceTabMap:
+      type: object
+      description: >
+        Maps normalized refactor tab codes to source-confirmed legacy page
+        codes. For GENERAL_0110 values must be EPROC0_011x/012x aliases; for
+        RENEWAL_0210 values must be EPROC0_021x/022x aliases. Missing 021x
+        aliases for RENEWAL_0210 fail R9/QA-009.
+      properties:
+        EPROC00112:
+          $ref: '#/components/schemas/SourceTabCode'
+        EPROC00114:
+          $ref: '#/components/schemas/SourceTabCode'
+        EPROC00115:
+          $ref: '#/components/schemas/SourceTabCode'
+        EPROC00116:
+          $ref: '#/components/schemas/SourceTabCode'
+        EPROC00117:
+          $ref: '#/components/schemas/SourceTabCode'
+        EPROC00118:
+          $ref: '#/components/schemas/SourceTabCode'
+        EPROC00119:
+          $ref: '#/components/schemas/SourceTabCode'
+        EPROC00120:
+          $ref: '#/components/schemas/SourceTabCode'
+      additionalProperties: false
+    SourceTabCode:
+      type: string
+      enum:
+        - EPROC0_0112
+        - EPROC0_0114
+        - EPROC0_0115
+        - EPROC0_0116
+        - EPROC0_0117
+        - EPROC0_0118
+        - EPROC0_0119
+        - EPROC0_0120
+        - EPROC0_0212
+        - EPROC0_0214
+        - EPROC0_0215
+        - EPROC0_0216
+        - EPROC0_0217
+        - EPROC0_0218
+        - EPROC0_0219
+        - EPROC0_0220
     PageMap:
       type: object
-      description: Child page completion map. Values use Y/N checkpoint semantics.
+      description: >
+        Child page checkpoint state map keyed by normalized refactor funcIds.
+        This is not the visibility carrier. For pages listed in visibleTabs,
+        Y means pending / still needs work and N means completed. Hidden or
+        inactive pages may have N without becoming visible. For renewal/change
+        source frames, use sourceTabMap to preserve 021x source provenance.
       properties:
         EPROC00112:
           $ref: '#/components/schemas/CheckpointValue'
@@ -203,15 +300,14 @@ components:
           $ref: '#/components/schemas/CheckpointValue'
         EPROC00120:
           $ref: '#/components/schemas/CheckpointValue'
-      additionalProperties:
-        $ref: '#/components/schemas/CheckpointValue'
+      additionalProperties: false
     CheckpointValue:
       type: string
       maxLength: 1
       enum:
         - Y
         - N
-      description: Y means not completed / should be worked; N means completed in legacy checkbox semantics.
+      description: Y means pending / still needs work for a visible tab; N means completed for a visible tab.
     EmptySuccessResponse:
       type: object
       required:
