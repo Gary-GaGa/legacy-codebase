@@ -1,5 +1,6 @@
 -- SRS EPROC00119 schema slice.
 -- DB snapshot authority: docs/db-diff/02_tables.
+-- db-diff snapshot 已於母資料夾 finalize 時覆核.
 -- TB_FIN_STATEMENT_CASHFLOW_FI markdown has malformed column_name cells; entity names are used below under code-as-baseline.
 -- Mentioned auth/source tables: TB_LON_SUMMARY_INFO, TB_API_AUTH.
 

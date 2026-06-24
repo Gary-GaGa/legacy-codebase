@@ -62,7 +62,7 @@ paths:
               $ref: '#/components/schemas/ReferenceQueryRequest'
       responses:
         '200':
-          description: Returns copyable FI data or business messages such as MSG_QUERY_SUCCESS, MSG_ERROR_APPLICATION_NO, MSG_OVER_COUNT_LIMIT, MSG_QUERY_FAIL, COMMOM_MSG_NO_DATA, COMMON_MSG_NO_DATA.
+          description: Returns copyable FI data or business messages such as MSG_QUERY_SUCCESS, MSG_ERROR_APPLICATION_NO, MSG_OVER_COUNT_LIMIT, MSG_QUERY_FAIL, COMMOM_MSG_NO_DATA (legacy alias), COMMON_MSG_NO_DATA (to-be canonical spelling).
           content:
             application/json:
               schema:
@@ -458,6 +458,10 @@ components:
         typeOfYear:
           type: string
           maxLength: 1
+        openingBalance:
+          allOf:
+            - $ref: '#/components/schemas/Decimal15p2'
+          description: Required for the first cashflow row unless the backend can read an existing stored opening balance; later rows derive opening balance from the previous row's end balance.
       additionalProperties:
         $ref: '#/components/schemas/Decimal15p2'
     CashflowFiRow:

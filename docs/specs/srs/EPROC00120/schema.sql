@@ -1,6 +1,7 @@
 -- SRS schema snapshot for EPROC00120.
 -- Evidence comes from docs/db-diff/02_tables/*.md, legacy 0120/0220,
 -- and current corporate code-as-baseline at commit 2ae96d0.
+-- db-diff snapshot 已於母資料夾 finalize 時覆核.
 -- This file is not a migration script; it lists contract-relevant tables/columns.
 
 CREATE TABLE TB_FINANCIAL_EVALUATION_FI (

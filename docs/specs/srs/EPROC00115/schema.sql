@@ -1,6 +1,7 @@
 -- SRS schema excerpt for EPROC00115 Borrower Group Exposure.
 -- Only SRS-relevant columns are listed for shared tables.
 -- Source priority: latest reverify TSV, then docs/db-diff markdown, then current entity/refactor evidence.
+-- db-diff snapshot 已於母資料夾 finalize 時覆核.
 --
 -- Reverify evidence:
 -- - TB_GROUP_EXPOSURE columns: C:/Users/00596357/Documents/project/kh/epro/epro-db/out/legacy_schema_reverify_new02_columns.tsv:1398-1413
