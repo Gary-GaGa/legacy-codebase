@@ -1,6 +1,9 @@
 -- SRS schema snapshot for EPROC00110.
 -- Evidence comes from docs/db-diff/02_tables/*.md and current source usage.
 -- This file is not a migration script; it lists contract-relevant tables/columns.
+-- Checkpoint polarity for visible EPROC00110 child pages:
+-- 'Y' = pending / still needs work, 'N' = completed.
+-- The physical DB default 'N' is not the active-frame initialization rule.
 
 CREATE TABLE TB_LON_SUMMARY_INFO (
     APPLICATION_NO VARCHAR2(30) NOT NULL,
@@ -24,7 +27,6 @@ CREATE TABLE TB_CHECK_POINTS_CS (
     EPROC00120 VARCHAR2(2) DEFAULT 'N',
     EPROC00118 VARCHAR2(2) DEFAULT 'N',
     EPROC00114 VARCHAR2(2) DEFAULT 'N',
-    EPROCSU0160 VARCHAR2(2) DEFAULT 'N',
     CONSTRAINT PK_TB_CHECK_POINTS_CS PRIMARY KEY (APPLICATION_NO)
 );
 
@@ -37,7 +39,6 @@ CREATE TABLE TB_CHECK_POINTS_CU (
     EPROC00117 VARCHAR2(2) DEFAULT 'N',
     EPROC00120 VARCHAR2(2) DEFAULT 'N',
     EPROC00118 VARCHAR2(2) DEFAULT 'N',
-    EPROCSU0160 VARCHAR2(2) DEFAULT 'N',
     CONSTRAINT PK_TB_CHECK_POINTS_CU PRIMARY KEY (APPLICATION_NO)
 );
 
