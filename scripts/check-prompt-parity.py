@@ -52,7 +52,7 @@ PAIRS = [
         ("circuit-breaker", "系統性失敗暫停整批"),
         ("context 衛生", "每 sub-task 獨立 session"),
         ("batch checkpoint", "低風險頁批末停"),
-        ("per-page checkpoint", "T1 頁每頁停人審"),
+        ("per-page 多 agent 驗證", "T1 頁每頁多 agent 跨模型驗、drain 不停人（owner 2026-06-25 改自人審停點）"),
         ("blocked", "單頁 FAIL 標 blocked 離開 ready 集合"),
         ("不並行", "序列非並行"),
     ]),

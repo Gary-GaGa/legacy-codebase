@@ -67,7 +67,7 @@ verifier-regression（舊系統/i0 偏離、既有回歸、reflection）／verif
 【回填 + 停】
 - 達標（①②③⑥ 綠 + RD 軸無 Blocker）→ ledger 該頁 status=rd-done、填 code 路徑（commit/PR）。
 - 一頁一 commit（金融頁逐頁）；回報 diff 摘要。
-- T1 頁（金錢/評分/授權，含撥貸 0920/0921/0922+T24、c0 評分線）→ 停此交人審（不自動接下一頁）。
+- T1 頁（金錢/評分/授權，含撥貸 0920/0921/0922+T24、c0 評分線）→ **per-page 多 agent 跨模型驗證**（RD 軸 §4c ≥4 隻 read-only）；Blocker 則修該頁再驗、**drain 不停人**（owner 2026-06-25 改自人審停點）；人審＝批末批次驗 + owner Done。
 - 不自宣 Done：終點＝rd-done（待 DoD 閘門牆 + 人審）。
 
 【回報格式】
@@ -82,7 +82,7 @@ verifier-regression（舊系統/i0 偏離、既有回歸、reflection）／verif
 ---
 
 ## 備註
-- **序列一次一頁、drain 整批**（同 SRS）：每頁各自過閘門＋軸＋回填，一頁達標即接下一頁（T1 例外＝per-page 停人審），drain 完 `rd-ready` 才停 batch checkpoint。
+- **序列一次一頁、drain 整批**（同 SRS）：每頁各自過閘門＋軸＋回填，一頁達標即接下一頁（T1＝per-page 多 agent 驗、drain 不停人），drain 完 `rd-ready` 才停 batch checkpoint（含批次多 agent 驗證）。
 - **強制點是拆工主軸**：FE/BE/both 決定該頁拆幾個子任務、誰是權威驗證層（`spec-architecture §5.5`）。
 - **terminal＝rd-done**，進 DoD 閘門牆（①契約②schema③verify-c0⑥build⑦LLM審 + 人審；**④QA驗收⑤覆蓋率 隨 QA 2026-06-24 暫拔除**）→ owner 蓋 Done。
 - 卡歸檔 `done/`：本批 drain 跑完、回填完成後移。

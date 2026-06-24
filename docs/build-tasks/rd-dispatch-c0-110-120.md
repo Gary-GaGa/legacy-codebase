@@ -5,7 +5,7 @@
 > **在哪跑**：母資料夾 Codex（產品碼可寫 + 規劃 repo 可讀 + local `docs/db-diff/`/`docs/refactor-spec/`）。本規劃 repo 無原始碼、跑不了。
 > **本卡只派 RD 開發**；spec.md 兩半翻新＝**獨立一輪**（不在本卡，見 plan）。
 
-## 9 包清單（全 Approved；皆 T1 金錢/評分/授權 → per-page 停人審）
+## 9 包清單（全 Approved；皆 T1 金錢/評分/授權 → per-page 多 agent 驗證、drain 不停人）
 | funcId | 名稱 | 備註（實作要點，照 to-be 契約非 legacy as-is） |
 |---|---|---|
 | EPROC00110 | 評分容器 credit-investigation | R9 checkpoint 四併二互斥；BE 驅動動態 tab |
@@ -28,7 +28,7 @@
 2. **brownfield 主路徑＝對位驗碼**（非從零）：每條 Rn ↔ 實作 method:line 三面比對（spec / openapi / 實作）→ drift 分 regression(修回) vs 刻意演進(keep+理由，三判)；附新舊雙方 file:line。
 3. **強制點為拆工主軸**：逐 Rn 看 FE/BE/both 拆子任務；**完整性/安全驗證 BE 必為權威**（FE 同款＝UX、永不信前端）；標「後端為準」決策欄，request 契約不得讓 client 送。
 4. **code-as-baseline 包（119/120）**：實作 to-be delta（REF-Dn/DEC），**不可重新引入 legacy bug**；as-is 證據釘 `@SHA`。
-5. **T1 per-page 停人審**：9 包全 T1（金錢/評分/授權）→ 每頁達標後**停、交人審**，不自動接下一頁。
+5. **T1 per-page 多 agent 驗證、drain 不停人**（owner 2026-06-25 改自人審停點）：9 包全 T1 → 每頁 ①②③⑥ 綠後 spawn RD 軸（§4c）≥4 隻跨模型 read-only 驗 → Blocker 則**修該頁再驗** → 無 Blocker 即 `rd-done`、**續下一頁**（不逐頁停人審）。correlated-blindness 防護由 per-page 多 agent 跨模型驗承載；人審收斂到批末批次驗 + owner Done。
 
 ## DoD 機械閘門（blocking，全綠才 rd-done）
 ①契約（openapi snapshot FE↔BE 對齊）②schema（entity↔DB 型別長度）③verify-c0（`python scripts/verify-c0.py --git` exit 0：鏡像/禁樣式/只新增）⑥build（mvn + ng build 各 exit 0）。
@@ -45,7 +45,8 @@ verifier-contract（契約對齊）／verifier-scope（commit 範圍、誤動 OU
 
 ## 回填 + 終點
 - 達標（①②③⑥ 綠 + RD 軸無 Blocker）→ ledger 該頁 `rd-done` + 填 code commit/PR；一頁一 commit。
-- terminal＝rd-done → DoD 閘門牆（①②③⑥⑦LLM審 + 人審；④⑤ QA 暫拔除）→ owner 蓋 Done。
+- **9 包全 rd-done → 批次多 agent 驗證**（跨頁一致性〔契約/DTO/錯誤碼/授權模型一致、共用表無衝突〕 + 跨批 regression〔合併 diff 互不破壞、未誤動既有 i0/Csu〕 + RD 軸對合併 diff，跨模型 read-only）→ **0 Blocker 才**進 DoD 閘門牆（①②③⑥⑦LLM審 + 人審；④⑤ QA 暫拔除）→ owner 蓋 Done。有 Blocker → 回對應頁修 + 再驗。
+- 此即 owner 2026-06-25 驗證模型：**per-page 多 agent 驗（drain 不停人）+ 批末批次多 agent 驗 + owner Done**。
 - 回報格式照 `rd-codex-dispatch.md`【回報格式】（funcId + commit + BE/FE 檔 + DoD exit + RD 軸逐行 + ledger diff + 待 C 類彙總 + 四守則一句）。
 - 卡歸檔 `done/`：9 包 drain 跑完、回填完成後移。
 
