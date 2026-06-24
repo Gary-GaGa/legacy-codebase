@@ -8,7 +8,7 @@
 
 對象＝ `$ARGUMENTS`（PRD 路徑或 funcId）。
 
-**權威內容**：讀取 repo 內 `.claude/skills/prd-to-srs/SKILL.md`，**忽略其 YAML frontmatter**（name/description 為 Claude Code 載入用），照其正文執行——輸入、輸出（bundle 四檔）、`spec.md` 結構、SRS 撰寫鐵則、Brownfield 鐵則、步驟、DoD，全部以該檔為準。
+**權威內容**：讀取 repo 內 `.claude/skills/prd-to-srs/SKILL.md`，**忽略其 YAML frontmatter**（name/description 為 Claude Code 載入用），照其正文執行——輸入、輸出（bundle 檔；qa-cases 2026-06-24 暫拔除後＝spec/openapi/schema 三檔，以 skill 為準）、`spec.md` 結構（canonical＝`docs/specs/srs/spec-template.md`）、SRS 撰寫鐵則、Brownfield 鐵則、步驟、DoD，全部以該檔為準。
 
 Codex 側差異（僅此清單）：
 
