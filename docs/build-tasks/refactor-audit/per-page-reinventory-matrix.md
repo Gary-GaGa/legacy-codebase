@@ -34,12 +34,12 @@
 | EPROC00110 容器 | c0 0110 | ✅/✅ | ❓未對舊企金驗 | **❓**(c0-parity 卡) | ⟳需產 |
 | EPROC00112 CBC | c0 0112 | ✅/✅ | ❓ | **❓** | ⟳需產 |
 | EPROC00114 Collateral Assess | c0 0114 | 🟡/✅ | ❓(grandfathered §6.1) | **❓** | ⟳需產 |
-| EPROC00115 Group Exposure | c0 0115 | ✅/✅ | ❓ | **❓** | ⟳需產 |
+| EPROC00115 Group Exposure | c0 0115 | ✅/✅ | ✅(對舊驗畢·fix-round) | **規格定版 Approved**(2026-06-25) | `docs/specs/srs/EPROC00115/` |
 | EPROC00116 FinStmt GI | c0 0116 | ✅/✅ | ❓(有 calc) | **❓** | ⟳需產 |
 | EPROC00117 FinEval GI | c0 0117 | ✅/✅ | 🔶(business-only 對舊驗畢·決策B) | **KEEP/FIX**(SRS in-review) | `docs/specs/srs/EPROC00117/` |
 | **EPROC00118 Corporate Scorecard** | c0 0118 | ✅/✅ | ❓(對舊未驗；E1/E2＝既有 Csu* 行為待裁、非本頁缺陷) | **❓**(T1·E1/E2 合流) | ⟳需產(全清重跑) |
-| EPROC00119 FinStmt FI | c0 0119 | ✅/✅ | ❓(F-8 修過) | **❓**(SRS in-review) | `docs/specs/srs/EPROC00119/` |
-| **EPROC00120 FinEval FI** | c0 0120 | ✅/✅ | 🔶(business-only·金錢欄) | **❓**(T1) | ⟳需產 |
+| EPROC00119 FinStmt FI | c0 0119 | ✅/✅ | ❓(F-8 修過) | **in-review**(fix🟡真修·待補 PRD §8) | `docs/specs/srs/EPROC00119/` |
+| **EPROC00120 FinEval FI** | c0 0120 | ✅/✅ | 🔶(business-only·金錢欄) | **規格定版 Approved**(2026-06-25) | `docs/specs/srs/EPROC00120/` |
 > 全線 **❓ parity-gated**（卡 `c0-legacy-parity-recheck.md`，risk-tier 00118/00120/CSU0170 先）；00117/00120 已部分對舊（決策 B）較穩。
 
 ### 00800 + deputy
@@ -113,7 +113,7 @@
 ---
 
 ## PRD→SRS backlog（接「新版 Bible/PRD 跑 to SRS」）
-> Current repo SRS coverage = **14/67** bundles exist & pass `check-srs-bundle`; **10 規格定版 Approved** (`EPROZ00100`, `EPROC00118`, `EPROISU0921`, `EPROISU0922`, `EPROZ00800`, `EPROC00110`, `EPROC00112`, `EPROC00114`, `EPROC00116`, `EPROC00117` — 後五包 owner-stamped 2026-06-24 after axis A–F independent confirmation), **4 in-review** (`EPROC00115`, `EPROC00119`, `EPROC00120`, `EPROCSU0170`). Coverage counting remains defined by the PRD-to-SRS queue + ledger table below.
+> Current repo SRS coverage = **14/67** bundles exist & pass `check-srs-bundle`; **12 規格定版 Approved** (`EPROZ00100`, `EPROC00118`, `EPROISU0921`, `EPROISU0922`, `EPROZ00800`, `EPROC00110`, `EPROC00112`, `EPROC00114`, `EPROC00115`, `EPROC00116`, `EPROC00117`, `EPROC00120` — `00115`/`00120` owner-stamped 2026-06-25 after fix-round 🟡 真修 + axis A–F re-review 0 Blocker), **2 in-review** (`EPROC00119` 待補 PRD §8, `EPROCSU0170`). Coverage counting remains defined by the PRD-to-SRS queue + ledger table below.
 > **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-diff/`+`docs/refactor-spec/`。
 > **risk-tier 產 SRS 順序**（= rebuild/fix 最需規格者先）：
 > 1. **企金線**（CSU 主流程 + c0 評分，~18 頁）—— parity 回來若判 rebuild，立即需 SRS。
@@ -132,12 +132,12 @@
 |---|---|---|---|---|
 | `EPROZ00100` | z0 shared | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md` | approved | `docs/specs/srs/EPROZ00100/` |
 | `EPROC00118` | T1 corporate | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` | approved | `docs/specs/srs/EPROC00118/` |
-| `EPROC00120` | T1 企金線(先) | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00120-v1.0.md` | in-review | `docs/specs/srs/EPROC00120/` |
+| `EPROC00120` | T1 企金線(先) | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00120-v1.0.md` | 規格定版 Approved (2026-06-25) | `docs/specs/srs/EPROC00120/` |
 | `EPROCSU0170` | T1 企金線(先) | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0170-v1.0.md` | in-review | `docs/specs/srs/EPROCSU0170/` |
 | `EPROC00110` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md` | approved | `docs/specs/srs/EPROC00110/` |
 | `EPROC00112` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md` | approved | `docs/specs/srs/EPROC00112/` |
 | `EPROC00114` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00114-v1.0.md` | approved | `docs/specs/srs/EPROC00114/` |
-| `EPROC00115` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00115-v1.0.md` | in-review | `docs/specs/srs/EPROC00115/` |
+| `EPROC00115` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00115-v1.0.md` | 規格定版 Approved (2026-06-25) | `docs/specs/srs/EPROC00115/` |
 | `EPROC00116` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00116-v1.0.md` | approved | `docs/specs/srs/EPROC00116/` |
 | `EPROC00117` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00117-v1.0.md` | approved | `docs/specs/srs/EPROC00117/` |
 | `EPROC00119` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00119-v1.0.md` | in-review | `docs/specs/srs/EPROC00119/` |

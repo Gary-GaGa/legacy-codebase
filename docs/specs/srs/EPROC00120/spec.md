@@ -3,8 +3,8 @@
 ## Metadata
 | Field | Value |
 |---|---|
-| Status | In Review / ready-for-owner-finalization; awaiting human approval |
-| N-axis review | Mechanical gate PASS and independent A-F SRS re-review PASS on 2026-06-24 after adopting findings. Axis G / QA generation remains paused by process. Owner decisions dated 2026-06-24 plus owner-authorized self-resolution close P-001 through P-013. |
+| Status | 規格定版: Approved (2026-06-25, owner — axis A–F 獨立再審 0 Blocker、fix-card 🟡 全真修確認); 實作完成: not-started (QA 暫拔除); 殘留非阻擋 🟡 見 pending-register |
+| N-axis review | Mechanical gate PASS and independent A-F SRS re-review PASS on 2026-06-24 after adopting findings. 2026-06-25 fix-round 獨立再審 (cross-model): R1/R19 本頁 `applicationName`/checkpoint 不被 P-012 誤排（FE 斷料封）、P-005 採 PRD 5.3.1 人工欄、db-diff disclaim 消不對稱、R2 改引 R10、行級 `@2ae96d0`、`EPROC00120_FUNC_NAME` literal 全真修，0 Blocker → owner-approved 規格定版 2026-06-25. 殘留非阻擋 🟡（Traceability 殘段 grandfathered、openapi 兩 row schema 重複可維護性）折翻新/下次 touch。Owner decisions dated 2026-06-24 plus owner-authorized self-resolution close P-001 through P-013. Axis G / QA generation remains paused by process. |
 | funcId | EPROC00120 |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00120-v1.0.md` |
 | Bundle | `docs/specs/srs/EPROC00120/` |
