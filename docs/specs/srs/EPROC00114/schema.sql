@@ -207,5 +207,6 @@ CREATE TABLE TB_CHECK_POINTS_CU (
 -- TB_CHECK_POINT_RC_CORP legacy field EPROC0_0214 maps to active TB_CHECK_POINTS_CS.EPROC00114.
 
 -- Authorization evidence only; DDL is owned by the common auth seed set.
--- TB_API_AUTH must contain endpoint rows for EPROC00114 select/info/save, and the to-be calc endpoint
--- needs its own row when the standalone rate API is implemented.
+-- TB_API_AUTH evidence is limited to EPROC00114 select/info/save rows.
+-- There is no public C0 calc endpoint or standalone Rate auth row in this
+-- contract; Rate is carried by the save-path score phase.
