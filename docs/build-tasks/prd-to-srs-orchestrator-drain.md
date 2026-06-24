@@ -40,7 +40,7 @@
 
 2c. Context Window（上下限，批量必守）：
    - **上限（防爆/跨頁不累積）**：主控 context **只留**＝佇列 ledger（逐頁一行 status/srs）＋當前頁各 sub-agent 回的「PASS/Blocker(file:line) 一行＋findings 檔路徑」。**絕不**把 bundle 全文/PRD 全文/sub-agent transcript 貼進主控。**一頁回填 ledger 後即丟棄該頁細節**，下一頁從乾淨 context 起。接近 context 上限 → 停在當前頁完成處、輸出 ledger、靠 resume 冪等下批接續（別硬撐到爆）。
-   - **下限（防空審/每隻吃飽）**：每隻 sub-agent **自己讀原檔**拿足量上下文＝該頁 PRD＋SRS bundle 四檔＋對應 db-diff/refactor-spec/legacy `file:line`＋該軸 §4b brief；**不可餵摘要代替原文**（摘要＝空審）。產 SRS 的 sub-agent 也要吃到 §5 reconcile 來源，不足則顯式 disclaim「待母資料夾複核」、不靜默。每隻單一職責、範圍小到能在自己 context 內窮舉。
+   - **下限（防空審/每隻吃飽）**：每隻 sub-agent **自己讀原檔**拿足量上下文＝該頁 PRD＋SRS bundle 三檔＋對應 db-diff/refactor-spec/legacy `file:line`＋該軸 §4b brief；**不可餵摘要代替原文**（摘要＝空審）。產 SRS 的 sub-agent 也要吃到 §5 reconcile 來源，不足則顯式 disclaim「待母資料夾複核」、不靜默。每隻單一職責、範圍小到能在自己 context 內窮舉。
    - sub-agent 間**不共享 context**（各自獨立 session）；主控不轉貼 A 軸輸出給 B 軸。
 
 3. 停點＝ledger 已無 prd-ready（皆 in-review 或 blocked）才停＝batch checkpoint。彙總回報：每頁一行（in-review / blocked=gate-fail 或 待裁 C 類）+ bundle/findings 路徑，整批一起交人審/裁 TBD。
@@ -55,7 +55,7 @@
 |---|---|---|
 | **主控 orchestrator** | 只存 ledger 行 + 當頁 sub-agent 的 PASS/Blocker(file:line)+findings 路徑；不吞 bundle/PRD/transcript 全文 | 保有佇列 ledger 全貌（知道還有哪些頁、排序） |
 | **每頁** | 回填 ledger 後**丟棄該頁細節**→ 跨頁不累積 | 該頁的 sub-agent 各拿到完整一頁材料 |
-| **sub-agent** | 各自獨立 session、不共享、只回精簡 verdict | **自己讀原檔**（PRD+bundle 四檔+db-diff/refactor-spec/legacy file:line+軸 brief）、不吃摘要 |
+| **sub-agent** | 各自獨立 session、不共享、只回精簡 verdict | **自己讀原檔**（PRD+bundle 三檔+db-diff/refactor-spec/legacy file:line+軸 brief）、不吃摘要 |
 | **批量** | 單批頁數上限（低風險 ≤5、T1 ≤3）；接近 context 上限即停、輸出 ledger | 長佇列分多批、**resume 冪等**（§5b）接續，不漏頁 |
 
 - **隔離**：每隻 sub-agent 的 context 不計入主控 → 全 A–F × 多頁的 token 重擔落在「用完即拋」的子 session,不堆在主控。

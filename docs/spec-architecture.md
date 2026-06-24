@@ -108,6 +108,7 @@ flowchart LR
 - **降級方案**：用 **legacy（對應舊頁）+ current migrated code 當 as-is baseline** 做 parity 碼驗，**不等正式 artifact、不臆造 baseline**。
 - **寫法**：as-is 證據標 `[CODE:<file>:<line>@<commit-SHA>]`（reference + commit 釘版、可回查）；spec 顯式 disclaim「baseline＝code-as-baseline、無正式 refactor-spec artifact、待補」。
 - **不省嚴謹度**：parity 差異仍過 `legacy-parity-sop` 三判（regression/演進/結構差）；高風險面（authZ/金額）仍升級。**code-as-baseline 換的是 baseline 來源、非 parity 嚴謹度**。
+- **與 Rule 1 之別**（互補非替代）：Rule 1＝**有** baseline、撈 DB fact 不留 Pending；本條＝**缺** baseline、用 legacy+current code 當 as-is 做 parity。`[CODE:<file>:<line>@<SHA>]` **即滿足 Rule 1 第 2 護欄 provenance**（可回查、釘版）。
 - **owner 決策**：code-as-baseline vs 補正式 artifact ＝ owner 裁（缺料 trade-off）；2026-06-24 owner 裁企金線 00119/00120 採 code-as-baseline。
 
 ### Rule 2 — refactor 優先（限本層）；踩線才升級

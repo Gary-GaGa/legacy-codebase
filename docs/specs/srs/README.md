@@ -34,7 +34,7 @@
 | ~~④ QA 驗收~~ | 〔2026-06-24 暫拔除〕 |
 | ~~⑤ 覆蓋率~~ | 〔gate⑤ skip（non-FAIL、機械層自動）：qa-cases.md 不存在時;隨 QA 2026-06-24 暫拔除,恢復見 git history〕 |
 | ⑥ Build 綠 | —（牆上 ⑥；腳本無同號項，撞號已消除）|
-| ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與牆上 ⑦ 混）＝**N 軸 axis A**；全軸 A–G 見 `../../process/orchestration-playbook.md §4b` |
+| ⑦ LLM 語意審查（advisory）| `spec-reviewer`（SRS 定稿＝**blocking**，別與牆上 ⑦ 混）＝**N 軸 axis A**；全軸 A–F（G 隨 QA 暫拔除）見 `../../process/orchestration-playbook.md §4b` |
 | —（牆上無對應格＝SRS 階段專屬）| **gateⒷ** Bible↔PRD、**gateⓅ** @PENDING↔register、**gateⓈ** Status↔安全/雙軸〔(a) Approved+`BPn-PENDING`=warn；(b) Status 未分「規格定版/實作完成」=warn——批判輪1/輪2 2026-06-16〕、**gateⒺ** 錯誤碼承載〔PRD Error 表→spec/openapi 漏承載=warn、HTTP status 不一致=warn——批判輪3 2026-06-16，源 SR-B1/B2〕、**gateⓇ** reconcile 承載〔spec.md 須有『新舊 DB 對照/更動 delta』段否則 warn——防規模化靜默跳過 db-diff/refactor-spec reconcile，2026-06-18；段內容真確＝spec-reviewer 紅旗⑥〕、xfile 跨檔、doc-paths |
 
 ## 與 vision 的關係

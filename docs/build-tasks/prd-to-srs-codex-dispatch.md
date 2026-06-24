@@ -34,7 +34,7 @@
 任務：把新版 PRD `<PRD 路徑>`（funcId `<funcId>`）轉成 SRS bundle（SA + AI 步驟，what→how）。
 
 【權威工作流】先讀規劃 repo 的 `.claude/skills/prd-to-srs/SKILL.md` 正文（忽略 YAML
-frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵則 / Brownfield 鐵則 /
+frontmatter），照其〔輸入 / 輸出三檔(spec/openapi/schema) / spec.md 結構(canonical 11 段) / SRS 鐵則 / Brownfield 鐵則 /
 步驟 / DoD〕全照做。若該檔不可讀，依本 prompt 的內聯要點。
 
 【本專案 context（2026-06-17）— 必遵】

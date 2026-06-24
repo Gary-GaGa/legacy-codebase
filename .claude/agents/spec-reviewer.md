@@ -16,7 +16,7 @@ model: opus
 2. **明確性** — 揪模糊詞（「快速/適當/友善」）要求量化；NFR 要可量測（如 `p95<200ms`、`maxlength 3000`）。
 3. **一致性** — PRD ↔ SRS ↔ as-is findings 是否互相矛盾；rule-id/優先級/範圍一致。**特別查：as-is/to-be 是否標清楚、有沒有把 legacy 行為當「已核准需求」（違 PRD 紀律）**。
 4. ~~**可測試性**~~ — 〔**2026-06-24 暫拔除**：隨 QA 產生/驗收暫停；SRS bundle 不再含 qa-cases，本維度與 gate⑤ 暫不適用。恢復 QA 後重啟。〕
-5. **可追溯性** — `Rn` 是否 `covers-prd:` 到 PRD REQ（上）；funcId backbone 是否串到底；**Traceability Matrix 是否完整**（REQ↔Rn；QA 欄隨 QA 暫拔除）。
+5. **可追溯性** — `Rn` 是否 `covers-prd:` 到 PRD REQ（上）；**每 PRD REQ ≥1 Rn**（完整性）；funcId backbone 是否串到底。〔無獨立 Traceability Matrix 表，SoT＝covers-prd；2026-06-24 移除。〕
 6. **可平行性** — rule/模組邊界是否清楚，能否拆給多 agent 平行實作。
 7. **邊界契約（語意審 ①②契約/schema 層；機械＝`check-srs-bundle` ①②⑤，③verify-c0 屬 c0 鏡像、非本職）** — endpoints 是否為**真實 `epl-*`**（非 PRD 理想化 REST）、method 符語意（mutate=POST）；`openapi.yaml`/`schema.sql` 是否齊且與 `Rn` 一致。
 

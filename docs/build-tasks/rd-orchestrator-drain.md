@@ -52,7 +52,7 @@ orchestration-playbook §5c/§6c、§4c（RD 軸）。
 
 ## 步驟 1b — Context Window 管理
 - **上限**：主控只存 ledger 行 + 當頁 sub-agent 的 PASS/Blocker(file:line)+code 路徑；不吞 diff/transcript 全文；一頁回填即丟細節（跨頁不累積）；接近上限停、輸出 ledger、resume 冪等下批接。
-- **下限**：每 sub-agent 自讀原檔（SRS bundle 四檔 + 該頁產品碼 + db-diff/refactor-spec file:line + 軸 brief），不吃摘要。
+- **下限**：每 sub-agent 自讀原檔（SRS bundle 三檔 + 該頁產品碼 + db-diff/refactor-spec file:line + 軸 brief），不吃摘要。
 
 ## 步驟 2 — batch checkpoint（人）
 - 全批停 `rd-done` 後逐頁人審 diff；T1 頁已在 1g 單頁審過。

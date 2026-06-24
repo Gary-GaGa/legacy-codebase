@@ -23,7 +23,8 @@
 - **常見模式**：throw-stub／無條件 return false、setter 寫 null、guard 永假、無條件 skip、寫入無 commit/return、object↔string 比較錯型、欄位取錯來源（如 `BORROWER_RISK_*` 取 `businessRisk`）、比較方向反（end-balance vs cash-equivalent）。
 - **快速判別**：① DB 寫入有無 commit/return ② 該分支是否可達 ③ 有無邊界保護 ④ 與 PRD/Bible 意圖是否一致。
 - **預設處置**：判為 (a) regression（非刻意）→ **預設修正成正確**（refactor 覆寫、標 `REF-Dn` delta + 新舊 `file:line`）；**除非該錯誤行為被外部依賴**（則保留+標、回灌 PRD）。
-- **何時升級（不自決）**：疑似 bug 若**踩高風險面**（authZ/金額/精度/資料刪改/交易一致）→ 命中升級觸發 #3、停交 owner；**純邏輯 bug**（顯示/非金錢計算/流程）→ refactor 可自決修。
+- **何時升級（不自決）**：疑似 bug 若**踩高風險面**（authZ/金額/精度/資料刪改/交易一致）→ 命中升級觸發 #3、停交 owner；**純邏輯 bug**（顯示/非金錢計算/流程）→ refactor 可自決修。例：throw-stub／silent-skip 落在**金錢/checkpoint/交易/授權路徑＝高風險→升級**；落在純 UI/顯示→自決修。
+- **修正涉 PRD 範圍須回灌**：bug 修正若動到 PRD 載明的流程/欄名/業務規則（非純實作細節）→ **回灌 PRD/Bible 待確認、不自決承載進 to-be 契約**（§9#3 教訓：legacy 細節不 silent 抄進契約）。
 - 對應 §9#22（throw-stub 行為驗證漏網）、`spec-architecture §5b` 升級觸發 + Rule 2。
 
 ## 2. DB 特例（(c) 類展開）
