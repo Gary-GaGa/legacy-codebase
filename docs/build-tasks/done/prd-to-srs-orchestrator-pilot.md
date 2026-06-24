@@ -1,5 +1,8 @@
 # Build Task — PRD→SRS orchestrator **PILOT**（規模化前先跑通一頁）
 
+> Status: **已歸檔（移入 done/，2026-06-24）** — pilot 任務完成（`EPROZ00100`/`EPROC00118` 2026-06-18 跑通 → drain 啟用）。單頁首跑紀律已併入 `prd-to-srs-orchestrator-drain.md` 首批放量段；本卡留作方法論歷史。
+
+
 > **載具**：Codex（母資料夾：產品碼 + 規劃 repo 可讀 + Bible v1.1 + 新版 PRD + local `docs/db-diff/`/`docs/refactor-spec/`）。
 > **目的**：用 SRS orchestrator 跑通 **1 頁**（**非批量**），確認「取佇列 → 產 SRS → 機械 gate（含 gateⓇ）→ N 軸驗證 → 回填 ledger → 停等審」整條順、四條守則守得住，**再放大到 67 頁**。
 > **權威**（prompt 已內聯關鍵，不可讀亦能跑）：流程＝`docs/process/orchestration-playbook.md §4b（N 軸）/§5b（SRS 迴圈）/§6b（prompt 骨架）`；產 SRS＝`docs/build-tasks/prd-to-srs-codex-dispatch.md`；機械閘門＝`scripts/check-srs-bundle.py`（含 **gateⓇ** reconcile）；pilot 頁 risk-tier/舊對應＝`docs/build-tasks/c0-legacy-parity-recheck.md`。

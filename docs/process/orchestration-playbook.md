@@ -47,6 +47,7 @@
 - **真獨立**：各軸獨立 session、不同指示、最好跨模型；同質多個＝theater、不算 N 軸 PASS。
 - **A 廣度兜底、C–G 深度窮舉**：A（含 spec-reviewer 6 紅旗）與 C/D/E 在錯誤碼/安全/reconcile 上**刻意重疊＝雙保險**（跨模型反 correlated-blindness），非互推皮球；專軸逐項窮舉、A 顧整體一致——**跑了 A 不替代專軸**。
 - **規模調配（2026-06-22 起：SRS pilot/drain 一律全 A–G）**：**每頁全 A–G、每軸一隻 read-only sub-agent（可叢集 ≥3 隻）、跨模型**——drain 對齊 pilot 品質,**不因批量降軸**。〔早前「低風險頁可 A+E+G」**已棄用**;若 owner 對個別 trivial 頁明示放行才例外,且 F/D 綁欄位內容**仍不可省**。〕F 軸＝現流程最空白、風險最高(pilot 跨模型 F 軸抓到 `nfix-card` C-B1~B3 精度/截斷/缺 `TB_API_AUTH`,機械閘門看不到);D 軸＝授權/四眼(0922 N 軸抓到 Maker-Checker 缺四眼控制)。批量靠 **context 隔離+壓縮+分批**承載全軸(見 `prd-to-srs-orchestrator-drain.md §1b`)。
+- **度量驅動軸配置（斷言→量測）**：本表的軸 profile／再審輪數目前是**斷言的**。每軸每頁的 {提出 Blocker／確認為真／誤報} 一律回填 `docs/process/n-axis-findings-ledger.md`；累積 ≥10 頁（T1 ≥5）後用實測 catch-rate 回調本節（砍低 ROI 軸、加碼高 ROI 軸如 F/D、定再審輪數）。**改軸 profile＝改本表 + `decisions.md` 指回 ledger**，不憑單一事件拍板。
 - **仍 ≠ 人審**：N 軸是強化自驗，orchestration 仍停在等人審／等裁 TBD。
 - **落地**：Claude 主 session 用 Agent 工具各 spawn 一軸；Codex 同（部署見 §7；**briefs 權威＝本表**）。axis A＝既有 `spec-reviewer`。
 
@@ -102,7 +103,8 @@
 ```
 
 ## 6b. SRS orchestrator prompt 骨架（PRD→SRS 規模化；可直接 pilot）
-> **pilot 派工卡（一頁、含前置/對帳/拆列/N 軸/回填）＝`build-tasks/prd-to-srs-orchestrator-pilot.md`**——規模化前先用它跑通一頁。
+> **首次跑先單頁**（規模化前驗四守則）：見 `build-tasks/prd-to-srs-orchestrator-drain.md` 首批放量段（單頁模式＝drain prompt 去掉迴圈、只取一頁）。pilot 歷史卡＝`build-tasks/done/prd-to-srs-orchestrator-pilot.md`（已歸檔）。
+> **運行殼 ↔ 本節權威同步**：drain 殼的迴圈不變式由 `python scripts/check-prompt-parity.py` 驗（anchor 漏在一邊＝FAIL；改本節記得同步 drain 殼）。
 ```
 你是 SRS orchestrator。任務板＝docs/build-tasks/refactor-audit/per-page-reinventory-matrix.md 的「PRD→SRS 佇列 + ledger」表。
 0. 起手對帳 docs/specs/prd/ 實檔 ⟷ 佇列 prd 欄：實檔有但表列 not-started→回報「PRD 已放、待標 prd-ready」；bundle/佔位列（多 funcId）不可直接 pick，須先拆成一 funcId 一列。
@@ -124,5 +126,5 @@
 - `AGENTS.md §Spec workflow`：orchestration 鐵則指標（薄殼，內容權威＝本檔）。
 
 ## 8. 天花板（誠實標）
-orchestration 省的是「派工打字＋貼 prompt」，**省不掉審查＋裁定**。天花板＝「自動到等審」，非「自動到上線」。pilot 建議：先用 `epl-* method 慣例 recon` + `0922-t24-exchrate-colname-fix`（兩個 A 類、互不相依）跑一輪,確認「停在等審、不自宣 done、不碰 C 類、三軸真獨立」四條守得住,再放大到批量 PRD→SRS（SRS 軌 pilot＝`build-tasks/prd-to-srs-orchestrator-pilot.md`，跑通一頁再批量）。
+orchestration 省的是「派工打字＋貼 prompt」，**省不掉審查＋裁定**。天花板＝「自動到等審」，非「自動到上線」。pilot 建議：先用 `epl-* method 慣例 recon` + `0922-t24-exchrate-colname-fix`（兩個 A 類、互不相依）跑一輪,確認「停在等審、不自宣 done、不碰 C 類、三軸真獨立」四條守得住,再放大到批量 PRD→SRS（首次跑先單頁＝drain 殼只取一頁，跑通再批量；§6b）。
 > **SRS 軌 drain 模式已啟用（2026-06-20）**：pilot 已過（`EPROZ00100`/`EPROC00118` 重產 → Approved）→ SRS 軌改 **drain 迴圈**（§5b/§6b）：允許多頁同時 `prd-ready`、**序列一次一頁**逐頁過 gate＋N 軸，**checkpoint 從「每頁停」改為「整批 prd-ready 清空後停一次」**（batch checkpoint）。守則不變：序列非並行、每頁全 gate＋N 軸、終點 `in-review`（不自升 approved）、C 類不碰、單頁 FAIL 標因續跑。

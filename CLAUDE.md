@@ -24,6 +24,7 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 
 > Codex 版皆為 `docs/env/codex/` 範本，部署到本機/專案 `.codex/`。**鏡像＝薄殼指標**（2026-06-11 健檢採納，ADR-0001 更新）：Codex prompt/agent 範本只含「指標＋Codex 側差異清單」，**內容權威＝Claude 版檔案**——改內容只改 Claude 版；Codex 範本僅在差異清單（語法/部署）變動時才動。〔第三軌 GitHub Copilot（`.github/`）已於 2026-06-16 移除——回歸 Claude↔Codex 雙軌；見 `decisions.md`。〕
 > **雙軌 parity 機械化**（2026-06-12）：本表 ↔ `AGENTS.md §Spec workflow` 的工具/共用參照同步由 `python scripts/check-dualtrack-parity.py` 驗（任一 parity anchor 漏在一邊＝FAIL）。**加雙軌工具時兩份 constitution 都要提到**（內容仍只改 Claude 版＝薄殼指標）；anchor 清單單一出處＝該腳本 `ANCHORS`。
+> **prompt parity 機械化**（2026-06-24）：`orchestration-playbook §5b/§6b`（迴圈權威）↔ `prd-to-srs-orchestrator-drain.md`（可貼運行殼）的迴圈不變式由 `python scripts/check-prompt-parity.py` 驗（同 `ANCHORS` 單一出處模式；改 playbook 迴圈規則記得同步 drain 殼）。
 
 ## 3. 生命週期
 | 階段 | 動作 | Claude | Codex |

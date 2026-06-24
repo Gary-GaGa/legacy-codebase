@@ -8,7 +8,8 @@
   "hooks": {
     "Stop": [
       { "command": "python scripts/verify-c0.py --git" },
-      { "command": "python scripts/check-srs-bundle.py --all" }
+      { "command": "python scripts/check-srs-bundle.py --all" },
+      { "command": "python scripts/check-prompt-parity.py" }
     ],
     "_PostToolUse_optional": [
       { "command": "python scripts/verify-c0.py --git" }
