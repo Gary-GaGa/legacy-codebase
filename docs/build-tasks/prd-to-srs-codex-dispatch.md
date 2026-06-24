@@ -99,6 +99,7 @@ frontmatter），照其〔輸入 / 輸出四檔 / spec.md 十段結構 / SRS 鐵
    - 每條 delta 附來源（db-diff 檔行 / refactor-spec 段 / decisions 列 / parity `file:line`）+ 三判 tag。
 
 【輸出 bundle → 規劃 repo `docs/specs/srs/<funcId>/`】
+- **結構照 canonical 範本 `docs/specs/srs/spec-template.md`**（複製起手、段名/順序/Rn 格式一致）；新包須過 `check-srs-bundle.py` 結構檢查 warn-clean。
 - spec.md（Metadata header〔Status/Owner/Slug/版本/上游 PRD/as-is 來源〕、Scope+Non-Goals、
   Assumptions/Deps、Endpoints〔epl-*〕、業務規則 Rn〔每條 covers-prd: + 強制點 FE/BE/both +
   as-is✅⚠️🔴/to-be〕、NFR、Trade-offs、**新舊 DB 對照 + 更動 delta 清單**〔每條：來源

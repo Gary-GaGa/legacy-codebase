@@ -33,6 +33,11 @@
          源 EPROZ00100 首跑 schema.sql 把 db-schema 對照整段 defer 給 RD、兩閘門皆放行）；段內容
          真確性〔每條附來源+三判 vs 只寫『待 RD』〕＝spec-reviewer 紅旗⑥（語意層）。
          **gateⓇ PASS 僅表『段存在』、不表內容真確**（空標題/否定段亦 PASS→紅旗⑥ 兜底）。
+  structure 結構（warn 級，永不 FAIL）：對 canonical 結構（單一出處＝
+         `docs/specs/srs/spec-template.md`）驗——canonical 12 段齊/命名一致、metadata 必要欄、
+         Rn 標題 `### Rn <title> - 強制點: FE|BE|both`+`covers-prd:`、不編號風格。**既有 14 包
+         標準定版前產出、漂移為已知＝grandfathered（warn 不擋、exit 0 不變）；新包照 template
+         寫＝warn-clean**（往後一致由此把關）。全部正規化後可升 FAIL。（2026-06-24 加）
   [--all 附帶] doc-paths：全 repo markdown 內 backtick 引用的 root-anchored 路徑
          存在性（advisory；歷史檔 build-tasks/done/、archive/ 不掃）
 
@@ -696,6 +701,84 @@ def scan_doc_paths():
     return warns
 
 
+# ---------- structure（canonical 結構 lint；warn 級，永不 FAIL）-----------------
+# canonical 段＝docs/specs/srs/spec-template.md（結構單一出處）。本檢查只 warn：
+# 既有 14 包標準定版前產出、漂移為已知 → warn 不擋（check-srs-bundle 仍 exit 0、不破 Stop hook）；
+# 新包照 template 寫＝warn-clean。全部正規化後可改 FAIL（見 spec-template.md 註）。
+# (canonical 顯示名, 別名關鍵詞[出現即「命名非 canonical」], 必要?)
+_CANON_SECTIONS = [
+    ("Metadata", [], True),
+    ("Scope", [], True),
+    ("Assumptions / Dependencies / Constraints", ["Assumptions"], False),
+    ("Source Evidence", ["Sources", "Source Inputs"], True),
+    ("Endpoints", [], True),
+    ("Rules", ["Business Rules"], True),
+    ("NFR", [], False),
+    ("Trade-offs", ["Trade-off"], False),
+    ("DB Reconcile / Delta", ["DB ", "DB/", "DB對", "Reconcile", "Delta", "對照"], True),
+    ("@PENDING", ["PENDING", "Pending", "Decision Register"], True),
+    ("Traceability Matrix", ["Traceability"], True),
+    ("Hard Boundaries", ["Hard Boundar", "硬界線"], False),
+]
+
+
+def structure_check(bundle):
+    """canonical 結構 lint（warn 級）：段齊/命名、metadata 欄、Rn 格式、編號風格。永不 FAIL。"""
+    warns, infos = [], []
+    sp = os.path.join(bundle, "spec.md")
+    if not os.path.isfile(sp):
+        return [], [], []
+    lines = read(sp).splitlines()
+    # 抽 level-2 標題（去 "## " 與 leading "N. " 編號）
+    raw_h2 = [ln[3:].strip() for ln in lines if ln.startswith("## ")]
+    norm = [re.sub(r"^\d+\.\s*", "", h) for h in raw_h2]
+    norm_l = [h.lower() for h in norm]
+
+    def has_exact(name):
+        return name.lower() in norm_l
+
+    def alias_hit(keys):
+        for h in norm:
+            for k in keys:
+                if k.lower() in h.lower():
+                    return h
+        return None
+
+    for canon, aliases, required in _CANON_SECTIONS:
+        if has_exact(canon):
+            continue
+        hit = alias_hit(aliases) if aliases else None
+        if hit:
+            warns.append(f"段命名非 canonical：`{hit}` → 建議統一為 `{canon}`")
+        elif required:
+            warns.append(f"缺 canonical 必要段 `{canon}`（或用了未識別別名）")
+        else:
+            infos.append(f"無選用段 `{canon}`（canonical 建議段，非必要）")
+
+    # 編號風格（canonical 為不編號）
+    if any(re.match(r"^\d+\.\s", h) for h in raw_h2):
+        infos.append("使用編號標題（`## N.`）；canonical 為不編號")
+
+    # metadata 必要欄
+    meta_txt = "\n".join(lines[:40])
+    for field, pat in [("funcId", r"(?i)\bfuncid\b"), ("Status", r"(?i)\bstatus\b"),
+                       ("PRD", r"(?i)\bPRD\b"), ("Output files", r"(?i)Output files|Bundle files")]:
+        if not re.search(pat, meta_txt):
+            warns.append(f"metadata 缺欄位 `{field}`（前 40 行未見）")
+
+    # Rn 標題格式：### R<n> … - 強制點: FE|BE|both
+    rn_heads = [ln for ln in lines if re.match(r"^### R\d", ln)]
+    bad = [ln for ln in rn_heads
+           if not re.search(r"-\s*強制點\s*[:：]\s*(FE|BE|both)", ln)]
+    if rn_heads and bad:
+        warns.append(f"{len(bad)}/{len(rn_heads)} 條 Rn 標題不符 canonical 強制點格式"
+                     f"（應 `### Rn <title> - 強制點: FE|BE|both`，避免粗體/括弧/無冒號）")
+    if not rn_heads:
+        infos.append("無 `### Rn` 規則標題（確認 Rules 段寫法）")
+
+    return [], warns, infos
+
+
 # ---------- runner -----------------------------------------------------------
 def check_bundle(bundle):
     funcid = os.path.basename(bundle.rstrip("/"))
@@ -710,6 +793,7 @@ def check_bundle(bundle):
     gsf, gsw = gate_status_safety(bundle)
     gef, gew, gei = gate_error_carry(bundle)
     grf, grw = gate_reconcile(bundle)
+    stf, stw, sti = structure_check(bundle)
     sections = [
         ("gate①openapi", g1f, g1w, []),
         ("gate②schema ", g2f, g2w, []),
@@ -720,6 +804,7 @@ def check_bundle(bundle):
         ("gateⓈstatus安全", gsf, gsw, []),
         ("gateⒺ錯誤碼承載", gef, gew, gei),
         ("gateⓇreconcile", grf, grw, []),
+        ("structure 結構 ", stf, stw, sti),
     ]
     for name, fails, warns, infos in sections:
         status = "FAIL" if fails else "PASS"
