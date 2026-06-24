@@ -16,9 +16,10 @@
 --   TB_CHECK_POINT_RC_CORP is not recreated by this SRS bundle.
 --   TB_CHECK_POINT_RC_CU is not recreated by this SRS bundle.
 --   latest active new-schema evidence found only TB_CHECK_POINTS_CS/CU for EPROC00115.
---   The RC 0215 checkpoint mapping is @PENDING in spec.md R14.
+--   Owner decision 2026-06-24 closes RC 0215 as unified into CS/CU EPROC00115.
 -- - db-diff markdown carries checkpoint default 'N'; latest column TSV used here does not expose default text.
 --   Type, length, nullability, and PK still match for the columns used by this SRS.
+--   DEFAULT 'N' is kept from db-diff because the latest column TSV has no default field.
 -- - TB_COMMON_FIELD_OPTIONS.MSG_CODE is VARCHAR2(30) in db-diff and VARCHAR2(50) in latest reverify;
 --   latest reverify is used here per source priority.
 
@@ -92,12 +93,12 @@ CREATE TABLE TB_API_AUTH (
 --   epl-sele-c0-borrower-group-exposure
 -- REF_FUNCTION_ID must be EPROC00115.
 -- Route/API seed rows do not replace service-level case/edit authorization.
--- TB_PAGE_MENU is mentioned only as missing route/menu proof in spec.md R18; no EPROC00115 menu DDL
--- is owned by this bundle, and no final TB_PAGE_MENU row was found in this worker scope.
+-- TB_PAGE_MENU is the route/menu data source, but no EPROC00115 menu DDL is owned by this bundle.
+-- Route/menu identity is closed in spec.md R18 as EPROC00115 from owner decision plus inventory/schema evidence.
 
 -- New-vs-old mapping:
 -- legacy EPRO_TB_GROUP_EXPOSURE -> new TB_GROUP_EXPOSURE: carried/exact.
 -- legacy EPRO_TB_CHECK_POINT_CORP.EPROC0_0115 -> new TB_CHECK_POINTS_CS.EPROC00115 for CS branch.
 -- legacy EPRO_TB_CHECK_POINT_CU.EPROC0_0115 -> new TB_CHECK_POINTS_CU.EPROC00115 for CU branch.
 -- legacy EPRO_TB_CHECK_POINT_RC_CORP.EPROC0_0215 and EPRO_TB_CHECK_POINT_RC_CU.EPROC0_0215:
--- db-diff says moved to CS/CU, but exact 0215 mapping remains pending; see spec.md R14 @PENDING.
+-- db-diff says moved to CS/CU; owner decision 2026-06-24 maps modern RC 0215 behavior to CS/CU EPROC00115.

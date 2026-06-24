@@ -1,12 +1,13 @@
 openapi: 3.0.3
 info:
   title: EPROC00120 Corporate Financial Evaluation FI API
-  version: 0.1.1
+  version: 0.2.0
   description: >
-    Draft-for-review SRS contract for EPROC00120. The main schema contains
-    current/parity-confirmed DTO keys only. PRD-only parent-progress fields
-    and unconfirmed capital-ratio additions are tracked as P-012/P-010 deltas
-    in spec.md, not asserted as the current API contract.
+    Ready-for-owner-finalization SRS contract for EPROC00120. The page API
+    keeps the current-confirmed financialList contract. Parent progress is
+    refreshed through an independent parent/checkpoint endpoint. Current code
+    exposes cetOneCapitalRatio and totalCapitalRatio, but this SRS excludes them
+    from the to-be page API because PRD/db-diff do not confirm those fields.
 servers:
   - url: https://example.com/api
     description: Placeholder base URL; deployment URL is environment-specific.
@@ -31,7 +32,8 @@ paths:
             Platform envelope for success or business error. Business error
             codes include MSG_DATA_NOT_FOUND, MSG_OVER_COUNT_LIMIT,
             MSG_QUERY_FAIL, COMMON_MSG_ERROR_LON, and ErrorInputException
-            where validation is mapped from legacy/PRD.
+            where validation is mapped from legacy/PRD. Source DATA_SEQ/count
+            mismatch and PERIODS=0 handling follow spec.md R10-R11.
           content:
             application/json:
               schema:
@@ -100,7 +102,7 @@ components:
           description: TB_LON_SUMMARY_INFO.APPLICATION_NO.
         isFinish:
           type: boolean
-          description: false saves draft; true enforces Finished validation and checkpoint completion.
+          description: false saves draft; true enforces backend Finished validation and checkpoint completion. Backend must reject true for trusted RC old-case context before mutation.
         financialList:
           type: array
           minItems: 0
@@ -117,7 +119,7 @@ components:
       properties:
         code:
           type: string
-          maxLength: 20
+          maxLength: 64
           description: Platform response code; nonzero still uses HTTP 200 for business errors.
         message:
           type: string
@@ -139,15 +141,11 @@ components:
       additionalProperties: false
     FinancialEvaluationFiRow:
       type: object
-      x-pending-runtime-fields:
-        cetOneCapitalRatio:
-          maxLength: 12
-          mapsToCurrentEntityColumn: CET_ONE_CAPITAL
-          pending: P-010
-        totalCapitalRatio:
-          maxLength: 12
-          mapsToCurrentEntityColumn: TOTAL_CAPITAL
-          pending: P-010
+      x-runtime-delta:
+        excludedCurrentFields:
+          - cetOneCapitalRatio
+          - totalCapitalRatio
+        disposition: Current DTO/entity maps these to CET_ONE_CAPITAL and TOTAL_CAPITAL, but PRD/db-diff do not confirm them; excluded from this SRS contract until RD/DBA cleanup.
       required:
         - dataSeq
         - ratiosDate
@@ -155,6 +153,7 @@ components:
         dataSeq:
           type: string
           maxLength: 2
+          description: Source/target row key; balance and income DATA_SEQ sets must match exactly before calculation.
         ratiosDate:
           type: string
           maxLength: 10
@@ -178,26 +177,27 @@ components:
           type: string
           maxLength: 12
           nullable: true
-          description: API key for DB GGL.
+          description: API key for DB GGL. First period or previous LOANS_DISCOUNTED denominator zero is N/A; rounding uses HALF_DOWN.
         aggregateLargeExposureRatio:
           type: string
           maxLength: 12
           nullable: true
-          description: API key for DB AGREE_LARGE_EXPOSURE.
+          description: API key for DB AGREE_LARGE_EXPOSURE. Required when isFinish=true.
         creditExposureToSingleBeneficiary:
           type: string
           maxLength: 12
           nullable: true
-          description: API key for DB CREDIT_EXPOSURE_TO_SB.
+          description: API key for DB CREDIT_EXPOSURE_TO_SB. Required when isFinish=true.
         relatedPartyExposure:
           type: string
           maxLength: 12
           nullable: true
+          description: API key for DB RELATED_PARTY_EXPOSURE. Required when isFinish=true.
         unhedgedForeignCurrencyRatio:
           type: string
           maxLength: 12
           nullable: true
-          description: API key for DB UNHEDGED_FOREIGN_CURR.
+          description: API key for DB UNHEDGED_FOREIGN_CURR. Required when isFinish=true.
         netInterestMargin:
           type: string
           maxLength: 12
@@ -206,35 +206,37 @@ components:
           type: string
           maxLength: 12
           nullable: true
-          description: API key for DB COST_INCOME.
+          description: API key for DB COST_INCOME. Legacy formula; denominator zero is N/A; rounding uses HALF_DOWN.
         roa:
           type: string
           maxLength: 12
           nullable: true
+          description: First period, PERIODS=0, or zero average TOTAL_ASSETS denominator is N/A; rounding uses HALF_DOWN.
         roe:
           type: string
           maxLength: 12
           nullable: true
+          description: First period, PERIODS=0, or zero average TOTAL_STOCKHOLDER_EQUITY denominator is N/A; rounding uses HALF_DOWN.
         loans:
           type: string
           maxLength: 12
           nullable: true
-          description: API key for DB LOANS_DEPOSITS.
+          description: API key for DB LOANS_DEPOSITS. Denominator zero is N/A; rounding uses HALF_DOWN.
         liquidityCoverageRatio:
           type: string
           maxLength: 12
           nullable: true
-          description: API key for DB LIQUIDITY_COVERAGE.
+          description: API key for DB LIQUIDITY_COVERAGE. Required when isFinish=true.
         solvencyRatio:
           type: string
           maxLength: 12
           nullable: true
-          description: API key for DB SOLVENCY.
+          description: API key for DB SOLVENCY. Required when isFinish=true.
         tier1CapitalRatio:
           type: string
           maxLength: 12
           nullable: true
-          description: API key for DB TIER_ONE_CAPITAL.
+          description: API key for DB TIER_ONE_CAPITAL. Manual field; not Finished-required by this contract.
       additionalProperties: false
     SaveFinancialEvaluationFiResponseEnvelope:
       type: object
@@ -245,7 +247,7 @@ components:
       properties:
         code:
           type: string
-          maxLength: 20
+          maxLength: 64
           description: COMMON_MSG_SAVE_SUCCESS on success; nonzero for business errors.
         message:
           type: string
@@ -253,6 +255,7 @@ components:
         data:
           type: object
           nullable: true
+          description: Empty page response; parent progress is refreshed via independent parent/checkpoint endpoint.
           additionalProperties: false
       additionalProperties: false
     ErrorResponse:
@@ -263,7 +266,7 @@ components:
       properties:
         code:
           type: string
-          maxLength: 50
+          maxLength: 64
           description: ACCESS_DENIED / E405 for authorization failures.
         message:
           type: string

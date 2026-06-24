@@ -3,8 +3,8 @@ info:
   title: EPROC00119 Financial Statement FI API
   version: 1.0.0
   description: >
-    In Review contract for C0 Financial Statement FI. All business operations
-    use POST RPC endpoints. Binary exports use file responses with JSON error envelopes.
+    C0 Financial Statement FI contract. All business operations use POST RPC
+    endpoints. Binary exports use file responses with JSON error envelopes.
 servers:
   - url: /
 paths:
@@ -217,15 +217,15 @@ components:
         balanceList:
           type: array
           items:
-            $ref: '#/components/schemas/StatementRow'
+            $ref: '#/components/schemas/BalanceFiInputRow'
         incomeList:
           type: array
           items:
-            $ref: '#/components/schemas/StatementRow'
+            $ref: '#/components/schemas/IncomeFiInputRow'
         cashflowList:
           type: array
           items:
-            $ref: '#/components/schemas/StatementRow'
+            $ref: '#/components/schemas/CashflowFiInputRow'
     SaveRequest:
       type: object
       required:
@@ -250,15 +250,46 @@ components:
         balanceList:
           type: array
           items:
-            $ref: '#/components/schemas/StatementRow'
+            $ref: '#/components/schemas/BalanceFiInputRow'
         incomeList:
           type: array
           items:
-            $ref: '#/components/schemas/StatementRow'
+            $ref: '#/components/schemas/IncomeFiInputRow'
         cashflowList:
           type: array
           items:
-            $ref: '#/components/schemas/StatementRow'
+            $ref: '#/components/schemas/CashflowFiInputRow'
+        criteria1:
+          type: string
+          maxLength: 1
+          description: Required when isFinish is true.
+        criteria2:
+          type: string
+          maxLength: 1
+          description: Required when isFinish is true.
+        criteria3:
+          type: string
+          maxLength: 1
+          description: Required when isFinish is true.
+        doesNeedAuditedFs:
+          type: string
+          maxLength: 1
+          description: Required when isFinish is true.
+        haveProvidedAuditedFs:
+          type: string
+          maxLength: 1
+          description: Required when isFinish is true.
+        auditFirm:
+          type: string
+          maxLength: 50
+          description: Required when isFinish is true when audited financial statements apply.
+        opinionMemo:
+          type: string
+          maxLength: 500
+          description: Required when isFinish is true when opinion memo applies.
+        highlight:
+          type: string
+          description: Required when isFinish is true.
         loanRepayment:
           type: string
           maxLength: 6000
@@ -286,39 +317,58 @@ components:
         langType:
           type: string
           maxLength: 10
-    MainStatement:
+    Decimal15p2:
+      type: string
+      pattern: '^-?\d{1,15}(\.\d{1,2})?$'
+      description: Decimal string with up to 15 integer digits and 2 fractional digits; reject over-precision or over-scale without implicit rounding or truncation.
+    Decimal17p2:
+      type: string
+      pattern: '^-?\d{1,17}(\.\d{1,2})?$'
+      description: Decimal string with up to 17 integer digits and 2 fractional digits; reject over-precision or over-scale without implicit rounding or truncation.
+    Decimal10p2:
+      type: string
+      pattern: '^\d{1,8}(\.\d{1,2})?$'
+      description: Non-negative Oracle NUMBER(10,2) decimal string; reject over-precision or over-scale without implicit rounding or truncation.
+    BalanceFiInputRow:
       type: object
+      description: >
+        Balance FI request row. `applicationNo` and `dataSeq` are backend-owned.
+        Declared total fields use 17+2 precision; all other financial amount
+        detail fields are decimal strings with 15+2 precision.
+      not:
+        anyOf:
+          - required:
+              - applicationNo
+          - required:
+              - dataSeq
       properties:
-        currency:
+        year:
+          type: string
+          maxLength: 10
+        periods:
           type: string
           maxLength: 3
-        ccyUnit:
-          type: string
-          maxLength: 2
-        companyName:
-          type: string
-          maxLength: 200
-        criteria1:
+        typeOfYear:
           type: string
           maxLength: 1
-        criteria2:
-          type: string
-          maxLength: 1
-        criteria3:
-          type: string
-          maxLength: 1
-        auditFirm:
-          type: string
-          maxLength: 50
-        opinionMemo:
-          type: string
-          maxLength: 500
-        financialHighlights:
-          type: array
-          items:
-            type: string
-    StatementRow:
+        totalAssets:
+          $ref: '#/components/schemas/Decimal17p2'
+        totalLiabEquity:
+          $ref: '#/components/schemas/Decimal17p2'
+        totalLiabilities:
+          $ref: '#/components/schemas/Decimal17p2'
+        totalStockholderEquity:
+          $ref: '#/components/schemas/Decimal17p2'
+        totalEquityAttrOwnerPa:
+          $ref: '#/components/schemas/Decimal17p2'
+      additionalProperties:
+        $ref: '#/components/schemas/Decimal15p2'
+    BalanceFiRow:
       type: object
+      description: >
+        Balance FI response/calc row. `dataSeq` is server-assigned. Declared
+        total fields use 17+2 precision; all other financial amount detail
+        fields are decimal strings with 15+2 precision.
       properties:
         dataSeq:
           type: integer
@@ -332,7 +382,104 @@ components:
         typeOfYear:
           type: string
           maxLength: 1
-      additionalProperties: true
+        totalAssets:
+          $ref: '#/components/schemas/Decimal17p2'
+        totalLiabEquity:
+          $ref: '#/components/schemas/Decimal17p2'
+        totalLiabilities:
+          $ref: '#/components/schemas/Decimal17p2'
+        totalStockholderEquity:
+          $ref: '#/components/schemas/Decimal17p2'
+        totalEquityAttrOwnerPa:
+          $ref: '#/components/schemas/Decimal17p2'
+      additionalProperties:
+        $ref: '#/components/schemas/Decimal15p2'
+    IncomeFiInputRow:
+      type: object
+      description: >
+        Income FI request row. `applicationNo` and `dataSeq` are backend-owned.
+        Financial amount detail fields are decimal strings with 15+2 precision.
+      not:
+        anyOf:
+          - required:
+              - applicationNo
+          - required:
+              - dataSeq
+      properties:
+        year:
+          type: string
+          maxLength: 10
+        periods:
+          type: string
+          maxLength: 3
+        typeOfYear:
+          type: string
+          maxLength: 1
+      additionalProperties:
+        $ref: '#/components/schemas/Decimal15p2'
+    IncomeFiRow:
+      type: object
+      description: >
+        Income FI response/calc row. `dataSeq` is server-assigned. Financial
+        amount detail fields are decimal strings with 15+2 precision.
+      properties:
+        dataSeq:
+          type: integer
+          minimum: 1
+        year:
+          type: string
+          maxLength: 10
+        periods:
+          type: string
+          maxLength: 3
+        typeOfYear:
+          type: string
+          maxLength: 1
+      additionalProperties:
+        $ref: '#/components/schemas/Decimal15p2'
+    CashflowFiInputRow:
+      type: object
+      description: >
+        Cashflow FI request row. `applicationNo` and `dataSeq` are backend-owned.
+        `periods` follows the DB NUMBER(10,2) contract; financial amount detail
+        fields are decimal strings with 15+2 precision.
+      not:
+        anyOf:
+          - required:
+              - applicationNo
+          - required:
+              - dataSeq
+      properties:
+        year:
+          type: string
+          maxLength: 10
+        periods:
+          $ref: '#/components/schemas/Decimal10p2'
+        typeOfYear:
+          type: string
+          maxLength: 1
+      additionalProperties:
+        $ref: '#/components/schemas/Decimal15p2'
+    CashflowFiRow:
+      type: object
+      description: >
+        Cashflow FI response/calc row. `dataSeq` is server-assigned. `periods`
+        follows the DB NUMBER(10,2) contract; financial amount detail fields are
+        decimal strings with 15+2 precision.
+      properties:
+        dataSeq:
+          type: integer
+          minimum: 1
+        year:
+          type: string
+          maxLength: 10
+        periods:
+          $ref: '#/components/schemas/Decimal10p2'
+        typeOfYear:
+          type: string
+          maxLength: 1
+      additionalProperties:
+        $ref: '#/components/schemas/Decimal15p2'
     OptionEnvelope:
       type: object
       required:
@@ -342,7 +489,8 @@ components:
       properties:
         code:
           type: string
-          maxLength: 4
+          maxLength: 64
+          description: Supports short platform codes and long message-code keys.
         message:
           type: string
           maxLength: 200
@@ -358,7 +506,8 @@ components:
       properties:
         code:
           type: string
-          maxLength: 4
+          maxLength: 64
+          description: Supports short platform codes and long message-code keys.
         message:
           type: string
           maxLength: 200
@@ -377,18 +526,41 @@ components:
             currencyUnit:
               type: string
               maxLength: 2
+            criteria1:
+              type: string
+              maxLength: 1
+            criteria2:
+              type: string
+              maxLength: 1
+            criteria3:
+              type: string
+              maxLength: 1
+            doesNeedAuditedFs:
+              type: string
+              maxLength: 1
+            haveProvidedAuditedFs:
+              type: string
+              maxLength: 1
+            auditFirm:
+              type: string
+              maxLength: 50
+            opinionMemo:
+              type: string
+              maxLength: 500
+            highlight:
+              type: string
             balanceList:
               type: array
               items:
-                $ref: '#/components/schemas/StatementRow'
+                $ref: '#/components/schemas/BalanceFiRow'
             incomeList:
               type: array
               items:
-                $ref: '#/components/schemas/StatementRow'
+                $ref: '#/components/schemas/IncomeFiRow'
             cashflowList:
               type: array
               items:
-                $ref: '#/components/schemas/StatementRow'
+                $ref: '#/components/schemas/CashflowFiRow'
             loanRepayment:
               type: string
               maxLength: 6000
@@ -416,7 +588,8 @@ components:
       properties:
         code:
           type: string
-          maxLength: 4
+          maxLength: 64
+          description: Supports short platform codes and long message-code keys.
         message:
           type: string
           maxLength: 200
@@ -426,15 +599,15 @@ components:
             balanceList:
               type: array
               items:
-                $ref: '#/components/schemas/StatementRow'
+                $ref: '#/components/schemas/BalanceFiRow'
             incomeList:
               type: array
               items:
-                $ref: '#/components/schemas/StatementRow'
+                $ref: '#/components/schemas/IncomeFiRow'
             cashflowList:
               type: array
               items:
-                $ref: '#/components/schemas/StatementRow'
+                $ref: '#/components/schemas/CashflowFiRow'
             resultMsg:
               type: array
               items:
@@ -447,7 +620,8 @@ components:
       properties:
         code:
           type: string
-          maxLength: 4
+          maxLength: 64
+          description: Supports short platform codes and long message-code keys.
         message:
           type: string
           maxLength: 200
@@ -462,7 +636,8 @@ components:
       properties:
         code:
           type: string
-          maxLength: 4
+          maxLength: 64
+          description: Supports short platform codes and long message-code keys.
         message:
           type: string
           maxLength: 200

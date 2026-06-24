@@ -24,7 +24,7 @@ paths:
                   - $ref: '#/components/schemas/SelectResponse'
                   - $ref: '#/components/schemas/BusinessErrorResponse'
         '401':
-          description: E405 access denied from platform API authorization
+          description: E405 access denied or E498 invalid auth/session context from platform API authorization
           content:
             application/json:
               schema:
@@ -41,7 +41,7 @@ paths:
               $ref: '#/components/schemas/InfoRequest'
       responses:
         '200':
-          description: EPRO envelope. Success returns detail data; empty exposure rows return facility="" and facilitiesList=[]. Business errors such as E102, E126, MSG_DATA_NOT_FOUND, MSG_OVER_COUNT_LIMIT, or MSG_QUERY_FAIL return ErrorResponse in the same envelope.
+          description: EPRO envelope. Success returns detail data; empty exposure rows return facility="" and facilitiesList=[]. Business errors such as E102, E126, E130, E201, E999, MSG_DATA_NOT_FOUND, MSG_OVER_COUNT_LIMIT, or MSG_QUERY_FAIL return ErrorResponse in the same envelope.
           content:
             application/json:
               schema:
@@ -49,7 +49,7 @@ paths:
                   - $ref: '#/components/schemas/InfoResponse'
                   - $ref: '#/components/schemas/BusinessErrorResponse'
         '401':
-          description: E405 access denied from platform API authorization
+          description: E405 access denied or E498 invalid auth/session context from platform API authorization
           content:
             application/json:
               schema:
@@ -66,7 +66,7 @@ paths:
               $ref: '#/components/schemas/SaveRequest'
       responses:
         '200':
-          description: EPRO envelope. Success returns code=0000, message=Success, empty data (legacy COMMON_MSG_SAVE_SUCCESS is a UI message, not an API body per R9); business errors such as E102, E126, E130, COMMON_MSG_SAVE_FAIL, or MSG_QUERY_FAIL return ErrorResponse in the same envelope.
+          description: EPRO envelope. Success returns code=0000, message=Success, empty data (legacy COMMON_MSG_SAVE_SUCCESS is a UI message, not an API body per R9); business errors such as E102, E126, E130, E201, E999, COMMON_MSG_SAVE_FAIL, or MSG_QUERY_FAIL return ErrorResponse in the same envelope.
           content:
             application/json:
               schema:
@@ -74,7 +74,7 @@ paths:
                   - $ref: '#/components/schemas/SaveResponse'
                   - $ref: '#/components/schemas/BusinessErrorResponse'
         '401':
-          description: E405 access denied from platform API authorization. Backend case/edit authorization is tracked as @PENDING in spec.md R20.
+          description: E405 access denied from platform or backend case/edit authorization, or E498 invalid auth/session context.
           content:
             application/json:
               schema:
@@ -185,6 +185,7 @@ components:
           maxLength: 2
         facilitiesList:
           type: array
+          minItems: 1
           items:
             $ref: '#/components/schemas/FacilityRow'
     SaveResponse:
@@ -213,7 +214,7 @@ components:
         loanLimitType:
           type: string
           maxLength: 2
-          description: Conditional Finished semantics are @PENDING in spec.md R10.
+          description: Finished requires the Outstanding/Maturity branch when loanLimitType is not "2".
         lccAmountCur:
           type: string
           maxLength: 3

@@ -1,5 +1,6 @@
 -- SRS schema snapshot for EPROC00120.
--- Evidence comes from docs/db-diff/02_tables/*.md and current source usage.
+-- Evidence comes from docs/db-diff/02_tables/*.md, legacy 0120/0220,
+-- and current corporate code-as-baseline at commit 2ae96d0.
 -- This file is not a migration script; it lists contract-relevant tables/columns.
 
 CREATE TABLE TB_FINANCIAL_EVALUATION_FI (
@@ -91,9 +92,21 @@ CREATE TABLE TB_API_AUTH (
 --    LIQUIDITY_COVERAGE, SOLVENCY, TIER_ONE_CAPITAL, RATIOS_DATE.
 -- 2. Current backend DTO/entity additionally maps cetOneCapitalRatio and
 --    totalCapitalRatio to CET_ONE_CAPITAL and TOTAL_CAPITAL. Those columns are
---    absent from the db-diff snapshot and PRD field mapping, so P-010 requires
---    RD/DBA to decide whether the snapshot is stale or implementation drift.
+--    absent from the db-diff snapshot and PRD field mapping. The SRS keeps the
+--    snapshot authoritative, excludes those fields from OpenAPI contract, and
+--    leaves RD/DBA to reconcile current DTO/entity drift before release.
 -- 3. Source statement tables contain numeric money values; target ratio table
---    stores calculated/display ratio values as VARCHAR2(12).
+--    stores calculated/display ratio values as VARCHAR2(12). DATA_SEQ/count
+--    mismatch must be rejected before formula calculation; PERIODS=0 renders
+--    ROA/ROE as N/A.
 -- 4. Checkpoint writes use TB_CHECK_POINTS_CS or TB_CHECK_POINTS_CU by
---    corporate secured/unsecured branch.
+--    corporate secured/unsecured branch. The update must affect exactly one
+--    row; zero-row update must throw so the save transaction rolls back.
+-- 5. Automatic ratio rounding is a service-layer rule: legacy HALF_DOWN with
+--    final two-decimal display/storage. No schema change is implied.
+-- 6. epl-save-c0-financial-evaluation-table-fi requires TB_API_AUTH seed rows
+--    plus a service-level case edit/role guard before mutation. TB_API_AUTH
+--    alone is not sufficient authorization proof.
+-- 7. Parent progress/checkpoint aggregation is handled by an independent
+--    parent/checkpoint endpoint. EPROC00120 save updates only its own
+--    EPROC00120 checkpoint column.

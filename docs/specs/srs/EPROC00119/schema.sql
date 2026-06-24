@@ -1,6 +1,6 @@
 -- SRS EPROC00119 schema slice.
 -- DB snapshot authority: docs/db-diff/02_tables.
--- TB_FIN_STATEMENT_CASHFLOW_FI markdown has malformed column_name cells; entity names are used below pending mother-folder recheck.
+-- TB_FIN_STATEMENT_CASHFLOW_FI markdown has malformed column_name cells; entity names are used below under code-as-baseline.
 -- Mentioned auth/source tables: TB_LON_SUMMARY_INFO, TB_API_AUTH.
 
 CREATE TABLE TB_FIN_STATEMENT_MAIN (
@@ -127,12 +127,12 @@ CREATE TABLE TB_CHECK_POINTS_CU (
 );
 
 -- TB_LON_SUMMARY_INFO supplies APPLICATION_NO, LON_ATTRIBUTE, SECURE_ATTRIBUTE, APPLICATION_DATE, CASE_PROGRESS.
--- TB_API_AUTH / TB_ROLE_TASK / service authorization proof remains pending RP51.
+-- TB_API_AUTH / TB_ROLE_TASK plus service-level case/edit/ownership checks are required by DEC-RP51.
 
 -- Delta tags:
--- DB-D1 (c + drift): TB_FIN_STATEMENT_MAIN follows active/exact snapshot PK APPLICATION_NO; current JPA/service identity also uses CURRENCY pending RP53.
+-- DB-D1 (c + drift): TB_FIN_STATEMENT_MAIN follows active/exact snapshot PK APPLICATION_NO; current JPA/service identity also uses CURRENCY and is RD/DBA conformance work under DEC-RP53.
 -- DB-D2 (c): TB_FIN_STATEMENT_BALANCE_FI follows active/exact snapshot plus current entity; PK is APPLICATION_NO, DATA_SEQ.
 -- DB-D3 (c): TB_FIN_STATEMENT_INCOME_FI follows active/exact snapshot, preserves typo physical names, and uses PK APPLICATION_NO, DATA_SEQ.
--- DB-D4 (pending): TB_FIN_STATEMENT_CASHFLOW_FI snapshot column_name extraction malformed; current entity names used pending mother-folder recheck.
+-- DB-D4 (c + snapshot extraction defect): TB_FIN_STATEMENT_CASHFLOW_FI snapshot column_name extraction is malformed; current entity names are used under code-as-baseline.
 -- DB-D5 (c + defect): TB_CHECK_POINTS_CS/CU use EPROC00119 and seed EPROC00120 on save; legacy 0119 checkpoint read defect used EPROI0_0119.
--- DB-D6 (pending): current entity/service use narrative split columns LOAN_REPAYMENT_1/2, FINANCIAL_SITUATION_1/2, BUSINESS_RISK_1/2, BORROWER_RISK_1/2, SUMMARY_1/2, but db-diff snapshot does not include them; reconcile under RP54.
+-- DB-D6 (c + drift): current entity/service use narrative split columns LOAN_REPAYMENT_1/2, FINANCIAL_SITUATION_1/2, BUSINESS_RISK_1/2, BORROWER_RISK_1/2, SUMMARY_1/2, but db-diff snapshot does not include them; reconcile as RD/DBA conformance work under DEC-RP54.
