@@ -204,5 +204,5 @@ Resolved source/domain note: prior `PENDING-007` is closed by source evidence. T
 | REQ-007 | R7 | QA-016, QA-017 |
 | REQ-008 | R8 | QA-018 |
 | REQ-009 | R8 | QA-019 |
-| REQ-010 | R2, R4, R9, R10 | QA-020, QA-021, QA-022, QA-025, QA-026, QA-027, QA-028, QA-032 |
+| REQ-010 | R2, R4, R9, R10 | QA-020, QA-021, QA-022, QA-023, QA-024, QA-025, QA-026, QA-027, QA-028, QA-032 |
 | REQ-011 | R11 | Pending only; see PENDING-001..PENDING-006 and PENDING-008..PENDING-010. |
