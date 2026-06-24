@@ -48,3 +48,8 @@ verifier-contract（契約對齊）／verifier-scope（commit 範圍、誤動 OU
 - terminal＝rd-done → DoD 閘門牆（①②③⑥⑦LLM審 + 人審；④⑤ QA 暫拔除）→ owner 蓋 Done。
 - 回報格式照 `rd-codex-dispatch.md`【回報格式】（funcId + commit + BE/FE 檔 + DoD exit + RD 軸逐行 + ledger diff + 待 C 類彙總 + 四守則一句）。
 - 卡歸檔 `done/`：9 包 drain 跑完、回填完成後移。
+
+## 後續（9 包 rd-done 後；owner 定 2026-06-25）
+- **spec.md 兩半翻新一輪**：9 包改成 canonical 兩半（Contract/Appendix；`docs/specs/srs/spec-template.md`）、**順帶補 4 包缺的 `covers-prd`**（00110/00112/00114/SU0170）。規範/lint 已就位（warn 級），翻新＝消既有 warn。詳見 plan「SRS spec.md 可讀性 — 一檔兩半」Part B。
+- 全部被動到的包轉兩半後 → structure lint 由 warn 升 **FAIL**（硬閘門）。
+- **不在 RD 開發中插隊、不在蓋章時做**——RD 先收 9 包 rd-done，翻新另起。
