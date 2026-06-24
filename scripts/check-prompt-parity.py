@@ -36,7 +36,7 @@ PAIRS = [
         ("prd-ready", "佇列狀態驅動 drain"),
         ("batch checkpoint", "低風險頁批末停一次"),
         ("per-page checkpoint", "T1/金錢/授權頁每頁停"),
-        ("A–G", "每頁全 A–G 七正交軸"),
+        ("A–F", "每頁全 A–F 七正交軸"),
         ("跨模型", "各軸跨模型、反 correlated-blindness"),
         ("n-axis-findings-ledger", "每軸 Blocker/誤報回填度量 ledger"),
         ("in-review", "終點＝in-review，非 approved"),

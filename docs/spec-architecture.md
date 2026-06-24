@@ -103,6 +103,13 @@ flowchart LR
 - **操作前提**：轉換得**讀得到** `docs/db-diff/` snapshot；讀不到（如僅母資料夾有）＝退回 `@PENDING` 標「待母資料夾撈」、不臆造。
 - **定位**：目標是 **right-size** Pending（砍掉本就非人類決策的），不是 minimize——Pending 的價值正是逼出「人**必須**裁」的事。
 
+### Rule 1c — 缺正式 refactor baseline → code-as-baseline 降級（2026-06-24 立）
+- **適用**：某頁 `docs/refactor-spec/` 無正式 corporate baseline artifact（如 `EPROC00119` RP40、`EPROC00120` P-009；個金 i0 有、企金 c0 缺）。
+- **降級方案**：用 **legacy（對應舊頁）+ current migrated code 當 as-is baseline** 做 parity 碼驗，**不等正式 artifact、不臆造 baseline**。
+- **寫法**：as-is 證據標 `[CODE:<file>:<line>@<commit-SHA>]`（reference + commit 釘版、可回查）；spec 顯式 disclaim「baseline＝code-as-baseline、無正式 refactor-spec artifact、待補」。
+- **不省嚴謹度**：parity 差異仍過 `legacy-parity-sop` 三判（regression/演進/結構差）；高風險面（authZ/金額）仍升級。**code-as-baseline 換的是 baseline 來源、非 parity 嚴謹度**。
+- **owner 決策**：code-as-baseline vs 補正式 artifact ＝ owner 裁（缺料 trade-off）；2026-06-24 owner 裁企金線 00119/00120 採 code-as-baseline。
+
 ### Rule 2 — refactor 優先（限本層）；踩線才升級
 - **預設**：legacy vs refactor 在 **FE/API 行為與契約層** 衝突→**refactor 贏**（最新意圖版；承 `REF-D2` keep-latest、`DB-D6` win-by-layer）+ 留 `REF-Dn` delta 註。
 - **不得越層**：refactor **不蓋** db-diff（物理真相）、**不蓋** Bible/PRD（業務意圖）。blanket「refactor 贏」會讓一份 FE 文件改物理 schema＝危險。
@@ -115,6 +122,13 @@ flowchart LR
 3. 踩**高風險面**：authN/authZ、金額/計算/精度、資料刪改、安全/隱私、交易一致性；
 4. **同一層**兩來源實質衝突，且該層 SoT 來源本身**缺資料/沉默**（無從裁）——**不得**以「對方沒明文反對」當 refactor 自動贏的理由。
 > 其餘（純本層 contract 取捨、可由 upstream 裁的差異）＝可自決 refactor-wins，但仍留 `REF-Dn` delta。
+
+### Rule 3 — 授權分層（雙層防禦；mutating 端點必遵，2026-06-24 立）
+完整性/安全的授權**不得只靠單層**；標準三層、spec 授權 Rn 須標各層強制點：
+- **DB 層（SoT）**：`TB_API_AUTH`（`API_ID` + `REF_FUNCTION_ID` + `ROLE`）記權限，初期 seed/DML 落地。
+- **Service 層（BE 權威）**：save/execute/authorize 等 mutation 前做 case-edit/ownership/role guard（Maker-Checker、互斥、交易一致）；**未授權角色呼叫一律拒（401 未認證 / 403 已認證但無權）**。
+- **FE 層（非安全邊界）**：UI disable/隱藏＝UX，**永不信前端**。
+- **鐵則**：`TB_API_AUTH` seed **單獨不足**（Bible `:332`/`:342`：權限須前後端對齊、負向角色呼叫應被拒）——**必配 service guard**。對應 N 軸軸 D、`SEC-nnn` 條目。
 
 ## 6. 追溯與驗證（兩條鏈）
 

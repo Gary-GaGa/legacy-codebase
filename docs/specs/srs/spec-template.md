@@ -13,7 +13,7 @@
 | Field | Value |
 |---|---|
 | funcId | <funcId> |
-| Status | In Review / draft-for-review（定版前；勿自宣 Approved） |
+| Status | 規格定版: In Review（定版前；勿自宣 Approved）; 實作完成: not-started |
 | Owner | <SA / domain / RD…> |
 | PRD | `docs/specs/prd/PRD-...-<funcId>-v1.0.md` |
 | Bundle | `docs/specs/srs/<funcId>/` |
@@ -73,10 +73,12 @@ covers-prd: REQ-002
 | PENDING-<funcId>-<簡述> | 待關 TBD-xxx | <owner> | Yes/No | Open |
 
 ## Traceability Matrix
-> QA 欄 2026-06-24 隨 QA 暫拔除＝dormant（不得視為已驗證）；REQ↔Rn 仍有效。
-| PRD | Rn | QA |
-|---|---|---|
-| REQ-001 | R1 | （QA 暫拔除） |
+> 兩欄 REQ↔Rn（QA 欄隨 QA 2026-06-24 暫拔除而移除；恢復 QA 後再加回）。
+| PRD | Rn |
+|---|---|
+| REQ-001 | R1 |
 
 ## Hard Boundaries
-- as-is/to-be 摘要：給 RD「可先修 vs 待 TBD」的硬界線。
+- 可先修（as-is ✅/⚠️、與 @PENDING 無關）：<列 Rn 範圍>。
+- 待 TBD（涉 @PENDING）：<列 Rn 範圍 + 擋住的 TBD/PENDING id>。
+- 摘要：<RD 可先動的邊界一句>。

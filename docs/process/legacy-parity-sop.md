@@ -18,6 +18,14 @@
 | **(c) DB 結構差** | 新 DB schema 與舊不同 | **code 對齊舊行為值，但 schema 以新為準**（**不回滾 DB**，見 §2）|
 > **判據一律「比舊系統對應行為」**（附舊 `file:line`）；推不出＝**停手登記 UNFOUND、不臆測**。(b) 的「刻意」需有依據（owner/規格/縮編表），不能用「新就是對」自我證成。
 
+### 1a. 「疑似 bug」判準 + 「預設修正 vs 升級」分界（2026-06-24 立）
+(a) regression 常以「疑似 legacy bug」現身——判別與處置：
+- **常見模式**：throw-stub／無條件 return false、setter 寫 null、guard 永假、無條件 skip、寫入無 commit/return、object↔string 比較錯型、欄位取錯來源（如 `BORROWER_RISK_*` 取 `businessRisk`）、比較方向反（end-balance vs cash-equivalent）。
+- **快速判別**：① DB 寫入有無 commit/return ② 該分支是否可達 ③ 有無邊界保護 ④ 與 PRD/Bible 意圖是否一致。
+- **預設處置**：判為 (a) regression（非刻意）→ **預設修正成正確**（refactor 覆寫、標 `REF-Dn` delta + 新舊 `file:line`）；**除非該錯誤行為被外部依賴**（則保留+標、回灌 PRD）。
+- **何時升級（不自決）**：疑似 bug 若**踩高風險面**（authZ/金額/精度/資料刪改/交易一致）→ 命中升級觸發 #3、停交 owner；**純邏輯 bug**（顯示/非金錢計算/流程）→ refactor 可自決修。
+- 對應 §9#22（throw-stub 行為驗證漏網）、`spec-architecture §5b` 升級觸發 + Rule 2。
+
 ## 2. DB 特例（(c) 類展開）
 - **新 DB ＝已部署事實**：`OVSLXLON01/02` 為準；`AUD-6`（財評精度 `(28,2)→(20,2)`、利率 `6→2` 位）已裁「**以新 DB 為準、不還原**」、schema-diff 定「**有 DB→以 DB 為準**」。
 - **故「遇 DB 不同」的處置不是把 DB 改回舊**，而是：**先按頁登記哪裡差 → 判該差異是否真影響舊行為的可達成性 → code 對齊舊行為、entity/mapping 接新 schema 形狀**。
