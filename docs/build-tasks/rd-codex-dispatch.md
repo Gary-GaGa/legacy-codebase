@@ -16,7 +16,7 @@
 | `docs/specs/srs/<funcId>/spec.md` | 業務規則 Rn + **強制點 FE/BE/both** + as-is✅⚠️🔴/to-be + delta |
 | `docs/specs/srs/<funcId>/openapi.yaml` | **契約鎖**＝唯一真相（epl-* request/response、method） |
 | `docs/specs/srs/<funcId>/schema.sql` | 表/欄 DDL（型別/長度/PK/nullable） |
-| `docs/specs/srs/<funcId>/qa-cases.md` | 不在 RD 階段產測試，但讀它確認可測性（QA flow 會用） |
+| `docs/specs/srs/<funcId>/qa-cases.md` | 不在 RD 階段產測試，但讀它確認可測性（DoD gate④ 會跑） |
 
 ---
 
@@ -56,7 +56,7 @@ checkpoint 用 Cs/Cu 非 Is/Iu、endpoint -c0- 非 -i0-）。
 2. ② schema：entity ↔ DB（型別長度）。
 3. ③ verify-c0：python scripts/verify-c0.py --git exit 0（鏡像/禁樣式/只新增）。
 4. ⑥ build：mvn（BE）、ng build（FE）各 exit 0。
-（④QA驗收 ⑤覆蓋率 屬 QA flow，不在 RD 階段。）
+（④QA驗收 ⑤覆蓋率 在 rd-done 後的 DoD 閘門牆跑，不在 RD 實作階段。）
 
 【RD 軸（§4c；advisory、跨模型、各 read-only）】
 spawn：verifier-contract（契約對齊）／verifier-scope（commit 範圍、誤動 OUT、聚焦）／
@@ -68,7 +68,7 @@ verifier-regression（舊系統/i0 偏離、既有回歸、reflection）／verif
 - 達標（①②③⑥ 綠 + RD 軸無 Blocker）→ ledger 該頁 status=rd-done、填 code 路徑（commit/PR）。
 - 一頁一 commit（金融頁逐頁）；回報 diff 摘要。
 - T1 頁（金錢/評分/授權，含撥貸 0920/0921/0922+T24、c0 評分線）→ 停此交人審（不自動接下一頁）。
-- 不自宣 Done：終點＝rd-done（QA flow 還沒跑）。
+- 不自宣 Done：終點＝rd-done（待 DoD 閘門牆 + 人審）。
 
 【回報格式】
 - funcId + code commit/PR 路徑 + 改動 BE/FE 檔清單。
@@ -84,5 +84,5 @@ verifier-regression（舊系統/i0 偏離、既有回歸、reflection）／verif
 ## 備註
 - **序列一次一頁、drain 整批**（同 SRS）：每頁各自過閘門＋軸＋回填，一頁達標即接下一頁（T1 例外＝per-page 停人審），drain 完 `rd-ready` 才停 batch checkpoint。
 - **強制點是拆工主軸**：FE/BE/both 決定該頁拆幾個子任務、誰是權威驗證層（`spec-architecture §5.5`）。
-- **terminal＝rd-done**，交棒 QA flow（`qa-codex-dispatch.md`）；最終 Done 由 owner 蓋章。
+- **terminal＝rd-done**，進 DoD 閘門牆（gate④ 跑 qa-cases、⑤覆蓋率 + 人審）→ owner 蓋 Done。〔QA Agent Flow 暫不納入。〕
 - 卡歸檔 `done/`：本批 drain 跑完、回填完成後移。

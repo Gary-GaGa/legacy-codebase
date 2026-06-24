@@ -61,17 +61,7 @@
 | **強制點落實**（RD 新） | `verifier-enforcement` | 每 Rn 的強制點 FE/BE/both 真落地：完整性/安全的 BE 強制有且為權威；mutating 端點非 FE-only；標「後端為準」的欄 client 不可送（接 §4b 軸 D 在 code 端的對應驗） |
 - 全軸 PASS 才算 RD 三軸+1 PASS；同質多隻＝theater。仍 ≠ 人審（T1 頁仍 per-page 人審）。
 
-## 4d. QA flow 驗證軸（test 階段；新正交軸）
-> QA flow（④ code→test）跑完三層測試後的「測試本身夠不夠好」驗證，各 read-only、跨模型。**brief 權威＝本表**；對應 DoD ④QA驗收＋⑤覆蓋率（機械）之上的語意層。
-| 軸 | 只看 | 對應陷阱 |
-|---|---|---|
-| **Q1 覆蓋完整性** | 每 non-@PENDING Rn ≥1 test；多分支 happy/error/edge 齊（補 gate⑤「≥1」假綠） | 測試掛名、只測 happy |
-| **Q2 oracle 真確** | 斷言對 Rn 精神（非鏡像實作）；紅燈正確分「impl-gap（回 RD）」vs「oracle/spec 錯（回 SRS，不自改 spec）」 | 把實作當預期、測了個寂寞 |
-| **Q3 三層齊備** | DB+BE+FE 各測到該測：強制點 BE → BE+繞FE negative；FE 行為 → Playwright；DB 副作用 → DB 斷言 | 只測一層、強制點漏繞 FE |
-| **Q4 環境隔離** | Testcontainers 自 seed（含授權列）、可 teardown、不污染共享 DB；不依賴 ops 套授權 | 測試彼此污染、依賴外部狀態 |
-| **Q5 報告忠實** | 測試報告清單逐案 PASS/FAIL/SKIP + 證據齊；Rollup 數據與實跑一致；SKIP/deferred 標明不灌水 | 假綠、漏報 FAIL、覆蓋率灌水 |
-- 真獨立、跨模型、各軸獨立 session；採納修正後再審一輪。仍 ≠ 人審（T1 頁 owner 審報告才升 done）。
-- **度量**：每軸每頁 {提出問題／確認為真／誤報} 同樣回填 `docs/process/n-axis-findings-ledger.md`（與 SRS N 軸共用度量機制，分 stage 標記）。
+> 〔QA flow 驗證軸（原 §4d）已移除——QA Agent Flow 暫不納入；先把 Bible→PRD→SRS→RD→DoD 跑順。QA 驗收仍由 DoD gate④（跑 qa-cases）承擔，見 `docs/specs/qa-to-test.md`。日後再決定 QA flow 何處介入。〕
 
 ## 5. orchestrator 迴圈
 ```
@@ -123,30 +113,14 @@
       → spawn sub-agent 跑 rd-codex-dispatch（填 funcId）→ 產 code 到產品 repo（brownfield=對位驗碼 / greenfield=盤點+計畫）
       → 機械閘門：DoD ①契約 ②schema ③verify-c0 ⑥build（mvn/ng build exit 0、verify-c0.py exit 0）
       → RD 軸（§4c：contract/scope/regression/強制點落實，跨模型、advisory）→ 採納修正後再審一輪
-      → 達標 → ledger status=rd-done、填 code 路徑（commit/PR）→ 回填觸發 QA 軌入口（該頁可轉 qa-ready）
+      → 達標 → ledger status=rd-done、填 code 路徑（commit/PR）→ 進 DoD 閘門牆（gate④ 跑 qa-cases、⑤覆蓋率 + 人審）→ owner 蓋 done
       → 未達標（build 紅 / verify-c0 違規 / 軸有 Blocker 需 C 類）→ status=blocked+原因（離開 rd-ready）→ 續下一頁
  → 佇列無 rd-ready → batch checkpoint
 ```
 - 守則全 mirror §5b（序列非並行、context 衛生、circuit-breaker、單頁 FAIL 標 blocked、首批漸進）。**終點＝`rd-done`、不得自宣 Done**（QA 還沒跑）。
 - **T1（金錢/評分/授權）頁＝per-page checkpoint**：code 產完即停交人審（diff 審 + 三軸跨模型 + 採納修正再審），不併批末。
 
-## 5d. QA 軌迴圈（④ code→test；輸入＝ledger `qa-ready` 佇列）
-> RD 軌把頁推到 `rd-done`；**QA 軌接 `rd-done→qa-ready` 的頁**，產三層測試、跑、出報告。權威迴圈，運行殼＝`build-tasks/qa-orchestrator-drain.md`。
-```
-讀 ledger（qa-ready 佇列）
- → 入口閘：只取 status=qa-ready（前置＝該頁 rd-done、build 綠）；build 紅不收
- → while 佇列仍有 qa-ready（序列一次一頁）：
-     取一頁
-      → spawn sub-agent 跑 qa-codex-dispatch（填 funcId）→ 依 qa-cases.md 產三層測試：
-          DB（Testcontainers 自 seed→DB 斷言）／BE（epl-* + response/DB 斷言）／FE（Playwright e2e）
-      → 跑測試 → 機械閘門：DoD ④QA驗收（三層測試綠）＋⑤覆蓋率（check-srs-bundle gate⑤）
-      → QA 軸（§4d Q1–Q5，跨模型）→ 採納修正後再審一輪
-      → 產【測試報告清單】（格式＝docs/specs/qa-report-format.md）
-      → 達標 → ledger status=qa-passed、填 report 路徑
-      → 未達標：紅燈分類——impl-gap→回 RD（該頁 status=rd-ready 重排）／oracle-spec 錯→回 SRS（標，不自改）／測試環境問題→blocked
- → 佇列無 qa-ready → batch checkpoint；交 owner 審報告
-```
-- **終點＝`qa-passed`、非 done**；**最終 `done` 由 owner 蓋章**（T1 頁逐頁審報告）。其餘守則 mirror §5b。
+> 〔QA 軌迴圈（原 §5d）已移除——QA Agent Flow 暫不納入。RD 後直接進 DoD 閘門牆（gate④ 跑 qa-cases、⑤覆蓋率），owner 蓋 `done`。待 Bible→PRD→SRS→RD→DoD 跑順後，再決定 QA flow（三層測試/報告）何處介入。〕
 
 ## 6. orchestrator prompt 骨架（可直接 pilot）
 ```
@@ -178,8 +152,6 @@
 ## 6c. RD orchestrator prompt（PRD→code 規模化）
 > 迴圈權威＝§5c；**可貼運行殼＝`build-tasks/rd-orchestrator-drain.md`**（單頁 worker＝`rd-codex-dispatch.md`）。殼 ↔ §5c 迴圈不變式由 `python scripts/check-prompt-parity.py` 驗（改 §5c 記得同步殼）。首次跑先單頁(殼只取一頁)驗四守則再批量。
 
-## 6d. QA orchestrator prompt（code→test 規模化）
-> 迴圈權威＝§5d；**可貼運行殼＝`build-tasks/qa-orchestrator-drain.md`**（單頁 worker＝`qa-codex-dispatch.md`；三層測試對映＝`docs/specs/qa-to-test.md`、FE＝`docs/specs/fe-test-convention.md`、報告＝`docs/specs/qa-report-format.md`）。殼 ↔ §5d 由 `check-prompt-parity.py` 驗。00118（spec+impl 已完成）＝QA flow 首跑 pilot 頁。
 
 ## 7. config 落地（部署本機 `.codex/`）
 - `.codex/agents/verifier-{contract,scope,regression}.toml`（範本 `docs/env/codex/verifier-*.toml`；`sandbox_mode="read-only"`、三軸不同 `developer_instructions`、建議跨模型）。

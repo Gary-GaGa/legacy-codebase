@@ -36,8 +36,8 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→QA→co
 | 架構決策 | 重大取捨 | 寫 `docs/adr/ADR-NNNN-<funcId>.md` | 同 |
 | **審核** | 定稿前必跑 | **`spec-reviewer`**〔=SRS N 軸 axis A，§4b〕 + `/code-review` | **`spec-reviewer.toml`**〔N 軸 axis A〕 |
 | 定稿 | 過門檻 | spec.md `Status: Approved` | 同 |
-| **RD 開發** | SRS Approved→code（編排化、母資料夾執行）| `build-tasks/rd-codex-dispatch`／`rd-orchestrator-drain`〔迴圈 §5c/§6c、軸 §4c〕 | 同 |
-| **QA 驗測** | code→三層測試 DB/BE/FE + 測試報告清單 | `build-tasks/qa-codex-dispatch`／`qa-orchestrator-drain`〔§5d/§6d、軸 §4d、FE `specs/fe-test-convention.md`、報告 `specs/qa-report-format.md`〕 | 同 |
+| **RD 開發** | SRS Approved→code（編排化、母資料夾執行）→ DoD 閘門牆 | `build-tasks/rd-codex-dispatch`／`rd-orchestrator-drain`〔迴圈 §5c/§6c、軸 §4c〕 | 同 |
+| **DoD** | code 過 7 道閘（含 gate④ 跑 qa-cases）→ owner 蓋 Done | DoD 閘門牆（`docs/ai-flow-guide.md ⑥`） | 同 |
 | **盤點/校正** | 里程碑後重對 inventory（drift 校正回路，非主線一站）| **`/refactor-audit`** | **`/refactor-audit`** |
 
 ## 4. 品質門檻（`Status: Approved` 前必過）— DoD

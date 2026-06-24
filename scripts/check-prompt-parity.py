@@ -7,10 +7,10 @@
 忘了同步 drain 殼，就是靜默漂移（殼還在跑舊規則）。本腳本把「關鍵不變式 anchor 兩邊都在」
 機械化：任一 anchor 缺在任一邊＝FAIL，逼漏改現形。
 
-涵蓋三條 flow 的殼（皆以 playbook 為權威）：
+涵蓋的 flow 殼（皆以 playbook 為權威）：
   - SRS 軌（§5b/§6b）↔ prd-to-srs-orchestrator-drain.md
   - RD  軌（§5c/§6c）↔ rd-orchestrator-drain.md
-  - QA  軌（§5d/§6d）↔ qa-orchestrator-drain.md
+  〔QA 軌暫移除——QA Agent Flow 待 Bible→PRD→SRS→RD→DoD 跑順後再納入〕
 
 設計＝對照 check-dualtrack-parity.py：anchor 清單＝本腳本單一出處（下方 PAIRS）。新增/改迴圈
 不變式時在這裡加一行（同步點）。pilot 卡已歸檔 done/，不納入比對。
@@ -55,19 +55,6 @@ PAIRS = [
         ("per-page checkpoint", "T1 頁每頁停人審"),
         ("blocked", "單頁 FAIL 標 blocked 離開 ready 集合"),
         ("不並行", "序列非並行"),
-    ]),
-    ("QA", PLAYBOOK, "docs/build-tasks/qa-orchestrator-drain.md", [
-        ("qa-ready", "入口閘＝rd-done 衍生的 qa-ready"),
-        ("qa-passed", "終點態＝qa-passed"),
-        ("三層", "DB+BE+FE 三層測試"),
-        ("Testcontainers", "DB 層自 seed harness"),
-        ("Playwright", "FE 層 e2e"),
-        ("impl-gap", "紅燈分類 impl-gap→回 RD"),
-        ("oracle", "oracle-spec 錯→回 SRS，不自改"),
-        ("report", "測試報告清單為產物"),
-        ("circuit-breaker", "系統性失敗暫停整批"),
-        ("batch checkpoint", "低風險頁批末停"),
-        ("per-page checkpoint", "T1 頁每頁停 owner 審報告"),
     ]),
 ]
 

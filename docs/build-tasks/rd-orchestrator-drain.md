@@ -27,7 +27,7 @@ orchestration-playbook §5c/§6c、§4c（RD 軸）。
    a. 取 risk-tier 最前、同 risk 依表序的【一頁】（序列、一次只一頁、不並行、不吞整批）。
    b. spawn 獨立 sub-agent 跑 rd-codex-dispatch.md 的單頁 prompt（填 funcId）→ 產 code 到產品 repo。
    c. DoD 機械閘門（blocking）：① 契約 openapi 對齊 ② schema entity↔DB ③ verify-c0.py --git exit 0
-      ⑥ build：mvn + ng build exit 0。（④⑤ 屬 QA flow。）
+      ⑥ build：mvn + ng build exit 0。（④⑤ 在 rd-done 後的 DoD 閘門牆跑。）
    d. RD 軸（§4c，跨模型、advisory）：spawn verifier-contract/scope/regression/enforcement（強制點
       落實：BE 權威 enforce、mutating 非 FE-only、決策欄 client 不可送）各一隻 read-only、獨立
       session、不同指示 → 採納修正後再審一輪。
@@ -56,7 +56,7 @@ orchestration-playbook §5c/§6c、§4c（RD 軸）。
 
 ## 步驟 2 — batch checkpoint（人）
 - 全批停 `rd-done` 後逐頁人審 diff；T1 頁已在 1g 單頁審過。
-- `rd-done` 頁 → owner 放行轉 `qa-ready`（進 QA flow，`qa-orchestrator-drain.md`）。
+- `rd-done` 頁 → 進 DoD 閘門牆（gate④ 跑 qa-cases、⑤覆蓋率 + 人審）→ owner 蓋 `done`。〔QA Agent Flow 暫不納入。〕
 - `blocked` 頁：build/驗證可修者回母資料夾修、C 類進 pending-register 裁 → 修/裁後重標 `rd-ready`。
 - 回填 STATUS / feature-inventory / ledger（code 路徑、覆蓋計數）。
 
