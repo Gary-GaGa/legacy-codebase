@@ -302,6 +302,7 @@ components:
         - code
         - message
         - isAllTabsCheck
+        - rateResult
       properties:
         code:
           type: string
@@ -313,6 +314,29 @@ components:
           example: COMMON_MSG_SAVE_SUCCESS
         isAllTabsCheck:
           type: boolean
+        rateResult:
+          $ref: '#/components/schemas/RateResult'
+      additionalProperties: false
+    RateResult:
+      type: object
+      description: BE-derived Rate result for the acting AO/CR side. Preserves the legacy observable `level`, `scrDate`, and `totalScore` outcome without exposing a standalone calc endpoint.
+      required:
+        - riskLevel
+        - scoreDatetime
+        - totalScore
+      properties:
+        riskLevel:
+          type: string
+          maxLength: 7
+          description: Legacy `level`; derived from `TB_SCORE_CARD_PARAM_DETAIL.COL_RISK_LV`.
+        scoreDatetime:
+          type: string
+          maxLength: 20
+          description: Legacy `scrDate`, formatted for page display and persistence.
+        totalScore:
+          type: string
+          maxLength: 20
+          description: Decimal score string preserving precision before persistence to NUMBER(7,2).
       additionalProperties: false
     AssessmentViewMap:
       type: object

@@ -75,6 +75,7 @@ paths:
     post:
       operationId: calcC0FinancialStatementComments
       summary: Calculate derived Balance, Income, and Cashflow values.
+      description: Read-only operation. It must not update checkpoint or financial-statement tables.
       requestBody:
         required: true
         content:
@@ -166,7 +167,7 @@ paths:
 components:
   responses:
     AuthError:
-      description: Authorization error for missing or invalid TB_API_AUTH permission.
+      description: Authorization error for missing or invalid TB_API_AUTH endpoint permission, or failed backend case/page authorization for the requested applicationNo. Info, reference, and export operations require read access; calc, save, and Finished operations require edit access before business execution.
       content:
         application/json:
           schema:
@@ -298,14 +299,23 @@ components:
           $ref: '#/components/schemas/FinancialMain'
         balanceMap:
           type: array
+          description: Required save detail list. Must be non-empty, contain no null rows, have one to five rows, and have the same length as incomeMap and cashflowMap.
+          minItems: 1
+          maxItems: 5
           items:
             $ref: '#/components/schemas/BalanceRow'
         incomeMap:
           type: array
+          description: Required save detail list. Must be non-empty, contain no null rows, have one to five rows, and have the same length as balanceMap and cashflowMap.
+          minItems: 1
+          maxItems: 5
           items:
             $ref: '#/components/schemas/IncomeRow'
         cashflowMap:
           type: array
+          description: Required save detail list. Must be non-empty, contain no null rows, have one to five rows, and have the same length as balanceMap and incomeMap.
+          minItems: 1
+          maxItems: 5
           items:
             $ref: '#/components/schemas/CashflowRow'
     CalcRequest:
@@ -365,6 +375,7 @@ components:
                 haveData:
                   type: string
                   enum: [Y, N]
+                  description: Y only when main, Balance, Income, and Cashflow persisted data all exist.
                 mainMap:
                   $ref: '#/components/schemas/FinancialMain'
                 balanceMap:
@@ -440,6 +451,7 @@ components:
           maxLength: 100
     FinancialMain:
       type: object
+      description: Public API uses five structured highlight fields. Legacy raw `HIGHLIGHT` pipe text is migration provenance only and is not exposed as a public save/query field; if preserved, it belongs in DB `HIGHLIGHT_CLOB`.
       additionalProperties: false
       properties:
         currency:
@@ -489,6 +501,7 @@ components:
           maxLength: 6000
     BalanceRow:
       type: object
+      description: Public JSON uses canonical field names. Persistence maps canonical `apRelatedParties` and `shareholdersLoan` to physical DB typo columns `AP_RELATED_PARITIES` and `SHARDHOLDERS_LOAN`.
       additionalProperties: true
       properties:
         year:
@@ -520,6 +533,7 @@ components:
           type: string
     IncomeRow:
       type: object
+      description: Public JSON uses canonical field names. Persistence maps income date/year semantics and `impairmentLoss` to physical DB typo columns `IMCOME_DATE` and `IMPAIMENT_LOSS`.
       additionalProperties: true
       properties:
         year:

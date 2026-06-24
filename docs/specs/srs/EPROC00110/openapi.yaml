@@ -55,6 +55,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /epl-confirm-c0-credit-investigation-switch:
+    post:
+      tags:
+        - EPROC00110
+      summary: Issue a destructive GI/FI switch confirmation token
+      operationId: confirmCsuCreditInvestigationSwitch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmCreditInvestigationSwitchRequest'
+      responses:
+        '200':
+          description: Single-use confirmation token issued for the requested old/new business type transition.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmCreditInvestigationSwitchResponseEnvelope'
+        '400':
+          description: Validation error, missing warning acceptance, invalid sourceFrame, invalid businessType, or same old/new businessType.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: User has no edit permission, is in query-only mode, or is in old-case mode for destructive GI/FI switch.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: MSG_DATA_NOT_FOUND when applicationNo has no summary row.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Current persisted business type/version does not match fromBusinessType.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: MSG_QUERY_FAIL for token issuance or current-state validation failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /epl-save-c0-credit-investigation-tab:
     post:
       tags:
@@ -75,13 +124,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/EmptySuccessResponse'
         '400':
-          description: Validation error, blank sourceFrame/businessType, invalid sourceFrame/businessType, or pending confirmation-token policy from TBD-006.
+          description: Validation error, blank sourceFrame/businessType, invalid sourceFrame/businessType, or malformed confirmationToken.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: User has no edit permission for destructive GI/FI switch.
+          description: User has no edit permission, is in query-only mode, or is in old-case mode for destructive GI/FI switch.
           content:
             application/json:
               schema:
@@ -93,7 +142,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '409':
-          description: Missing, invalid, stale, or mismatched confirmationToken / version guard.
+          description: Missing, invalid, expired, reused, stale, or mismatched confirmationToken / switchGeneration guard.
           content:
             application/json:
               schema:
@@ -125,6 +174,29 @@ components:
         sourceFrame:
           $ref: '#/components/schemas/SourceFrame'
       additionalProperties: false
+    ConfirmCreditInvestigationSwitchRequest:
+      type: object
+      required:
+        - applicationNo
+        - sourceFrame
+        - fromBusinessType
+        - toBusinessType
+        - warningAccepted
+      properties:
+        applicationNo:
+          type: string
+          maxLength: 30
+          description: TB_LON_SUMMARY_INFO.APPLICATION_NO.
+        sourceFrame:
+          $ref: '#/components/schemas/SourceFrame'
+        fromBusinessType:
+          $ref: '#/components/schemas/BusinessType'
+        toBusinessType:
+          $ref: '#/components/schemas/BusinessType'
+        warningAccepted:
+          type: boolean
+          description: Must be true only after the user accepts the finalized delete-scope warning text from R18.
+      additionalProperties: false
     SaveCreditInvestigationTabRequest:
       type: object
       required:
@@ -132,6 +204,7 @@ components:
         - sourceFrame
         - businessType
         - confirmationToken
+        - switchGeneration
       properties:
         applicationNo:
           type: string
@@ -140,16 +213,61 @@ components:
         sourceFrame:
           $ref: '#/components/schemas/SourceFrame'
         businessType:
-          type: string
-          maxLength: 1
-          enum:
-            - G
-            - F
-          description: G for general industry, F for financial industry.
+          $ref: '#/components/schemas/BusinessType'
         confirmationToken:
           type: string
           maxLength: 64
-          description: Required server-issued destructive-switch confirmation/version token; exact issuance policy remains tracked by TBD-006 / R18.
+          description: Required token issued by epl-confirm-c0-credit-investigation-switch; single-use, valid for 10 minutes, and bound to actor/session, applicationNo, sourceFrame, old businessType, new businessType, and switchGeneration.
+        switchGeneration:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Server-issued monotonic generation for applicationNo plus sourceFrame; must match the token and current server-side generation at save time.
+      additionalProperties: false
+    ConfirmCreditInvestigationSwitchResponseEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 20
+          description: Platform response code.
+        message:
+          type: string
+          maxLength: 400
+          description: Platform response message.
+        data:
+          $ref: '#/components/schemas/ConfirmCreditInvestigationSwitchResponse'
+      additionalProperties: false
+    ConfirmCreditInvestigationSwitchResponse:
+      type: object
+      required:
+        - confirmationToken
+        - expiresAt
+        - fromBusinessType
+        - toBusinessType
+        - switchGeneration
+      properties:
+        confirmationToken:
+          type: string
+          maxLength: 64
+          description: Single-use token valid for 10 minutes from issuance.
+        expiresAt:
+          type: string
+          format: date-time
+          description: Server-side token expiry timestamp.
+        fromBusinessType:
+          $ref: '#/components/schemas/BusinessType'
+        toBusinessType:
+          $ref: '#/components/schemas/BusinessType'
+        switchGeneration:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Server-side generation bound into the token; successful switch advances this generation and invalidates older tokens for the same applicationNo plus sourceFrame.
       additionalProperties: false
     GetCreditInvestigationTabResponseEnvelope:
       type: object
@@ -207,6 +325,13 @@ components:
       enum:
         - GENERAL_0110
         - RENEWAL_0210
+    BusinessType:
+      type: string
+      maxLength: 1
+      enum:
+        - G
+        - F
+      description: G for General Industry (GI), F for Financial Industry (FI).
     VisibleTabs:
       type: array
       description: >

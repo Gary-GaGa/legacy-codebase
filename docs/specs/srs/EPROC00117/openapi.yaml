@@ -53,7 +53,7 @@ paths:
   /epl-save-c0-financial-business:
     post:
       operationId: saveC0FinancialBusiness
-      summary: Save draft or Finished Financial Evaluation GI rows.
+      summary: Save draft or Finished Financial Evaluation GI rows; RC old cases are save-only and cannot be finished.
       requestBody:
         required: true
         content:
@@ -74,7 +74,7 @@ paths:
 components:
   responses:
     AuthError:
-      description: Platform authentication or authorization failure such as E401/E405/E498; no mutation occurs.
+      description: Platform authentication or authorization failure for missing/invalid endpoint permission or failed service-level case/page read/edit authorization. Select/info require read access; save and any info compute/write-back branch require edit/write access before mutation. The platform may return E401/E405/E498 or this envelope; no mutation occurs.
       content:
         application/json:
           schema:
@@ -116,8 +116,11 @@ components:
           maxLength: 30
         isFinish:
           type: boolean
+          description: true requests Finished/completed save. RC old-case requests must reject true before mutation/checkpoint update.
         currency:
           type: string
+          enum:
+            - USD
           maxLength: 3
         mExistInstallmentAmt:
           type: string
@@ -135,10 +138,14 @@ components:
           type: string
         financialList:
           type: array
+          minItems: 1
+          maxItems: 5
           items:
             $ref: '#/components/schemas/FinancialInfo'
     FinancialInfo:
       type: object
+      required:
+        - dataSeq
       properties:
         dataSeq:
           type: integer
@@ -292,9 +299,15 @@ components:
           maxLength: 200
         data:
           type: object
+          required:
+            - currency
+            - financialList
+            - ratios
           properties:
             currency:
               type: string
+              enum:
+                - USD
               maxLength: 3
             mExistInstallmentAmt:
               type: string
@@ -312,6 +325,8 @@ components:
               type: string
             financialList:
               type: array
+              minItems: 1
+              maxItems: 5
               items:
                 $ref: '#/components/schemas/FinancialInfo'
             ratios:

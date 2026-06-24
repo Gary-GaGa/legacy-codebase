@@ -1,6 +1,7 @@
 -- SRS EPROC00116 follows latest reverify/current entity shape.
--- Older db-diff/legacy HIGHLIGHT LONG shape remains a pending migration issue.
+-- Older db-diff/legacy HIGHLIGHT LONG migrates through structured highlight fields; raw legacy text may be stored in HIGHLIGHT_CLOB as provenance.
 -- Checkpoint tables list the latest active column set, not only the EPROC00116 delta.
+-- TB_LON_SUMMARY_INFO is an external reference/read source for application date and eligibility; this bundle does not define or migrate that table.
 
 CREATE TABLE TB_FIN_STATEMENT_MAIN (
   APPLICATION_NO VARCHAR2(30) NOT NULL,

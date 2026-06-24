@@ -1,7 +1,7 @@
 # 待決登記表（Pending Register）
 
 > **單一視圖**：把散落在各 SRS `@PENDING`、escalation、A-1 OQ、架構待議的**開著的決策**聚一處——「**誰欠我們裁定、卡什麼、開了多久**」。
-> 來源仍各自為準（改在來源檔、這裡同步）。**最後更新＝2026-06-23**。狀態：🔴 擋主線 ／ 🟡 擋單頁/子集 ／ ⚪ 非阻擋/暫緩。
+> 來源仍各自為準（改在來源檔、這裡同步）。**最後更新＝2026-06-24**。狀態：🔴 擋主線 ／ 🟡 擋單頁/子集 ／ ⚪ 非阻擋/暫緩。
 > **06-11 裁定輪**：`00800` TBD-001~007 七條全裁（五關二改追蹤），見文末 §✅ 已關。
 
 ## 🔴 擋主線（卡住才能往下走）
@@ -25,7 +25,7 @@
 | **AUD-11**（F-OWN-4）| `EPROCU0160` typo vs 真分歧——**Codex 碼驗 06-17＝UNFOUND（先不關）**：新 source **無獨立 `EPROCU0160`**（FE pageCode/route/API + BE controller 全 → `EPROCSU0160`/`epl-*-csu-*`＝傾向 typo/已併），**但** ① checkout 無 `TB_PAGE_MENU` row data → 無法證 CU×0160 routing 實指 CSU0160 ② `CsuLoanConditionServiceImpl:597` 讀 `EPROISU0160`（CS/CU checkpoint 欄＝`EPROCSU0160`）→ CU 分流正確性存疑 | 待 ① 唯讀 SQL 查 `TB_PAGE_MENU` 無擔×0160 routing ② `:597` ISU0160 是否 CU 誤接 bug | DBA(SQL)＋RD(`:597`) | 06-16 | F-OWN-4＋`done/aud11-cu0160-page-reverify-findings.md`（push `8c376f7`）＋**派工卡 `build-tasks/aud11-closeout-dba-rd.md`** |
 | **企金線 老系統 parity 補比**（reopen 06-17，**18 頁**）| 企金線（c0 評分 9 + CSU 主流程 9）由鏡像個金 i0/ISU twin 建、**未對舊企金 cs/cu 行為比**（0921「撥貸收斂後評估補比」）→ 撥貸已收斂、補比到期；E1/E2（00118）、AUD-11（CSU0160）合流 | 企金線各頁老系統 parity 維度定版（risk-tier 00118/00120/0170 先）| 信用決策 domain＋RD/Codex（碼驗）| 06-17 | `archive/decisions-2026H1-disbursement.md` 0921＋`decisions.md` c0-parity reopen 列＋**派工卡 `build-tasks/c0-legacy-parity-recheck.md`**（18 頁批次，套 `process/legacy-parity-sop.md`）|
 | **EPROCSU0170 SRS in-review** | Open SRS @PENDING IDs: RP12 RP13 RP14 RP15 RP16 RP17 RP18 RP19 RP20 RP21 RP22 RP23 RP24. | EPROCSU0170 Approved gate / human checkpoint | Credit decision domain + RD/SA/Security/DBA | 2026-06-23 | `docs/specs/srs/EPROCSU0170/spec.md` §@PENDING |
-| **EPROC00117 SRS in-review** | Open SRS @PENDING IDs: RP26 RP27 RP28 RP29 RP30 RP31 RP32 RP33 RP34 RP35 RP36 RP37 RP38. | EPROC00117 Approved gate / human checkpoint | Credit decision domain + RD/SA/Finance/Security/DBA | 2026-06-23 | `docs/specs/srs/EPROC00117/spec.md` §@PENDING |
+| **EPROC00117 SRS in-review** | Open SRS @PENDING IDs: none. | EPROC00117 Approved gate / human checkpoint | Credit decision domain + RD/SA/Finance/Security/DBA | 2026-06-24 | `docs/specs/srs/EPROC00117/spec.md` §@PENDING |
 | **EPROC00119 SRS in-review** | Open SRS @PENDING IDs: RP40 RP41 RP42 RP43 RP44 RP45 RP46 RP47 RP48 RP49 RP50 RP51 RP52 RP53 RP54. | EPROC00119 Approved gate / human checkpoint | Credit decision domain + RD/SA/QA/Security/DBA | 2026-06-23 | `docs/specs/srs/EPROC00119/spec.md` §@PENDING |
 | ~~EPROZ00100 / EPROC00118 SRS @PENDING / contract closeout~~ | Closed 2026-06-20: owner-decision pending closed, RD/DBA contract closeout completed, TB_API_AUTH 12 rows direct-applied and SELECT-only rechecked against OVSLXLON02, both SRS bundles now use dual-axis Approved status. | Done | RD/DBA | 06-20 | docs/build-tasks/done/EPROZ00100-EPROC00118-contract-closeout-card.md plus pilot-srs-pending-verification.md/.sql and c0-authz-sql-findings.md |
 
@@ -51,6 +51,54 @@
 ## ✅ 已關（保留 30 天供交接，之後可清；**裁定內容單一出處＝來源 spec §@PENDING**，本表只留 verdict token）
 | ID | 裁定（06-11）| 來源（＝完整內容）|
 |---|---|---|
+| **EPROC00110 TBD-001 / R13** ✅（06-24）| `NO_EXPOSE_0211_0213` -> `docs/specs/srs/EPROC00110/spec.md` R13 | `docs/specs/srs/EPROC00110/spec.md` R13 |
+| **EPROC00110 TBD-002 / R14** ✅（06-24）| `APPLICATION_NO_REQUEST_CONTRACT` -> `docs/specs/srs/EPROC00110/spec.md` R14 | `docs/specs/srs/EPROC00110/spec.md` R14 |
+| **EPROC00110 TBD-003 / R15** ✅（06-24）| `ERROR_INPUT_INITIAL_FAIL` -> `docs/specs/srs/EPROC00110/spec.md` R15 | `docs/specs/srs/EPROC00110/spec.md` R15 |
+| **EPROC00110 TBD-004 / R16** ✅（06-24）| `C0_OWNED_TITLE_KEY` -> `docs/specs/srs/EPROC00110/spec.md` R16 | `docs/specs/srs/EPROC00110/spec.md` R16 |
+| **EPROC00110 TBD-005 / R17** ✅（06-24）| `GI_FI_ENGLISH_C0_KEYS` -> `docs/specs/srs/EPROC00110/spec.md` R17 | `docs/specs/srs/EPROC00110/spec.md` R17 |
+| **EPROC00110 TBD-006 / R18** ✅（06-24）| `DESTRUCTIVE_SWITCH_TOKEN_A` -> `docs/specs/srs/EPROC00110/spec.md` R18 | `docs/specs/srs/EPROC00110/spec.md` R18 |
+| **EPROC00112 TBD-001 / R11** ✅（06-24）| `EPROC00112_CANONICAL_NAMING` -> `docs/specs/srs/EPROC00112/spec.md` R11 | `docs/specs/srs/EPROC00112/spec.md` R11 |
+| **EPROC00112 TBD-002 / R12** ✅（06-24）| `EXCLUDE_CR_DEL_GUARANTORS` -> `docs/specs/srs/EPROC00112/spec.md` R12 | `docs/specs/srs/EPROC00112/spec.md` R12 |
+| **EPROC00112 TBD-003 / R13** ✅（06-24）| `USD_KHR_ONLY_CURRENCY` -> `docs/specs/srs/EPROC00112/spec.md` R13 | `docs/specs/srs/EPROC00112/spec.md` R13 |
+| **EPROC00112 TBD-004 / R14** ✅（06-24）| `SAVE_Y_FINISH_N_POLARITY` -> `docs/specs/srs/EPROC00112/spec.md` R14 | `docs/specs/srs/EPROC00112/spec.md` R14 |
+| **EPROC00112 TBD-005 / R15** ✅（06-24）| `NULL_INFOLIST_AS_EMPTY` -> `docs/specs/srs/EPROC00112/spec.md` R15 | `docs/specs/srs/EPROC00112/spec.md` R15 |
+| **EPROC00112 TBD-006 / R16** ✅（06-24）| `CS_TO_CS_NONCS_TO_CU` -> `docs/specs/srs/EPROC00112/spec.md` R16 | `docs/specs/srs/EPROC00112/spec.md` R16 |
+| **EPROC00112 TBD-007 / R17** ✅（06-24）| `HIDE_AND_REJECT_0212_OLDCASE_FINISH` -> `docs/specs/srs/EPROC00112/spec.md` R17 | `docs/specs/srs/EPROC00112/spec.md` R17 |
+| **EPROC00112 SEC-001 / R9** ✅（06-24）| `SAVE_SERVICE_AUTH_GATE_CONTRACT` -> `docs/specs/srs/EPROC00112/spec.md` R9 | `docs/specs/srs/EPROC00112/spec.md` R9 |
+| **EPROC00114 PENDING-001 / R11** ✅（06-24）| `DB_SEED_SOT_PRESENT` -> `docs/specs/srs/EPROC00114/spec.md` R11 | `docs/specs/srs/EPROC00114/spec.md` R11 |
+| **EPROC00114 PENDING-002 / R11** ✅（06-24）| `GRANDFATHERED_SCORE_FUNCTION_OK` -> `docs/specs/srs/EPROC00114/spec.md` R11 | `docs/specs/srs/EPROC00114/spec.md` R11 |
+| **EPROC00114 PENDING-003 / R11** ✅（06-24）| `EPROC00114_COLLATERAL_ASSESSMENT_CANONICAL_NAME` -> `docs/specs/srs/EPROC00114/spec.md` R11 | `docs/specs/srs/EPROC00114/spec.md` R11 |
+| **EPROC00114 PENDING-004 / R11** ✅（06-24）| `CS_ONLY_NO_CU_CHECKPOINT_CONTRACT` -> `docs/specs/srs/EPROC00114/spec.md` R11 | `docs/specs/srs/EPROC00114/spec.md` R11 |
+| **EPROC00114 PENDING-005 / R11** ✅（06-24）| `CR_COLL_ADDR_COLUMNS_AUTHORITATIVE` -> `docs/specs/srs/EPROC00114/spec.md` R11 | `docs/specs/srs/EPROC00114/spec.md` R11 |
+| **EPROC00114 PENDING-006 / R11** ✅（06-24）| `COPIED_JS_HANDLERS_NOT_MIGRATED` -> `docs/specs/srs/EPROC00114/spec.md` R11 | `docs/specs/srs/EPROC00114/spec.md` R11 |
+| **EPROC00114 PENDING-008 / R11** ✅（06-24）| `SAVE_RESPONSE_PARENT_COMPLETION_REQUIRED` -> `docs/specs/srs/EPROC00114/spec.md` R11 | `docs/specs/srs/EPROC00114/spec.md` R11 |
+| **EPROC00114 PENDING-009 / R11** ✅（06-24）| `SAVE_SERVICE_AUTH_GUARD_REQUIRED` -> `docs/specs/srs/EPROC00114/spec.md` R11 | `docs/specs/srs/EPROC00114/spec.md` R11 |
+| **EPROC00114 PENDING-010 / R11** ✅（06-24）| `BE_DERIVED_RATE_FIELDS_REQUIRED` -> `docs/specs/srs/EPROC00114/spec.md` R11 | `docs/specs/srs/EPROC00114/spec.md` R11 |
+| **EPROC00116 REFERENCE-STATUS-CODES / R12** ✅（06-24）| `REFERENCE_COPY_CURRENT_REPOSITORY_ELIGIBILITY` -> `docs/specs/srs/EPROC00116/spec.md` R12 | `docs/specs/srs/EPROC00116/spec.md` R12 |
+| **EPROC00116 LEGACY-ACTION-AND-MESSAGE-COMPAT / R12** ✅（06-24）| `LEGACY_ACTIONS_NO_ADAPTER_MESSAGE_ALIAS_ONLY` -> `docs/specs/srs/EPROC00116/spec.md` R10/R12 | `docs/specs/srs/EPROC00116/spec.md` R10/R12 |
+| **EPROC00116 FIVE-YEAR-REQUIREDNESS / R12** ✅（06-24）| `FINISHED_AT_LEAST_ONE_YEAR_MAX_FIVE` -> `docs/specs/srs/EPROC00116/spec.md` R7/R12 | `docs/specs/srs/EPROC00116/spec.md` R7/R12 |
+| **EPROC00116 FIELD-TYPO-MAPPING / R12** ✅（06-24）| `DB_TYPO_PHYSICAL_CANONICAL_API_MAPPING` -> `docs/specs/srs/EPROC00116/spec.md` R4/R5/R12 | `docs/specs/srs/EPROC00116/spec.md` R4/R5/R12 |
+| **EPROC00116 HIGHLIGHT-MIGRATION / R12** ✅（06-24）| `HIGHLIGHT_STRUCTURED_FIELDS_RAW_CLOB_PROVENANCE` -> `docs/specs/srs/EPROC00116/spec.md` R3/R12 | `docs/specs/srs/EPROC00116/spec.md` R3/R12 |
+| **EPROC00116 REPORT-TEMPLATE-OWNERSHIP / R12** ✅（06-24）| `C0_REPORT_API_SHARED_I0_TEMPLATE_ASSET` -> `docs/specs/srs/EPROC00116/spec.md` R8/R12 | `docs/specs/srs/EPROC00116/spec.md` R8/R12 |
+| **EPROC00116 CALC-CHECKPOINT-SIDE-EFFECT / R12** ✅（06-24）| `CALC_ENDPOINT_READ_ONLY_NO_CHECKPOINT_WRITE` -> `docs/specs/srs/EPROC00116/spec.md` R7/R12 | `docs/specs/srs/EPROC00116/spec.md` R7/R12 |
+| **EPROC00116 PXLS-AUTHZ-SEED / R12** ✅（06-24）| `PXLS_AUTH_SEED_REQUIRED_FROM_I0_SOURCE` -> `docs/specs/srs/EPROC00116/spec.md` R10/R12 | `docs/specs/srs/EPROC00116/spec.md` R10/R12 |
+| **EPROC00116 SAVE-LIST-BE-VALIDATION / R12** ✅（06-24）| `SAVE_LISTS_REQUIRED_ALIGNED_NONEMPTY` -> `docs/specs/srs/EPROC00116/spec.md` R7/R12 | `docs/specs/srs/EPROC00116/spec.md` R7/R12 |
+| **EPROC00116 PARITY-CODE-VERIFY / R12** ✅（06-24）| `PARITY_FIX_KEEP_BE_FINISHED_HARDENING` -> `docs/specs/srs/EPROC00116/spec.md` R7/R9/R12 | `docs/specs/srs/EPROC00116/spec.md` R7/R9/R12 |
+| **EPROC00116 HAVEDATA-CASHFLOW-PARITY / R12** ✅（06-24）| `HAVEDATA_REQUIRES_CASHFLOW_COMPLETENESS` -> `docs/specs/srs/EPROC00116/spec.md` R1/R8/R12 | `docs/specs/srs/EPROC00116/spec.md` R1/R8/R12 |
+| **EPROC00116 SERVICE-AUTHZ / R12** ✅（06-24）| `SERVICE_LEVEL_CASE_PAGE_AUTH_REQUIRED` -> `docs/specs/srs/EPROC00116/spec.md` R10/R12 | `docs/specs/srs/EPROC00116/spec.md` R10/R12 |
+| **EPROC00117 RP26 / R1-R8** ✅（06-24）| `EPL_ONLY_NO_GETTOTAL_GETRATE_ALIAS` -> `docs/specs/srs/EPROC00117/spec.md` R1/R8 | `docs/specs/srs/EPROC00117/spec.md` R1/R8 |
+| **EPROC00117 RP27 / R2** ✅（06-24）| `QUERY_MODE_PERSISTED_EDIT_MODE_RECOMPUTE` -> `docs/specs/srs/EPROC00117/spec.md` R2 | `docs/specs/srs/EPROC00117/spec.md` R2 |
+| **EPROC00117 RP28 / R2-R3** ✅（06-24）| `SOURCE_LIST_DATA_SEQ_ALIGNMENT_REQUIRED` -> `docs/specs/srs/EPROC00117/spec.md` R2/R3 | `docs/specs/srs/EPROC00117/spec.md` R2/R3 |
+| **EPROC00117 RP29 / R3** ✅（06-24）| `FIX_AP_TURNOVER_ZERO_DAYS_FOR_AP` -> `docs/specs/srs/EPROC00117/spec.md` R3 | `docs/specs/srs/EPROC00117/spec.md` R3 |
+| **EPROC00117 RP30 / R2** ✅（06-24）| `RATIOS_EMPTY_ARRAY_NO_NULL_LIST` -> `docs/specs/srs/EPROC00117/spec.md` R2 | `docs/specs/srs/EPROC00117/spec.md` R2 |
+| **EPROC00117 RP31 / R5-R7** ✅（06-24）| `SAVE_DETAIL_KEY_AUTHORITY_REQUIRED` -> `docs/specs/srs/EPROC00117/spec.md` R5/R7 | `docs/specs/srs/EPROC00117/spec.md` R5/R7 |
+| **EPROC00117 RP32 / R4** ✅（06-24）| `DSR_FIXED_USD_NO_MULTICURRENCY` -> `docs/specs/srs/EPROC00117/spec.md` R4 | `docs/specs/srs/EPROC00117/spec.md` R4 |
+| **EPROC00117 RP33 / R4-R5** ✅（06-24）| `DSR_ITEM_LIMIT_FIVE` -> `docs/specs/srs/EPROC00117/spec.md` R4/R5 | `docs/specs/srs/EPROC00117/spec.md` R4/R5 |
+| **EPROC00117 RP34 / R1-R8** ✅（06-24）| `NO_GETEXIST_COMPAT_API` -> `docs/specs/srs/EPROC00117/spec.md` R1/R8 | `docs/specs/srs/EPROC00117/spec.md` R1/R8 |
+| **EPROC00117 RP35 / R5-DB-D2** ✅（06-24）| `INFO_AND_INFO_CORP_DISTINCT_TABLES` -> `docs/specs/srs/EPROC00117/spec.md` R5/DB-D2 | `docs/specs/srs/EPROC00117/spec.md` R5/DB-D2 |
+| **EPROC00117 RP36 / R3** ✅（06-24）| `LEGACY_GROWTH_BASIS_ROUND_HALF_DOWN` -> `docs/specs/srs/EPROC00117/spec.md` R3 | `docs/specs/srs/EPROC00117/spec.md` R3 |
+| **EPROC00117 RP37 / R7** ✅（06-24）| `SERVICE_LEVEL_AUTH_AUDIT_REQUIRED` -> `docs/specs/srs/EPROC00117/spec.md` R7 | `docs/specs/srs/EPROC00117/spec.md` R7 |
+| **EPROC00117 RP38 / R5-R6-R8** ✅（06-24）| `KEEP_0217_OLD_CASE_SAVE_ONLY_NO_FINISH_DONE_UPDATE` -> `docs/specs/srs/EPROC00117/spec.md` R5/R6/R8 | `docs/specs/srs/EPROC00117/spec.md` R5/R6/R8 |
 | **TBD-006 / RP1** 🔴→✅ | **A＝保留側效＋修bug＋audit** → R13.1–13.3/13.6/13.7 定版、QA-007/008 解 pending | `00800 spec.md §@PENDING` |
 | **TBD-003 / RP2** ✅ | 保留強制、原因後補 → R5 定版 | 同 |
 | **TBD-004 / RP3** ✅ | 保留刪 fee、原因後補 → R13.6 定版 | 同 |

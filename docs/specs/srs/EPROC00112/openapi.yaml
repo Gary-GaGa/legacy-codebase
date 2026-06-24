@@ -59,7 +59,9 @@ paths:
       summary: Save EPROC00112 CBC banking relationship data.
       description: >
         Full replacement save for BBL, BGL, and GBGL rows, then checkpoint update.
-        Covers PRD REQ-005, REQ-007, REQ-008, and REQ-009.
+        Covers PRD REQ-005, REQ-007, REQ-008, and REQ-009. SRS R17 requires
+        EPROC0_0212 sessions whose source LON_TYPE_CODE is 91, 92, 93, or 94
+        with isFinish=true to be rejected before mutation.
       requestBody:
         required: true
         content:
@@ -74,7 +76,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SaveResponse'
         '400':
-          description: COMMON_MSG_ERROR_LON, E130, or request validation error.
+          description: COMMON_MSG_ERROR_LON, E130, non-USD/KHR CBC currency, or request validation error.
           content:
             application/json:
               schema:
@@ -86,7 +88,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '403':
-          description: Query-only, old-case, or non-edit session is not allowed to mutate CBC data.
+          description: Query-only, EPROC0_0212 old-case Finished, or non-edit session is not allowed to mutate CBC data.
           content:
             application/json:
               schema:
@@ -137,8 +139,9 @@ components:
         isFinish:
           type: boolean
           description: >
-            Submit mode flag. Legacy check polarity is pending in spec R14;
-            current backend writes checkpoint value from isFinish at backend/src/main/java/khd/svc/epro/service/corporate/impl/CbcBankingCorpRelationshipServiceImpl.java:629-644.
+            Submit mode flag. SRS R14 maps isFinish=false to legacy checkpoint value Y
+            and isFinish=true to legacy checkpoint value N; SRS R17 disallows
+            isFinish=true for EPROC0_0212 old-case equivalent sessions.
         pageCheckMap:
           $ref: '#/components/schemas/PageCheckMap'
           description: Parent tab state equivalent to legacy getPageObj for EPROC0_0110 or EPROC0_0210.
@@ -253,7 +256,7 @@ components:
         infoList:
           type: array
           nullable: true
-          description: Null/missing handling remains @PENDING under R15; empty array is allowed for Save drafts.
+          description: SRS R15 treats null or missing infoList as an empty array; empty array is allowed for Save drafts and CBC available = N.
           items:
             $ref: '#/components/schemas/InvestigationInfo'
         usdTCA:
@@ -306,7 +309,7 @@ components:
         infoList:
           type: array
           nullable: true
-          description: Null/missing handling remains @PENDING under R15; empty array is allowed for Save drafts.
+          description: SRS R15 treats null or missing infoList as an empty array; empty array is allowed for Save drafts and CBC available = N.
           items:
             $ref: '#/components/schemas/InvestigationInfo'
         usdTCA:
@@ -330,12 +333,20 @@ components:
           maxLength: 20
         creditAmountCurrency:
           type: string
+          enum:
+            - USD
+            - KHR
+          description: SRS R13 allows only USD or KHR for EPROC00112 CBC currency fields.
           maxLength: 3
         creditAmount:
           type: string
           pattern: '^-?[0-9]{1,15}(\\.[0-9]{1,2})?$'
         outstandingBalanceCurrency:
           type: string
+          enum:
+            - USD
+            - KHR
+          description: SRS R13 allows only USD or KHR for EPROC00112 CBC currency fields.
           maxLength: 3
         outstandingBalance:
           type: string
