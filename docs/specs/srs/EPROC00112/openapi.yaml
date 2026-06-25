@@ -23,12 +23,12 @@ paths:
       responses:
         '200':
           description: >
-            Success response containing BBL, BGL, and GBGL sections with USD/KHR totals.
-            Info failures carry message codes below; COMMON_MSG_SAVE_SUCCESS is save-only.
+            Success envelope containing BBL, BGL, and GBGL sections with USD/KHR totals.
+            Info failures use the error envelopes below; COMMON_MSG_SAVE_SUCCESS is save-only.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InfoResponse'
+                $ref: '#/components/schemas/InfoEnvelope'
         '400':
           description: COMMON_MSG_ERROR_LON or validation error for missing or invalid applicationNo.
           content:
@@ -163,6 +163,21 @@ components:
           $ref: '#/components/schemas/BorrowerSection'
         gBGL:
           $ref: '#/components/schemas/GuarantorSection'
+    InfoEnvelope:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          description: EPROResponse status code.
+        message:
+          type: string
+          description: EPROResponse status message.
+        data:
+          $ref: '#/components/schemas/InfoResponse'
     InfoResponse:
       type: object
       properties:
@@ -172,9 +187,6 @@ components:
           $ref: '#/components/schemas/BorrowerSectionWithTotals'
         gBGL:
           $ref: '#/components/schemas/GuarantorSectionWithTotals'
-        messageCode:
-          type: string
-          description: MSG_DATA_NOT_FOUND, MSG_OVER_COUNT_LIMIT, MSG_QUERY_FAIL, COMMON_MSG_TOTAL_FAIL, or blank on success.
     SaveResponse:
       type: object
       required:
