@@ -10,7 +10,7 @@ Status: DB SELECT-only precheck completed; INSERT SQL not executed. RD addendum 
 - DB precheck scope: `epro-db/new.cmd`, SELECT only, `OVSLXLON02` current schema / owner in precheck queries, no INSERT executed
 - Expected `TB_API_AUTH` inserts now: 18 from the original precheck baseline: 17 exact-source rows plus 1 EPROC00116 pxls reviewed-equivalent row copied from the existing c0 ppdf row. Current c0 rows: 15/33. Source i0 rows: 30/32 plus one EPROC00110 to-be confirm row copied from the existing c0 save row.
 - Expected `TB_ROLE_TASK` inserts now: 0. Current c0 rows: 8/8. Source i0 rows: 8/8.
-- UNSURE / gap rows: 0 after owner decision 2026-06-25. The prior `epl-pxls-c0-financial-statement-comments` gap is resolved by copying roles from the existing c0 `epl-ppdf-c0-financial-statement-comments` reviewed-equivalent row.
+- UNSURE / gap rows: 0 after owner ratification 2026-06-25 (was RD-proposed). The prior `epl-pxls-c0-financial-statement-comments` gap is resolved by copying roles from the existing c0 `epl-ppdf-c0-financial-statement-comments` reviewed-equivalent row.
 
 ## Pattern Evidence
 
