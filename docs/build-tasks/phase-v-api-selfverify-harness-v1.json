@@ -1,0 +1,552 @@
+{
+  "id": "phase-v-api-selfverify-harness-v1",
+  "version": 1,
+  "description": "Read-only Phase V API to DB consistency harness manifest. JWT, DB runner, and fixture application numbers are supplied by environment variables.",
+  "baseUrl": "${env:PHASE_V_BASE_URL|http://localhost:8080}",
+  "jwt": "${env:PHASE_V_JWT}",
+  "dbRunner": "${env:PHASE_V_DB_RUNNER}",
+  "langTypes": [
+    "zh_TW",
+    "en_US"
+  ],
+  "defaults": {
+    "page": 1,
+    "size": 99999,
+    "loanRate": 4000
+  },
+  "cases": [
+    {
+      "id": "LT-1",
+      "title": "TODO List langType count parity",
+      "endpoint": "/epl-list-todolist",
+      "method": "POST",
+      "source": {
+        "controller": "backend/src/main/java/khd/svc/epro/controller/common/ToDoListController.java:64",
+        "service": "backend/src/main/java/khd/svc/epro/service/common/impl/ToDoListServiceImpl.java:277-294",
+        "repository": "backend/src/main/java/khd/svc/epro/repository/VMainBorrowerInfoRepository.java:13-76",
+        "openapi": "docs/specs/srs/EPROZ00100/openapi.yaml:30"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "queryMode": "GENERAL",
+          "page": 1,
+          "size": 99999,
+          "applicationNo": "${env:PHASE_V_LT1_APPLICATION_NO|null}",
+          "approvalDateStart": "${env:PHASE_V_LT1_APPROVAL_DATE_START|null}",
+          "approvalDateEnd": "${env:PHASE_V_LT1_APPROVAL_DATE_END|null}",
+          "startDecisionDate": "${env:PHASE_V_LT1_START_DECISION_DATE|null}",
+          "endDecisionDate": "${env:PHASE_V_LT1_END_DECISION_DATE|null}",
+          "mainBorrowerName": "${env:PHASE_V_LT1_MAIN_BORROWER_NAME|null}",
+          "docNo": "${env:PHASE_V_LT1_DOC_NO|null}",
+          "langType": "${langType}"
+        }
+      },
+      "response": {
+        "listPath": "data.toDoList",
+        "totalCountPath": "data.totalCount"
+      },
+      "equiv_sql": {
+        "kind": "count",
+        "params": {
+          "userId": "${jwt:empId}",
+          "roleId": "${jwt:roleId}",
+          "lonTypeCodes": [
+            "01",
+            "02",
+            "03",
+            "04"
+          ],
+          "caseProgressNotIn": [
+            "03",
+            "D1",
+            "R0305",
+            "R0313",
+            "R0397"
+          ],
+          "applicationNo": "${env:PHASE_V_LT1_APPLICATION_NO|null}",
+          "approvalDateStart": "${env:PHASE_V_LT1_START_DECISION_DATE|${env:PHASE_V_LT1_APPROVAL_DATE_START|null}}",
+          "approvalDateEnd": "${env:PHASE_V_LT1_END_DECISION_DATE|${env:PHASE_V_LT1_APPROVAL_DATE_END|null}}",
+          "mainBorrowerName": "${env:PHASE_V_LT1_MAIN_BORROWER_NAME|null}",
+          "docNo": "${env:PHASE_V_LT1_DOC_NO|null}"
+        },
+        "sql": [
+          "SELECT COUNT(*)",
+          "FROM (",
+          "  SELECT DISTINCT S.APPLICATION_NO",
+          "  FROM V_MAIN_BORROWER_INFO S",
+          "  INNER JOIN TB_LON_SUMMARY_INFO LOSU ON S.APPLICATION_NO = LOSU.APPLICATION_NO",
+          "  LEFT JOIN TB_RELATED_PARTY_INFO R",
+          "    ON S.APPLICATION_NO = R.APPLICATION_NO",
+          "   AND (R.IS_CUB_RELATED = 'Y' OR R.IS_CUBC_RELATED = 'Y' OR R.IS_TCP = 'Y')",
+          "  WHERE (:userId IS NULL OR S.CURRENT_USER_ID = :userId)",
+          "    AND ((:roleId IN ('404', '405') AND S.LON_TYPE_CODE IN (:lonTypeCodes))",
+          "      OR (:roleId NOT IN ('404', '405') AND S.CASE_PROGRESS NOT IN (:caseProgressNotIn)))",
+          "    AND (:applicationNo IS NULL OR S.APPLICATION_NO = :applicationNo)",
+          "    AND (:approvalDateStart IS NULL OR :approvalDateEnd IS NULL",
+          "      OR S.DECISION_DATE BETWEEN TO_DATE(:approvalDateStart, 'DD/MM/YYYY') AND TO_DATE(:approvalDateEnd, 'DD/MM/YYYY'))",
+          "    AND (:mainBorrowerName IS NULL OR UPPER(S.MAIN_BORROWER_NAME) LIKE '%' || UPPER(:mainBorrowerName) || '%')",
+          "    AND (:docNo IS NULL OR (UPPER(S.PASSPORT_NO) LIKE '%' || UPPER(:docNo) || '%'",
+          "      OR UPPER(S.ID_NO) LIKE '%' || UPPER(:docNo) || '%'",
+          "      OR UPPER(S.FAMILY_BOOK_NO) LIKE '%' || UPPER(:docNo) || '%'",
+          "      OR UPPER(S.RESIDENT_BOOK_NO) LIKE '%' || UPPER(:docNo) || '%'",
+          "      OR UPPER(S.VISA_NO) LIKE '%' || UPPER(:docNo) || '%'",
+          "      OR UPPER(S.REGISTER_NO) LIKE '%' || UPPER(:docNo) || '%'))",
+          ")"
+        ]
+      },
+      "assert": {
+        "kind": "langtype_count",
+        "primary": "response count zh_TW equals response count en_US",
+        "secondary": "each response count equals equiv_sql count",
+        "referenceCount": "91 = 91 on OVSLXLON02 snapshot"
+      }
+    },
+    {
+      "id": "LT-2",
+      "title": "Case Distribution langType count parity",
+      "endpoint": "/epl-list-casedistribution",
+      "method": "POST",
+      "source": {
+        "controller": "backend/src/main/java/khd/svc/epro/controller/common/CaseDistributionController.java:38-39",
+        "service": "backend/src/main/java/khd/svc/epro/service/common/impl/CaseDistributionServiceImpl.java:107-117",
+        "repository": "backend/src/main/java/khd/svc/epro/repository/VMainBorrowerInfoRepository.java:79-118"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "page": 1,
+          "size": 99999,
+          "applicationNo": "${env:PHASE_V_LT2_APPLICATION_NO|null}",
+          "langType": "${langType}"
+        }
+      },
+      "response": {
+        "listPath": "data.caseDistributionList",
+        "totalCountPath": "data.totalCount"
+      },
+      "equiv_sql": {
+        "kind": "count",
+        "params": {
+          "applicationNo": "${env:PHASE_V_LT2_APPLICATION_NO|null}",
+          "roleId": "${jwt:roleId}",
+          "caCaseProgress": [
+            "03"
+          ],
+          "cadCaseProgress": [
+            "20"
+          ],
+          "systemVer": "02.00"
+        },
+        "sql": [
+          "SELECT COUNT(*)",
+          "FROM (",
+          "  SELECT DISTINCT APPLICATION_NO",
+          "  FROM V_MAIN_BORROWER_INFO",
+          "  WHERE (:applicationNo IS NULL OR APPLICATION_NO = :applicationNo)",
+          "    AND (",
+          "      (:roleId = '101' AND CASE_PROGRESS IN (:caCaseProgress))",
+          "      OR (:roleId = '405' AND CASE_PROGRESS IN (:cadCaseProgress) AND SYSTEM_VER >= :systemVer)",
+          "    )",
+          ")"
+        ]
+      },
+      "assert": {
+        "kind": "langtype_count",
+        "primary": "response count zh_TW equals response count en_US",
+        "secondary": "each response count equals equiv_sql count",
+        "referenceCount": "5 = 5 for role 405 on OVSLXLON02 snapshot"
+      }
+    },
+    {
+      "id": "LT-3",
+      "title": "New Case Application langType count parity",
+      "endpoint": "/epl-list-caseapplication",
+      "method": "POST",
+      "source": {
+        "controller": "backend/src/main/java/khd/svc/epro/controller/common/NewCaseApplicationController.java:37-40",
+        "service": "backend/src/main/java/khd/svc/epro/service/common/impl/NewCaseApplicationServiceImpl.java:113-121",
+        "repository": "backend/src/main/java/khd/svc/epro/repository/TBLonSummaryInfoRepository.java:31-105"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "page": 1,
+          "size": 99999,
+          "deptCode": "${env:PHASE_V_LT3_DEPT_CODE|${jwt:deptCode}}",
+          "loanAttribute": "${env:PHASE_V_LT3_LOAN_ATTRIBUTE|I}",
+          "secureAttribute": "${env:PHASE_V_LT3_SECURE_ATTRIBUTE|S}",
+          "productCode": "${env:PHASE_V_LT3_PRODUCT_CODE|null}",
+          "applicantName": "${env:PHASE_V_LT3_APPLICANT_NAME|%}",
+          "applicationNo": "${env:PHASE_V_LT3_APPLICATION_NO|null}",
+          "docNo": "${env:PHASE_V_LT3_DOC_NO|null}",
+          "dateOfBirth": "${env:PHASE_V_LT3_DATE_OF_BIRTH|null}",
+          "registerNo": "${env:PHASE_V_LT3_REGISTER_NO|null}",
+          "langType": "${langType}"
+        }
+      },
+      "response": {
+        "listPath": "data.caseApplicationList",
+        "totalCountPath": "data.totalCount"
+      },
+      "equiv_sql": {
+        "kind": "count",
+        "params": {
+          "depCode": "${env:PHASE_V_LT3_DEPT_CODE|${jwt:deptCode}}",
+          "lonAttribute": "${env:PHASE_V_LT3_LOAN_ATTRIBUTE|I}",
+          "secureAttribute": "${env:PHASE_V_LT3_SECURE_ATTRIBUTE|S}",
+          "productCode": "${env:PHASE_V_LT3_PRODUCT_CODE|null}",
+          "applicantName": "${env:PHASE_V_LT3_APPLICANT_NAME|%}",
+          "applicationNo": "${env:PHASE_V_LT3_APPLICATION_NO|null}",
+          "docNo": "${env:PHASE_V_LT3_DOC_NO|null}",
+          "dateOfBirth": "${env:PHASE_V_LT3_DATE_OF_BIRTH|null}",
+          "registerNo": "${env:PHASE_V_LT3_REGISTER_NO|null}"
+        },
+        "sql": [
+          "SELECT COUNT(*)",
+          "FROM (",
+          "  SELECT SI.APPLICATION_NO",
+          "  FROM OVSLXLON02.TB_LON_SUMMARY_INFO SI",
+          "  LEFT JOIN OVSLXLON02.TB_MAIN_BORROWER_PERSONAL_INFO MB ON SI.APPLICATION_NO = MB.APPLICATION_NO",
+          "  LEFT JOIN OVSLXLON02.TB_CO_BORROWER_PERSONAL_INFO CB ON SI.APPLICATION_NO = CB.APPLICATION_NO",
+          "  LEFT JOIN OVSLXLON02.TB_REVISED_ITEM UNPIVOT (ITEM_VALUE FOR REVISED_ITEM IN (ITEM1, ITEM2, ITEM3, ITEM4, ITEM5, ITEM6, ITEM7, ITEM8, ITEM9, ITEM10, ITEM11, ITEM12, ITEM13, ITEM14)) RI",
+          "    ON SI.APPLICATION_NO = RI.APPLICATION_NO AND RI.ITEM_VALUE = 'Y'",
+          "  LEFT JOIN OVSLXLON02.TB_MAIN_BORROWER_INFO_CORP MBC ON SI.APPLICATION_NO = MBC.APPLICATION_NO",
+          "  LEFT JOIN OVSLXLON02.TB_CO_BORROWER_INFO_CORP CBC ON SI.APPLICATION_NO = CBC.APPLICATION_NO",
+          "  WHERE SI.APP_CON_TYPE IS NOT NULL",
+          "    AND SI.LON_ATTRIBUTE = :lonAttribute",
+          "    AND SI.SECURE_ATTRIBUTE = :secureAttribute",
+          "    AND (:productCode IS NULL OR SI.PRODUCT_CODE = :productCode)",
+          "    AND (:applicantName IS NULL OR (",
+          "      UPPER(MB.MAIN_BORROWER_NAME) LIKE '%' || UPPER(:applicantName) || '%'",
+          "      OR UPPER(CB.CO_BORROWER_NAME) LIKE '%' || UPPER(:applicantName) || '%'",
+          "      OR UPPER(MBC.MAIN_BORROWER_NAME) LIKE '%' || UPPER(:applicantName) || '%'",
+          "      OR UPPER(CBC.CO_BORROWER_NAME) LIKE '%' || UPPER(:applicantName) || '%'))",
+          "    AND ((:applicationNo IS NULL AND SI.BELONG_DEP_CODE = :depCode)",
+          "      OR (:applicationNo IS NOT NULL AND SI.APPLICATION_NO = :applicationNo))",
+          "    AND (:docNo IS NULL OR UPPER(MB.PASSPORT_NO) = UPPER(:docNo)",
+          "      OR UPPER(MB.ID_NO) = UPPER(:docNo)",
+          "      OR UPPER(MB.FAMILY_BOOK_NO) = UPPER(:docNo)",
+          "      OR UPPER(MB.RESIDENT_BOOK_NO) = UPPER(:docNo)",
+          "      OR UPPER(MB.VISA_NO) = UPPER(:docNo)",
+          "      OR UPPER(CB.PASSPORT_NO) = UPPER(:docNo)",
+          "      OR UPPER(CB.ID_NO) = UPPER(:docNo)",
+          "      OR UPPER(CB.FAMILY_BOOK_NO) = UPPER(:docNo)",
+          "      OR UPPER(CB.RESIDENT_BOOK_NO) = UPPER(:docNo)",
+          "      OR UPPER(CB.VISA_NO) = UPPER(:docNo))",
+          "    AND (:dateOfBirth IS NULL OR TO_CHAR(MB.DATE_OF_BIRTH, 'DD/MM/YYYY') = :dateOfBirth OR TO_CHAR(CB.DATE_OF_BIRTH, 'DD/MM/YYYY') = :dateOfBirth)",
+          "    AND (:registerNo IS NULL OR UPPER(MBC.REGISTER_NO) = UPPER(:registerNo) OR UPPER(CBC.REGISTER_NO) = UPPER(:registerNo))",
+          "  GROUP BY SI.APPLICATION_NO, SI.LON_TYPE_CODE, SI.DECISION_DATE, MB.MAIN_BORROWER_NAME, MBC.MAIN_BORROWER_NAME, MB.PASSPORT_NO, MB.ID_NO, MB.DATE_OF_BIRTH, MBC.REGISTER_NO",
+          ")"
+        ]
+      },
+      "assert": {
+        "kind": "langtype_count",
+        "primary": "response count zh_TW equals response count en_US",
+        "secondary": "each response count equals equiv_sql count",
+        "referenceCount": "569 = 569 on OVSLXLON02 snapshot"
+      }
+    },
+    {
+      "id": "LT-4",
+      "title": "Deviation Case Report langType count parity",
+      "endpoint": "/epl-list-deviation",
+      "method": "POST",
+      "source": {
+        "controller": "backend/src/main/java/khd/svc/epro/controller/common/DeviationCaseReportController.java:35-38",
+        "service": "backend/src/main/java/khd/svc/epro/service/common/impl/DeviationCaseReportServiceImpl.java:91-104",
+        "repository": "backend/src/main/java/khd/svc/epro/repository/TBLonSummaryInfoRepository.java:332-400"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "page": 1,
+          "size": 99999,
+          "approvalDateStart": "${env:PHASE_V_LT4_APPROVAL_DATE_START|01/01/1900}",
+          "approvalDateEnd": "${env:PHASE_V_LT4_APPROVAL_DATE_END|31/12/2099}",
+          "deptCode": "${env:PHASE_V_LT4_DEPT_CODE|null}",
+          "loanCode": "${env:PHASE_V_LT4_LOAN_CODE|null}",
+          "langType": "${langType}"
+        }
+      },
+      "response": {
+        "listPath": "data.deviationList",
+        "totalCountPath": "data.totalCount"
+      },
+      "equiv_sql": {
+        "kind": "count",
+        "params": {
+          "loanRate": 4000,
+          "approvalDateStart": "${env:PHASE_V_LT4_APPROVAL_DATE_START|01/01/1900}",
+          "approvalDateEnd": "${env:PHASE_V_LT4_APPROVAL_DATE_END|31/12/2099}",
+          "deptCode": "${env:PHASE_V_LT4_DEPT_CODE|null}",
+          "loanTypeCode": "${env:PHASE_V_LT4_LOAN_CODE|null}"
+        },
+        "sql": [
+          "SELECT COUNT(*)",
+          "FROM (",
+          "  SELECT DD.APPLICATION_NO",
+          "  FROM (",
+          "    SELECT SI.APPLICATION_NO,",
+          "           LISTAGG(DISTINCT DT.DEVIATION_CODE, ';') WITHIN GROUP (ORDER BY DT.DEVIATION_CODE)",
+          "             || NVL2(CI.DEVIATION_OTHER, ':' || CI.DEVIATION_OTHER, '')",
+          "             || NVL2(DT2.DEVIATION_CODE, ';' || DT2.DEVIATION_CODE, '')",
+          "             || NVL2(LCI.OTHER_DEVIATION_OTHER, ':' || LCI.OTHER_DEVIATION_OTHER, '') AS DEVIATION_ITEM,",
+          "           TRUNC(NVL2(USD_SUM_LOAN_AMOUNT, USD_SUM_LOAN_AMOUNT, 0) + ROUND(NVL2(KHR_SUM_LOAN_AMOUNT, KHR_SUM_LOAN_AMOUNT, 0) / :loanRate, 5), 2) AS APPROVAL_AMOUNT",
+          "    FROM TB_LON_SUMMARY_INFO SI",
+          "    LEFT JOIN TB_COLL_LTV CI ON SI.APPLICATION_NO = CI.APPLICATION_NO",
+          "    LEFT JOIN TB_COLL_LTV UNPIVOT (DEVIATION_VALUE FOR DEVIATION_NAME IN (DEVIATION_1, DEVIATION_2, DEVIATION_3, DEVIATION_4, CR_DEVIATION_1)) CI2",
+          "      ON SI.APPLICATION_NO = CI2.APPLICATION_NO AND CI2.DEVIATION_VALUE = 'Y'",
+          "    LEFT JOIN TB_LTV_DEVIATION_TYPE DT ON CI2.DEVIATION_NAME = DT.MERGE_RULE",
+          "    LEFT JOIN TB_LOAN_CONDITION_INFO LCI ON SI.APPLICATION_NO = LCI.APPLICATION_NO",
+          "    LEFT JOIN TB_LOAN_CONDITION_INFO UNPIVOT (OTHER_VALUE FOR OTHER_NAME IN (OTH_DEVIATION_AGE_FLAG, OTHER_FLAG)) LCI2",
+          "      ON SI.APPLICATION_NO = LCI2.APPLICATION_NO AND LCI2.OTHER_VALUE = 'Y'",
+          "    LEFT JOIN TB_LTV_DEVIATION_TYPE DT2 ON LCI2.OTHER_NAME = DT2.MERGE_RULE",
+          "    LEFT JOIN (SELECT APPLICATION_NO, CON_TYPE, SUM(LOAN_AMOUNT) AS USD_SUM_LOAN_AMOUNT FROM TB_LOAN_CONDITION_DETAIL WHERE LOAN_AMOUNT_CURRENCY = 'USD' GROUP BY APPLICATION_NO, CON_TYPE) USD",
+          "      ON SI.APPLICATION_NO = USD.APPLICATION_NO AND SI.APP_CON_TYPE = USD.CON_TYPE",
+          "    LEFT JOIN (SELECT APPLICATION_NO, CON_TYPE, SUM(LOAN_AMOUNT) AS KHR_SUM_LOAN_AMOUNT FROM TB_LOAN_CONDITION_DETAIL WHERE LOAN_AMOUNT_CURRENCY = 'KHR' GROUP BY APPLICATION_NO, CON_TYPE) KHR",
+          "      ON SI.APPLICATION_NO = KHR.APPLICATION_NO AND SI.APP_CON_TYPE = KHR.CON_TYPE",
+          "    WHERE SI.APP_CON_TYPE IS NOT NULL",
+          "      AND SI.DECISION_DATE BETWEEN TO_DATE(:approvalDateStart, 'DD/MM/YYYY') AND TO_DATE(:approvalDateEnd, 'DD/MM/YYYY')",
+          "      AND (:deptCode IS NULL OR SI.DEP_CODE = :deptCode)",
+          "      AND (:loanTypeCode IS NULL OR SI.LON_TYPE_CODE = :loanTypeCode)",
+          "    GROUP BY SI.APPLICATION_NO, SI.LON_TYPE_CODE, SI.DECISION_DATE, CI.DEVIATION_OTHER, DT2.DEVIATION_CODE, LCI.OTHER_DEVIATION_OTHER, USD_SUM_LOAN_AMOUNT, KHR_SUM_LOAN_AMOUNT",
+          "  ) DD",
+          "  WHERE DD.DEVIATION_ITEM IS NOT NULL",
+          ")"
+        ]
+      },
+      "assert": {
+        "kind": "langtype_count",
+        "primary": "response count zh_TW equals response count en_US",
+        "secondary": "each response count equals equiv_sql count",
+        "referenceCount": "293 = 293 on OVSLXLON02 snapshot"
+      }
+    },
+    {
+      "id": "LT-5",
+      "title": "Application Cancel Report langType count parity",
+      "endpoint": "/epl-list-cancelreport",
+      "method": "POST",
+      "source": {
+        "controller": "backend/src/main/java/khd/svc/epro/controller/common/ApplicationCancelReportController.java:47-49",
+        "service": "backend/src/main/java/khd/svc/epro/service/common/impl/ApplicationCancelReportServiceImpl.java:70-94",
+        "repository": "backend/src/main/java/khd/svc/epro/repository/TBLonSummaryInfoRepository.java:527-594"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "page": 1,
+          "size": 99999,
+          "applicationDateStart": "${env:PHASE_V_LT5_APPLICATION_DATE_START|01/01/1900}",
+          "applicationDateEnd": "${env:PHASE_V_LT5_APPLICATION_DATE_END|31/12/2099}",
+          "deptCode": "${env:PHASE_V_LT5_DEPT_CODE|null}",
+          "loanCode": "${env:PHASE_V_LT5_LOAN_CODE|null}",
+          "langType": "${langType}"
+        }
+      },
+      "response": {
+        "listPath": "data.cancelList",
+        "totalCountPath": "data.totalCount"
+      },
+      "equiv_sql": {
+        "kind": "count",
+        "params": {
+          "loanRate": 4000,
+          "processCodeCanceled": "99",
+          "newLoanCode": [
+            "01",
+            "02",
+            "03",
+            "04"
+          ],
+          "applicationDateStart": "${env:PHASE_V_LT5_APPLICATION_DATE_START|01/01/1900}",
+          "applicationDateEnd": "${env:PHASE_V_LT5_APPLICATION_DATE_END|31/12/2099}",
+          "conType": "AO",
+          "deptCode": "${env:PHASE_V_LT5_DEPT_CODE|null}",
+          "loanCode": "${env:PHASE_V_LT5_LOAN_CODE|null}"
+        },
+        "sql": [
+          "SELECT COUNT(*)",
+          "FROM (",
+          "  SELECT INF.APPLICATION_NO",
+          "  FROM OVSLXLON02.TB_LON_SUMMARY_INFO INF",
+          "  LEFT JOIN OVSLXLON02.TB_MAIN_BORROWER_PERSONAL_INFO MAN ON MAN.APPLICATION_NO = INF.APPLICATION_NO",
+          "  LEFT JOIN OVSLXLON02.TB_MAIN_BORROWER_INFO_CORP CORP ON CORP.APPLICATION_NO = INF.APPLICATION_NO",
+          "  LEFT JOIN OVSLXLON02.TB_BRANCH_PROFILE BRANCH ON INF.BRANCH_CODE = BRANCH.BRANCH_CODE AND INF.DEP_CODE = BRANCH.DEPT_CODE",
+          "  LEFT JOIN OVSLXLON02.TB_EMP_PROFILE EMP ON EMP.EMP_ID = INF.AO_ASSISTANT_CODE",
+          "  LEFT JOIN OVSLXLON02.TB_EMP_PROFILE EMP2 ON EMP2.EMP_ID = INF.AO_CODE",
+          "  LEFT JOIN OVSLXLON02.TB_CAN_REASON CA ON INF.APPLICATION_NO = CA.APPLICATION_NO",
+          "  LEFT JOIN OVSLXLON02.TB_OLD_CASE_INFO OLD ON OLD.APPLICATION_NO = INF.APPLICATION_NO",
+          "  LEFT JOIN (",
+          "    SELECT APPLICATION_NO, TRUNC(SUM(NEW_LOAN_AMOUNT), 2) AS LOAN_AMOUNT, MAX(TENOR) AS TENOR, MIN(LOW_RATE) AS INTEREST_RATE",
+          "    FROM (",
+          "      SELECT DETAIL.APPLICATION_NO,",
+          "             CASE WHEN DETAIL.LOAN_AMOUNT_CURRENCY = 'KHR' THEN ROUND(DETAIL.LOAN_AMOUNT / :loanRate, 5) ELSE DETAIL.LOAN_AMOUNT END AS NEW_LOAN_AMOUNT,",
+          "             DETAIL.TENOR,",
+          "             CASE WHEN COALESCE(DETAIL.FIX_RATE, DETAIL.TIER_RATE_1, DETAIL.TIER_RATE_2, DETAIL.TIER_RATE_3) IS NULL THEN NULL ELSE LEAST(NVL(DETAIL.FIX_RATE, 9999), NVL(DETAIL.TIER_RATE_1, 9999), NVL(DETAIL.TIER_RATE_2, 9999), NVL(DETAIL.TIER_RATE_3, 9999)) END AS LOW_RATE",
+          "      FROM OVSLXLON02.TB_LON_SUMMARY_INFO SUMMARY",
+          "      LEFT JOIN OVSLXLON02.TB_LOAN_CONDITION_DETAIL DETAIL ON SUMMARY.APPLICATION_NO = DETAIL.APPLICATION_NO",
+          "      WHERE SUMMARY.CASE_PROGRESS = :processCodeCanceled",
+          "        AND SUMMARY.LON_TYPE_CODE IN (:newLoanCode)",
+          "        AND SUMMARY.APPLICATION_DATE BETWEEN TO_DATE(:applicationDateStart, 'DD/MM/YYYY') AND TO_DATE(:applicationDateEnd, 'DD/MM/YYYY')",
+          "        AND DETAIL.CON_TYPE = :conType",
+          "        AND (DETAIL.RATE_TYPE IS NOT NULL OR TRIM(DETAIL.RATE_TYPE) != '')",
+          "        AND (:deptCode IS NULL OR SUMMARY.DEP_CODE = :deptCode)",
+          "        AND (:loanCode IS NULL OR SUMMARY.LON_TYPE_CODE = :loanCode)",
+          "    )",
+          "    GROUP BY APPLICATION_NO",
+          "  ) COND ON INF.APPLICATION_NO = COND.APPLICATION_NO",
+          "  WHERE INF.CASE_PROGRESS = :processCodeCanceled",
+          "    AND INF.LON_TYPE_CODE IN (:newLoanCode)",
+          "    AND INF.APPLICATION_DATE BETWEEN TO_DATE(:applicationDateStart, 'DD/MM/YYYY') AND TO_DATE(:applicationDateEnd, 'DD/MM/YYYY')",
+          "    AND (:deptCode IS NULL OR INF.DEP_CODE = :deptCode)",
+          "    AND (:loanCode IS NULL OR INF.LON_TYPE_CODE = :loanCode)",
+          ")"
+        ]
+      },
+      "assert": {
+        "kind": "langtype_count",
+        "primary": "response count zh_TW equals response count en_US",
+        "secondary": "each response count equals equiv_sql count",
+        "referenceCount": "10 = 10 on OVSLXLON02 snapshot"
+      }
+    },
+    {
+      "id": "RI-1",
+      "title": "EPROZ00800 Revised Item row mirrors TB_REVISED_ITEM",
+      "endpoint": "/epl-case-query-reviseditem",
+      "method": "GET",
+      "source": {
+        "controller": "backend/src/main/java/khd/svc/epro/controller/common/RevisedItemController.java:39-40",
+        "service": "backend/src/main/java/khd/svc/epro/service/common/impl/RevisedItemServiceImpl.java:175-190",
+        "repository": "backend/src/main/java/khd/svc/epro/repository/TBLonSummaryInfoRepository.java:596-602",
+        "openapi": "docs/specs/srs/EPROZ00800/openapi.yaml:50"
+      },
+      "params": {
+        "contentType": "query",
+        "query": {
+          "applicationNo": "${env:PHASE_V_RI_WITH_REVISED_APP_NO}"
+        }
+      },
+      "response": {
+        "dataPath": "data"
+      },
+      "equiv_sql": {
+        "kind": "json_row",
+        "params": {
+          "applicationNo": "${env:PHASE_V_RI_WITH_REVISED_APP_NO}"
+        },
+        "sql": [
+          "SELECT JSON_OBJECT(",
+          "  'item1' VALUE NVL(TRI.ITEM1, ''),",
+          "  'item2' VALUE NVL(TRI.ITEM2, ''),",
+          "  'item3' VALUE NVL(TRI.ITEM3, ''),",
+          "  'item4' VALUE NVL(TRI.ITEM4, ''),",
+          "  'item5' VALUE NVL(TRI.ITEM5, ''),",
+          "  'item6' VALUE NVL(TRI.ITEM6, ''),",
+          "  'item7' VALUE NVL(TRI.ITEM7, ''),",
+          "  'item8' VALUE NVL(TRI.ITEM8, ''),",
+          "  'item9' VALUE NVL(TRI.ITEM9, ''),",
+          "  'item10' VALUE NVL(TRI.ITEM10, ''),",
+          "  'item11' VALUE NVL(TRI.ITEM11, ''),",
+          "  'item12' VALUE NVL(TRI.ITEM12, ''),",
+          "  'item13' VALUE NVL(TRI.ITEM13, ''),",
+          "  'item14' VALUE NVL(TRI.ITEM14, ''),",
+          "  'reasonMemo' VALUE NVL(TRI.REASON_MEMO, '')",
+          "  RETURNING CLOB",
+          ")",
+          "FROM TB_LON_SUMMARY_INFO LON",
+          "LEFT JOIN TB_REVISED_ITEM TRI ON TRI.APPLICATION_NO = LON.APPLICATION_NO",
+          "WHERE LON.APPLICATION_NO = :applicationNo"
+        ]
+      },
+      "assert": {
+        "kind": "row_equals",
+        "fields": [
+          "item1",
+          "item2",
+          "item3",
+          "item4",
+          "item5",
+          "item6",
+          "item7",
+          "item8",
+          "item9",
+          "item10",
+          "item11",
+          "item12",
+          "item13",
+          "item14",
+          "reasonMemo"
+        ],
+        "primary": "API data fields equal TB_REVISED_ITEM fields for a fixture applicationNo with an existing Revised Item row"
+      }
+    },
+    {
+      "id": "RI-2",
+      "title": "EPROZ00800 Revised Item empty row and option count",
+      "endpoint": "/epl-case-query-reviseditem",
+      "method": "GET",
+      "source": {
+        "controller": "backend/src/main/java/khd/svc/epro/controller/common/RevisedItemController.java:39-40",
+        "service": "backend/src/main/java/khd/svc/epro/service/common/impl/RevisedItemServiceImpl.java:175-190",
+        "repository": "backend/src/main/java/khd/svc/epro/repository/TBLonSummaryInfoRepository.java:596-602",
+        "openapi": "docs/specs/srs/EPROZ00800/openapi.yaml:50"
+      },
+      "params": {
+        "contentType": "query",
+        "query": {
+          "applicationNo": "${env:PHASE_V_RI_WITHOUT_REVISED_APP_NO}"
+        }
+      },
+      "response": {
+        "dataPath": "data"
+      },
+      "equiv_sql": {
+        "kind": "empty_row_and_option_count",
+        "params": {
+          "applicationNo": "${env:PHASE_V_RI_WITHOUT_REVISED_APP_NO}",
+          "optionLangType": "${env:PHASE_V_RI_OPTION_LANG_TYPE|en_US}"
+        },
+        "row_count_sql": [
+          "SELECT COUNT(*)",
+          "FROM TB_REVISED_ITEM",
+          "WHERE APPLICATION_NO = :applicationNo"
+        ],
+        "option_count_sql": [
+          "SELECT COUNT(*)",
+          "FROM TB_COMMON_FIELD_OPTIONS O",
+          "LEFT JOIN TB_MULTI_LANG L ON O.LANG_KEY = L.LANG_KEY",
+          "WHERE O.SYS_CODE = 'EPRO'",
+          "  AND O.IS_SHOW = 'Y'",
+          "  AND O.MSG_CODE = 'REVISED_ITEM'",
+          "  AND L.LANG_TYPE = :optionLangType"
+        ]
+      },
+      "assert": {
+        "kind": "empty_and_options",
+        "emptyFields": [
+          "item1",
+          "item2",
+          "item3",
+          "item4",
+          "item5",
+          "item6",
+          "item7",
+          "item8",
+          "item9",
+          "item10",
+          "item11",
+          "item12",
+          "item13",
+          "item14",
+          "reasonMemo"
+        ],
+        "optionPath": "revisedType",
+        "optionSizePath": "revisedTypeSize",
+        "primary": "TB_REVISED_ITEM count is zero, item fields are empty, and response revisedType option count equals TB_COMMON_FIELD_OPTIONS"
+      }
+    }
+  ]
+}

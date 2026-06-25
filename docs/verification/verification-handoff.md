@@ -140,5 +140,24 @@
 - **🔧 #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query → RP9 ✅ 關（06-16 RD/架構：GET，Follow PRD §6.1）**：解鎖。修向＝**GET query 同 00600**（BE `@RequestBody`→`@ModelAttribute` applicationNo、FE 改 GET query）。**可派工**（get-body sweep 卡 #3）。
 - 00600 已修為樣板（不算候選）。
 
+### 6.3 Phase V API 自驗 harness v1（2026-06-25 materialized；READY_NOT_RUN）
+> 範圍：唯讀短命呼叫；人依 `build-tasks/local-phase-v-bringup.md` 起服務並以環境變數提供 JWT/DB runner/fixture。腳本只輸出 PASS/FAIL，不自動改碼；FAIL 項另開 runtime-bug 卡。
+
+- Runnable manifest：`docs/build-tasks/phase-v-api-selfverify-manifest-v1.json`
+- Harness：`tools/phase-v-api-selfverify.ps1`
+- 執行形狀：
+  `.\tools\phase-v-api-selfverify.ps1 -OutFile docs\verification\phase-v-api-selfverify-report.md`
+- 必要環境變數：`PHASE_V_JWT`、`PHASE_V_DB_RUNNER`；RI-1/2 另需 `PHASE_V_RI_WITH_REVISED_APP_NO`、`PHASE_V_RI_WITHOUT_REVISED_APP_NO`。
+
+| id | endpoint | 主守門 | 次守門 | 狀態 |
+|---|---|---|---|---|
+| LT-1 | `/epl-list-todolist` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
+| LT-2 | `/epl-list-casedistribution` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
+| LT-3 | `/epl-list-caseapplication` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
+| LT-4 | `/epl-list-deviation` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
+| LT-5 | `/epl-list-cancelreport` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
+| RI-1 | `/epl-case-query-reviseditem` | API `ITEM1`-`ITEM14`/`reasonMemo` = DB row | GET query by `applicationNo` | READY_NOT_RUN |
+| RI-2 | `/epl-case-query-reviseditem` | no `TB_REVISED_ITEM` row returns empty item fields | `revisedType` count = option SQL count | READY_NOT_RUN |
+
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`），不影響「程式補完」里程碑。
