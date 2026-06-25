@@ -21,6 +21,11 @@
 - spec 來源＝各頁 SRS Contract 半的 `強制點: FE/both` Rn + 原 smoke 清單（V-2~V-6）。
 - 抓 build+靜態驗**漏的 runtime FE bug**（RV-1/RV-2 類：langType 砍資料、GET-body、render 斷料）。
 - 工具＝**Playwright（新依賴）**；page-object 對 c0 容器 + 8 子頁。110–120 段③建（FE 在 RD 對位後定型）；i0/z0/csu 既有頁可先建基線。
+- **⚠️ Windows 安裝兩個會卡的坑（段③前先解，找 ops）**：
+  1. **Node 版本**：前端是 Node **16.20.2**，但 Playwright **v1.41+ 要 Node 18+** → 釘 `@playwright/test@1.40.5`（最後支援 Node 16），或 **E2E 另開 Node 18+**（與 app build 互不綁，推薦）。
+  2. **內網禁外網下載 browser binary**：`npx playwright install` 預設抓 playwright CDN、內網八成擋 → **首選用系統已裝 Chrome**（config `use: { channel: 'chrome' }`、**免下載 binary**）；或設 `PLAYWRIGHT_DOWNLOAD_HOST` 指內網 mirror；或離線複製到 `%USERPROFILE%\AppData\Local\ms-playwright`。
+  - 安裝：`yarn add -D @playwright/test@1.40.5`（走內網 Nexus npm-all）→ config 設 `channel: 'chrome'` → `npx playwright test`（Windows **不需** `install-deps`，那是 Linux apt）。
+  - **決策點（段③前確認）**：browser binary 走「系統 Chrome」還是「內網 mirror」。
 
 ## 原 smoke（V-1~V-6）→ 自動化對應
 | smoke | 內容 | 自動化落點 |
