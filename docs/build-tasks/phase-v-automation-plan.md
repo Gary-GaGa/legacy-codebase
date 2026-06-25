@@ -2,7 +2,8 @@
 
 > **決定**：owner 2026-06-25 定 **Phase V 全自動、取代人工 smoke**（含 FE 畫面層）。屬**段③**（執行順序：① 9 包 RD → ② SRS 兩半轉換 → ③ 本段；見 `STATUS.md` 執行順序）。
 > **在哪跑**：母資料夾/本機（規劃 repo 的 remote agent 打不到本機 localhost）→ **AI 產 runnable，執行在你那**。
-> **時機**：架構現定（本卡）；runnable 在**段③**建（c0/FE 依 110–120 RD 定型）；唯 **L2 v1（i0/z0 唯讀）穩定、可預建**。
+> **時機**：架構現定（本卡）；runnable 在**段③**建（c0/FE 依 110–120 RD 定型）。**L2 v1（i0/z0 唯讀）內容正交、本可預建，但 owner 2026-06-25 定「等 9 包 RD 批次跑完再做」**（守不交錯、Codex 專注 RD）。
+> **誰建**：L2 全部 runnable（含 v1）由 **Codex 在母資料夾 materialize+跑**（需 product native SQL + localhost）；規劃 repo 只留 manifest 約定（已 grounded）。RD 批次後由規劃側產 **L2 v1 materialize 派工卡**給 Codex。
 
 ## 三層架構
 ### L1 Bring-up（起服務腳本化）
@@ -11,7 +12,7 @@
 
 ### L2 API/DB harness（materialize 既有卡）
 - 來源＝`phase-v-api-selfverify-harness.md` + `phase-v-harness-manifest-v1.md`（manifest 已 grounded）。endpoint/method/params 以 openapi 為準；唯讀帳號 SELECT 比對。
-- **v1**：i0/z0 唯讀「API↔DB 一致性」（read/list/init-query 比筆數/關鍵欄；含 **langType 五頁回歸守門**）。**穩定、可預建**（不依賴 110–120 RD）。
+- **v1**：i0/z0 唯讀「API↔DB 一致性」（read/list/init-query 比筆數/關鍵欄；含 **langType 五頁回歸守門**）。內容穩定、不依賴 110–120 RD，但**時機＝RD 批次後**（owner 2026-06-25，守不交錯）。
 - **v2**：納 c0/csu（110–120）——需先套 `c0-authz-sql` 授權列（否則 403）+ 110–120 **rd-done**（契約定型）。
 - **v3**：寫入（save/submit）——帶 `local-phase-v-bringup §0.1` 護欄 + teardown SQL + 測試案件號段。
 
@@ -33,9 +34,9 @@
 
 ## 建置時機（守三段序列、不交錯）
 - **架構＝現在**（本卡）。
-- **L2 v1（i0/z0 唯讀）**：與 110–120 RD 正交 → **可預建/段①期間並行**（要的話我先 materialize manifest 成 runnable）。
+- **L2 v1（i0/z0 唯讀）**：內容與 110–120 RD 正交（打 i0/z0 穩定面），**但 owner 2026-06-25 定等 9 包 RD 批次跑完再做**（不在段①並行；守 Codex 單一專注）。RD 批次後規劃側產 materialize 派工卡 → Codex 母資料夾建。
 - **L2 v2/v3 + L3（110–120）**：**段③建**（依 110–120 rd-done + SRS 兩半轉換 + `c0-authz-sql` 授權列套用）。
-- 不在 RD/轉換中插隊跑 Phase V（L2 v1 foundation 例外＝正交可預建）。
+- 不在 RD/轉換中插隊跑 Phase V（含 L2 v1——owner 2026-06-25 撤回「可預建」、改 RD 批次後）。
 
 ## 鐵則
 - runnable 由 AI 產、執行在母資料夾/本機；JWT/帳密走環境變數**不進 repo**；local profile 不 commit 正式。
