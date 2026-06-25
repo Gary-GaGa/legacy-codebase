@@ -1,6 +1,6 @@
 # c0 Authz SQL Findings
 
-Status: DB SELECT-only precheck completed; INSERT SQL not executed. RD addendum updated 2026-06-25 for EPROC00116 pxls reviewed-equivalent auth seed.
+Status: DB SELECT-only precheck completed; INSERT SQL not executed. RD addendum updated 2026-06-25 for EPROC00116 pxls reviewed-equivalent auth seed. **Owner ratified 2026-06-25** both RD-proposed authz role-source substitutions (00116 pxls←ppdf-c0; 00110 confirm-switch←save-c0) after independent review — same-semantics sibling copy (export→export, mutate→mutate); were RD-proposed, now owner-ratified.
 
 ## Output
 
@@ -52,7 +52,7 @@ Command scope: `epro-db/new.cmd`, `SELECT` only, `OVSLXLON02` current schema / o
 | EPROC00116 | `epl-calc-c0-financial-statement-comments` | Y | `001;002` | `epl-calc-i0-financial-statement-comments` | N |  | 0 | c0 already exists; i0 source missing has no insert impact |
 | EPROC00116 | `epl-info-c0-financial-statement-comments` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | `epl-info-i0-financial-statement-comments` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | 0 | skip existing |
 | EPROC00116 | `epl-ppdf-c0-financial-statement-comments` | N |  | `epl-ppdf-i0-financial-statement-comments` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | 1 | will insert |
-| EPROC00116 | `epl-pxls-c0-financial-statement-comments` | N |  | `epl-ppdf-c0-financial-statement-comments` | Y | `001;002;003;101;102;103;201;202;203;301;302` | 1 | RD addendum 2026-06-25: owner-approved reviewed equivalent copies existing c0 ppdf roles |
+| EPROC00116 | `epl-pxls-c0-financial-statement-comments` | N |  | `epl-ppdf-c0-financial-statement-comments` | Y | inherits ppdf-c0 final roles＝`001;002;003;101;102;103;201;202;203;301;302;401;404;405`(14, == ppdf) | 1 | owner-RATIFIED 2026-06-25 reviewed equivalent copies existing c0 ppdf roles; **DBA verify post-apply: pxls role count == ppdf-c0 (14)** |
 | EPROC00116 | `epl-quer-c0-financial-statement-comments` | Y | `001;002` | `epl-quer-i0-financial-statement-comments` | Y | `001;002` | 0 | skip existing |
 | EPROC00116 | `epl-save-c0-financial-statement-comments` | Y | `001;002` | `epl-save-i0-financial-statement-comments` | Y | `001;002` | 0 | skip existing |
 | EPROC00116 | `epl-sele-c0-financial-statement-comments` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | `epl-sele-i0-financial-statement-comments` | Y | `001;002;003;101;102;103;201;202;203;301;302;401;404;405` | 0 | skip existing |
@@ -135,7 +135,7 @@ Expected close condition: all four target rows exist with the `ROLE` and `REF_FU
 
 1. Execute/apply only against schema `OVSLXLON02`; confirm current schema before applying and do not run against `OVSLXLON01`.
 2. Idempotency check: first apply should insert 17 `TB_API_AUTH` rows and 0 `TB_ROLE_TASK` rows from the original precheck state, plus the EPROC00116 pxls reviewed-equivalent row when ppdf c0 exists; a second apply should insert 0 rows because `TB_API_AUTH` is guarded by `API_ID` and `TB_ROLE_TASK` by `PAGE_CODE,FUNCTION`.
-3. The prior missing-source list is closed by owner decision 2026-06-25: `epl-pxls-c0-financial-statement-comments` copies roles from the existing c0 `epl-ppdf-c0-financial-statement-comments` reviewed-equivalent row; the 00117 API auth gap is addressed by the appended insert block.
+3. The prior missing-source list is closed by **owner ratification 2026-06-25** (was RD-proposed): `epl-pxls-c0-financial-statement-comments` copies roles from the existing c0 `epl-ppdf-c0-financial-statement-comments` reviewed-equivalent row; the 00117 API auth gap is addressed by the appended insert block.
 
 ## Endpoint Mapping
 
@@ -191,7 +191,8 @@ Expected close condition: all four target rows exist with the `ROLE` and `REF_FU
 ## UNSURE
 
 - No role is hard-coded or guessed; the EPROC00116 pxls addendum copies the reviewed-equivalent c0 ppdf role.
-- `epl-pxls-c0-financial-statement-comments`: current c0 auth row was absent and exact i0 source auth row `epl-pxls-i0-financial-statement-comments` / `EPROI00116` was also absent in the precheck. Owner decision 2026-06-25 resolves the source by using the existing c0 `epl-ppdf-c0-financial-statement-comments` row as the reviewed equivalent.
+- `epl-pxls-c0-financial-statement-comments`: current c0 auth row was absent and exact i0 source auth row `epl-pxls-i0-financial-statement-comments` / `EPROI00116` was also absent in the precheck. **Owner ratified 2026-06-25** (was RD-proposed) using the existing c0 `epl-ppdf-c0-financial-statement-comments` row as the reviewed equivalent (pxls final roles == ppdf-c0).
+- `epl-confirm-c0-credit-investigation-switch` (EPROC00110, to-be): no i0 source route. **Owner ratified 2026-06-25** (was RD-proposed) copying ROLE from existing c0 `epl-save-c0-credit-investigation-tab` — same mutating GI/FI switch contract / edit-audience.
 
 ## Resolved Precheck Notes
 

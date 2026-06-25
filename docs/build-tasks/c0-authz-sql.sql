@@ -13,12 +13,13 @@
 -- If any i0 source row is missing, that mapping inserts 0 rows and must be
 -- investigated by ops before Phase V verification.
 -- EPROC00116 pxls has no exact i0 source auth row in the current
--- OVSLXLON02 precheck. Owner decision 2026-06-25: use the existing
--- epl-ppdf-c0-financial-statement-comments c0 roles as the reviewed
--- equivalent for epl-pxls-c0-financial-statement-comments.
--- EPROC00110 confirm switch is a to-be endpoint with no i0 source route; copy
--- its ROLE from the existing c0 save endpoint because both guard the same
--- mutating GI/FI switch contract.
+-- OVSLXLON02 precheck. Owner RATIFIED 2026-06-25 (owner reviewed; was RD-proposed):
+-- use the existing epl-ppdf-c0-financial-statement-comments c0 roles as the reviewed
+-- equivalent for epl-pxls-c0-financial-statement-comments (same page, same export action,
+-- PDF vs Excel → identical role set; pxls final roles MUST == ppdf-c0 final roles).
+-- EPROC00110 confirm switch is a to-be endpoint with no i0 source route. Owner RATIFIED
+-- 2026-06-25 (owner reviewed; was RD-proposed): copy its ROLE from the existing c0 save
+-- endpoint because both guard the same mutating GI/FI switch contract (same edit-audience).
 
 INSERT INTO TB_API_AUTH (
     API_ID,
