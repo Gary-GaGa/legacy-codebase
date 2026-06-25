@@ -131,16 +131,16 @@
 | funcId | risk | prd（`docs/specs/prd/`）| status | srs（`docs/specs/srs/`）|
 |---|---|---|---|---|
 | `EPROZ00100` | z0 shared | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00100-v1.0.md` | approved | `docs/specs/srs/EPROZ00100/` |
-| `EPROC00118` | T1 corporate | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` | approved | `docs/specs/srs/EPROC00118/` |
-| `EPROC00120` | T1 企金線(先) | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00120-v1.0.md` | 規格定版 Approved (2026-06-25) | `docs/specs/srs/EPROC00120/` |
+| `EPROC00118` | T1 corporate | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` | rd-done | `docs/specs/srs/EPROC00118/`; code:`fix(eproc00118): enforce scorecard numeric contract` |
+| `EPROC00120` | T1 企金線(先) | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00120-v1.0.md` | rd-done | `docs/specs/srs/EPROC00120/`; code:`fix(eproc00120): align FI evaluation contract` |
 | `EPROCSU0170` | T1 企金線(先) | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0170-v1.0.md` | in-review | `docs/specs/srs/EPROCSU0170/` |
-| `EPROC00110` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md` | approved | `docs/specs/srs/EPROC00110/` |
-| `EPROC00112` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md` | approved | `docs/specs/srs/EPROC00112/` |
-| `EPROC00114` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00114-v1.0.md` | approved | `docs/specs/srs/EPROC00114/` |
-| `EPROC00115` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00115-v1.0.md` | 規格定版 Approved (2026-06-25) | `docs/specs/srs/EPROC00115/` |
-| `EPROC00116` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00116-v1.0.md` | approved | `docs/specs/srs/EPROC00116/` |
-| `EPROC00117` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00117-v1.0.md` | approved | `docs/specs/srs/EPROC00117/` |
-| `EPROC00119` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00119-v1.0.md` | 規格定版 Approved (2026-06-25) | `docs/specs/srs/EPROC00119/` |
+| `EPROC00110` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00110-v1.0.md` | rd-done | `docs/specs/srs/EPROC00110/`; code:`fix(eproc00110): align credit investigation frame` |
+| `EPROC00112` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md` | rd-done | `docs/specs/srs/EPROC00112/`; code:`fix(eproc00112): align banking relationship contract` |
+| `EPROC00114` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00114-v1.0.md` | rd-done | `docs/specs/srs/EPROC00114/`; code:`fix(eproc00114): enforce collateral assessment contract` |
+| `EPROC00115` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00115-v1.0.md` | rd-done | `docs/specs/srs/EPROC00115/`; code:`fix(eproc00115): enforce group exposure contract` |
+| `EPROC00116` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00116-v1.0.md` | rd-done | `docs/specs/srs/EPROC00116/`; code:`fix(eproc00116): harden financial statement GI contract` |
+| `EPROC00117` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00117-v1.0.md` | rd-done | `docs/specs/srs/EPROC00117/`; code:`fix(eproc00117): align GI evaluation contract` |
+| `EPROC00119` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00119-v1.0.md` | rd-done | `docs/specs/srs/EPROC00119/`; code:`fix(eproc00119): enforce FI statement contract` |
 | `EPROCSU0110` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
 | `EPROCSU0120` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
 | `EPROCSU0130` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |

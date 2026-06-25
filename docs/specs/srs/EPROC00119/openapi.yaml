@@ -104,7 +104,7 @@ paths:
               $ref: '#/components/schemas/SaveRequest'
       responses:
         '200':
-          description: Success or business error; codes include COMMON_MSG_SAVE_SUCCESS, COMMON_MSG_SAVE_FAIL, COMMON_MSG_ERROR_LON, MSG_OVER_COUNT_LIMIT, MSG_ERROR_APPLICATION_NO, EPROI0_0160_MSG_ERRO_CURRENCY, E119/FAILED_E119 for first-year zero total assets or total liab/equity, and E120/FAILED_E120 for dated Balance rows with difference not equal to zero.
+          description: Success or business error; codes include COMMON_MSG_SAVE_SUCCESS, COMMON_MSG_SAVE_FAIL, COMMON_MSG_ERROR_LON, MSG_OVER_COUNT_LIMIT, MSG_ERROR_APPLICATION_NO, EPROI0_0160_MSG_ERRO_CURRENCY, E119/FAILED_E119 for first-year zero total assets or total liab/equity, E120/FAILED_E120 for dated Balance rows with difference not equal to zero, and E121/FAILED_E121 for End Balance not equal to Cash and Cash Equivalent.
           content:
             application/json:
               schema:

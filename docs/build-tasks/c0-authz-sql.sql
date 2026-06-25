@@ -12,10 +12,13 @@
 -- - TB_ROLE_TASK skips a target PAGE_CODE + FUNCTION that already exists.
 -- If any i0 source row is missing, that mapping inserts 0 rows and must be
 -- investigated by ops before Phase V verification.
--- UNSURE: OVSLXLON02 precheck found no source auth row for
--- epl-pxls-i0-financial-statement-comments; the corresponding c0 endpoint
--- currently has no row, so this mapping inserts 0 rows until ops supplies
--- a reviewed role/source row.
+-- EPROC00116 pxls has no exact i0 source auth row in the current
+-- OVSLXLON02 precheck. Owner decision 2026-06-25: use the existing
+-- epl-ppdf-c0-financial-statement-comments c0 roles as the reviewed
+-- equivalent for epl-pxls-c0-financial-statement-comments.
+-- EPROC00110 confirm switch is a to-be endpoint with no i0 source route; copy
+-- its ROLE from the existing c0 save endpoint because both guard the same
+-- mutating GI/FI switch contract.
 
 INSERT INTO TB_API_AUTH (
     API_ID,
@@ -76,6 +79,52 @@ WHERE NOT EXISTS (
     FROM TB_API_AUTH dst
     WHERE dst.API_ID = m.TARGET_API_ID
 );
+
+-- EPROC00116 pxls reviewed-equivalent addendum.
+INSERT INTO TB_API_AUTH (
+    API_ID,
+    ROLE,
+    REF_FUNCTION_ID,
+    UPDATE_USER,
+    UPDATE_DATE
+)
+SELECT
+    'epl-pxls-c0-financial-statement-comments',
+    src.ROLE,
+    'EPROC00116',
+    'C0AUTHZ',
+    SYSDATE
+FROM TB_API_AUTH src
+WHERE src.API_ID = 'epl-ppdf-c0-financial-statement-comments'
+  AND src.REF_FUNCTION_ID = 'EPROC00116'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM TB_API_AUTH dst
+      WHERE dst.API_ID = 'epl-pxls-c0-financial-statement-comments'
+  );
+
+-- EPROC00110 to-be destructive-switch confirmation endpoint.
+INSERT INTO TB_API_AUTH (
+    API_ID,
+    ROLE,
+    REF_FUNCTION_ID,
+    UPDATE_USER,
+    UPDATE_DATE
+)
+SELECT
+    'epl-confirm-c0-credit-investigation-switch',
+    src.ROLE,
+    'EPROC00110',
+    'C0AUTHZ',
+    SYSDATE
+FROM TB_API_AUTH src
+WHERE src.API_ID = 'epl-save-c0-credit-investigation-tab'
+  AND src.REF_FUNCTION_ID = 'EPROC00110'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM TB_API_AUTH dst
+      WHERE dst.API_ID = 'epl-confirm-c0-credit-investigation-switch'
+  );
 
 INSERT INTO TB_ROLE_TASK (
     PAGE_CODE,

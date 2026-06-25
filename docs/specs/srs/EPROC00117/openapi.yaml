@@ -149,7 +149,8 @@ components:
       properties:
         dataSeq:
           type: integer
-          minimum: 1
+          minimum: 0
+          description: Borrower row sequence; 0 is the brownfield main borrower row. Save requests must use a backend-recognized borrower row for the case.
         applicantName:
           type: string
           maxLength: 50
@@ -220,7 +221,8 @@ components:
       properties:
         dataSeq:
           type: integer
-          minimum: 1
+          minimum: 0
+          description: Source/rating row sequence; 0 is accepted for brownfield main borrower data and rows must align with backend GI source rows.
         ratiosDate:
           type: string
           maxLength: 10
@@ -371,8 +373,7 @@ components:
               type: string
             financialList:
               type: array
-              minItems: 1
-              maxItems: 5
+              description: Non-null array; may be empty when no borrower financial rows are available. Save requests enforce the five-row mutation limit.
               items:
                 $ref: '#/components/schemas/FinancialInfo'
             ratios:

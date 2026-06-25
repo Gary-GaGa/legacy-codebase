@@ -137,3 +137,8 @@ CREATE TABLE TB_API_AUTH (
     UPDATE_DATE DATE,
     CONSTRAINT PK_TB_API_AUTH PRIMARY KEY (API_ID)
 );
+
+-- Required EPROC00110 API authorization rows:
+-- API_ID = epl-info-c0-credit-investigation-tab, REF_FUNCTION_ID = EPROC00110
+-- API_ID = epl-confirm-c0-credit-investigation-switch, REF_FUNCTION_ID = EPROC00110
+-- API_ID = epl-save-c0-credit-investigation-tab, REF_FUNCTION_ID = EPROC00110

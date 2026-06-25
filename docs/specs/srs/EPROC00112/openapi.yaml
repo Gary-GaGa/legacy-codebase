@@ -177,6 +177,24 @@ components:
           description: MSG_DATA_NOT_FOUND, MSG_OVER_COUNT_LIMIT, MSG_QUERY_FAIL, COMMON_MSG_TOTAL_FAIL, or blank on success.
     SaveResponse:
       type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          description: EPROResponse status code.
+        message:
+          type: string
+          description: EPROResponse status message.
+        data:
+          $ref: '#/components/schemas/SaveResponseData'
+    SaveResponseData:
+      type: object
+      required:
+        - messageCode
+        - isAllTabsCheck
       properties:
         messageCode:
           type: string

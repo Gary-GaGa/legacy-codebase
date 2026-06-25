@@ -142,6 +142,7 @@ components:
       required:
         - code
         - message
+        - data
       properties:
         code:
           type: string
@@ -150,6 +151,10 @@ components:
         message:
           type: string
           maxLength: 300
+        data:
+          type: object
+          nullable: true
+          description: Standard EPROResponse error payload; empty object when no structured error data is supplied.
       additionalProperties: false
     SelectRequest:
       type: object
@@ -169,6 +174,22 @@ components:
       type: object
       required:
         - code
+        - message
+        - data
+      properties:
+        code:
+          type: string
+          maxLength: 4
+          example: '0000'
+        message:
+          type: string
+          maxLength: 100
+        data:
+          $ref: '#/components/schemas/SelectResponseData'
+      additionalProperties: false
+    SelectResponseData:
+      type: object
+      required:
         - districtList
         - documentList
         - areaList
@@ -178,10 +199,6 @@ components:
         - incomeList
         - addressList
       properties:
-        code:
-          type: string
-          maxLength: 4
-          example: '0000'
         districtList:
           type: array
           items:
@@ -244,26 +261,25 @@ components:
       type: object
       required:
         - code
-        - applicationNo
-        - assistMap
-        - reviewerMap
+        - message
+        - data
       properties:
         code:
           type: string
           maxLength: 4
           example: '0000'
-        applicationNo:
-          type: string
-          maxLength: 30
-        mainBorrowerName:
+        message:
           type: string
           maxLength: 100
-        applicationDate:
-          type: string
-          format: date-time
-        checkpointStatus:
-          type: string
-          maxLength: 2
+        data:
+          $ref: '#/components/schemas/InfoResponseData'
+      additionalProperties: false
+    InfoResponseData:
+      type: object
+      required:
+        - assistMap
+        - reviewerMap
+      properties:
         reviewComment:
           type: string
           maxLength: 3000
@@ -302,14 +318,26 @@ components:
       required:
         - code
         - message
-        - isAllTabsCheck
-        - rateResult
+        - data
       properties:
         code:
           type: string
           maxLength: 4
           example: '0000'
         message:
+          type: string
+          maxLength: 100
+        data:
+          $ref: '#/components/schemas/SaveResponseData'
+      additionalProperties: false
+    SaveResponseData:
+      type: object
+      required:
+        - messageCode
+        - isAllTabsCheck
+        - rateResult
+      properties:
+        messageCode:
           type: string
           maxLength: 100
           example: COMMON_MSG_SAVE_SUCCESS

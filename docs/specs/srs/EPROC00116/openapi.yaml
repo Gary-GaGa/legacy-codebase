@@ -264,8 +264,12 @@ components:
     ReferenceQueryRequest:
       type: object
       required:
+        - applicationNo
         - reApplicationNo
       properties:
+        applicationNo:
+          type: string
+          maxLength: 30
         reApplicationNo:
           type: string
           maxLength: 30
@@ -274,6 +278,7 @@ components:
       required:
         - applicationNo
         - langType
+        - isQuery
       properties:
         applicationNo:
           type: string
@@ -281,6 +286,8 @@ components:
         langType:
           type: string
           maxLength: 10
+        isQuery:
+          type: boolean
     SaveRequest:
       type: object
       required:
@@ -516,21 +523,104 @@ components:
           maxLength: 1
         totalAssets:
           type: string
+          readOnly: true
         totalLiabEquity:
           type: string
+          readOnly: true
         difference:
           type: string
+          readOnly: true
         cashEquivalent:
+          type: string
+        securOtherFinclAssets:
+          type: string
+        arRelatedParties:
+          type: string
+        arNonRelatedParties:
+          type: string
+        otherReceivables:
+          type: string
+        loansToOthers:
+          type: string
+        inventories:
+          type: string
+        prepayments:
+          type: string
+        otherCurrentAssets:
           type: string
         totalCurrentAassets:
           type: string
+          readOnly: true
         nonCurrentAssets:
           type: string
+          readOnly: true
+        land:
+          type: string
+        building:
+          type: string
+        equipment:
+          type: string
+        otherFixedAssets:
+          type: string
+        depreciationAmortization:
+          type: string
+        netFixedAssets:
+          type: string
+          readOnly: true
         currentLiabilities:
+          type: string
+          readOnly: true
+        intangibleAsset:
+          type: string
+        fundsInvestment:
+          type: string
+        otherNonCurrentAssets:
           type: string
         nonCurrentLiabilities:
           type: string
+          readOnly: true
+        stBorrowings:
+          type: string
+        billsPayable:
+          type: string
+        financialLiablitites:
+          type: string
+        apRelatedParties:
+          type: string
+        apNonRelatedParties:
+          type: string
+        taxPayable:
+          type: string
+        otherPayable:
+          type: string
+        otherPayableFees:
+          type: string
+        preReceivePayments:
+          type: string
+        cpltd:
+          type: string
+        otherCurrentLiabilities:
+          type: string
+        ltBorrrowings:
+          type: string
+        bondsPayable:
+          type: string
+        shareholdersLoan:
+          type: string
+        otherNonCurrentLiabilities:
+          type: string
         totalEquity:
+          type: string
+          readOnly: true
+        paidUpCapital:
+          type: string
+        reserves:
+          type: string
+        retainedEarnings:
+          type: string
+        minorityInterestEquity:
+          type: string
+        otherAdjustments:
           type: string
     IncomeRow:
       type: object
@@ -548,26 +638,86 @@ components:
           maxLength: 1
         revenues:
           type: string
-        costOfGoodSold:
+        costOfGoodsSold:
           type: string
         grossProfit:
           type: string
+          readOnly: true
         operatingExpenses:
+          type: string
+          readOnly: true
+        salary:
+          type: string
+        commission:
+          type: string
+        marketingExpense:
+          type: string
+        transportation:
+          type: string
+        utilities:
           type: string
         operatingProfit:
           type: string
+          readOnly: true
         nonOperatingIncome:
+          type: string
+          readOnly: true
+        interestIncome:
+          type: string
+        investmentIncome:
+          type: string
+        interestDisposalFa:
+          type: string
+        interestDisposalInvestment:
+          type: string
+        fxGain:
+          type: string
+        rentalIncome:
+          type: string
+        reversals:
+          type: string
+        financeAssetsEvaluation:
+          type: string
+        debtEvaluation:
+          type: string
+        otherEvaluation:
+          type: string
+        otherNonOpIncome:
           type: string
         nonOperatingExpenses:
           type: string
+          readOnly: true
+        financeCostIntExp:
+          type: string
+        investmentLoss:
+          type: string
+        lossDisposalFa:
+          type: string
+        lossDisposalInvestment:
+          type: string
+        fxLoss:
+          type: string
+        impairmentLoss:
+          type: string
+        lossFinanceAssetsEvaluation:
+          type: string
+        lossOtherEvalualtion:
+          type: string
+        otherNonOpExpense:
+          type: string
         profitBeforeTax:
+          type: string
+          readOnly: true
+        taxOthers:
           type: string
         currentPeriodProfit:
           type: string
+          readOnly: true
         minorityInterests:
           type: string
         attributedParentCompany:
           type: string
+          readOnly: true
     CashflowRow:
       type: object
       additionalProperties: true
@@ -575,7 +725,7 @@ components:
         year:
           type: string
           maxLength: 10
-        period:
+        periods:
           type: string
           maxLength: 3
         typeOfYear:
@@ -583,16 +733,29 @@ components:
           maxLength: 1
         operatingNetCashflow:
           type: string
+          readOnly: true
+          description: Backend derived before save persistence.
+        depreciation:
+          type: string
+        amortisation:
+          type: string
         investingNetCashflow:
           type: string
+          description: First submitted row may carry manual input; backend recomputes and overwrites subsequent rows before save persistence.
         financingNetCashflow:
           type: string
+          description: First submitted row may carry manual input; backend recomputes and overwrites subsequent rows before save persistence.
         netIncreOrDecre:
           type: string
+          readOnly: true
+          description: Backend derived before save persistence.
         openingBalance:
           type: string
+          readOnly: true
+          description: Backend derived before save persistence.
         endBalance:
           type: string
+          readOnly: true
     BalanceCalcRow:
       type: object
       additionalProperties: true
@@ -631,6 +794,8 @@ components:
           type: string
         profitBeforeTax:
           type: string
+        currentPeriodProfit:
+          type: string
         attributedParentCompany:
           type: string
     CashflowCalcRow:
@@ -638,6 +803,12 @@ components:
       additionalProperties: true
       properties:
         operatingNetCashflow:
+          type: string
+        investingNetCashflow:
+          type: string
+        financingNetCashflow:
+          type: string
+        netIncreOrDecre:
           type: string
         openingBalance:
           type: string
