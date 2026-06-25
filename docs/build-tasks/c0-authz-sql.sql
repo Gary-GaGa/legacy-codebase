@@ -199,3 +199,28 @@ WHERE NOT EXISTS (
 );
 
 COMMIT;
+
+-- =====================================================================
+-- POST-APPLY VERIFY (read-only; DBA ran 2026-06-25 → 3 驗全對)
+-- 重跑可隨時驗 ratified 替代仍一致。皆 SELECT、不寫 DB。
+-- =====================================================================
+-- ① 00116 pxls 角色 == ppdf-c0（owner ratified pxls←ppdf；應含 14 角色）
+SELECT api_id, ref_function_id, role
+FROM   tb_api_auth
+WHERE  api_id IN ('epl-pxls-c0-financial-statement-comments',
+                  'epl-ppdf-c0-financial-statement-comments')
+  AND  ref_function_id = 'EPROC00116'
+ORDER  BY api_id, role;
+-- ② 00110 confirm-switch 角色 == save（owner ratified confirm←save）
+SELECT api_id, ref_function_id, role
+FROM   tb_api_auth
+WHERE  api_id IN ('epl-confirm-c0-credit-investigation-switch',
+                  'epl-save-c0-credit-investigation-tab')
+  AND  ref_function_id = 'EPROC00110'
+ORDER  BY api_id, role;
+-- ③ sanity：各 c0 funcId 授權列數
+SELECT ref_function_id, COUNT(*) AS rows_
+FROM   tb_api_auth
+WHERE  ref_function_id LIKE 'EPROC00%'
+GROUP  BY ref_function_id
+ORDER  BY ref_function_id;
