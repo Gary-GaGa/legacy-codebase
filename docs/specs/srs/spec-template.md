@@ -27,7 +27,7 @@
 | PRD | `docs/specs/prd/PRD-...-<funcId>-v1.0.md` |
 | Bundle | `docs/specs/srs/<funcId>/` |
 | Source baseline | PRD + Bible + db-diff + refactor-spec + bounded source read |
-| Output files | `spec.md`, `openapi.yaml`, `schema.sql`（`qa-cases.md` 2026-06-24 隨 QA 暫拔除） |
+| Output files | `spec.md`, `openapi.yaml`, `schema.sql`, `README.md`（人類 digest，見 `digest-template.md`）（`qa-cases.md` 2026-06-24 隨 QA 暫拔除） |
 | N-axis review | <選用：複審結果摘要> |
 
 ## Scope
