@@ -160,7 +160,7 @@
 | LT-4 | `/epl-list-deviation` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS (`293=293=293`) |
 | LT-5 | `/epl-list-cancelreport` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS (`10=10=10`) |
 | RI-1 | `/epl-case-query-reviseditem` | API `ITEM1`-`ITEM14`/`reasonMemo` = DB row | GET query by `applicationNo` | FAIL：Windows PowerShell `Set-Content -Encoding UTF8` writes BOM; SQLPlus emits `SP2-0734`, harness parses DB JSON as invalid primitive |
-| RI-2 | `/epl-case-query-reviseditem` | no `TB_REVISED_ITEM` row returns empty item fields | `revisedType` count = option SQL count | FAIL：API response missing `revisedType`; DB option count was `9` |
+| RI-2 | `/epl-case-query-reviseditem` | no `TB_REVISED_ITEM` row returns empty item fields | `revisedType` count = option SQL count | FAIL：API response missing `revisedType`; DB option count `9`。**獨立複驗升級＝疑真契約缺口**（現行 `EPROZ00800/openapi.yaml` 將 `revisedType` 列 required）→ 待 harness dump 完整 response + 確認 fixture 為「有 case、無 revised-item」才定真假（見 runtime-bug RB-4）|
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`），不影響「程式補完」里程碑。
