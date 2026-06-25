@@ -1,6 +1,6 @@
 # c0 Authz SQL Findings
 
-Status: DB SELECT-only precheck completed; INSERT SQL not executed. RD addendum updated 2026-06-25 for EPROC00116 pxls reviewed-equivalent auth seed. **Owner ratified 2026-06-25** both RD-proposed authz role-source substitutions (00116 pxls←ppdf-c0; 00110 confirm-switch←save-c0) after independent review — same-semantics sibling copy (export→export, mutate→mutate); were RD-proposed, now owner-ratified.
+Status: **APPLIED to `OVSLXLON02` 2026-06-25 (ops reported)** — `TB_API_AUTH` seed (33 rows incl owner-ratified pxls←ppdf-c0 + confirm-switch←save-c0) + `TB_ROLE_TASK` inserted. **c0/csu Phase V 403 前置解除。** RD addendum updated 2026-06-25 for EPROC00116 pxls reviewed-equivalent auth seed. **Owner ratified 2026-06-25** both RD-proposed authz role-source substitutions (00116 pxls←ppdf-c0; 00110 confirm-switch←save-c0) after independent review — same-semantics sibling copy (export→export, mutate→mutate). **DBA post-apply 待驗**：pxls 列最終角色數 == ppdf-c0（應 14）。**注意：seed 層已套＝必要非充分**——雙層授權的 service-guard 層仍為 RD code-stage（見 line 109）。
 
 ## Output
 

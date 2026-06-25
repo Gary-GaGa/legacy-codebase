@@ -17,7 +17,7 @@
 ## 1. 前置 gate（缺一不可往下）
 - [ ] **後端可 build**：Nexus `maven-settings.xml` → `mvn clean package -Dmaven.test.skip=true` 綠（baseline 測試與 main 不同步，跳測試編譯）。
 - [ ] **前端可 build**：Node **16.20.2**（`nvm use`；切版刪 `node_modules` 重裝）→ `yarn install --frozen-lockfile` → `yarn ng build` 綠。
-- [ ] **授權列已套**（**測 c0/csu 頁的前提**）：在 `OVSLXLON02` 套 `docs/build-tasks/c0-authz-sql.sql`（ops 照 `c0-authz-sql-findings.md` 的 Ops Apply Checklist；預期 insert 16）——**未套打 c0 endpoint 全 403**。不測 c0/csu 可暫略，但主流程 save 仍需此庫。
+- [x] **授權列已套**（測 c0/csu 頁的前提）：`OVSLXLON02` 已套 `docs/build-tasks/c0-authz-sql.sql`（**ops applied 2026-06-25**，33 rows incl ratified pxls/confirm）——c0 endpoint 403 前置解除。DBA 待驗 pxls 角色數 == ppdf-c0；service-guard 層仍 RD code-stage。
 - [ ] **BE profile** 指向：DB URL=`OVSLXLON02`、**既有帳號**（讀 config／`ALL_USERS` 撈，不創新；密碼不進 repo）、（護欄 0.1 的測試案件段就緒）。
 - [ ] **FE `environment`** API base 指向 local BE（**勿 commit 進正式 profile**）。
 

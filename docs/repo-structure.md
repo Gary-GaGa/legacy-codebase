@@ -84,7 +84,7 @@
 
 - **active（依「結論未進 SSOT／仍為 open 項長期來源」留 live；2026-06-18 重盤＝19 份；上次校 2026-06-16＝11 份漏記後續增量）**：
   1. **open 工單／進行中 sweep**：`get-body-contract-sweep.md`+`-findings.md`（#3 待修）、`local-phase-v-bringup.md`、`phase-v-api-selfverify-harness.md`+`phase-v-harness-manifest-v1.md`（Phase V 自驗 harness v1）、`c0-legacy-parity-recheck.md`（企金線 18 頁 parity reopen）。
-  2. **尚未套用的 ops artifact**：`c0-authz-sql-findings.md`（授權列對照——SQL 就緒、待 ops 簽核套 `OVSLXLON02`）。
+  2. **ops artifact**：`c0-authz-sql-findings.md`（授權列對照——**SQL 已套 `OVSLXLON02` 2026-06-25**；DBA 待驗 pxls 角色數、service-guard 層仍 code-stage）。
   3. **長青參考／SSOT**：`schema-diff-findings.md`（schema SSOT，AUD-7/8 還開）、`full-refactor-audit.md`+`refactor-audit/`（audit 工作集，待 AUD 收口）、`refactor-audit-qc.md`（QC 日誌）。
   4. **進行中里程碑 evidence／open 項長期來源（card 雖 done 仍留 live）**：`00800-verification-findings.md`（RP8/RP11 as-is 來源）、`legacy-schema-db-reverify-findings.md`（open AUD-7 證據）、`00800-spec-review-findings.md`（SR-B1/B2→00800 重產輸入）、`00800-rp8-rp11-rd-closeout.md`（RP8/RP11 RD 派工）、`aud11-closeout-dba-rd.md`（AUD-11 DBA/RD）、`c0-crediteval-e1-e2-escalation.md`（E1/E2 信用決策 domain）。
   5. **PRD→SRS pipeline（live，2026-06-18 起）**：`prd-to-srs-codex-dispatch.md`（per-page worker）、`prd-to-srs-orchestrator-drain.md`（orchestrator 批量迴圈；pilot 卡已歸檔 `done/`）、`n-axis-findings-ledger.md`（N 軸度量、驅動軸配置）、`EPROZ00100-EPROC00118-nfix-card.md`（**修正完成、待 Approved 收納**：N 軸 Blocker 已修 06-19 owner、opus×2 複審 PASS、結論進 SSOT；留 active 追 bundle In Review→Approved 迴圈）。
