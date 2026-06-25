@@ -69,7 +69,7 @@
 ## 2. override 提醒（相對 base prompt【鐵則】line 120–124）
 - T24/A-4/M6「照舊」**＝06-20 re-open、非凍結約束**（已在 base prompt §C line 82 + 鐵則 line 120–124 標例外）；**勿 re-litigate 成「照舊 ✅」**。
 - 每個 re-open 欄/項未 owner-confirm＝`@PENDING`（金錢/交易/檢核，ADR-0002 升級觸發）。
-- **撥貸＝金錢 T1** → N 軸跑**全 A–G**（不可降軸）；機械先 `check-srs-bundle exit 0`（含 gateⓇ delta 段）。
+- **撥貸＝金錢 T1** → N 軸跑**全 A–F**（不可降軸；原 G 隨 QA 暫拔除）；機械先 `check-srs-bundle exit 0`（含 gateⓇ delta 段）。
 
 ## 3. 收尾／回填
 - bundle → 規劃 repo `docs/specs/srs/<funcId>/`；回填 `feature-inventory`（§③ 撥貸）＋ matrix ledger（SRS 欄）。
