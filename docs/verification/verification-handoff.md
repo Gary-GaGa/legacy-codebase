@@ -140,24 +140,27 @@
 - **🔧 #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query → RP9 ✅ 關（06-16 RD/架構：GET，Follow PRD §6.1）**：解鎖。修向＝**GET query 同 00600**（BE `@RequestBody`→`@ModelAttribute` applicationNo、FE 改 GET query）。**可派工**（get-body sweep 卡 #3）。
 - 00600 已修為樣板（不算候選）。
 
-### 6.3 Phase V API 自驗 harness v1（2026-06-25 materialized；READY_NOT_RUN）
-> 範圍：唯讀短命呼叫；人依 `build-tasks/local-phase-v-bringup.md` 起服務並以環境變數提供 JWT/DB runner/fixture。腳本只輸出 PASS/FAIL，不自動改碼；FAIL 項另開 runtime-bug 卡。
+### 6.3 Phase V API 自驗 harness v1（2026-06-25 executed；PARTIAL_PASS_FAIL）
+> 範圍：唯讀短命呼叫；依 `build-tasks/local-phase-v-bringup.md` 背景啟 BE/FE，完成後 teardown。腳本只輸出 PASS/FAIL，不自動改碼；FAIL 項已開 runtime-bug 卡：`docs/build-tasks/phase-v-api-selfverify-runtime-bugs.md`。
 
-- Runnable manifest：`docs/build-tasks/phase-v-api-selfverify-manifest-v1.json`
+- Build/bring-up：`mvn clean package "-Dmaven.test.skip=true"` ✅；Node `16.20.2` + `yarn install --frozen-lockfile` ✅；`yarn ng build` ✅（既有 bundle budget/CUB selector warnings only）；BE 5500 ready、FE 4200 ready；結束已 kill BE/FE PID，無 5500/4200 listener。
+- Runnable manifest：實際檔案為 `docs/build-tasks/phase-v-api-selfverify-harness-v1.json`；既有 handoff/ps1 default 指到不存在的 `docs/build-tasks/phase-v-api-selfverify-manifest-v1.json`（runtime-bug RB-1）。
 - Harness：`tools/phase-v-api-selfverify.ps1`
 - 執行形狀：
-  `.\tools\phase-v-api-selfverify.ps1 -OutFile docs\verification\phase-v-api-selfverify-report.md`
-- 必要環境變數：`PHASE_V_JWT`、`PHASE_V_DB_RUNNER`；RI-1/2 另需 `PHASE_V_RI_WITH_REVISED_APP_NO`、`PHASE_V_RI_WITHOUT_REVISED_APP_NO`。
+  `.\tools\phase-v-api-selfverify.ps1 -ManifestPath docs\build-tasks\phase-v-api-selfverify-harness-v1.json -OutFile docs\verification\phase-v-api-selfverify-report.md`
+- 實跑 reports：`docs/verification/phase-v-api-selfverify-report.md`、`docs/verification/phase-v-api-selfverify-report-role403.md`、`docs/verification/phase-v-api-selfverify-report-role101.md`
+- 必要環境變數：本次 JWT 由 open `/epl-ut-login` 對既有 `TB_EMP_PROFILE` role 產生；`PHASE_V_DB_RUNNER` 使用既有 read-only runner；RI fixture 以 SELECT-only 查得；帳密/JWT 未寫入 repo。
+- 授權限制：`TB_API_AUTH` 目前無單一 role 同時覆蓋 v1 全部 endpoint；role 分片可驗 LT cases，但單一 `PHASE_V_JWT` 跑完整 manifest 必然 FAIL（runtime-bug RB-2）。
 
 | id | endpoint | 主守門 | 次守門 | 狀態 |
 |---|---|---|---|---|
-| LT-1 | `/epl-list-todolist` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
-| LT-2 | `/epl-list-casedistribution` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
-| LT-3 | `/epl-list-caseapplication` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
-| LT-4 | `/epl-list-deviation` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
-| LT-5 | `/epl-list-cancelreport` | `zh_TW` count = `en_US` count | response count = equiv SQL count | READY_NOT_RUN |
-| RI-1 | `/epl-case-query-reviseditem` | API `ITEM1`-`ITEM14`/`reasonMemo` = DB row | GET query by `applicationNo` | READY_NOT_RUN |
-| RI-2 | `/epl-case-query-reviseditem` | no `TB_REVISED_ITEM` row returns empty item fields | `revisedType` count = option SQL count | READY_NOT_RUN |
+| LT-1 | `/epl-list-todolist` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS under authorized role split (`1=1=1`; also `0=0=0` under role 405) |
+| LT-2 | `/epl-list-casedistribution` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS (`5=5=5` under role 405; zero-result roles also matched) |
+| LT-3 | `/epl-list-caseapplication` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS under authorized role split (`0=0=0`); single manifest JWT can 401 depending role |
+| LT-4 | `/epl-list-deviation` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS (`293=293=293`) |
+| LT-5 | `/epl-list-cancelreport` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS (`10=10=10`) |
+| RI-1 | `/epl-case-query-reviseditem` | API `ITEM1`-`ITEM14`/`reasonMemo` = DB row | GET query by `applicationNo` | FAIL：Windows PowerShell `Set-Content -Encoding UTF8` writes BOM; SQLPlus emits `SP2-0734`, harness parses DB JSON as invalid primitive |
+| RI-2 | `/epl-case-query-reviseditem` | no `TB_REVISED_ITEM` row returns empty item fields | `revisedType` count = option SQL count | FAIL：API response missing `revisedType`; DB option count was `9` |
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`），不影響「程式補完」里程碑。
