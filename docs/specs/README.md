@@ -7,17 +7,17 @@
 docs/specs/
 ├── bible/    ① 業務聖經（Legacy 反推：北極星 · 黃金旅程 · user story）— EPRO Expert + AI
 ├── prd/      ② 產品需求（what/why · REQ-nnn）— PM + AI；外部權威、此處放快照
-└── srs/      ③ 系統規格（how）— SA + AI；boundary bundle（spec/openapi/schema/qa-cases）
-                 ↳ QA cases 在各 bundle 內（qa-cases.md，covers: Rn）
+└── srs/      ③ 系統規格（how）— SA + AI；boundary bundle（spec/openapi/schema 餵 gate + README 人讀 digest）
+                 ↳ qa-cases（covers: Rn）隨 QA 產生/驗收 2026-06-24 暫拔除，恢復見 git history
 ```
 
 | 層 | 資料夾 | 產出工具 | 驗證 | 下一層 |
 |---|---|---|---|---|
 | ① Bible | `bible/` | EPRO Expert AI 反推（證據接地 `file:line`） | 人審 | 餵 PRD |
 | ② PRD | `prd/` | `/product-brainstorming`、`/write-spec` | 人審（PM） | `/prd-to-srs` |
-| ③ SRS（含 QA） | `srs/<funcId>/` | `/prd-to-srs`（Claude skill ∥ Codex prompt） | **機械 `check-srs-bundle.py`（涵蓋見腳本檔頭）+ `spec-reviewer` 語意（＝N 軸 axis A，全軸見 `../process/orchestration-playbook.md §4b`）** | RD 任務單 `../build-tasks/` |
+| ③ SRS | `srs/<funcId>/` | `/prd-to-srs`（Claude skill ∥ Codex prompt） | **機械 `check-srs-bundle.py`（涵蓋見腳本檔頭）+ `spec-reviewer` 語意（＝N 軸 axis A，全軸見 `../process/orchestration-playbook.md §4b`）** | RD 任務單 `../build-tasks/` |
 
-- **追溯骨幹**：funcId 串 ①→②→③→QA→code；`Rn` 標 `covers-prd:`、QA 標 `covers: Rn`。
-- **QA → 可跑測試**（gate④ 橋接）：[`qa-to-test.md`](qa-to-test.md)——case 散文→測試的對映 + Testcontainers harness + test-ready 寫法。
+- **追溯骨幹**：funcId 串 ①→②→③→code；`Rn` 標 `covers-prd:`。〔原 ③→QA→code 一跳隨 QA 2026-06-24 暫拔除〕
+- ~~**QA → 可跑測試**（gate④ 橋接）：[`qa-to-test.md`](qa-to-test.md)~~——**隨 QA 產生/驗收 2026-06-24 暫拔除休眠**，恢復見 git history。
 - **RD 階段不在此**：任務單在 [`../build-tasks/`](../build-tasks/)（live ↔ `done/`），產品碼在 repo 外。
 - **設計規格（UI/UX）不在此**：Adobe XD（repo 外），慣例見 `frontend/AGENTS.md §5` —— 行為進 SRS、長相留 XD。

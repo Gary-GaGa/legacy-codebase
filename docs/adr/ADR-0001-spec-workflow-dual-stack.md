@@ -13,7 +13,9 @@
 - 參考通用 `path-a-scaffold`（plugins + 模板 + read-only 審查 agent + constitution）；但我們是 **brownfield**（有舊系統 + 真 codebase），需要比通用範本更強的可驗證性。
 
 ## Decision
-1. **SRS＝機器可驗證 boundary bundle**（`spec.md` rule-id `Rn` + `openapi.yaml` + `schema.sql` + `qa-cases.md` `covers:Rn`），餵 DoD 6 道 deterministic 閘門；**保留 brownfield 殺手鐧 `as-is/to-be` + PRD `TBD→@PENDING`**。
+1. **SRS＝機器可驗證 boundary bundle**（`spec.md` rule-id `Rn` + `openapi.yaml` + `schema.sql` + ~~`qa-cases.md` `covers:Rn`~~），餵 DoD 6 道 deterministic 閘門；**保留 brownfield 殺手鐧 `as-is/to-be` + PRD `TBD→@PENDING`**。
+
+> **修訂（2026-06-24）**：QA 產生/驗收暫拔除 → bundle 不再產 `qa-cases.md`（＝spec/openapi/schema 三契約檔，另加 `README.md` 人讀 digest 非 gate）；Traceability Matrix 表移除（追溯改靠每 `Rn` 的 `covers-prd:`）；本檔下列各處 `…→QA→…` pipeline 與 `qa-cases` 字樣為**原始決策史實**，現行流程收斂為 `Bible→PRD→SRS→RD→DoD`，恢復見 git history。
 2. **雙軌工具對等**：每個 spec 工具都有 Claude 版與 Codex 版（constitution、prd-to-srs、spec-reviewer、權限），內容等價、原生格式各異，**改一版同步另一版**。對照表見 `CLAUDE.md` §2。
 3. **吸收通用範本的好東西**：read-only `spec-reviewer`、狀態 metadata + DoD checklist、SRS 富化區段（NFR/Non-Goals/Assumptions/Trade-offs/Traceability Matrix）、least-privilege 權限、ADR 逐則。
 4. **funcId＝追溯 slug**（取代通用 slug），串 Bible→PRD→SRS→QA→code。

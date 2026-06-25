@@ -8,7 +8,7 @@
 
 | 軸 | 是什麼 | 內容 |
 |---|---|---|
-| **A 精煉層級**（縱，funcId 追溯） | 同一件事逐層加「how」、可上下追溯 | Legacy → Bible → **PRD** → **SRS** → QA → Code |
+| **A 精煉層級**（縱，funcId 追溯） | 同一件事逐層加「how」、可上下追溯 | Legacy → Bible → **PRD** → **SRS** → Code〔QA 產生/驗收 2026-06-24 暫拔除，恢復見 git history〕 |
 | **B 規格類型**（同層分工） | SRS 層其實有**兩種並行的 spec** | **SRS**（行為+契約）∥ **UI/UX 設計規格**（長相） |
 | **C 層界契約**（橫，seam） | 用契約把實作層切開、不拆文件 | FE —`openapi`— BE —`schema`— DB |
 
@@ -48,7 +48,7 @@ flowchart LR
     spec["spec.md<br/>Rn 行為 + 強制點 FE/BE"]
     api["openapi.yaml<br/>FE↔BE 契約"]
     sql["schema.sql<br/>BE↔DB 契約"]
-    qa["qa-cases.md<br/>covers: Rn"]
+    readme["README.md<br/>人讀 digest（非 gate）"]
   end
   FE["前端 Angular"]
   BE["後端 Spring Boot"]
@@ -56,8 +56,9 @@ flowchart LR
   FE --- api --- BE --- sql --- DB
   spec -.->|"強制點=FE（UX）"| FE
   spec -.->|"強制點=BE（完整性/安全·權威）"| BE
-  qa -.->|"每條 Rn ≥1 covers"| spec
+  readme -.->|"摘要、指回 spec"| spec
 ```
+> 〔`qa-cases.md`（covers: Rn）隨 QA 產生/驗收 2026-06-24 暫拔除，恢復見 git history；`README.md`＝人讀 digest（非 gate 餵入，範本 `specs/srs/digest-template.md`）〕
 
 **重點**：規格本體**只有一份**（`spec.md` 的 `Rn`），FE/BE 不拆成兩份文件；要分的是**契約這一層**（`openapi`=FE↔BE、`schema`=BE↔DB）。每條 `Rn` 標**強制點**當屬性。
 
@@ -133,7 +134,7 @@ flowchart LR
 
 ## 6. 追溯與驗證（兩條鏈）
 
-- **追溯鏈（縱）**：`funcId` → PRD `REQ-nnn` →（`covers-prd`）→ SRS `Rn` →（`covers`）→ QA case → code/test。↑可追溯、↓可驗證。
+- **追溯鏈（縱）**：`funcId` → PRD `REQ-nnn` →（`covers-prd`）→ SRS `Rn` → code/test。↑可追溯、↓可驗證。〔原 SRS →（`covers`）→ QA case 一跳隨 QA 2026-06-24 暫拔除〕
 - **驗證鏈（DoD）**：
   - **機械層**（deterministic）＝`scripts/check-srs-bundle.py`：**涵蓋範圍以腳本檔頭 canonical 清單為準（勿在此複寫）**——大類＝契約/schema/covers/跨檔/Bible↔PRD（治 BP-7）/@PENDING↔register 同步；編號對照見 `specs/srs/README.md`。
   - **語意層**：`spec-reviewer`（唯讀、不改檔）審完整性/一致性/可測性/把 legacy 當需求等（＝SRS **N 軸 axis A**；規模化另跑 B–G 軸〔as-is parity/錯誤碼/安全/reconcile/金錢欄/可測試性〕，見 `process/orchestration-playbook.md §4b`）。
@@ -154,7 +155,7 @@ flowchart LR
 ## 8. 一頁總結
 
 ```
-規格 = 精煉層級（Bible→PRD→SRS→QA→Code，funcId 串）
+規格 = 精煉層級（Bible→PRD→SRS→Code，funcId 串；QA 2026-06-24 暫拔除）
      × 規格類型（SRS 行為+契約 ∥ 設計規格 長相）
      × 層界契約（FE—openapi—BE—schema—DB）
 
