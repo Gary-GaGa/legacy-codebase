@@ -3,7 +3,7 @@
 ## Metadata
 | Field | Value |
 |---|---|
-| Status | 規格定版: Approved / 實作完成: Approved (RD/DBA closeout 2026-06-20) |
+| Status | 規格定版: Approved / 實作完成: done (owner 2026-06-25; RD/DBA closeout 2026-06-20 + 本輪 rd-done) |
 | Owner | PM/SA/RD/QA review |
 | funcId | EPROC00118 |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00118-v1.0.md` |

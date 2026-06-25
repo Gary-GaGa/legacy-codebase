@@ -4,7 +4,7 @@
 | Field | Value |
 |---|---|
 | FuncId | EPROC00116 |
-| Status | 規格定版: Approved (2026-06-24, owner — axis A–F 獨立確認 Blocker 全清); 實作完成: pending RD (QA 暫拔除) |
+| Status | 規格定版: Approved (2026-06-24, owner — axis A–F 獨立確認 Blocker 全清); 實作完成: done (owner 2026-06-25; rd-done+獨立驗+ratify) (QA 暫拔除) |
 | N-axis review | 2026-06-24 source/domain patch + Should-fix closeout PASS. R12 pending items resolved via owner/RD-contract decisions (service-level auth, runtime parity, report ownership, DB/API mapping); QA-021..QA-032 references are dormant per 2026-06-24 QA removal, not verification evidence. Mechanical gate PASS. Axis A–F independent cross-model confirmation 2026-06-24: prior Blockers (E130 semantics, error-enum carry, pxls auth baseline-to-reconcile, provenance disclaimer) confirmed closed, no regression. Owner-approved 2026-06-24 (規格定版); implementation/tests remain RD code-stage DoD. |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00116-v1.0.md` |
 | Legacy source | `EPROC0_0116`, `EPROC0_0216`, `EPROC00116.jsp`, `EPROC00216.jsp`, GI financial statement DAOs |

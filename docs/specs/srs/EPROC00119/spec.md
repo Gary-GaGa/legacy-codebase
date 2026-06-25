@@ -4,7 +4,7 @@
 | Field | Value |
 |---|---|
 | FuncId | EPROC00119 |
-| Status | 規格定版: Approved (2026-06-25, owner-approved after Round 2 PRD 8 blocker patch, mechanical gate PASS, and independent A-F re-review 0 Blocker); 實作完成: not-started / pending RD (QA axis G paused) |
+| Status | 規格定版: Approved (2026-06-25, owner-approved after Round 2 PRD 8 blocker patch, mechanical gate PASS, and independent A-F re-review 0 Blocker); 實作完成: done (owner 2026-06-25; rd-done+獨立驗+ratify) (QA axis G paused) |
 | N-axis review | Mechanical gate PASS and independent A-F SRS re-review PASS on 2026-06-24 after adopting findings for RP40-RP54. Round 2 2026-06-25 patch added PRD 8 Finished blockers in R7/REF-D5/DEC-RP55; `check-srs-bundle docs/specs/srs/EPROC00119` PASS; independent spec-reviewer A-F re-review returned 0 Blocker / 0 Should-fix. QA axis G remains paused by process. |
 | Owner | SA / Credit decision domain / RD |
 | Upstream PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00119-v1.0.md` |

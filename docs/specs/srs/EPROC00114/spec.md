@@ -1,6 +1,6 @@
 # SRS - EPROC00114 Collateral Assessment
 
-Status: 規格定版=Approved (2026-06-24, owner — axis A–F 獨立確認 Blocker 全清)；實作完成=pending RD (QA 暫拔除)
+Status: 規格定版=Approved (2026-06-24, owner — axis A–F 獨立確認 Blocker 全清)；實作完成=done (owner 2026-06-25; rd-done+獨立驗+ratify) (QA 暫拔除)
 N-axis review: 2026-06-24 source/domain patch + Should-fix closeout PASS. Cleared the 2026-06-23 3🔴 by removing the phantom public C0 calc endpoint, carrying Rate through the save-path score phase, splitting read/write assessment maps so client save input no longer carries BE-derived `riskLevel`/`actionDate`/score fields, adding positive NUMBER(7,2) precision QA, grounding required `langType`, and adding edge QA for `LOW_RANGE <= score < UP_RANGE`, CVer default `001`, and strict maps. Later Should-fix closeout removed the stale standalone rate/calc auth wording from `schema.sql` and explicitly scoped PRD BR-014/TC-017 cross-module reset to `EPROCS_0170/0270` ownership. Mechanical gate PASS; axis-A reviewer PASS and cross-model reviewer PASS with no new Blocker/Should-fix. Owner-approved 2026-06-24 (規格定版) after axis A–F independent cross-model confirmation (AO CR-comment guard, totalScore precision, Rate no-data split closed); open pending rows closed; implementation/tests remain RD code-stage DoD.
 funcId: EPROC00114  
 PRD: `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00114-v1.0.md`  

@@ -4,7 +4,7 @@
 | Field | Value |
 |---|---|
 | FuncId | EPROC00117 |
-| Status | 規格定版: Approved (2026-06-24, owner — axis A–F 獨立確認 Blocker 全清); 實作完成: pending RD (QA 暫拔除); 企金線老系統 parity 補比為獨立軌 (pending-register:26)、不阻本規格定版 |
+| Status | 規格定版: Approved (2026-06-24, owner — axis A–F 獨立確認 Blocker 全清); 實作完成: done (owner 2026-06-25; rd-done+獨立驗+ratify) (QA 暫拔除); 企金線老系統 parity 補比為獨立軌 (pending-register:26)、不阻本規格定版 |
 | N-axis review | spec-reviewer (axis A) 2026-06-23: mechanical gate PASS; 1🔴 + 5🟡. 🔴 = `MSG_QUERY_FAIL` declared in openapi errors but no Rn/QA carries it. (A prior schema.sql corruption 🔴 — qa-cases content prepended to the file — was fixed in commit d4326d7.) 🔴 fixed + re-review PASS 2026-06-23: `MSG_QUERY_FAIL` carried in R1 + new QA-017 + traceability matrix; re-review tightening applied same day (QA-017 now drives both option+info endpoints with simulated fault wording; R5 cross-refs SAVE-006 split). RP26-RP38 closed 2026-06-24; owner-approved 2026-06-24 (規格定版) after axis A–F independent cross-model confirmation (SaveRequest DSR money fields + fixed USD, INFO/INFO_CORP reconcile closed); enterprise old-cs/cu parity 補比 (pending-register:26) is a separate downstream track and does not block this spec finalization; implementation/tests remain RD code-stage DoD. |
 | Owner | SA / Credit decision domain / RD |
 | Upstream PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00117-v1.0.md` |

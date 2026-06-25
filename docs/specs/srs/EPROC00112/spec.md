@@ -3,7 +3,7 @@
 ## Metadata
 | Field | Value |
 |---|---|
-| Status | 規格定版: Approved (2026-06-24, owner — axis A–F 獨立確認 Blocker 全清); 實作完成: pending RD (QA 暫拔除) |
+| Status | 規格定版: Approved (2026-06-24, owner — axis A–F 獨立確認 Blocker 全清); 實作完成: done (owner 2026-06-25; rd-done+獨立驗+ratify) (QA 暫拔除) |
 | N-axis review | spec-reviewer (axis A) 2026-06-24 second pass: mechanical gate PASS; 0 blocker / 0 should-fix. R11-R17/TBD-001..007 and SEC-001 closed; ready for owner review. Owner-approved 2026-06-24 (規格定版) after axis A–F independent cross-model confirmation (Bible RBAC tuple 403, KHR precision, message placement closed); implementation/tests remain RD code-stage DoD. |
 | funcId | EPROC00112 |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00112-v1.0.md` |

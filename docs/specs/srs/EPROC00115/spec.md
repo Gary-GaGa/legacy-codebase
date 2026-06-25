@@ -4,7 +4,7 @@
 | Field | Value |
 |---|---|
 | FuncId | EPROC00115 |
-| Status | 規格定版: Approved (2026-06-25, owner — axis A–F 獨立再審 0 Blocker、fix-card 🟡 全真修確認); 實作完成: not-started (QA 暫拔除); 殘留非阻擋 🟡 見 pending-register |
+| Status | 規格定版: Approved (2026-06-25, owner — axis A–F 獨立再審 0 Blocker、fix-card 🟡 全真修確認); 實作完成: done (owner 2026-06-25; rd-done+獨立驗+ratify) (QA 暫拔除); 殘留非阻擋 🟡 見 pending-register |
 | N-axis review | Mechanical gate PASS and independent A-F SRS re-review PASS on 2026-06-24 after adopting findings. 2026-06-25 fix-round 獨立再審 (cross-model): openapi 金額 `\.` regex 修正、R5/R11/R16 補 REF-D1/D2/D3、R16 cross-module 掛 R9 + 評 CS0181/CU0181、行級 `@f91d194`、db-diff 覆核 disclaim 全真修，0 Blocker → owner-approved 規格定版 2026-06-25. 殘留非阻擋 🟡（`COMMON_MSG_LIMIT` UI-only disclaim、`legacyFunctionId` 後端分流取代註明、BR-001 blank→`COMMON_MSG_ERROR_LON` 綁 R2）折下次 touch。QA axis G remains paused by process. |
 | Code baseline | Current-code line evidence is pinned to repository snapshot `f91d194` using the CODE tag format. |
 | PRD | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00115-v1.0.md` |
