@@ -23,6 +23,21 @@
 - **可重複 / idempotent**：唯讀、可連跑、結果一致（同 `verification-execution §1.5`）。
 - **langType regression 守門**：v1 必含「`zh_TW` 與 `en_US` 筆數一致」斷言（五頁）——直接把 RV-2 修復變成**回歸守門**，未來再有人加 langType WHERE 會被這支抓到。**此段 manifest 約定已 grounded 寫出＝`phase-v-harness-manifest-v1.md` 段①（五列 endpoint/handler/repo `file:line` + 基準筆數齊、差分斷言定義）；該檔段②另含 `EPROZ00800` init-query 兩條讀型一致斷言。harness author materialize 成 runnable 即可。**
 
+## 可貼 Codex 啟動（v1 materialize；母資料夾）
+```
+任務：materialize Phase V API 自驗 harness v1（唯讀 API↔DB 一致性），照本卡 +
+docs/build-tasks/phase-v-harness-manifest-v1.md。範圍 v1＝段① langType 五頁筆數一致
+（LT-1~5）+ 段② EPROZ00800 init-query 讀型（RI-1/2）；皆唯讀、零寫入。
+1. manifest 段①五列+段②兩列 → runnable manifest（YAML/JSON：id/endpoint/method/params/equiv_sql/assert）。
+2. equiv_sql 從各列 repository native query（manifest 給的 file:line）抽、**去 langType 過濾、business filter 全留**。
+3. harness 腳本（落產品 repo / 母資料夾 tools/）：人起服務（local-phase-v-bringup）+ 拿 JWT（環境變數、不進 repo）
+   → 逐列 curl epl-*（langType zh_TW/en_US 各一）+ 唯讀 SELECT → 出 PASS/FAIL 表。
+   主守門＝差分 count(resp[zh_TW])==count(resp[en_US])（不需 DB）；次守門＝count(resp)==count(equiv_sql)。
+4. method/params 以 openapi 為準；全唯讀、不寫 DB、不啟動長程序（短命呼叫）。
+回報：PASS/FAIL 表 → verification-handoff §6；FAIL 開 runtime-bug 卡。規劃 repo 留本卡+manifest、runnable 落產品 repo。
+鐵則：唯讀；JWT 不進 repo；斷言失敗只報不自動改碼。
+```
+
 ## 鐵則
 1. **v1 全唯讀**：只 GET/查詢 + 唯讀帳號 SELECT；**不寫 DB**（任何寫入留 v3）。
 2. 不啟動長程序（起服務人做）；harness 只短命呼叫。
@@ -34,7 +49,7 @@
 PASS/FAIL 表 → 回填 `verification/verification-handoff.md §6`（runtime）；FAIL 項開 runtime-bug 卡（同 RV-1/RV-2 流程）。harness 腳本/manifest 落產品 repo（或母資料夾 tools/），規劃 repo 留本卡 + manifest 約定。
 
 ## 後續階段（v1 過後）
-- **v2**：ops 套 `c0-authz-sql`（OVSLXLON02）後，納 c0/csu 讀型 endpoint（解 403）。
+- **v2**：~~ops 套 `c0-authz-sql`~~ **✅ 已套+驗 2026-06-25（403 解除）** → 可納 c0/csu 讀型 endpoint（v1 過後接續）。
 - **v3**：寫入自驗（save/submit）——帶 `local-phase-v-bringup §0.1` 護欄（測試案件號段 + teardown SQL 人審 + 快照）；唯讀斷言可全自動、寫入需 seed/清理。
 - **FE 層**（選配）：Playwright 類 render/dialog smoke＝另案，非本卡。
 
