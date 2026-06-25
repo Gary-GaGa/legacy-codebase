@@ -1,10 +1,10 @@
 # Build Task — 本機 FE+BE 同跑 runtime 整合驗證（Phase V runtime 層）
 
 > 載具：**你/Codex 在母資料夾**（規劃 repo 起不了服務——無原始碼）。**性質＝runtime 整合測試**，與 `verification/verification-execution.md`（Codex bounded session 逐項唯讀「程式碼/語意比對」）互補：那層找邏輯 gap，本卡找「真的跑不跑得動」。
-> **觸發**：DB 連線已通（2026-06-12），runtime 這層第一次可行。
+> **觸發**：DB 連線已通，runtime 這層第一次可行。
 > **長程序鐵則**（`process/SETUP-codex.md`）：`ng serve` / `spring-boot:run` **絕不讓 agent 跑**（等不到結束會卡死）——你在自己終端跑，agent 只改 code / 看錯誤。
 
-## 0. 決策：寫入測試打 `OVSLXLON02`（使用者裁定 2026-06-14）
+## 0. 決策：寫入測試打 `OVSLXLON02`（使用者裁定）
 > 本機 BE 用 **DB 既有帳號**（**不創新帳號**——讀 backend datasource config 既有 profile，或唯讀查 `ALL_USERS` 撈 `OVSLXLON02` 既有可用帳號）直連 **正式新 app schema `OVSLXLON02`** 做 save/submit 寫測。**已知代價＝測試髒資料會寫進正式新庫**——故下列護欄為**強制**：
 
 ### 0.1 護欄（寫測前必讀，強制）
@@ -17,12 +17,12 @@
 ## 1. 前置 gate（缺一不可往下）
 - [ ] **後端可 build**：Nexus `maven-settings.xml` → `mvn clean package -Dmaven.test.skip=true` 綠（baseline 測試與 main 不同步，跳測試編譯）。
 - [ ] **前端可 build**：Node **16.20.2**（`nvm use`；切版刪 `node_modules` 重裝）→ `yarn install --frozen-lockfile` → `yarn ng build` 綠。
-- [x] **授權列已套+驗**（測 c0/csu 頁的前提）：`OVSLXLON02` 已套 `docs/build-tasks/c0-authz-sql.sql`（**ops applied + DBA verified 2026-06-25**，33 rows incl ratified pxls/confirm；pxls==ppdf、confirm==save 驗畢）——c0 endpoint 403 前置解除。service-guard 層仍 RD code-stage。
+- [x] **授權列已套+驗**（測 c0/csu 頁的前提）：`OVSLXLON02` 已套 `docs/build-tasks/c0-authz-sql.sql`（**ops applied + DBA verified**，33 rows incl ratified pxls/confirm；pxls==ppdf、confirm==save 驗畢）——c0 endpoint 403 前置解除。service-guard 層仍 RD code-stage。
 - [ ] **BE profile** 指向：DB URL=`OVSLXLON02`、**既有帳號**（讀 config／`ALL_USERS` 撈，不創新；密碼不進 repo）、（護欄 0.1 的測試案件段就緒）。
 - [ ] **FE `environment`** API base 指向 local BE（**勿 commit 進正式 profile**）。
 
 ## 2. Bring-up 順序
-> **分工（2026-06-25 升級：v1 唯讀 self-driving）**：原「AI 只設定、人起服務」(2026-06-15) 是為避開**前景長程序卡死 session**；改用**背景 detached 程序**即可解 → **v1 唯讀由 Codex 自啟動全跑**（不再需人手起服務）。
+> **分工（v1 唯讀 self-driving）**：原「AI 只設定、人起服務」是為避開**前景長程序卡死 session**；改用**背景 detached 程序**即可解 → **v1 唯讀由 Codex 自啟動全跑**（不再需人手起服務）。
 ```
 v1 自啟動（Codex，全背景、不阻塞 turn）：
   設定    撈既有帳號→設 BE profile(url=OVSLXLON02、不創新帳號、密碼 env 不進 repo)→ mvn build 綠 / yarn install
@@ -52,7 +52,7 @@ phase-v-api-selfverify-harness.md）。全背景、不阻塞 turn；v1 唯讀零
 6. teardown：kill BE/FE pid（務必，不留殭屍程序）。
 7. 回報：PASS/FAIL 表 → 回填 docs/verification/verification-handoff.md §6.3；FAIL 開 runtime-bug 卡。
 鐵則：全程唯讀零寫入；帳密/JWT 走 env 不進 repo；起服務用背景不前景阻塞；結束必 teardown；
-      斷言失敗只報不自動改碼；c0 授權列已套 OVSLXLON02（2026-06-25）c0 不再 403。
+      斷言失敗只報不自動改碼；c0 授權列已套 OVSLXLON02，c0 不再 403。
 ```
 
 ## 3. 能驗 / 不能驗矩陣

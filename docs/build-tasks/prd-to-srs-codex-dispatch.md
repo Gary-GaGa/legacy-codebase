@@ -1,11 +1,11 @@
 # PRD → SRS dispatch prompt（給 Codex；新版 Bible/PRD 用）
 
 > **用法**：在母資料夾（產品碼 + 規劃 repo 可讀 + 新版 Bible/PRD 放好）開 Codex。下方 prompt＝**單頁轉換單元**（填 `<funcId>` / `<PRD 路徑>`）；產 SRS bundle → 過閘門 → 回填。
-> **批量 = drain（2026-06-20）**：規模化由 SRS orchestrator（`orchestration-playbook §5b/§6b`）驅動——允許**多頁同時 `prd-ready`**，orchestrator **序列**逐頁套用本 prompt（一次一頁、每頁各自過 gate＋N 軸＋回填），**持續 drain 直到所有既有 `prd-ready` 都轉成 `in-review`** 才停（batch checkpoint）。本 prompt 本身不變、仍是單頁；改的是外層迴圈不再每頁停。
+> **批量 = drain**：規模化由 SRS orchestrator（`orchestration-playbook §5b/§6b`）驅動——允許**多頁同時 `prd-ready`**，orchestrator **序列**逐頁套用本 prompt（一次一頁、每頁各自過 gate＋N 軸＋回填），**持續 drain 直到所有既有 `prd-ready` 都轉成 `in-review`** 才停（batch checkpoint）。本 prompt 本身不變、仍是單頁；改的是外層迴圈不再每頁停。
 > **依賴**：① 新版 PRD（必）+ Bible（有則接上游追溯）② 該頁產品碼（as-is）③ 規劃 repo 的 skill/SOP（prompt 已內聯關鍵，不可讀亦能跑）④ **對比輸入 md**（新舊 DB 差異/新 schema + 既有重構 spec，見 prompt 內 §5）。
 > **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24；**re-open 頁別 overlay＝`disbursement-reopen-srs-dispatch.md`**〕→ ④ `EPROZ00800` 重產（新版 PRD；v0.9 已封存）→ ⑤ 主流程 ISU/i0/z0 增量。
 
-## PRD 放置與對應（PM 貼給 Codex 前；2026-06-18 EPROZ00100 首跑實測歸納）
+## PRD 放置與對應（PM 貼給 Codex 前；EPROZ00100 首跑實測歸納）
 > **對應鍵＝funcId**（如 `EPROZ00100`）。PRD 檔名含 funcId → SRS 自動產到 `srs/<funcId>/`、db-diff 用 table_name、refactor-spec 用 module_code（EPRO* 碼、≈funcId）反查、trace 配同 funcId。**一頁一 PRD、funcId 不重複**（同 funcId 多版會被 gateⒷ glob 同時命中、取字典序最後一個 → **只留最新一份在資料夾**）。
 
 | 檔案 | 放哪 | 由誰 |
@@ -13,7 +13,7 @@
 | Bible v1.1 | `docs/specs/bible/bible-eproposal.md` | 已在 repo |
 | **PRD 快照** | `docs/specs/prd/`（**扁平放、可一次 bulk**），名 `PRD-*<funcId>*.md`（rename 腳本 `scripts/rename-prd.ps1`）| **PM 放** |
 | trace | `docs/specs/prd/trace-*<funcId>*.md` | **prd-to-srs 產**（PM 不放）|
-| **SRS bundle** | `docs/specs/srs/<funcId>/`（spec.md/openapi.yaml/schema.sql；**qa-cases.md 2026-06-24 暫拔除**）| **prd-to-srs 產**（PM 不放、目錄名＝funcId）|
+| **SRS bundle** | `docs/specs/srs/<funcId>/`（spec.md/openapi.yaml/schema.sql；**qa-cases.md 暫拔除**）| **prd-to-srs 產**（PM 不放、目錄名＝funcId）|
 | 新 DB schema | local `docs/db-diff/`（**留母資料夾、不進規劃 repo**）| owner（dev host）|
 | 70% baseline | local `docs/refactor-spec/`（**留母資料夾**）| owner（dev host）|
 
@@ -37,7 +37,7 @@
 frontmatter），照其〔輸入 / 輸出 spec/openapi/schema + README(人類 digest,見 digest-template) / spec.md 結構(canonical 一檔兩半;見 spec-template) / SRS 鐵則 / Brownfield 鐵則 /
 步驟 / DoD〕全照做。若該檔不可讀，依本 prompt 的內聯要點。
 
-【本專案 context（2026-06-17）— 必遵】
+【本專案 context — 必遵】
 1. 舊系統為主 + 三判（規劃 repo `docs/process/legacy-parity-sop.md`）：to-be 規則以
    「舊系統對應行為」為基準；新≠舊的差異在 spec 明標三判——
    (a) regression → 照舊修回　(b) 刻意演進/縮編 → keep 新 + 寫理由
@@ -53,7 +53,7 @@ frontmatter），照其〔輸入 / 輸出 spec/openapi/schema + README(人類 di
 4. 真實 endpoint = RPC `epl-{verb}-{scope}-{feature}`（非 PRD 理想化 /api/...）；
    mutate=POST。Oracle native query 未加引號 alias → label 大寫（大小寫對映注意）。
 5. 【對比輸入：多個 md 檔 — 必讀並 reconcile，把「更動後需求」一起納入 SRS】
-   A. 新 Table schema（新側 snapshot）＝**local `docs/db-diff/`**（owner 提供；結構已盤點 2026-06-17，**2026-06-18 改名 db-diff 後重掃確認：187 檔/156 表/snapshot+change-hint 不變、非完整 diff**）：
+   A. 新 Table schema（新側 snapshot）＝**local `docs/db-diff/`**（owner 提供；結構已盤點，**改名 db-diff 後重掃確認：187 檔/156 表/snapshot+change-hint 不變、非完整 diff**）：
       - 佈局：`02_tables/TB_<NAME>.md`（156 表，一檔一表）、索引 `00_HOME.md`（Table Map）、`01_groups/group-xx.md`。
         **索引鍵＝`table_name`**（非 funcId；table→funcId 反查多半缺）。
       - schema 形式＝**markdown 欄位表**（`| no | pk | fk | column_name | comments | data_type | nullable | data_default | note |`），
@@ -66,7 +66,7 @@ frontmatter），照其〔輸入 / 輸出 spec/openapi/schema + README(人類 di
         內以 funcId 命名的 checkpoint 欄 ③Bible v1.1 DB 錨點（`TB_LON_SUMMARY_INFO`…）④`legacy/db-schema-catalog.md`
         推出 table set，逐表查 `02_tables/`（找不到→標 UNFOUND、不臆造）。
       - ⚠️ `OVSLXLON01/02`＝runtime 資料來源（A-2/B-1 escalations 已裁），**與此 schema 結構正交**、勿混。
-   B. refactor-spec＝**latest-only spec index/artifact map ＋ legacy reference outputs**＝**local `docs/refactor-spec/`**（owner 提供；**2026-06-18 改名後重掃、結構已重排**）：
+   B. refactor-spec＝**latest-only spec index/artifact map ＋ legacy reference outputs**＝**local `docs/refactor-spec/`**（owner 提供；**改名後重掃、結構已重排**）：
       - 佈局（737 檔；733 .md＋`manifest.json`＋tools）：**latest＝`03_artifacts/**/*.md`（466，已挑 selected latest artifact；一 module 可多 artifact、68 module 多 artifact）**、**legacy 多版＝`02_specs/`（146，含 `doc_status`/`修訂紀錄`/`待確認項目`；舊版在 `manifest.json.excluded_versions`）**、module 彙整 `02_modules/`（77）、索引 `00_HOME.md`/`README.md`（Source Map）、共用規則 `03_rules/`（7）＋`04_rules/`（8，含 `field_rule.md`/`validation.md`）、`04_assets/`（18，畫面/圖）、`01_groups/`（7）、issues `99_issues.md`。
       - **索引鍵＝`module_code`（EPRO* 頁碼、≈funcId）→ `artifact_id`（區分 API/FE/asset）；無 literal `funcId` 欄**。
         **latest 規則＝highest parsed version → newest filename date → non-old path**（跳 archive/old；見 `refactor-spec/README.md:26`）；一 module 可多 latest artifact → 撈齊該 module 全部 latest。
@@ -106,12 +106,12 @@ frontmatter），照其〔輸入 / 輸出 spec/openapi/schema + README(人類 di
 - spec.md **下半 `Appendix — Evidence & Decisions`**（Source Evidence、Trade-offs、**新舊 DB 對照 +
   更動 delta 清單**〔每條：來源〔DB-diff/decision/parity〕→ 影響 Rn → 三判 → carried(Rn)/@PENDING〕、
   @PENDING、**Rule Evidence**〔每 Rn 的 as-is✅⚠️🔴 / REF-Dn / provenance file:line·@SHA / 決策 ID，
-  鍵到 Rn〕）〔Traceability Matrix 2026-06-24 移除;追溯靠 Rn covers-prd〕
+  鍵到 Rn〕）〔Traceability Matrix 移除;追溯靠 Rn covers-prd〕
 - openapi.yaml（真實 epl-* request/response）
 - schema.sql（涉及表/欄 DDL：型別/長度/PK/nullable；**+ 新舊對照**：舊欄→新欄、change 類型
   〔add/remove/type/precision/nullable/rename〕、三判 tag、來源 schema-diff 行）
 - **README.md（人類 digest）**：照 `docs/specs/srs/digest-template.md` 從兩半 spec 衍生（繁中 RD 速覽：頁目的/流程 per-page/規則速覽依執行序/雷區/連結；**精確 identifier 一律不複製、指回 spec**；spec 權威、變更請重生）。
-〔qa-cases.md 2026-06-24 暫拔除——QA 產生/驗收先移除〕
+〔qa-cases.md 暫拔除——QA 產生/驗收先移除〕
 
 【鐵則】
 - 一條業務規則 = 一個 Rn；行為句用 EARS（普通/當…時/在…期間/若…）。
@@ -128,7 +128,7 @@ frontmatter），照其〔輸入 / 輸出 spec/openapi/schema + README(人類 di
 
 【DoD（Approved 前必過，含批判輪教訓）】
 - 每 PRD REQ ≥1 Rn；每 Rn 有 acceptance + 強制點；完整性/安全的驗證 BE 有且權威。〔≥1 QA covers 隨 QA 暫拔除。〕
-〔gate⑤（多分支 Rn happy/error/edge ≥1 case）2026-06-24 隨 QA 暫拔除——qa-cases 不產，gate⑤ skip。〕
+〔gate⑤（多分支 Rn happy/error/edge ≥1 case）隨 QA 暫拔除——qa-cases 不產，gate⑤ skip。〕
 - Bible 安全/災難條件逐條對：carried(Rn) 或 disclaimed；【安全/災難類未承載 → 不得 Approved
   （連 subset 也不行）】。
 - PRD Error Response 每個錯誤碼 → 落某 Rn + openapi response（對的 HTTP status），否則明文
@@ -139,11 +139,11 @@ frontmatter），照其〔輸入 / 輸出 spec/openapi/schema + README(人類 di
 - Status 雙軸（規格定版 vs 實作完成），勿單一 Approved(subset) 混用。
 - **新舊 DB + 既有 spec reconcile**：SRS 已對 schema-diff（新舊 DB 差異/新 schema）+
   feature-inventory/matrix/decisions/pending/escalations（既有重構 spec）；**更動後需求以
-  Rn/@PENDING 顯式承載、附來源+三判，未遺漏**；既有決策（AUD-6/A-5/T24/頁合併…）當約束不重議。**（2026-06-18 加 backstop：機械 `gateⓇ` warn『spec 無 delta 段』＋ spec-reviewer 紅旗⑥ 查『只寫待 RD』→ reconcile 不再只靠自律。）**
+  Rn/@PENDING 顯式承載、附來源+三判，未遺漏**；既有決策（AUD-6/A-5/T24/頁合併…）當約束不重議。**（加 backstop：機械 `gateⓇ` warn『spec 無 delta 段』＋ spec-reviewer 紅旗⑥ 查『只寫待 RD』→ reconcile 不再只靠自律。）**
 
 【過閘門（兩層，先機械再語意）】
 1. 機械：`python scripts/check-srs-bundle.py docs/specs/srs/<funcId>` 必 exit 0。
-2. 語意：**SRS N 軸驗證**（`orchestration-playbook §4b` 的 **A–F 軸**〔G 可測試性隨 QA 2026-06-24 暫拔除〕、各 read-only、最好跨模型；axis A＝`spec-reviewer`〔`.codex/agents/spec-reviewer.toml`＝部署後本機路徑、repo 範本 `docs/env/codex/spec-reviewer.toml`〕；risk-tier T1 全跑、低風險頁可 A+E）**全軸無未解 Blocker**；
+2. 語意：**SRS N 軸驗證**（`orchestration-playbook §4b` 的 **A–F 軸**〔G 可測試性隨 QA 暫拔除〕、各 read-only、最好跨模型；axis A＝`spec-reviewer`〔`.codex/agents/spec-reviewer.toml`＝部署後本機路徑、repo 範本 `docs/env/codex/spec-reviewer.toml`〕；risk-tier T1 全跑、低風險頁可 A+E）**全軸無未解 Blocker**；
    採納修正後【再審一輪】（修正可能引入新錯）。
 
 【回填】bundle 連到 feature-inventory 該頁 + per-page-reinventory-matrix（SRS 欄）；
@@ -153,7 +153,7 @@ frontmatter），照其〔輸入 / 輸出 spec/openapi/schema + README(人類 di
 ---
 
 ## 備註
-- **序列一次一頁、但 drain 整批**（2026-06-20 改）：不並行吞整批；每頁各自過閘門＋N 軸＋回填，但 orchestrator **一頁達標即接下一頁、不在每頁停**，drain 完所有 `prd-ready`→`in-review` 才停在 batch checkpoint **一次交人審/裁 TBD**（非每頁人審）。終點仍是 `in-review`、不自升 approved（人裁 TBD 才升）。迴圈權威＝`orchestration-playbook §5b/§6b`。
+- **序列一次一頁、但 drain 整批**（drain 改）：不並行吞整批；每頁各自過閘門＋N 軸＋回填，但 orchestrator **一頁達標即接下一頁、不在每頁停**，drain 完所有 `prd-ready`→`in-review` 才停在 batch checkpoint **一次交人審/裁 TBD**（非每頁人審）。終點仍是 `in-review`、不自升 approved（人裁 TBD 才升）。迴圈權威＝`orchestration-playbook §5b/§6b`。
 - **parity 與 SRS 互補**：企金線 18 頁 parity 卡（`c0-legacy-parity-recheck.md`）的 findings 餵 SRS 的 as-is 欄；兩者可並行，但同頁建議 parity 先（as-is 才實）。
 - **SRS 落點是規劃 repo**（`docs/specs/srs/`）：Codex 要能寫到規劃 repo；**Bible v1.1 已在 repo**（`docs/specs/bible/`），新版 PRD 放 `docs/specs/prd/`（舊 00800 PRD 已封存 `docs/archive/EPROZ00800-v0.9-superseded/`）。
 - **00800 重產**：v0.9 SRS 已封存（`docs/archive/EPROZ00800-v0.9-superseded/srs/`）；用新版 PRD 從新 Bible v1.1 **重產**——封存內 RP1-10 裁定 + SR-B1/B2（2 錯誤碼）+ RP8/RP11 為重產輸入，一併承載。

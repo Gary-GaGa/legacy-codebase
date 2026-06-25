@@ -8,7 +8,7 @@
 
 | 軸 | 是什麼 | 內容 |
 |---|---|---|
-| **A 精煉層級**（縱，funcId 追溯） | 同一件事逐層加「how」、可上下追溯 | Legacy → Bible → **PRD** → **SRS** → Code〔QA 產生/驗收 2026-06-24 暫拔除，恢復見 git history〕 |
+| **A 精煉層級**（縱，funcId 追溯） | 同一件事逐層加「how」、可上下追溯 | Legacy → Bible → **PRD** → **SRS** → Code〔QA 產生/驗收暫拔除〕 |
 | **B 規格類型**（同層分工） | SRS 層其實有**兩種並行的 spec** | **SRS**（行為+契約）∥ **UI/UX 設計規格**（長相） |
 | **C 層界契約**（橫，seam） | 用契約把實作層切開、不拆文件 | FE —`openapi`— BE —`schema`— DB |
 
@@ -58,7 +58,7 @@ flowchart LR
   spec -.->|"強制點=BE（完整性/安全·權威）"| BE
   readme -.->|"摘要、指回 spec"| spec
 ```
-> 〔`qa-cases.md`（covers: Rn）隨 QA 產生/驗收 2026-06-24 暫拔除，恢復見 git history；`README.md`＝人讀 digest（非 gate 餵入，範本 `specs/srs/digest-template.md`）〕
+> 〔`qa-cases.md`（covers: Rn）隨 QA 產生/驗收暫拔除；`README.md`＝人讀 digest（非 gate 餵入，範本 `specs/srs/digest-template.md`）〕
 
 **重點**：規格本體**只有一份**（`spec.md` 的 `Rn`），FE/BE 不拆成兩份文件；要分的是**契約這一層**（`openapi`=FE↔BE、`schema`=BE↔DB）。每條 `Rn` 標**強制點**當屬性。
 
@@ -104,13 +104,13 @@ flowchart LR
 - **操作前提**：轉換得**讀得到** `docs/db-diff/` snapshot；讀不到（如僅母資料夾有）＝退回 `@PENDING` 標「待母資料夾撈」、不臆造。
 - **定位**：目標是 **right-size** Pending（砍掉本就非人類決策的），不是 minimize——Pending 的價值正是逼出「人**必須**裁」的事。
 
-### Rule 1c — 缺正式 refactor baseline → code-as-baseline 降級（2026-06-24 立）
+### Rule 1c — 缺正式 refactor baseline → code-as-baseline 降級
 - **適用**：某頁 `docs/refactor-spec/` 無正式 corporate baseline artifact（如 `EPROC00119` RP40、`EPROC00120` P-009；個金 i0 有、企金 c0 缺）。
 - **降級方案**：用 **legacy（對應舊頁）+ current migrated code 當 as-is baseline** 做 parity 碼驗，**不等正式 artifact、不臆造 baseline**。
 - **寫法**：as-is 證據標 `[CODE:<file>:<line>@<commit-SHA>]`（reference + commit 釘版、可回查）；spec 顯式 disclaim「baseline＝code-as-baseline、無正式 refactor-spec artifact、待補」。
 - **不省嚴謹度**：parity 差異仍過 `legacy-parity-sop` 三判（regression/演進/結構差）；高風險面（authZ/金額）仍升級。**code-as-baseline 換的是 baseline 來源、非 parity 嚴謹度**。
 - **與 Rule 1 之別**（互補非替代）：Rule 1＝**有** baseline、撈 DB fact 不留 Pending；本條＝**缺** baseline、用 legacy+current code 當 as-is 做 parity。`[CODE:<file>:<line>@<SHA>]` **即滿足 Rule 1 第 2 護欄 provenance**（可回查、釘版）。
-- **owner 決策**：code-as-baseline vs 補正式 artifact ＝ owner 裁（缺料 trade-off）；2026-06-24 owner 裁企金線 00119/00120 採 code-as-baseline。
+- **owner 決策**：code-as-baseline vs 補正式 artifact ＝ owner 裁（缺料 trade-off）；owner 裁企金線 00119/00120 採 code-as-baseline。
 
 ### Rule 2 — refactor 優先（限本層）；踩線才升級
 - **預設**：legacy vs refactor 在 **FE/API 行為與契約層** 衝突→**refactor 贏**（最新意圖版；承 `REF-D2` keep-latest、`DB-D6` win-by-layer）+ 留 `REF-Dn` delta 註。
@@ -125,7 +125,7 @@ flowchart LR
 4. **同一層**兩來源實質衝突，且該層 SoT 來源本身**缺資料/沉默**（無從裁）——**不得**以「對方沒明文反對」當 refactor 自動贏的理由。
 > 其餘（純本層 contract 取捨、可由 upstream 裁的差異）＝可自決 refactor-wins，但仍留 `REF-Dn` delta。
 
-### Rule 3 — 授權分層（雙層防禦；mutating 端點必遵，2026-06-24 立）
+### Rule 3 — 授權分層（雙層防禦；mutating 端點必遵）
 完整性/安全的授權**不得只靠單層**；標準三層、spec 授權 Rn 須標各層強制點：
 - **DB 層（SoT）**：`TB_API_AUTH`（`API_ID` + `REF_FUNCTION_ID` + `ROLE`）記權限，初期 seed/DML 落地。
 - **Service 層（BE 權威）**：save/execute/authorize 等 mutation 前做 case-edit/ownership/role guard（Maker-Checker、互斥、交易一致）；**未授權角色呼叫一律拒（401 未認證 / 403 已認證但無權）**。
@@ -134,7 +134,7 @@ flowchart LR
 
 ## 6. 追溯與驗證（兩條鏈）
 
-- **追溯鏈（縱）**：`funcId` → PRD `REQ-nnn` →（`covers-prd`）→ SRS `Rn` → code/test。↑可追溯、↓可驗證。〔原 SRS →（`covers`）→ QA case 一跳隨 QA 2026-06-24 暫拔除〕
+- **追溯鏈（縱）**：`funcId` → PRD `REQ-nnn` →（`covers-prd`）→ SRS `Rn` → code/test。↑可追溯、↓可驗證。〔原 SRS →（`covers`）→ QA case 一跳隨 QA 暫拔除〕
 - **驗證鏈（DoD）**：
   - **機械層**（deterministic）＝`scripts/check-srs-bundle.py`：**涵蓋範圍以腳本檔頭 canonical 清單為準（勿在此複寫）**——大類＝契約/schema/covers/跨檔/Bible↔PRD（治 BP-7）/@PENDING↔register 同步；編號對照見 `specs/srs/README.md`。
   - **語意層**：`spec-reviewer`（唯讀、不改檔）審完整性/一致性/可測性/把 legacy 當需求等（＝SRS **N 軸 axis A**；規模化另跑 B–G 軸〔as-is parity/錯誤碼/安全/reconcile/金錢欄/可測試性〕，見 `process/orchestration-playbook.md §4b`）。
@@ -155,7 +155,7 @@ flowchart LR
 ## 8. 一頁總結
 
 ```
-規格 = 精煉層級（Bible→PRD→SRS→Code，funcId 串；QA 2026-06-24 暫拔除）
+規格 = 精煉層級（Bible→PRD→SRS→Code，funcId 串；QA 暫拔除）
      × 規格類型（SRS 行為+契約 ∥ 設計規格 長相）
      × 層界契約（FE—openapi—BE—schema—DB）
 

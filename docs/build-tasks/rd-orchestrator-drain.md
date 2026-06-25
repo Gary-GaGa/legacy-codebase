@@ -35,7 +35,7 @@ orchestration-playbook §5c/§6c、§4c（RD 軸）。
    f. 未達標（build 紅 / verify-c0 違規 / 軸 Blocker 需 C 類）→ status=blocked+原因（離開 rd-ready
       集合→不重取）→ 續下一頁（單頁失敗不擋整批）。
    g. ⚠️ T1 頁（金錢/評分/授權；撥貸 0920/0921/0922+T24、c0 評分線）＝**per-page 多 agent 驗證點**
-      （owner 2026-06-25 改自「per-page 人審停點」）：code 產完 → spawn RD 軸（§4c）≥4 隻跨模型
+      （owner 改自「per-page 人審停點」）：code 產完 → spawn RD 軸（§4c）≥4 隻跨模型
       read-only 驗 → Blocker 則修該頁再驗 → 無 Blocker 即 rd-done、**drain 不停人、續下一頁**。
       不逐頁停人審；correlated-blindness 防護由 per-page 多 agent 跨模型驗承載；人審＝step 2 批末 + owner Done。
 
@@ -58,7 +58,7 @@ orchestration-playbook §5c/§6c、§4c（RD 軸）。
 
 ## 步驟 2 — batch checkpoint（人）
 - 全批停 `rd-done` 後 **先 spawn 批次多 agent 驗證**（跨頁一致性 + 跨批 regression + RD 軸對合併 diff，跨模型 read-only）→ 再逐頁人審 diff（T1 頁已在 1g per-page 多 agent 驗過）。
-- `rd-done` 頁 → 進 DoD 閘門牆（①②③⑥⑦LLM審 + 人審；**④⑤ QA 2026-06-24 暫拔除**）→ owner 蓋 `done`。
+- `rd-done` 頁 → 進 DoD 閘門牆（①②③⑥⑦LLM審 + 人審；**④⑤ QA 暫拔除**）→ owner 蓋 `done`。
 - `blocked` 頁：build/驗證可修者回母資料夾修、C 類進 pending-register 裁 → 修/裁後重標 `rd-ready`。
 - 回填 STATUS / feature-inventory / ledger（code 路徑、覆蓋計數）。
 
@@ -74,7 +74,7 @@ orchestration-playbook §5c/§6c、§4c（RD 軸）。
 | 並行? | ❌ 序列一次一頁（context 衛生） |
 | 每頁 gate+軸? | ✅ DoD ①②③⑥ + RD 軸（§4c，跨模型、advisory）；採納修正後再審一輪 |
 | 自動到哪? | `rd-done`（**不自宣 Done**） |
-| 停點 | 人審＝批末（batch checkpoint，含批次多 agent 驗證）；T1 頁每頁＝多 agent 驗證（drain 不停人，owner 2026-06-25）|
+| 停點 | 人審＝批末（batch checkpoint，含批次多 agent 驗證）；T1 頁每頁＝多 agent 驗證（drain 不停人）|
 | 單頁 FAIL | 標因→`status=blocked`（離開 rd-ready）、續下一頁 |
 | 系統性失敗 | 🛑 circuit-breaker 暫停整批、修根因 |
 | C 類 / 既有 i0 | ❌ 不碰、不改 |

@@ -2,7 +2,7 @@
 
 > **性質**：兩條皆**既有 `CsuCreditEvalAndCreditDecisionServiceImpl` 行為**（grandfathered、`backend/AGENTS.md §6.1` 禁改）→ **非 00118 本體缺陷、須信用決策 domain 裁**。每條結構＝**①唯讀碼驗**（Codex/RD 追碼路徑，餵裁定）→ **②domain 裁定**（intended vs bug）。
 > **怎麼來的**：00118（企金 corporate scorecard）建置 code review 抓到既有服務兩個可疑行為；§6.1 禁改 `Csu*` → 不在 00118 修、升級。
-> **背景全文**：`verification/verification-handoff.md §1`、`archive/decisions-2026H1-c0-audit.md`（00118 calc 兩決策 / gate-b 裁決兩列；2026-06-18 由 `decisions.md` 歸檔）、`page-mapping.md §2B`（escalation 登記）、`pending-register` E1/E2。
+> **背景全文**：`verification/verification-handoff.md §1`、`archive/decisions-2026H1-c0-audit.md`（00118 calc 兩決策 / gate-b 裁決兩列；由 `decisions.md` 歸檔）、`page-mapping.md §2B`（escalation 登記）、`pending-register` E1/E2。
 >
 > 命名：c0＝企金評分線（00114-00120）；CS＝企金有擔、CU＝企金無擔；`crScoreCardCompleted` 雙位元＝第1碼 00114／第2碼 00118。
 

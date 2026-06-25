@@ -1,6 +1,6 @@
 # SRS 110/112/114/116/117 — axis A–F 複審 Blocker 修單（給 dev 機 Codex）
 
-> **來源**：2026-06-24 跨模型 axis A–F 獨立複審（QA 已拔除，G 可測試性不適用）。機械閘門 5 包全 PASS；本單＝**語意層**待修。
+> **來源**：跨模型 axis A–F 獨立複審（QA 已拔除，G 可測試性不適用）。機械閘門 5 包全 PASS；本單＝**語意層**待修。
 > **前置（重要）**：dev 機修前**先 `git pull`**——QA 帳務債（dormant qa-cases 引用、Output files、Traceability QA 欄 banner、00116「through QA」措辭）**已在 planning repo 清掉**（本 commit），勿重複處理、避免分叉。
 > **紀律**：審者報、人/dev 機修；改完**重跑 `check-srs-bundle` + axis A–F 再審一輪**；終點 In Review，不自宣 Approved。
 > **環境註**：所有「db-diff/refactor-spec/reverify 母夾-local、本 planning repo 搆不到」的 finding＝**雙 repo 環境性、非真缺陷**；修法統一＝SRS 加一句 disclaim「來源以母資料夾 baseline 為準、本 repo 不可複核、待母夾 reconcile」，不需補檔。

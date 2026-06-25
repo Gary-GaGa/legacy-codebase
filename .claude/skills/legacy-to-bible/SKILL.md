@@ -10,7 +10,7 @@ description: Reverse-engineer a business Bible (北極星 / 黃金旅程 / user 
 
 ## ⚠️ 最重要的鐵則：證據接地（這層最會幻覺）
 反推＝從碼推「為何這樣設計」，**AI 最容易在這層 confabulate**。**每個業務主張都要引 legacy `file:line` / 表名 / trx-id**；推不出依據的標「**推測（待業務確認）**」，**絕不寫成既定事實**。寧缺勿假。
-> **證據分級（2026-06-11 健檢明文化）**：`[HUMAN]`（業務/系統知識持有人已確認）＝**合格證據層級**，可先支撐主張；legacy `file:line` 為升級項——標 `[CODE-TBD]` 者於 source 驗證階段回填。專案級 Bible（如 `bible-eproposal.md`）先以 `[HUMAN]` 入流＝**合規、非違規**。
+> **證據分級（健檢明文化）**：`[HUMAN]`（業務/系統知識持有人已確認）＝**合格證據層級**，可先支撐主張；legacy `file:line` 為升級項——標 `[CODE-TBD]` 者於 source 驗證階段回填。專案級 Bible（如 `bible-eproposal.md`）先以 `[HUMAN]` 入流＝**合規、非違規**。
 
 ## 輸入
 1. **Legacy source**（舊碼 `file:line`、JSP、DB schema、SQL）——主來源。

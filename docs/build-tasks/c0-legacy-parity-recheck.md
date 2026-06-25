@@ -8,7 +8,7 @@
 > - **CSU 主流程（0110–0173）**＝Phase G 由**鏡像個金 ISU twin** 補建（`archive/decisions-2026H1-c0-audit.md` CSU0130「案件編輯子頁鏡像 twin」）、同樣**未對舊企金 cs/cu 驗**。
 > - 兩者都是「對個金像、未對舊企金忠實」→ **企金線整體**是 parity 系統性缺口（per-page 矩陣坐實）。撥貸已 06-17 收斂 → 補比到期。
 
-## 現狀更新（2026-06-25）
+## 現狀更新
 > 本卡 06-17 reopen 時 9 包企金尚未產 SRS;現況已變,**比的對象＝rd-done 的碼**:
 > - **9 包企金評分（00110/112/114/115/116/117/118/119/120）已 SRS Approved + RD `rd-done` + owner Done**;CSU 主流程(0110–0173)仍多未產 SRS。
 > - **部分 parity 已順帶做掉**(矩陣 `parity vs 舊` 欄):**00115 ✅ 對舊驗畢**(fix-round)、**00117 🔶/00120 🔶 business-only 對舊驗畢(決策 B)** → 這 3 頁 parity recheck **降為確認範圍/補殘維度**,非從零。

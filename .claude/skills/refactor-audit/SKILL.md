@@ -9,7 +9,7 @@ description: Zero-based, code-evidence-only audit of refactor progress — re-de
 動機：`feature-inventory.md` 是**增量維護**的狀態表，會 stale/漏列——本 skill 不信任它、從三個上游重推。
 位置見 `docs/assets/ai-workflow.mmd`（這是 inventory 的**定期校正回路**，不是 flow 主線的一站）。
 
-> **為什麼是 skill 不是一次性卡**：drift 會反覆發生（里程碑落地、增量回填後）。把方法論常設化＝下次盤點直接跑、不重新發明四錨點/窮盡聲明/QC 口徑。首跑實例＝`docs/build-tasks/refactor-audit/`（2026-06-11，166 列，F-1 翻案抓到 inventory 標 ✅ 但 FE 不存在）。
+> **為什麼是 skill 不是一次性卡**：drift 會反覆發生（里程碑落地、增量回填後）。把方法論常設化＝下次盤點直接跑、不重新發明四錨點/窮盡聲明/QC 口徑。首跑實例＝`docs/build-tasks/refactor-audit/`（166 列，F-1 翻案抓到 inventory 標 ✅ 但 FE 不存在）。
 
 ## ⚠️ 最重要的鐵則：trust nothing，找不到＝UNFOUND
 盤點的價值全在「不拿文件當證據」。**每個結論附碼證據**：舊＝JSP 檔名＋action `file:line`；新＝controller route／FE component 路徑。**推不出對應的標 `❓UNFOUND`，不准猜、不准拿 `feature-inventory`/`page-mapping` 當證據**（那正是被審對象）。寧缺勿假——假陽性（標綠其實沒做）比 UNFOUND 危險得多。

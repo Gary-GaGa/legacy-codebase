@@ -5,7 +5,7 @@
 > **權威**：re-open 框架＝`decisions.md`「T24/0921 於 SRS 層 re-open」＋「撥貸 re-open 的 to-be＝走 §5b SoT 梯裁」；梯裁＝`spec-architecture §5b`／`ADR-0002`；待決＝`pending-register` 兩 re-open 列。
 
 ## 0. 開火前置（gate；缺則勿跑）
-1. **PRD 定稿（PM 提供為準）**：PM 的 PRD `PRD-…-<funcId>-v1.0.md` 放 `docs/specs/prd/` → matrix ledger 該列升 `prd-ready`（orchestrator 只 pick `prd-ready`）。〔規劃 repo 的 draft skeleton **已棄 2026-06-22**——一律以 PM PRD 為準；本卡所有 `REQ-NNN`＝內容定位用，**以 PM PRD 之 REQ-ID 為準**。〕
+1. **PRD 定稿（PM 提供為準）**：PM 的 PRD `PRD-…-<funcId>-v1.0.md` 放 `docs/specs/prd/` → matrix ledger 該列升 `prd-ready`（orchestrator 只 pick `prd-ready`）。〔規劃 repo 的 draft skeleton **已棄**——一律以 PM PRD 為準；本卡所有 `REQ-NNN`＝內容定位用，**以 PM PRD 之 REQ-ID 為準**。〕
 2. **母資料夾備齊** `docs/refactor-spec/`＋`docs/db-diff/`（本規劃 repo 無此二夾）；**搆不到** → SRS 須顯式 disclaim「待母資料夾複核」＋列已知 delta（`check-srs-bundle` gateⓇ，非靜默留白）。
 3. **as-is 來源**＝母資料夾產品碼 ＋ 舊 T24 spec（`EPROIS_0922-t24.md`）＋ parity findings（`done/t24-bgroup-legacy-parity-fix-findings.md`，commit `3d6f446`）。
 
