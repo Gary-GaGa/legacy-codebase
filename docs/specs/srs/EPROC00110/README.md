@@ -34,8 +34,8 @@
 **橫切（每階段都適用）**
 - **來源別差異** `R9`：一般件 vs 展延/變更件用不同來源別名/checkpoint provenance；因實體表只有單一 PK、無 RC 鑑別欄，**用 `sourceFrame`/`sourceTabMap` 當執行期 provenance**（互斥），不靠額外欄位。
 - **跨模組 page menu** `R10`：子頁完成度回寫父頁。
-- **錯誤碼** `R11`：模組錯走 `ERROR_MODULE` + 模組訊息、超量走 `ERROR_MODULE` + 超量碼、一般錯走通用查詢失敗；0210 初始化例外走標準初始失敗（精確碼見 spec `R11`/`R15`）。
-- **安全/稽核** `R12`：mutating 必**後端**驗可編輯/查詢/舊案；破壞性切換必須留 `EPROC00110_GI_FI_SWITCH` 稽核事件；**只設 API 授權 seed 不夠**。
+- **錯誤碼** `R11`：模組錯走模組錯誤碼 + 模組訊息、超量走模組錯誤碼 + 超量碼、一般錯走通用查詢失敗；0210 初始化例外走標準初始失敗（精確碼見 spec `R11`/`R15`）。
+- **安全/稽核** `R12`：mutating 必**後端**驗可編輯/查詢/舊案；破壞性切換必須留 GI/FI 切換稽核事件（確切事件碼見 spec `R12`）；**只設 API 授權 seed 不夠**。
 - **邊界決策** `R13`–`R18`：不開個人評等別切換（0211/0213 另案）｜`applicationNo` 為必填請求欄｜0210 例外標準化｜title/GI-FI label 改 C0-owned i18n key｜破壞性切換 token 政策定版。
 
 ## NFR（精確見 spec `## NFR`）
@@ -56,7 +56,7 @@
 - **0210（展延/變更件）parity 是必做**：現碼只有 normalized 一般件常數、缺 0210 來源頁行為＝**failing condition、非可接受 gap**（`R9`）。
 - **`visibleTabs` ≠ `pageMap`**：可見/順序靠 `visibleTabs`，`pageMap` 只管 checkpoint state；別讓 `pageMap` 當唯一可見性載體（`R5`）。
 - **`EPROCSU0160` 別漏出**：實體有欄但屬 Loan Condition，本頁不得輸出（`## DB Reconcile / Delta`）。
-- **0210 空 catch 別照抄**：legacy 的 `ErrorInputException` 空回傳是疑似 bug，要改回標準初始失敗碼（`R11`/`R15`）。
+- **0210 空 catch 別照抄**：legacy 對輸入例外的空回傳是疑似 bug，要改回標準初始失敗碼（`R11`/`R15`）。
 
 **維護註記**
 - 不開個人評等別切換：0211/0213（normalized 00111/00113）**明確不在本包**，未來要做須另開 owner-approved bundle（`R13`）。

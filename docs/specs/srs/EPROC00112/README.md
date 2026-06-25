@@ -23,14 +23,14 @@
 **主流程（依執行序）**
 1. **載入** `R1`：info 回三區塊資料；四組下拉代碼由頁面取得（非塞 info DTO 也可）。
 2. **BBL/BGL** `R2`：主借款人 + 共同借款人，來源同一家族但 BBL/BGL **各存各表、不互蓋**。
-3. **GBGL** `R3`：個人（`IS_IND='Y'`）/公司（`IS_IND='N'`）保證人併一區；**排除已刪保證人**（`R12`，`CR_DEL != 'Y'`）。
+3. **GBGL** `R3`：個人/公司保證人（依保證人類型旗標分流，見 spec `R3`）併一區；**排除已刪保證人**（依刪除旗標過濾，見 spec `R12`）。
 4. **主檔/明細維護** `R4`：每卡主檔 + 明細列；Save 草稿可不完整、Finish 必填。
 5. **幣別加總** `R5`：BBL/BGL/GBGL 算 USD/KHR 的 Total Credit / Total Outstanding；**KHR 為 0 位小數顯示契約**（不得出現 `.00`）。`R13` 只准 USD/KHR。
 6. **存** `R6`/`R7`：**全量覆寫六張 CBC 表 + 更新 `EPROC00112` checkpoint**、單一交易、失敗整筆 rollback；回 `isAllTabsCheck` 給父框刷新整案完成狀態。
 
 **橫切（每階段都適用）**
 - **錯誤/訊息** `R8`：承載 PRD 錯誤/訊息碼（含 list-size 業務訊息）；BE 於 mutate 前擋無效 payload（含空 `applicationNo`）。
-- **授權** `R9`（API + page button 雙閘）：info/save 都驗平台授權 tuple（`API_ID + REF_FUNCTION_ID=EPROC00112 + ROLE`）；save 另需 **service-level guard** 擋 query-only/非編輯/舊案 Finish——**401 未認證、403 已認證但無權**；**只設 `TB_API_AUTH` seed 或只靠前端隱藏按鈕都不夠**。
+- **授權** `R9`（API + page button 雙閘）：info/save 都驗平台授權三元組（API 識別 + 本頁功能代碼 + 角色，確切欄見 spec `R9`）；save 另需 **service-level guard** 擋 query-only/非編輯/舊案 Finish——**401 未認證、403 已認證但無權**；**只設平台授權表 seed 或只靠前端隱藏按鈕都不夠**。
 - **邊界/決策** `R10`–`R17`：來源差異須留決策（`R10`）｜canonical funcId/路由命名（`R11`）｜checkpoint 極性 Save=Y/Finish=N（`R14`）｜`infoList` null 視為空陣列（`R15`）｜CS/CU checkpoint 分流（`R16`）｜0212 舊案不可 Finish（`R17`）。
 
 ## NFR（精確見 spec `## NFR`）
@@ -42,19 +42,19 @@
 ## ⚠️ 雷區（依 RD 接手順序）
 **動工前必知**
 - **0112 vs 0212 一支承接**：差異走 `legacyFunctionId` 模式，**勿拆成兩個 funcId/bundle**（`R11`）。
-- **舊案不可 Finish**：`legacyFunctionId=EPROC0_0212` 且 `LON_TYPE_CODE` ∈ 91/92/93/94，後端必擋 `isFinish=true`（不可信前端）（`R17`）。
-- **雙閘授權**：API 授權 tuple + service guard 都要，缺一即漏（`R9`/SEC-001/SEC-002）。
+- **舊案不可 Finish**：`legacyFunctionId=EPROC0_0212` 且放款類型碼 ∈ 91/92/93/94（確切欄見 spec `R17`），後端必擋 `isFinish=true`（不可信前端）（`R17`）。
+- **雙閘授權**：API 授權三元組 + service guard 都要，缺一即漏（`R9`/SEC-001/SEC-002）。
 - **全量覆寫單一交易**：六張表 delete→insert + checkpoint，任一失敗整筆 rollback（`R6`）。
 
 **實作踩坑**
 - **checkpoint 極性反直覺**：Save 寫 `Y`、Finish 寫 `N`（`isFinish=false→Y`、`true→N`），別寫反（`R14`）。
 - **第三幣別**：只准 USD/KHR，**不可默默歸 KHR、不可靜默忽略**——FE 限選項或 BE 擋 payload（`R13`）。
-- **`CR_DEL` 過濾**：0112 舊 SQL 漏了，新版兩模式都要 `CR_DEL != 'Y'`（現碼 SQL7/SQL8 尚缺＝RD 要補）（`R3`/`R12`）。
+- **已刪保證人過濾**：0112 舊 SQL 漏了，新版兩模式都要依刪除旗標排除（現碼 SQL7/SQL8 尚缺＝RD 要補；確切欄見 spec `R12`）（`R3`/`R12`）。
 - **`infoList` null**：後端正規化為空陣列再覆寫；空陣列對草稿/`CBC available=N` 合法（`R15`）。
-- **KHR 精度**：總額顯示 0 位小數，別吐 `.00`（明細實體欄仍可 `NUMBER(...,2)`）（`R5`）。
+- **KHR 精度**：總額顯示 0 位小數，別吐 `.00`（明細實體欄仍保 2 位小數的 DB 欄型，見 schema）（`R5`）。
 
 **維護註記**
-- DB 欄長/PK 多處 db-diff markdown 與 schema reverify 不一致（名稱欄 50→100、`LATE_PAYMENT` 5→7、`NOTE` 500→1000、BGL/GBGL_INFO PK 順序）——schema/openapi 以 **reverify 為準**，見 spec `## DB Reconcile / Delta`。
+- DB 欄長/PK 多處 db-diff markdown 與 schema reverify 不一致（名稱欄、逾期付款欄、備註欄的欄長，及保證負債明細表 PK 順序；確切欄/表見 schema）——schema/openapi 以 **reverify 為準**，見 spec `## DB Reconcile / Delta`。
 - QA 2026-06-24 暫拔除：spec 內 QA-0XX 引用為 dormant、不得視為已驗證。
 
 ## 連結
