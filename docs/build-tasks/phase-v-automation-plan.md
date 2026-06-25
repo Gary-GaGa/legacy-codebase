@@ -6,9 +6,10 @@
 > **誰建**：L2 全部 runnable（含 v1）由 **Codex 在母資料夾 materialize+跑**（需 product native SQL + localhost）；規劃 repo 只留 manifest 約定（已 grounded）。RD 批次後由規劃側產 **L2 v1 materialize 派工卡**給 Codex。
 
 ## 三層架構
-### L1 Bring-up（起服務腳本化）
-- 由 `local-phase-v-bringup.md` → 腳本：起 BE（`spring-boot:run`）+ FE（`ng serve`）+ 真 dev 帳號登入拿 JWT（環境變數、不進 repo）。
-- 人觸發、腳本執行；長程序人/腳本持有，驗證層只短命呼叫。
+### L1 Bring-up（v1 唯讀 self-driving；2026-06-25 升級）
+- **Codex 自啟動全跑**（v1 唯讀）：背景 detached 起 BE（`spring-boot:run`）+ FE（`ng serve`）、記 pid（**不前景阻塞 turn**）→ 輪詢 health 至 ready → 帳密（env、不進 repo）login 拿 JWT → 跑 harness → **teardown kill pid（不留殭屍）**。詳見 `local-phase-v-bringup.md`「可貼 Codex 自啟動殼」。
+- 原「人觸發起服務」（2026-06-15）是避**前景長程序卡死 session**，已用**背景程序**解。**fallback**：帳密不可放 env → JWT 人貼一次、其餘自動。
+- **v3 寫入**：teardown SQL/DML 仍人審（打正式新庫 OVSLXLON02），非全自動；v1 唯讀零寫入故可全自動。
 
 ### L2 API/DB harness（materialize 既有卡）
 - 來源＝`phase-v-api-selfverify-harness.md` + `phase-v-harness-manifest-v1.md`（manifest 已 grounded）。endpoint/method/params 以 openapi 為準；唯讀帳號 SELECT 比對。

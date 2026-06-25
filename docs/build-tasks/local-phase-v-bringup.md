@@ -22,14 +22,38 @@
 - [ ] **FE `environment`** API base 指向 local BE（**勿 commit 進正式 profile**）。
 
 ## 2. Bring-up 順序
-> **分工（2026-06-15 改）**：AI（Codex/Slack）**只做設定**（撈帳號→設 profile→build 確認→**產出 `start-local` 啟動腳本**），**不啟動長程序**（避免 session 卡死）；**啟動由人執行腳本**（兩視窗各起 BE/FE）。
+> **分工（2026-06-25 升級：v1 唯讀 self-driving）**：原「AI 只設定、人起服務」(2026-06-15) 是為避開**前景長程序卡死 session**；改用**背景 detached 程序**即可解 → **v1 唯讀由 Codex 自啟動全跑**（不再需人手起服務）。
 ```
-設定  AI：撈既有帳號→設 BE profile（url=OVSLXLON02）→ mvn build 綠 / yarn install →產 start-local 腳本
-啟動  你：執行 start-local（BE 視窗 mvn spring-boot:run、FE 視窗 yarn ng serve；各自獨立視窗不互卡）
-登入  真 dev 帳號登入拿 JWT（看真資料）；或 DevTools 塞 dummy token（只看皮，API 401）
+v1 自啟動（Codex，全背景、不阻塞 turn）：
+  設定    撈既有帳號→設 BE profile(url=OVSLXLON02、不創新帳號、密碼 env 不進 repo)→ mvn build 綠 / yarn install
+  起服務  背景 detached 起 BE(spring-boot:run)+FE(ng serve)、記 pid（不阻塞）
+  待命    輪詢 health 直到 BE/FE ready（逾時則回報、teardown）
+  登入    帳密(env、不進 repo)打 login API 拿 JWT → 設 PHASE_V_JWT 等 env
+  自驗    跑 tools/phase-v-api-selfverify.ps1 → PASS/FAIL 表
+  teardown kill BE/FE pid（不留殭屍程序）→ 回填 handoff §6.3、FAIL 開 runtime-bug 卡
 ```
-> auth bypass（dummy token / 關 guard）**只限本機、絕不 commit**（`SETUP-codex.md` 疑難排解）。
-> 啟動腳本＝**本機 only、勿 commit**（含本機路徑/profile；母資料夾已 gitignore）。
+> **fallback（帳密不可放 env）**：Codex 自啟動+poll+teardown 照跑，唯 JWT 由你手動登入貼一次、其餘自動。
+> **⚠️ v3 寫入仍需人審**：save/submit 的 teardown SQL/DML **不由 Codex 直執行**（打正式新庫 OVSLXLON02），產檔交人審，同 `c0-authz-sql` 模式。v1 唯讀零寫入故可全自動。
+> auth bypass（dummy token / 關 guard）**只限本機、絕不 commit**。BE/FE profile/啟動腳本＝**本機 only、勿 commit**（含本機路徑/帳密；母資料夾已 gitignore）。
+
+### 可貼 Codex 自啟動殼（v1 唯讀，全自動）
+```
+任務：Phase V harness v1 自啟動全自動驗（照 docs/build-tasks/local-phase-v-bringup.md +
+phase-v-api-selfverify-harness.md）。全背景、不阻塞 turn；v1 唯讀零寫入。
+1. 設定：用 Nexus settings → mvn clean package -Dmaven.test.skip=true 綠；Node 16.20.2 →
+   yarn install --frozen-lockfile → yarn ng build 綠。設 BE profile（DB url=OVSLXLON02、
+   既有帳號〔讀 config 或唯讀查 ALL_USERS〕、密碼走 env〔不創新帳號、不進 repo〕）、FE environment 指 local BE。
+2. 起服務（背景 detached、記 pid，勿前景阻塞）：BE `spring-boot:run`、FE `ng serve`。
+3. 輪詢 health 至 BE/FE ready（逾時 → 回報 + teardown 收尾、不留殭屍）。
+4. 登入：帳密（env、不進 repo）打 login API 拿 JWT → 設 PHASE_V_JWT；設 PHASE_V_DB_RUNNER、
+   PHASE_V_RI_WITHOUT_REVISED_APP_NO 等 fixture、PHASE_V_RI_OPTION_LANG_TYPE。
+   （帳密無法放 env → 停在這步、請人貼一次 JWT，其餘續自動。）
+5. 跑 tools/phase-v-api-selfverify.ps1（短命 curl + 唯讀 SELECT；ps1 內建擋寫 SQL）→ PASS/FAIL 表。
+6. teardown：kill BE/FE pid（務必，不留殭屍程序）。
+7. 回報：PASS/FAIL 表 → 回填 docs/verification/verification-handoff.md §6.3；FAIL 開 runtime-bug 卡。
+鐵則：全程唯讀零寫入；帳密/JWT 走 env 不進 repo；起服務用背景不前景阻塞；結束必 teardown；
+      斷言失敗只報不自動改碼；c0 授權列已套 OVSLXLON02（2026-06-25）c0 不再 403。
+```
 
 ## 3. 能驗 / 不能驗矩陣
 | 範圍 | 能否本機 | 前提 / 備註 |
