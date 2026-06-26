@@ -88,9 +88,38 @@ function ConvertTo-StringArrayLiteral {
 }
 
 function Get-Node16Root {
-    $candidate = "C:\Users\00596357\Documents\project\pkg\node\v16.20.2"
-    if (Test-Path -LiteralPath (Join-Path $candidate "node.exe")) {
-        return $candidate
+    $candidates = @()
+
+    foreach ($envName in @("NODE16_ROOT", "NODE_ROOT")) {
+        $value = [Environment]::GetEnvironmentVariable($envName, "Process")
+        if (![string]::IsNullOrWhiteSpace($value)) {
+            $candidates += $value
+        }
+    }
+
+    $override = Get-ProfileOverride
+    if ($null -ne $override) {
+        if (Has-Property $override "node16Root") {
+            $candidates += [string] $override.node16Root
+        }
+        if ((Has-Property $override "tools") -and (Has-Property $override.tools "node16Root")) {
+            $candidates += [string] $override.tools.node16Root
+        }
+    }
+
+    foreach ($candidate in $candidates) {
+        if ([string]::IsNullOrWhiteSpace($candidate)) {
+            continue
+        }
+        $nodeExe = Join-Path $candidate "node.exe"
+        if (Test-Path -LiteralPath $nodeExe) {
+            return ([System.IO.Path]::GetFullPath($candidate))
+        }
+    }
+
+    $pathNode = Get-Command node.exe -ErrorAction SilentlyContinue
+    if ($pathNode -and (Test-Path -LiteralPath $pathNode.Source)) {
+        return (Split-Path -Parent $pathNode.Source)
     }
     return $null
 }
@@ -444,12 +473,12 @@ function Wait-PortClear {
     param([int] $Port, [int] $TimeoutSec = 15)
     $deadline = (Get-Date).AddSeconds($TimeoutSec)
     while ((Get-Date) -lt $deadline) {
-        if ((Get-Listeners -Port $Port).Count -eq 0) {
+        if (@(Get-Listeners -Port $Port).Count -eq 0) {
             return $true
         }
         Start-Sleep -Milliseconds 500
     }
-    return ((Get-Listeners -Port $Port).Count -eq 0)
+    return (@(Get-Listeners -Port $Port).Count -eq 0)
 }
 
 function Clear-RecognizedPort {
@@ -653,7 +682,7 @@ function Test-ServiceReady {
 
 function Get-ListenerPid {
     param([System.Collections.IDictionary] $Service)
-    $listeners = Get-Listeners -Port $Service.port
+    $listeners = @(Get-Listeners -Port $Service.port)
     if ($listeners.Count -eq 0) {
         return $null
     }

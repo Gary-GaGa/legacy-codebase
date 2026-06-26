@@ -79,3 +79,8 @@ __pycache__/
 .local-env/
 tools/local-env*.local.json
 *.pidfile
+
+# === Phase V 真實 API response dump（含真案號/DB 資料 → 不進 GitHub）===
+# 證據用去敏摘錄放卡內即可；原始 dump 屬本機證據、不版控（產品資料不外流）
+docs/verification/phase-v-api-selfverify-responses/
+docs/verification/**/*-response.json

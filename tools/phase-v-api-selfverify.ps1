@@ -1,8 +1,10 @@
 param(
-    [string]$ManifestPath = (Join-Path $PSScriptRoot '..\docs\build-tasks\phase-v-api-selfverify-manifest-v1.json'),
+    [string]$ManifestPath = (Join-Path $PSScriptRoot '..\docs\build-tasks\phase-v-api-selfverify-harness-v1.json'),
+    [string]$BaseUrl,
     [switch]$SkipDb,
     [switch]$ValidateOnly,
-    [string]$OutFile
+    [string]$OutFile,
+    [string]$ResponseDumpDir = (Join-Path $PSScriptRoot '..\docs\verification\phase-v-api-selfverify-responses')
 )
 
 Set-StrictMode -Version Latest
@@ -42,6 +44,78 @@ function ConvertFrom-JwtPayload {
 
     $json = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payload))
     return $json | ConvertFrom-Json
+}
+
+function Get-OptionalEnv {
+    param([Parameter(Mandatory = $true)][string]$Name)
+    $value = [Environment]::GetEnvironmentVariable($Name)
+    if ([string]::IsNullOrWhiteSpace($value)) {
+        return $null
+    }
+    return $value
+}
+
+function Get-RoleEnvSuffix {
+    param([Parameter(Mandatory = $true)][string]$Role)
+    return ([regex]::Replace($Role, '[^A-Za-z0-9]', '_')).ToUpperInvariant()
+}
+
+function New-ValidationJwtClaims {
+    return [pscustomobject]@{
+        roleId = 'placeholder'
+        empId = 'placeholder'
+        deptCode = 'placeholder'
+    }
+}
+
+function New-HarnessFailure {
+    param(
+        [ValidateSet('infra', 'auth', 'assertion')]
+        [string]$Category,
+        [string]$Status,
+        [string]$Detail
+    )
+
+    throw ("{0}:{1}:{2}" -f $Status, $Category, $Detail)
+}
+
+function ConvertTo-ResultStatus {
+    param([System.Management.Automation.ErrorRecord]$ErrorRecord)
+
+    $message = [string]$ErrorRecord.Exception.Message
+    if ($message -match '^(ENV_NOT_READY|AUTH_FAILED|FAIL):(infra|auth|assertion):(.*)$') {
+        return [pscustomobject]@{
+            status = $Matches[1]
+            category = $Matches[2]
+            detail = $Matches[3]
+        }
+    }
+
+    if ($message -match 'HTTP (401|403)\b' -or $message -match '"code"\s*:\s*"E40[1-9]"' -or $message -match '"code"\s*:\s*"E49[78]"') {
+        return [pscustomobject]@{ status = 'AUTH_FAILED'; category = 'auth'; detail = $message }
+    }
+    if ($message -match '(Failed to connect|Could not resolve|Connection refused|timed out|No connection|ORA-01017|ORA-12154|ORA-125|TNS:|SQL\*Plus)') {
+        return [pscustomobject]@{ status = 'ENV_NOT_READY'; category = 'infra'; detail = $message }
+    }
+
+    return [pscustomobject]@{ status = 'FAIL'; category = 'assertion'; detail = $message }
+}
+
+function Test-AuthErrorEnvelope {
+    param([AllowNull()][object]$Body)
+
+    $code = Get-JsonPathValue -Object $Body -Path 'code'
+    if ($null -eq $code) {
+        return $false
+    }
+    return ([string]$code -match '^E40[1-9]$|^E49[78]$')
+}
+
+function Test-InfraErrorEnvelope {
+    param([AllowNull()][object]$Body)
+
+    $code = Get-JsonPathValue -Object $Body -Path 'code'
+    return ($null -ne $code -and [string]$code -eq 'E998')
 }
 
 function Resolve-TokenValue {
@@ -181,6 +255,190 @@ function ConvertTo-QueryString {
     return ($pairs -join '&')
 }
 
+function Get-CaseRequiredRole {
+    param([object]$Case)
+
+    if ($null -ne $Case.auth -and $null -ne $Case.auth.PSObject.Properties['requiredRole']) {
+        return [string]$Case.auth.requiredRole
+    }
+    if ($null -ne $Case.PSObject.Properties['requiredRole']) {
+        return [string]$Case.requiredRole
+    }
+    return $null
+}
+
+function Invoke-RoleLogin {
+    param(
+        [string]$BaseUrl,
+        [string]$Role,
+        [string]$EmpId,
+        [object]$Manifest
+    )
+
+    $endpoint = '/epl-ut-login'
+    if ($null -ne $Manifest.auth -and $null -ne $Manifest.auth.PSObject.Properties['loginEndpoint']) {
+        $endpoint = [string]$Manifest.auth.loginEndpoint
+    }
+    $tokenPath = 'data.eproToken'
+    if ($null -ne $Manifest.auth -and $null -ne $Manifest.auth.PSObject.Properties['tokenPath']) {
+        $tokenPath = [string]$Manifest.auth.tokenPath
+    }
+
+    $url = $BaseUrl.TrimEnd('/') + '/' + $endpoint.TrimStart('/')
+    $bodyFile = New-TemporaryFile
+    $outFile = New-TemporaryFile
+    try {
+        $body = @{ empId = $EmpId } | ConvertTo-Json -Compress
+        [System.IO.File]::WriteAllText($bodyFile.FullName, $body, [System.Text.UTF8Encoding]::new($false))
+        $statusRaw = & curl.exe -sS -o $outFile.FullName -w '%{http_code}' -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' --data-binary "@$($bodyFile.FullName)" $url 2>&1
+        $curlExitCode = $LASTEXITCODE
+        $raw = Get-Content -Path $outFile.FullName -Raw -Encoding UTF8
+        if ($curlExitCode -ne 0) {
+            New-HarnessFailure -Category infra -Status ENV_NOT_READY -Detail "login curl failed for role $Role with exit $curlExitCode"
+        }
+
+        $status = [int]([string]$statusRaw).Trim()
+        $json = $null
+        if (![string]::IsNullOrWhiteSpace($raw)) {
+            $json = $raw | ConvertFrom-Json
+        }
+
+        if ($status -eq 401 -or $status -eq 403 -or (Test-AuthErrorEnvelope -Body $json)) {
+            New-HarnessFailure -Category auth -Status AUTH_FAILED -Detail "login failed for role $Role with HTTP $status"
+        }
+        if ($status -lt 200 -or $status -ge 300 -or (Test-InfraErrorEnvelope -Body $json)) {
+            New-HarnessFailure -Category infra -Status ENV_NOT_READY -Detail "login endpoint not serviceable for role $Role; HTTP $status"
+        }
+
+        $jwt = Get-JsonPathValue -Object $json -Path $tokenPath
+        if ([string]::IsNullOrWhiteSpace($jwt)) {
+            New-HarnessFailure -Category auth -Status AUTH_FAILED -Detail "login response missing token at $tokenPath for role $Role"
+        }
+
+        $claims = ConvertFrom-JwtPayload -Jwt $jwt
+        if ([string]$claims.roleId -ne $Role) {
+            New-HarnessFailure -Category auth -Status AUTH_FAILED -Detail "login token role mismatch for role $Role"
+        }
+
+        return $jwt
+    } finally {
+        Remove-Item -LiteralPath $bodyFile.FullName -Force -ErrorAction SilentlyContinue
+        Remove-Item -LiteralPath $outFile.FullName -Force -ErrorAction SilentlyContinue
+    }
+}
+
+function Get-RoleJwt {
+    param(
+        [AllowNull()][string]$Role,
+        [string]$BaseUrl,
+        [object]$Manifest,
+        [hashtable]$TokenCache
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Role)) {
+        $fallbackJwt = Get-OptionalEnv -Name 'PHASE_V_JWT'
+        if ($null -ne $fallbackJwt) {
+            return $fallbackJwt
+        }
+        New-HarnessFailure -Category auth -Status AUTH_FAILED -Detail 'case has no required role and PHASE_V_JWT is not set'
+    }
+
+    if ($TokenCache.ContainsKey($Role)) {
+        return $TokenCache[$Role]
+    }
+
+    $suffix = Get-RoleEnvSuffix -Role $Role
+    foreach ($name in @("PHASE_V_JWT_ROLE_$suffix", "PHASE_V_ROLE_${suffix}_JWT")) {
+        $jwt = Get-OptionalEnv -Name $name
+        if ($null -ne $jwt) {
+            $claims = ConvertFrom-JwtPayload -Jwt $jwt
+            if ([string]$claims.roleId -ne $Role) {
+                New-HarnessFailure -Category auth -Status AUTH_FAILED -Detail "env token $name role mismatch for role $Role"
+            }
+            $TokenCache[$Role] = $jwt
+            return $jwt
+        }
+    }
+
+    foreach ($name in @("PHASE_V_ROLE_${suffix}_EMP_ID", "PHASE_V_EMP_ID_ROLE_$suffix")) {
+        $empId = Get-OptionalEnv -Name $name
+        if ($null -ne $empId) {
+            $jwt = Invoke-RoleLogin -BaseUrl $BaseUrl -Role $Role -EmpId $empId -Manifest $Manifest
+            $TokenCache[$Role] = $jwt
+            return $jwt
+        }
+    }
+
+    New-HarnessFailure -Category auth -Status AUTH_FAILED -Detail "missing JWT or empId env for role $Role"
+}
+
+function Get-CaseContext {
+    param(
+        [object]$Case,
+        [object]$Manifest,
+        [string]$BaseUrl,
+        [hashtable]$TokenCache
+    )
+
+    $role = Get-CaseRequiredRole -Case $Case
+    $jwt = Get-RoleJwt -Role $role -BaseUrl $BaseUrl -Manifest $Manifest -TokenCache $TokenCache
+    return [ordered]@{
+        role = $role
+        jwt = (ConvertFrom-JwtPayload -Jwt $jwt)
+        jwtValue = $jwt
+    }
+}
+
+function Get-CaseFixtureSummary {
+    param(
+        [object]$Case,
+        [hashtable]$Context
+    )
+
+    try {
+        $resolvedParams = Resolve-TokenValue -Value $Case.params -Context $Context
+        $applicationNo = $null
+        if ($resolvedParams.contentType -eq 'query') {
+            $applicationNo = Get-JsonPathValue -Object $resolvedParams -Path 'query.applicationNo'
+        } elseif ($resolvedParams.contentType -eq 'json') {
+            $applicationNo = Get-JsonPathValue -Object $resolvedParams -Path 'body.applicationNo'
+        }
+        if ($null -eq $applicationNo -or [string]::IsNullOrWhiteSpace([string]$applicationNo)) {
+            return '-'
+        }
+        return [string]$applicationNo
+    } catch {
+        return '-'
+    }
+}
+
+function Write-ResponseDump {
+    param(
+        [object]$Case,
+        [AllowNull()][string]$Raw,
+        [AllowNull()][string]$DumpDir
+    )
+
+    if ([string]::IsNullOrWhiteSpace($DumpDir) -or [string]::IsNullOrWhiteSpace($Raw)) {
+        return $null
+    }
+
+    if (-not (Test-Path -LiteralPath $DumpDir)) {
+        New-Item -ItemType Directory -Force -Path $DumpDir | Out-Null
+    }
+
+    $safeId = ([regex]::Replace([string]$Case.id, '[^A-Za-z0-9_.-]', '_'))
+    $path = Join-Path $DumpDir ("{0}-response.json" -f $safeId)
+    $fullPath = [System.IO.Path]::GetFullPath($path)
+    [System.IO.File]::WriteAllText($fullPath, $Raw, [System.Text.UTF8Encoding]::new($false))
+
+    $repoRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..')).TrimEnd('\', '/')
+    if ($fullPath.StartsWith($repoRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+        return $fullPath.Substring($repoRoot.Length).TrimStart('\', '/')
+    }
+    return $fullPath
+}
+
 function Invoke-ApiCase {
     param(
         [object]$Case,
@@ -212,13 +470,17 @@ function Invoke-ApiCase {
         } elseif ($resolvedParams.contentType -eq 'json') {
             $bodyFile = New-TemporaryFile
             $jsonBody = $resolvedParams.body | ConvertTo-Json -Depth 20 -Compress
-            Set-Content -Path $bodyFile.FullName -Value $jsonBody -Encoding UTF8
+            [System.IO.File]::WriteAllText($bodyFile.FullName, $jsonBody, [System.Text.UTF8Encoding]::new($false))
             $args += @('-H', 'Content-Type: application/json', '--data-binary', "@$($bodyFile.FullName)")
         } else {
             throw "Unsupported contentType: $($resolvedParams.contentType)"
         }
 
-        $statusRaw = & curl.exe @args $url
+        $statusRaw = & curl.exe @args $url 2>&1
+        $curlExitCode = $LASTEXITCODE
+        if ($curlExitCode -ne 0) {
+            New-HarnessFailure -Category infra -Status ENV_NOT_READY -Detail "curl failed with exit $curlExitCode for $($Case.endpoint)"
+        }
         $status = [int]([string]$statusRaw).Trim()
         $raw = Get-Content -Path $outFile.FullName -Raw -Encoding UTF8
         $json = $null
@@ -226,12 +488,24 @@ function Invoke-ApiCase {
             $json = $raw | ConvertFrom-Json
         }
 
+        if ($status -eq 401 -or $status -eq 403 -or (Test-AuthErrorEnvelope -Body $json)) {
+            $snippet = ($raw -replace '\s+', ' ')
+            if ($snippet.Length -gt 240) {
+                $snippet = $snippet.Substring(0, 240)
+            }
+            New-HarnessFailure -Category auth -Status AUTH_FAILED -Detail "HTTP $status from $($Case.endpoint): $snippet"
+        }
+
+        if (Test-InfraErrorEnvelope -Body $json) {
+            New-HarnessFailure -Category infra -Status ENV_NOT_READY -Detail "$($Case.endpoint) returned E998"
+        }
+
         if ($status -lt 200 -or $status -ge 300) {
             $snippet = ($raw -replace '\s+', ' ')
             if ($snippet.Length -gt 240) {
                 $snippet = $snippet.Substring(0, 240)
             }
-            throw "HTTP $status from $($Case.endpoint): $snippet"
+            New-HarnessFailure -Category assertion -Status FAIL -Detail "HTTP $status from $($Case.endpoint): $snippet"
         }
 
         return [pscustomobject]@{
@@ -331,7 +605,7 @@ exit
 "@
 
     try {
-        Set-Content -Path $sqlFile.FullName -Value $content -Encoding UTF8
+        [System.IO.File]::WriteAllText($sqlFile.FullName, $content, [System.Text.UTF8Encoding]::new($false))
         $output = & $DbRunner "@$($sqlFile.FullName)" 2>&1
         $exitCode = $LASTEXITCODE
         $text = ($output | ForEach-Object { [string]$_ } | Where-Object { $_.Trim() -ne '' }) -join "`n"
@@ -383,22 +657,30 @@ function Add-Result {
     param(
         [System.Collections.Generic.List[object]]$Rows,
         [string]$Id,
+        [AllowNull()][string]$Role,
+        [AllowNull()][string]$Fixture,
         [string]$Endpoint,
         [string]$Zh,
         [string]$En,
         [string]$Db,
+        [string]$Category,
         [string]$Status,
-        [string]$Detail
+        [string]$Detail,
+        [AllowNull()][string]$DumpFile
     )
 
     $Rows.Add([pscustomobject]@{
         id = $Id
+        role = if ([string]::IsNullOrWhiteSpace($Role)) { '-' } else { $Role }
+        fixture = if ([string]::IsNullOrWhiteSpace($Fixture)) { '-' } else { $Fixture }
         endpoint = $Endpoint
         zh_TW = $Zh
         en_US = $En
         db = $Db
+        category = $Category
         status = $Status
         detail = $Detail
+        dump = if ([string]::IsNullOrWhiteSpace($DumpFile)) { '-' } else { $DumpFile }
     }) | Out-Null
 }
 
@@ -407,19 +689,24 @@ function Test-LangTypeCase {
         [object]$Case,
         [object]$Manifest,
         [string]$BaseUrl,
-        [string]$Jwt,
-        [hashtable]$BaseContext,
+        [object]$AuthContext,
         [string]$DbRunner,
         [switch]$SkipDb,
         [System.Collections.Generic.List[object]]$Rows
     )
 
+    $baseContext = @{
+        jwt = $AuthContext.jwt
+        langType = $null
+    }
+    $fixture = Get-CaseFixtureSummary -Case $Case -Context $baseContext
+
     try {
         $counts = @{}
         foreach ($langType in $Manifest.langTypes) {
-            $context = $BaseContext.Clone()
+            $context = $baseContext.Clone()
             $context.langType = [string]$langType
-            $api = Invoke-ApiCase -Case $Case -BaseUrl $BaseUrl -Jwt $Jwt -Context $context
+            $api = Invoke-ApiCase -Case $Case -BaseUrl $BaseUrl -Jwt $AuthContext.jwtValue -Context $context
             $counts[[string]$langType] = Get-ResponseCount -Body $api.Body -ResponseSpec $Case.response
         }
 
@@ -435,7 +722,7 @@ function Test-LangTypeCase {
         }
 
         if (!$SkipDb) {
-            $context = $BaseContext.Clone()
+            $context = $baseContext.Clone()
             $dbCount = Invoke-DbScalar -SqlSpec $Case.equiv_sql.sql -ParamsSpec $Case.equiv_sql.params -Context $context -DbRunner $DbRunner
             $dbText = [string]$dbCount
             if ($zh -ne $dbCount -or $en -ne $dbCount) {
@@ -448,9 +735,11 @@ function Test-LangTypeCase {
             $details += 'ok'
         }
 
-        Add-Result -Rows $Rows -Id $Case.id -Endpoint $Case.endpoint -Zh $zh -En $en -Db $dbText -Status $status -Detail ($details -join '; ')
+        $category = if ($status -eq 'PASS') { '-' } else { 'assertion' }
+        Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh $zh -En $en -Db $dbText -Category $category -Status $status -Detail ($details -join '; ') -DumpFile $null
     } catch {
-        Add-Result -Rows $Rows -Id $Case.id -Endpoint $Case.endpoint -Zh '-' -En '-' -Db '-' -Status 'FAIL' -Detail $_.Exception.Message
+        $result = ConvertTo-ResultStatus -ErrorRecord $_
+        Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db '-' -Category $result.category -Status $result.status -Detail $result.detail -DumpFile $null
     }
 }
 
@@ -458,26 +747,35 @@ function Test-RowEqualsCase {
     param(
         [object]$Case,
         [string]$BaseUrl,
-        [string]$Jwt,
-        [hashtable]$BaseContext,
+        [object]$AuthContext,
         [string]$DbRunner,
         [switch]$SkipDb,
         [System.Collections.Generic.List[object]]$Rows
     )
 
+    $baseContext = @{
+        jwt = $AuthContext.jwt
+        langType = $null
+    }
+    $fixture = Get-CaseFixtureSummary -Case $Case -Context $baseContext
+    $dumpFile = $null
+
     try {
-        $api = Invoke-ApiCase -Case $Case -BaseUrl $BaseUrl -Jwt $Jwt -Context $BaseContext
+        $api = Invoke-ApiCase -Case $Case -BaseUrl $BaseUrl -Jwt $AuthContext.jwtValue -Context $baseContext
+        if ($Case.assert.PSObject.Properties['dumpResponse'] -and [bool]$Case.assert.dumpResponse) {
+            $dumpFile = Write-ResponseDump -Case $Case -Raw $api.Raw -DumpDir $ResponseDumpDir
+        }
         $apiData = Get-JsonPathValue -Object $api.Body -Path $Case.response.dataPath
         if ($null -eq $apiData) {
             throw "Response dataPath returned null: $($Case.response.dataPath)"
         }
 
         if ($SkipDb) {
-            Add-Result -Rows $Rows -Id $Case.id -Endpoint $Case.endpoint -Zh '-' -En '-' -Db 'SKIP' -Status 'PASS' -Detail 'API 2xx; DB skipped'
+            Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db 'SKIP' -Category '-' -Status 'PASS' -Detail 'API 2xx; DB skipped' -DumpFile $dumpFile
             return
         }
 
-        $dbRow = Invoke-DbJsonRow -SqlSpec $Case.equiv_sql.sql -ParamsSpec $Case.equiv_sql.params -Context $BaseContext -DbRunner $DbRunner
+        $dbRow = Invoke-DbJsonRow -SqlSpec $Case.equiv_sql.sql -ParamsSpec $Case.equiv_sql.params -Context $baseContext -DbRunner $DbRunner
         $diffs = @()
         foreach ($field in $Case.assert.fields) {
             $apiValue = Get-JsonPathValue -Object $apiData -Path $field
@@ -490,12 +788,13 @@ function Test-RowEqualsCase {
         }
 
         if ($diffs.Count -gt 0) {
-            Add-Result -Rows $Rows -Id $Case.id -Endpoint $Case.endpoint -Zh '-' -En '-' -Db 'row' -Status 'FAIL' -Detail ($diffs -join '; ')
+            Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db 'row' -Category 'assertion' -Status 'FAIL' -Detail ($diffs -join '; ') -DumpFile $dumpFile
         } else {
-            Add-Result -Rows $Rows -Id $Case.id -Endpoint $Case.endpoint -Zh '-' -En '-' -Db 'row' -Status 'PASS' -Detail 'API fields match DB row'
+            Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db 'row' -Category '-' -Status 'PASS' -Detail 'API fields match DB row' -DumpFile $dumpFile
         }
     } catch {
-        Add-Result -Rows $Rows -Id $Case.id -Endpoint $Case.endpoint -Zh '-' -En '-' -Db '-' -Status 'FAIL' -Detail $_.Exception.Message
+        $result = ConvertTo-ResultStatus -ErrorRecord $_
+        Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db '-' -Category $result.category -Status $result.status -Detail $result.detail -DumpFile $dumpFile
     }
 }
 
@@ -521,15 +820,34 @@ function Test-EmptyAndOptionsCase {
     param(
         [object]$Case,
         [string]$BaseUrl,
-        [string]$Jwt,
-        [hashtable]$BaseContext,
+        [object]$AuthContext,
         [string]$DbRunner,
         [switch]$SkipDb,
         [System.Collections.Generic.List[object]]$Rows
     )
 
+    $baseContext = @{
+        jwt = $AuthContext.jwt
+        langType = $null
+    }
+    $fixture = Get-CaseFixtureSummary -Case $Case -Context $baseContext
+    $dumpFile = $null
+
     try {
-        $api = Invoke-ApiCase -Case $Case -BaseUrl $BaseUrl -Jwt $Jwt -Context $BaseContext
+        $api = Invoke-ApiCase -Case $Case -BaseUrl $BaseUrl -Jwt $AuthContext.jwtValue -Context $baseContext
+        if ($Case.assert.PSObject.Properties['dumpResponse'] -and [bool]$Case.assert.dumpResponse) {
+            $dumpFile = Write-ResponseDump -Case $Case -Raw $api.Raw -DumpDir $ResponseDumpDir
+        }
+
+        $bodyCode = Get-JsonPathValue -Object $api.Body -Path 'code'
+        if ($null -ne $bodyCode -and [string]$bodyCode -ne '0000') {
+            $bodyMessage = Get-JsonPathValue -Object $api.Body -Path 'message'
+            if ([string]$bodyCode -eq 'E116' -or [string]$bodyMessage -match 'MSG_DATA_NOT_FOUND|Data not found') {
+                Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db '-' -Category 'assertion' -Status 'FAIL' -Detail "fixture returned data-not-found envelope; choose a valid case with no TB_REVISED_ITEM row" -DumpFile $dumpFile
+                return
+            }
+        }
+
         $apiData = Get-JsonPathValue -Object $api.Body -Path $Case.response.dataPath
         if ($null -eq $apiData) {
             throw "Response dataPath returned null: $($Case.response.dataPath)"
@@ -545,8 +863,8 @@ function Test-EmptyAndOptionsCase {
 
         $dbText = 'SKIP'
         if (!$SkipDb) {
-            $rowCount = Invoke-DbScalar -SqlSpec $Case.equiv_sql.row_count_sql -ParamsSpec $Case.equiv_sql.params -Context $BaseContext -DbRunner $DbRunner
-            $optionCount = Invoke-DbScalar -SqlSpec $Case.equiv_sql.option_count_sql -ParamsSpec $Case.equiv_sql.params -Context $BaseContext -DbRunner $DbRunner
+            $rowCount = Invoke-DbScalar -SqlSpec $Case.equiv_sql.row_count_sql -ParamsSpec $Case.equiv_sql.params -Context $baseContext -DbRunner $DbRunner
+            $optionCount = Invoke-DbScalar -SqlSpec $Case.equiv_sql.option_count_sql -ParamsSpec $Case.equiv_sql.params -Context $baseContext -DbRunner $DbRunner
             $dbText = "row=$rowCount options=$optionCount"
             if ($rowCount -ne 0) {
                 $issues += "TB_REVISED_ITEM count is $rowCount, expected 0"
@@ -555,7 +873,7 @@ function Test-EmptyAndOptionsCase {
             $optionValue = Get-JsonPathValue -Object $apiData -Path $Case.assert.optionPath
             $apiOptionCount = Get-ObjectMemberCount -Value $optionValue
             if ($null -eq $apiOptionCount) {
-                $issues += "response missing $($Case.assert.optionPath)"
+                $issues += "data envelope missing required $($Case.assert.optionPath) per EPROZ00800 QueryRevisedItemResponse"
             } elseif ($apiOptionCount -ne $optionCount) {
                 $issues += "option count api=$apiOptionCount db=$optionCount"
             }
@@ -567,12 +885,13 @@ function Test-EmptyAndOptionsCase {
         }
 
         if ($issues.Count -gt 0) {
-            Add-Result -Rows $Rows -Id $Case.id -Endpoint $Case.endpoint -Zh '-' -En '-' -Db $dbText -Status 'FAIL' -Detail ($issues -join '; ')
+            Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db $dbText -Category 'assertion' -Status 'FAIL' -Detail ($issues -join '; ') -DumpFile $dumpFile
         } else {
-            Add-Result -Rows $Rows -Id $Case.id -Endpoint $Case.endpoint -Zh '-' -En '-' -Db $dbText -Status 'PASS' -Detail 'empty item fields and option count match'
+            Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db $dbText -Category '-' -Status 'PASS' -Detail 'empty item fields and option count match' -DumpFile $dumpFile
         }
     } catch {
-        Add-Result -Rows $Rows -Id $Case.id -Endpoint $Case.endpoint -Zh '-' -En '-' -Db '-' -Status 'FAIL' -Detail $_.Exception.Message
+        $result = ConvertTo-ResultStatus -ErrorRecord $_
+        Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db '-' -Category $result.category -Status $result.status -Detail $result.detail -DumpFile $dumpFile
     }
 }
 
@@ -580,11 +899,13 @@ function ConvertTo-MarkdownTable {
     param([System.Collections.Generic.List[object]]$Rows)
 
     $lines = New-Object System.Collections.Generic.List[string]
-    $lines.Add('| id | endpoint | zh_TW | en_US | db | status | detail |') | Out-Null
-    $lines.Add('|---|---|---:|---:|---:|---|---|') | Out-Null
+    $lines.Add('| id | role | fixture | endpoint | zh_TW | en_US | db | category | status | detail | dump |') | Out-Null
+    $lines.Add('|---|---:|---|---|---:|---:|---:|---|---|---|---|') | Out-Null
     foreach ($row in $Rows) {
         $detail = ([string]$row.detail).Replace('|', '\|').Replace("`r", ' ').Replace("`n", ' ')
-        $lines.Add("| $($row.id) | $($row.endpoint) | $($row.zh_TW) | $($row.en_US) | $($row.db) | $($row.status) | $detail |") | Out-Null
+        $dump = ([string]$row.dump).Replace('|', '\|').Replace("`r", ' ').Replace("`n", ' ')
+        $fixture = ([string]$row.fixture).Replace('|', '\|').Replace("`r", ' ').Replace("`n", ' ')
+        $lines.Add("| $($row.id) | $($row.role) | $fixture | $($row.endpoint) | $($row.zh_TW) | $($row.en_US) | $($row.db) | $($row.category) | $($row.status) | $detail | $dump |") | Out-Null
     }
     return ($lines -join [Environment]::NewLine)
 }
@@ -630,48 +951,63 @@ function Test-ManifestOnly {
     "manifest validation ok: $($Manifest.cases.Count) cases"
 }
 
-$manifest = Get-Content -Path $ManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
-$jwt = Resolve-TokenValue -Value $manifest.jwt -Context @{ jwt = $null; langType = $null }
-$jwtClaims = ConvertFrom-JwtPayload -Jwt $jwt
-$baseContext = @{
-    jwt = $jwtClaims
+$manifestPathFull = [System.IO.Path]::GetFullPath($ManifestPath)
+$manifest = Get-Content -Path $manifestPathFull -Raw -Encoding UTF8 | ConvertFrom-Json
+$validationContext = @{
+    jwt = New-ValidationJwtClaims
     langType = $null
 }
-$baseUrl = Resolve-TokenValue -Value $manifest.baseUrl -Context $baseContext
+$baseUrl = if (![string]::IsNullOrWhiteSpace($BaseUrl)) { $BaseUrl } else { Resolve-TokenValue -Value $manifest.baseUrl -Context $validationContext }
 $dbRunner = $null
 if (!$SkipDb -and !$ValidateOnly) {
-    $dbRunner = Resolve-TokenValue -Value $manifest.dbRunner -Context $baseContext
+    $dbRunner = Resolve-TokenValue -Value $manifest.dbRunner -Context $validationContext
 }
 
 if ($ValidateOnly) {
-    Test-ManifestOnly -Manifest $manifest -BaseContext $baseContext
+    Test-ManifestOnly -Manifest $manifest -BaseContext $validationContext
     exit 0
 }
 
 $results = New-Object 'System.Collections.Generic.List[object]'
+$tokenCache = @{}
 foreach ($case in $manifest.cases) {
+    $authContext = $null
+    try {
+        $authContext = Get-CaseContext -Case $case -Manifest $manifest -BaseUrl $baseUrl -TokenCache $tokenCache
+    } catch {
+        $result = ConvertTo-ResultStatus -ErrorRecord $_
+        Add-Result -Rows $results -Id $case.id -Role (Get-CaseRequiredRole -Case $case) -Fixture '-' -Endpoint $case.endpoint -Zh '-' -En '-' -Db '-' -Category $result.category -Status $result.status -Detail $result.detail -DumpFile $null
+        continue
+    }
+
     switch ([string]$case.assert.kind) {
         'langtype_count' {
-            Test-LangTypeCase -Case $case -Manifest $manifest -BaseUrl $baseUrl -Jwt $jwt -BaseContext $baseContext -DbRunner $dbRunner -SkipDb:$SkipDb -Rows $results
+            Test-LangTypeCase -Case $case -Manifest $manifest -BaseUrl $baseUrl -AuthContext $authContext -DbRunner $dbRunner -SkipDb:$SkipDb -Rows $results
         }
         'row_equals' {
-            Test-RowEqualsCase -Case $case -BaseUrl $baseUrl -Jwt $jwt -BaseContext $baseContext -DbRunner $dbRunner -SkipDb:$SkipDb -Rows $results
+            Test-RowEqualsCase -Case $case -BaseUrl $baseUrl -AuthContext $authContext -DbRunner $dbRunner -SkipDb:$SkipDb -Rows $results
         }
         'empty_and_options' {
-            Test-EmptyAndOptionsCase -Case $case -BaseUrl $baseUrl -Jwt $jwt -BaseContext $baseContext -DbRunner $dbRunner -SkipDb:$SkipDb -Rows $results
+            Test-EmptyAndOptionsCase -Case $case -BaseUrl $baseUrl -AuthContext $authContext -DbRunner $dbRunner -SkipDb:$SkipDb -Rows $results
         }
         default {
-            Add-Result -Rows $results -Id $case.id -Endpoint $case.endpoint -Zh '-' -En '-' -Db '-' -Status 'FAIL' -Detail "Unsupported assert kind: $($case.assert.kind)"
+            Add-Result -Rows $results -Id $case.id -Role $authContext.role -Fixture '-' -Endpoint $case.endpoint -Zh '-' -En '-' -Db '-' -Category 'assertion' -Status 'FAIL' -Detail "Unsupported assert kind: $($case.assert.kind)" -DumpFile $null
         }
     }
 }
 
 $table = ConvertTo-MarkdownTable -Rows $results
 if (![string]::IsNullOrWhiteSpace($OutFile)) {
-    Set-Content -Path $OutFile -Value $table -Encoding UTF8
+    [System.IO.File]::WriteAllText([System.IO.Path]::GetFullPath($OutFile), $table + [Environment]::NewLine, [System.Text.UTF8Encoding]::new($false))
 }
 $table
 
+if (@($results | Where-Object { $_.status -eq 'ENV_NOT_READY' }).Count -gt 0) {
+    exit 3
+}
+if (@($results | Where-Object { $_.status -eq 'AUTH_FAILED' }).Count -gt 0) {
+    exit 2
+}
 if (@($results | Where-Object { $_.status -eq 'FAIL' }).Count -gt 0) {
     exit 1
 }
