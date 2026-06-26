@@ -811,7 +811,7 @@ function Get-ObjectMemberCount {
         return $Value.Count
     }
     if ($Value -is [pscustomobject]) {
-        return $Value.PSObject.Properties.Count
+        return @($Value.PSObject.Properties).Count
     }
     return 1
 }
