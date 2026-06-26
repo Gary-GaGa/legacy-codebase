@@ -24,6 +24,7 @@
 ## 2. Bring-up 順序
 
 ### 2.0 Bring-up 強健性鐵則（防「起不來/卡死/上次沒關停擺」——每次起服務前後必遵）
+> **元件化（owner 定）**：下列鐵則抽成**獨立 env manager 元件**（`tools/phase-v-env.ps1` up/down/status），**與自驗 harness/測試解耦**——契約見 **`phase-v-env-manager.md`**。本節＝該元件的鐵則來源；harness 改為「消費已起好的環境」（拿 `BaseUrl`、不起停）。
 > 已知兩大坑：① **埠殘留**——上次 BE/FE 沒 teardown，5500/4200 被佔 → 本次 bind 失敗、整個停擺；② **起服務卡住**——前景長程序或等不到 ready 卻無逾時 → 卡死 turn。對策：
 
 1. **Pre-flight 埠清場（起服務前必做、idempotent）**：先掃並清掉 5500(BE)/4200(FE) 殘留 listener + 舊 pidfile，**才**起新服務。

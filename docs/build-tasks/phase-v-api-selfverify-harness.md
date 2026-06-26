@@ -3,6 +3,7 @@
 > **性質**：runtime 層自動驗證——人起服務後，跑一支 harness 打活的 `epl-*` + 斷言，出 PASS/FAIL。**與既有兩層互補**：`qa-to-test.md` Testcontainers＝**單元層**（隔離 DB）；`verification-execution.md`＝**唯讀碼/語意比對**；本卡＝**真的跑 endpoint 對真 OVSLXLON02**（找「跑不跑得動 / API 是否忠實反映 DB」，RV-1/RV-2 那層）。
 > **載具**：harness 由 AI 產（腳本/manifest + 斷言，來源＝各頁 `qa-cases.md`）；**執行在你機器/母資料夾**（Codex 或你跑——同 localhost）。⚠️ **規劃 repo 的 agent（remote）打不到你本機 localhost**，故只產不跑。
 > **長程序鐵則不變**：起服務（`spring-boot:run`/`ng serve`）仍人/腳本（`local-phase-v-bringup.md`）；本 harness ＝**啟動後的短命呼叫**（curl + 唯讀 SELECT），不持有程序 → 可自動連跑。
+> **與生命週期解耦（owner 定）**：起停服務抽成獨立 **env manager**（`phase-v-env-manager.md`、`tools/phase-v-env.ps1`）；本 harness **不起停**、只吃 `-BaseUrl`（讀 env descriptor `be.url`）跑斷言；打不到→回 `ENV_NOT_READY`（**與 test FAIL 區分**）。組合靠 `tools/phase-v-run.ps1`（env up→login→harness→finally down）。
 
 ## v1 範圍：唯讀「API ↔ DB 一致性」自驗（零寫入、零護欄負擔）
 > 核心斷言：**read/list/init-query endpoint 的回應，應與等價唯讀 SQL 結果一致**（筆數/關鍵欄）。不一致＝FAIL——**RV-2 正是此類**（TODO init-query 回 0、DB 應有資料；修後筆數一致 `zh_TW`=`en_US`=**91**，見 `phase-v-harness-manifest-v1.md` LT-1）。**全程唯讀**（唯讀帳號 SELECT + GET/查詢呼叫），不寫 DB → **不需測試案件號段/teardown/快照**。
