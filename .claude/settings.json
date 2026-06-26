@@ -17,16 +17,16 @@
       "Read(**/secrets/**)"
     ]
   },
-  "_comment_hooks": "Stop hook：session 結束自動跑 SRS 機械閘門（scripts/check-srs-bundle.py --all；涵蓋範圍見腳本檔頭，勿在此複寫），對等 Codex docs/env/codex/hooks.json。非阻斷（wrapper 恆 exit 0）：PASS 印一行、FAIL 用 systemMessage 顯示完整違反清單。",
+  "_comment_hooks": "Stop hook：本 repo＝治理/方法論 canon（specs 自 Model A 移母資料夾 Codex 擁；SRS 機械閘 check-srs-bundle + spec-reviewer 改在母資料夾跑，見 docs/env/codex/hooks.json）→ 本 hook 改驗本 repo 仍擁有的 parity gate（prompt-parity playbook↔drain、dualtrack-parity CLAUDE↔AGENTS）。非阻斷（wrapper 恆 exit 0）。",
   "hooks": {
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -c \"import subprocess,json; r=subprocess.run(['python3','scripts/check-srs-bundle.py','--all'],capture_output=True,text=True); ok=r.returncode==0; print(json.dumps({'systemMessage': ('SRS 機械閘門：PASS ✓（語意層另跑 spec-reviewer）' if ok else r.stdout+r.stderr)}))\"",
+            "command": "python3 -c \"import subprocess,json; rs=[subprocess.run(['python3',s],capture_output=True,text=True) for s in ['scripts/check-prompt-parity.py','scripts/check-dualtrack-parity.py']]; ok=all(r.returncode==0 for r in rs); print(json.dumps({'systemMessage': ('parity gate：PASS \\u2713（prompt+dualtrack；SRS 機械閘已移母資料夾 Codex hooks）' if ok else '\\n'.join(r.stdout+r.stderr for r in rs))}))\"",
             "timeout": 30,
-            "statusMessage": "SRS 機械閘門"
+            "statusMessage": "parity gate"
           }
         ]
       }

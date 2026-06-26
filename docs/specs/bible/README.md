@@ -1,5 +1,7 @@
 # `specs/bible/` — 業務聖經（Bible）
 
+> 🧭 **Model A（2026-06-26）**：Bible 內容（`bible-eproposal.md`）**已移母資料夾、Codex 擁**；本 repo 僅留本導覽。
+
 > flow 第 ① 層：從 Legacy **反推**業務知識（EPRO Expert + AI），讓團隊不分角色一致理解業務。
 > 內容＝**北極星、黃金旅程、user story**；鐵律＝**證據接地**（每個主張引 legacy `file:line` / 表名，AI 反推最易 confabulate 的一層）。
 
