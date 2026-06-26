@@ -1,9 +1,9 @@
-| id | endpoint | zh_TW | en_US | db | status | detail |
-|---|---|---:|---:|---:|---|---|
-| LT-1 | /epl-list-todolist | 0 | 0 | 0 | PASS | ok |
-| LT-2 | /epl-list-casedistribution | 5 | 5 | 5 | PASS | ok |
-| LT-3 | /epl-list-caseapplication | - | - | - | FAIL | HTTP 401 from /epl-list-caseapplication: {"code":"E405","message":"Access denied: You do not have permission to access this resource.","data":{}} |
-| LT-4 | /epl-list-deviation | - | - | - | FAIL | HTTP 401 from /epl-list-deviation: {"code":"E405","message":"Access denied: You do not have permission to access this resource.","data":{}} |
-| LT-5 | /epl-list-cancelreport | - | - | - | FAIL | HTTP 401 from /epl-list-cancelreport: {"code":"E405","message":"Access denied: You do not have permission to access this resource.","data":{}} |
-| RI-1 | /epl-case-query-reviseditem | - | - | - | FAIL | Invalid JSON primitive: SP2-0734. |
-| RI-2 | /epl-case-query-reviseditem | - | - | row=0 options=9 | FAIL | response missing revisedType |
+| id | role | fixture | endpoint | zh_TW | en_US | db | category | status | detail | dump |
+|---|---:|---|---|---:|---:|---:|---|---|---|---|
+| LT-1 | 101 | - | /epl-list-todolist | 1 | 1 | 1 | - | PASS | ok | - |
+| LT-2 | 405 | - | /epl-list-casedistribution | 5 | 5 | 5 | - | PASS | ok | - |
+| LT-3 | 403 | - | /epl-list-caseapplication | 0 | 0 | 0 | - | PASS | ok | - |
+| LT-4 | 403 | - | /epl-list-deviation | 293 | 293 | 293 | - | PASS | ok | - |
+| LT-5 | 403 | - | /epl-list-cancelreport | 10 | 10 | 10 | - | PASS | ok | - |
+| RI-1 | 403 | 00011A01202005IS030009 | /epl-case-query-reviseditem | - | - | row | - | PASS | API fields match DB row | - |
+| RI-2 | 403 | 00011009201901010001 | /epl-case-query-reviseditem | - | - | row=0 options=9 | assertion | FAIL | data envelope missing required revisedType per EPROZ00800 QueryRevisedItemResponse | docs\verification\phase-v-api-selfverify-responses\RI-2-response.json |

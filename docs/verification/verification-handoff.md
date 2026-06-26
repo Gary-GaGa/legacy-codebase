@@ -140,27 +140,25 @@
 - **🔧 #3 `epl-case-query-reviseditem`（`RevisedItemController:38`）= 00800 init-query → RP9 ✅ 關（06-16 RD/架構：GET，Follow PRD §6.1）**：解鎖。修向＝**GET query 同 00600**（BE `@RequestBody`→`@ModelAttribute` applicationNo、FE 改 GET query）。**可派工**（get-body sweep 卡 #3）。
 - 00600 已修為樣板（不算候選）。
 
-### 6.3 Phase V API 自驗 harness v1（2026-06-25 executed；PARTIAL_PASS_FAIL）
-> 範圍：唯讀短命呼叫；依 `build-tasks/local-phase-v-bringup.md` 背景啟 BE/FE，完成後 teardown。腳本只輸出 PASS/FAIL，不自動改碼；FAIL 項已開 runtime-bug 卡：`docs/build-tasks/phase-v-api-selfverify-runtime-bugs.md`。
+### 6.3 Phase V API 自驗 harness v1.1（2026-06-26 executed；RI-2_CONTRACT_GAP）
+> 範圍：唯讀短命呼叫；`tools/phase-v-run.ps1` 依 `local-env` 起 BE/FE、讀 descriptor `services.be.url`、serviceability smoke、per-case role login、跑 harness，finally down。腳本只輸出三分類 PASS/FAIL，不自動改產品碼；RI-2 已開 RD 契約缺口卡：`docs/build-tasks/phase-v-ri2-query-reviseditem-contract-gap.md`。
 
-- Build/bring-up：`mvn clean package "-Dmaven.test.skip=true"` ✅；Node `16.20.2` + `yarn install --frozen-lockfile` ✅；`yarn ng build` ✅（既有 bundle budget/CUB selector warnings only）；BE 5500 ready、FE 4200 ready；結束已 kill BE/FE PID，無 5500/4200 listener。
-- Runnable manifest：實際檔案為 `docs/build-tasks/phase-v-api-selfverify-harness-v1.json`；既有 handoff/ps1 default 指到不存在的 `docs/build-tasks/phase-v-api-selfverify-manifest-v1.json`（runtime-bug RB-1）。
-- Harness：`tools/phase-v-api-selfverify.ps1`
-- 執行形狀：
-  `.\tools\phase-v-api-selfverify.ps1 -ManifestPath docs\build-tasks\phase-v-api-selfverify-harness-v1.json -OutFile docs\verification\phase-v-api-selfverify-report.md`
-- 實跑 reports：`docs/verification/phase-v-api-selfverify-report.md`、`docs/verification/phase-v-api-selfverify-report-role403.md`、`docs/verification/phase-v-api-selfverify-report-role101.md`
-- 必要環境變數：本次 JWT 由 open `/epl-ut-login` 對既有 `TB_EMP_PROFILE` role 產生；`PHASE_V_DB_RUNNER` 使用既有 read-only runner；RI fixture 以 SELECT-only 查得；帳密/JWT 未寫入 repo。
-- 授權限制：`TB_API_AUTH` 目前無單一 role 同時覆蓋 v1 全部 endpoint；role 分片可驗 LT cases，但單一 `PHASE_V_JWT` 跑完整 manifest 必然 FAIL（runtime-bug RB-2）。
+- Runner：`tools/phase-v-run.ps1 -SkipBuild`（本次 `mvn clean` 重跑遇 Windows file lock：`ValidationUtilsTest.class` 無法刪除；產品碼未改，沿用既有 build artifact 啟動 runtime）。
+- Harness：`tools/phase-v-api-selfverify.ps1`；預設 manifest 已改為 `docs/build-tasks/phase-v-api-selfverify-harness-v1.json`，並支援 `-BaseUrl` / per-case role / `ENV_NOT_READY`、`AUTH_FAILED`、assertion `FAIL` 三分類。
+- Serviceability smoke：PASS，`/epl-list-casedistribution` 回 HTTP 200 + `code=0000`，確認不只是 `/actuator/info` liveness。
+- 實跑 report：`docs/verification/phase-v-api-selfverify-report.md`；RI-2 response dump：`docs/verification/phase-v-api-selfverify-responses/RI-2-response.json`。
+- 必要環境變數：JWT 由 open `/epl-ut-login` 對既有 `TB_EMP_PROFILE` role 產生；`PHASE_V_DB_RUNNER` 使用既有 read-only runner；RI fixture 以 SELECT-only 查得；帳密/JWT 未寫入 repo。
+- Teardown：runner finally `local-env down` 成功，down 後無 5500/4200 listener。
 
-| id | endpoint | 主守門 | 次守門 | 狀態 |
-|---|---|---|---|---|
-| LT-1 | `/epl-list-todolist` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS under authorized role split (`1=1=1`; also `0=0=0` under role 405) |
-| LT-2 | `/epl-list-casedistribution` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS (`5=5=5` under role 405; zero-result roles also matched) |
-| LT-3 | `/epl-list-caseapplication` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS under authorized role split (`0=0=0`); single manifest JWT can 401 depending role |
-| LT-4 | `/epl-list-deviation` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS (`293=293=293`) |
-| LT-5 | `/epl-list-cancelreport` | `zh_TW` count = `en_US` count | response count = equiv SQL count | PASS (`10=10=10`) |
-| RI-1 | `/epl-case-query-reviseditem` | API `ITEM1`-`ITEM14`/`reasonMemo` = DB row | GET query by `applicationNo` | FAIL：Windows PowerShell `Set-Content -Encoding UTF8` writes BOM; SQLPlus emits `SP2-0734`, harness parses DB JSON as invalid primitive |
-| RI-2 | `/epl-case-query-reviseditem` | no `TB_REVISED_ITEM` row returns empty item fields | `revisedType` count = option SQL count | FAIL：API response missing `revisedType`; DB option count `9`。**獨立複驗升級＝疑真契約缺口**（現行 `EPROZ00800/openapi.yaml` 將 `revisedType` 列 required）→ 待 harness dump 完整 response + 確認 fixture 為「有 case、無 revised-item」才定真假（見 runtime-bug RB-4）|
+| id | role | fixture | endpoint | 守門 | 狀態 |
+|---|---:|---|---|---|---|
+| LT-1 | 101 | - | `/epl-list-todolist` | `zh_TW=1`、`en_US=1`、DB `1` | PASS |
+| LT-2 | 405 | - | `/epl-list-casedistribution` | `zh_TW=5`、`en_US=5`、DB `5` | PASS |
+| LT-3 | 403 | - | `/epl-list-caseapplication` | `zh_TW=0`、`en_US=0`、DB `0` | PASS |
+| LT-4 | 403 | - | `/epl-list-deviation` | `zh_TW=293`、`en_US=293`、DB `293` | PASS |
+| LT-5 | 403 | - | `/epl-list-cancelreport` | `zh_TW=10`、`en_US=10`、DB `10` | PASS |
+| RI-1 | 403 | `00011A01202005IS030009` | `/epl-case-query-reviseditem` | API `item1`-`item14`/`reasonMemo` = DB row | PASS |
+| RI-2 | 403 | `00011009201901010001` | `/epl-case-query-reviseditem` | 有 case、無 `TB_REVISED_ITEM` row；option SQL count `9`；response data envelope 缺 openapi required `revisedType/revisedTypeSize` | assertion FAIL → RD contract card |
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`），不影響「程式補完」里程碑。
