@@ -1,6 +1,6 @@
 # `docs/specs/` — 規格 pipeline（依 flow 分層）
 
-> 🧭 **Model A**：Bible/PRD/SRS **bundle 本體已移母資料夾、Codex 擁/產/驗**；本 repo 留**範本/README/方法論**（`srs/spec-template.md`/`digest-template.md`、機械閘腳本 `scripts/`）。內容需複查時臨時拉特定 bundle。
+> 🧭 spec 本體在母資料夾（Model A，見 `../../CLAUDE.md`）；本 repo 只留範本/README/腳本。
 
 > 資料夾結構＝AI flow 的精煉層級（`assets/ai-workflow.mmd`）。每層一個資料夾、**由上往下讀就是流程**：
 > 方法論（三軸、行為 vs 長相、強制點）見 [`../spec-architecture.md`](../spec-architecture.md)。
@@ -20,6 +20,6 @@ docs/specs/
 | ③ SRS | `srs/<funcId>/` | `/prd-to-srs`（Claude skill ∥ Codex prompt） | **機械 `check-srs-bundle.py`（涵蓋見腳本檔頭）+ `spec-reviewer` 語意（＝N 軸 axis A，全軸見 `../process/orchestration-playbook.md §4b`）** | RD 任務單 `../build-tasks/` |
 
 - **追溯骨幹**：funcId 串 ①→②→③→code；`Rn` 標 `covers-prd:`。〔原 ③→QA→code 一跳隨 QA 暫拔除〕
-- ~~**QA → 可跑測試**（gate④ 橋接）：[`qa-to-test.md`](qa-to-test.md)~~——**隨 QA 產生/驗收暫拔除休眠**。
+- ~~QA → 可跑測試（gate④ 橋接）~~——QA 暫拔休眠，原 `qa-to-test.md` 已刪、見 git history。
 - **RD 階段不在此**：任務單在 [`../build-tasks/`](../build-tasks/)（live ↔ `done/`），產品碼在 repo 外。
 - **設計規格（UI/UX）不在此**：Adobe XD（repo 外），慣例見 `frontend/AGENTS.md §5` —— 行為進 SRS、長相留 XD。

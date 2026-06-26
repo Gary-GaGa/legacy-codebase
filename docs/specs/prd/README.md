@@ -1,6 +1,6 @@
 # `specs/prd/` — 產品需求（PRD）
 
-> 🧭 **Model A**：PRD 快照 + trace **已移母資料夾、Codex 擁**（PRD 本即外部 CDC-EPRO 權威）；本 repo 僅留本導覽。
+> 🧭 PRD 快照在母資料夾（Model A，見 `../../../CLAUDE.md`）；本 repo 只留本導覽。
 
 > flow 第 ② 層：PM/PO + AI 寫 **what / why**（REQ-nnn、業務規則、TBD）。
 > ⚠️ **權威版在 repo 外**（公司文管，如 `CDC-EPRO-0001`）；**工作快照在母資料夾**（Model A、Codex 擁、gitignored local）——`/prd-to-srs`/`spec-reviewer`/追溯檢查在母資料夾讀。本 repo 不留 PRD 快照本體（下列放置規則＝Codex 在母資料夾遵循的慣例）。

@@ -2,7 +2,7 @@
 
 > **這份是什麼**：把 AI-native SDLC pipeline（Legacy→Bible→PRD→SRS→RD→DoD 閘門；**QA 產生/驗收暫拔除**，見 §L2 註）串成**一條由淺入深的閱讀線**，給新進團隊冷讀、也給單兵交接用。
 > **這份不是什麼**：它**不是新權威**。flow 的權威密圖＝[`assets/ai-workflow.mmd`](assets/ai-workflow.mmd)；方法論權威＝[`spec-architecture.md`](spec-architecture.md)、[`process/orchestration-playbook.md`](process/orchestration-playbook.md)；逐頁狀態權威＝[`feature-inventory.md`](feature-inventory.md)。本檔只做**敘事＋導引**，細節一律連回原檔（守本 repo 的 single-source-of-truth 紀律）。
-> 🧭 **Model A**：Bible/PRD/SRS bundle 本體在**母資料夾 local**（Codex 擁，不在本 repo）；本檔範例若指 `specs/srs|bible/...` 皆指母資料夾。coverage SSOT＝`build-tasks/refactor-audit/per-page-reinventory-matrix.md` ledger。見 `decisions.md` Model A。
+> 🧭 Model A：本檔提到的 `specs/...` bundle 本體皆在母資料夾（見 `CLAUDE.md`）；coverage SSOT＝ledger。
 > **怎麼讀**：由上往下＝由粗到細。**L0 心智模型**（5 分鐘）→ **L1 六階段總表**（10 分鐘）→ **L2 逐站詳解**（順著 flow ①→⑥）→ **L2½ 真實範例**（`EPROC00118` 走完全程）→ **橫向主題**（雙軌／規模化／狀態）→ **新人最短上手路徑** → **名詞表**。
 
 ---
