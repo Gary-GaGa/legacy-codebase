@@ -19,6 +19,7 @@ $Script:LogRoot = Join-Path $Script:ProfileRunRoot "logs"
 $Script:WrapperRoot = Join-Path $Script:ProfileRunRoot "wrappers"
 $Script:DescriptorPath = Join-Path $Script:ProfileRunRoot "descriptor.json"
 $Script:PidfilePath = Join-Path $Script:ProfileRunRoot "pids.json"
+$Script:OwnershipPath = Join-Path $Script:ProfileRunRoot "ownership.json"
 $Script:ManagerLog = Join-Path $Script:LogRoot "manager.log"
 
 function Ensure-Directory {
@@ -202,7 +203,6 @@ function New-EproConfig {
                 env = [ordered]@{}
                 prependPath = @()
                 log = (Join-Path $Script:LogRoot "be.log")
-                markerRegex = "(spring-boot:run|spring-boot\.run)"
             }
             fe = [ordered]@{
                 name = "fe"
@@ -229,7 +229,6 @@ function New-EproConfig {
                 env = [ordered]@{}
                 prependPath = $fePrepend
                 log = (Join-Path $Script:LogRoot "fe.log")
-                markerRegex = "(ng(\.cmd|\.js)?\s+serve|@angular[\\/]+cli[\\/]+bin[\\/]+ng\.js.*\sserve)"
             }
         }
     }
@@ -375,6 +374,36 @@ function Get-ProcessCommandLine {
     }
 }
 
+function ConvertTo-ProcessTimeText {
+    param([AllowNull()][object] $Value)
+    if ($null -eq $Value) {
+        return $null
+    }
+    try {
+        if ($Value -is [datetime]) {
+            return $Value.ToUniversalTime().ToString("o")
+        }
+        return ([System.Management.ManagementDateTimeConverter]::ToDateTime([string] $Value)).ToUniversalTime().ToString("o")
+    } catch {
+        return [string] $Value
+    }
+}
+
+function Get-ProcessCreationTimeText {
+    param([int] $ProcessId)
+    try {
+        $process = Get-CimInstance Win32_Process -Filter "ProcessId=$ProcessId" -ErrorAction Stop
+        return (ConvertTo-ProcessTimeText $process.CreationDate)
+    } catch {
+        try {
+            $process = Get-WmiObject Win32_Process -Filter "ProcessId=$ProcessId" -ErrorAction Stop
+            return (ConvertTo-ProcessTimeText $process.CreationDate)
+        } catch {
+            return $null
+        }
+    }
+}
+
 function Get-KnownServicePids {
     param([string] $ServiceName)
     $known = @()
@@ -398,23 +427,61 @@ function Get-KnownServicePids {
     return @($known | Select-Object -Unique)
 }
 
-function Test-RecognizedListener {
-    param([System.Collections.IDictionary] $Service, [int] $ProcessId, [string] $CommandLine)
+function Get-OwnershipState {
+    return (Read-JsonFile $Script:OwnershipPath)
+}
+
+function Get-MarkerServiceState {
+    param([System.Collections.IDictionary] $Service)
+    $state = Get-OwnershipState
+    if ($null -eq $state -or -not (Has-Property $state "services")) {
+        return $null
+    }
+    if ((Has-Property $state "profile") -and [string] $state.profile -ne $Profile) {
+        return $null
+    }
+    if (-not (Has-Property $state.services $Service.name)) {
+        return $null
+    }
+    $serviceState = $state.services.$($Service.name)
+    if ((Has-Property $serviceState "port") -and [int] $serviceState.port -ne [int] $Service.port) {
+        return $null
+    }
+    return $serviceState
+}
+
+function Test-MarkerListenerMatch {
+    param([System.Collections.IDictionary] $Service, [int] $ProcessId)
+
+    $serviceState = Get-MarkerServiceState -Service $Service
+    if ($null -eq $serviceState -or -not (Has-Property $serviceState "listenerPid") -or $null -eq $serviceState.listenerPid) {
+        return $false
+    }
+    if ([int] $serviceState.listenerPid -ne $ProcessId) {
+        return $false
+    }
+    if (Has-Property $serviceState "listenerStartedAt" -and -not [string]::IsNullOrWhiteSpace([string] $serviceState.listenerStartedAt)) {
+        $actualStartedAt = Get-ProcessCreationTimeText -ProcessId $ProcessId
+        if ([string]::IsNullOrWhiteSpace($actualStartedAt) -or [string] $serviceState.listenerStartedAt -ne $actualStartedAt) {
+            return $false
+        }
+    }
+    return $true
+}
+
+function Get-ListenerOwnership {
+    param([System.Collections.IDictionary] $Service, [int] $ProcessId)
 
     $known = Get-KnownServicePids -ServiceName $Service.name
     if ($known -contains $ProcessId) {
-        return $true
+        return [ordered]@{ owned = $true; source = "pidfile/descriptor" }
     }
 
-    if ([string]::IsNullOrWhiteSpace($CommandLine) -or $CommandLine -like "<unavailable:*") {
-        return $false
+    if (Test-MarkerListenerMatch -Service $Service -ProcessId $ProcessId) {
+        return [ordered]@{ owned = $true; source = "marker" }
     }
 
-    $normalizedCommand = $CommandLine.ToLowerInvariant()
-    $repoMarker = $Script:RepoRoot.ToLowerInvariant()
-    $serviceRoot = ([string] $Service.root).ToLowerInvariant()
-    $hasWorkspace = $normalizedCommand.Contains($repoMarker) -or $normalizedCommand.Contains($serviceRoot)
-    return ($hasWorkspace -and ($CommandLine -match $Service.markerRegex))
+    return [ordered]@{ owned = $false; source = "none" }
 }
 
 function Wait-ProcessExit {
@@ -488,16 +555,16 @@ function Clear-RecognizedPort {
         $processId = [int] $listener.OwningProcess
         $commandLine = Get-ProcessCommandLine -ProcessId $processId
         $maskedCommandLine = Mask-SensitiveText $commandLine
-        $recognized = Test-RecognizedListener -Service $Service -ProcessId $processId -CommandLine $commandLine
+        $ownership = Get-ListenerOwnership -Service $Service -ProcessId $processId
 
-        if (-not $recognized -and -not $AllowForce) {
+        if (-not $ownership.owned -and -not $AllowForce) {
             $message = "Port $($Service.port) is occupied by unrecognized PID $processId. CommandLine: $maskedCommandLine. Re-run with -Force to stop it."
             Write-ManagerLog $message
             throw $message
         }
 
-        if ($recognized) {
-            Write-Info "pre-flight clearing recognized $($Service.name) listener pid $processId on port $($Service.port)"
+        if ($ownership.owned) {
+            Write-Info "pre-flight clearing recognized $($Service.name) listener pid $processId on port $($Service.port) via $($ownership.source)"
         } else {
             Write-Info "pre-flight clearing unrecognized listener pid $processId on port $($Service.port) because -Force was supplied"
         }
@@ -510,15 +577,29 @@ function Clear-RecognizedPort {
 }
 
 function Clear-OldWrappers {
+    $wrapperPids = @()
     $pidState = Read-JsonFile $Script:PidfilePath
-    if ($null -eq $pidState -or -not (Has-Property $pidState "services")) {
-        return
-    }
-    foreach ($serviceProperty in $pidState.services.PSObject.Properties) {
-        $state = $serviceProperty.Value
-        if (Has-Property $state "wrapperPid" -and $null -ne $state.wrapperPid) {
-            Stop-WrapperTree -ProcessId ([int] $state.wrapperPid) -Reason "old pidfile"
+    if ($null -ne $pidState -and (Has-Property $pidState "services")) {
+        foreach ($serviceProperty in $pidState.services.PSObject.Properties) {
+            $state = $serviceProperty.Value
+            if (Has-Property $state "wrapperPid" -and $null -ne $state.wrapperPid) {
+                $wrapperPids += [int] $state.wrapperPid
+            }
         }
+    }
+
+    $ownershipState = Get-OwnershipState
+    if ($null -ne $ownershipState -and (Has-Property $ownershipState "services")) {
+        foreach ($serviceProperty in $ownershipState.services.PSObject.Properties) {
+            $state = $serviceProperty.Value
+            if (Has-Property $state "wrapperPid" -and $null -ne $state.wrapperPid) {
+                $wrapperPids += [int] $state.wrapperPid
+            }
+        }
+    }
+
+    foreach ($wrapperPid in @($wrapperPids | Select-Object -Unique)) {
+        Stop-WrapperTree -ProcessId $wrapperPid -Reason "old local-env state"
     }
 }
 
@@ -531,7 +612,30 @@ function Invoke-Preflight {
     Clear-OldWrappers
     Remove-Item -LiteralPath $Script:DescriptorPath -Force -ErrorAction SilentlyContinue
     Remove-Item -LiteralPath $Script:PidfilePath -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $Script:OwnershipPath -Force -ErrorAction SilentlyContinue
     Write-Info "pre-flight completed"
+}
+
+function Copy-StringMap {
+    param([System.Collections.IDictionary] $Source)
+    $target = [ordered]@{}
+    if ($null -eq $Source) {
+        return $target
+    }
+    foreach ($key in $Source.Keys) {
+        $target[$key] = [string] $Source[$key]
+    }
+    return $target
+}
+
+function New-ServiceStartEnv {
+    param([System.Collections.IDictionary] $Service, [string] $RunId)
+    $env = Copy-StringMap -Source $Service.env
+    $env["LOCAL_ENV_OWNED"] = $RunId
+    $env["LOCAL_ENV_PROFILE"] = $Profile
+    $env["LOCAL_ENV_SERVICE"] = [string] $Service.name
+    $env["LOCAL_ENV_MARKER_PATH"] = $Script:OwnershipPath
+    return $env
 }
 
 function New-RunnerScript {
@@ -615,11 +719,12 @@ function Invoke-StepWithTimeout {
 }
 
 function Start-ServiceDetached {
-    param([System.Collections.IDictionary] $Service)
+    param([System.Collections.IDictionary] $Service, [string] $RunId)
 
     $wrapperPath = Join-Path $Script:WrapperRoot ("{0}-start.ps1" -f $Service.name)
     Remove-Item -LiteralPath $Service.log -Force -ErrorAction SilentlyContinue
-    New-RunnerScript -Path $wrapperPath -WorkDir $Service.root -File $Service.start.file -Arguments $Service.start.args -LogPath $Service.log -Env $Service.env -PrependPath $Service.prependPath
+    $startEnv = New-ServiceStartEnv -Service $Service -RunId $RunId
+    New-RunnerScript -Path $wrapperPath -WorkDir $Service.root -File $Service.start.file -Arguments $Service.start.args -LogPath $Service.log -Env $startEnv -PrependPath $Service.prependPath
     Set-NormalizedProcessPath -Prepend $Service.prependPath
     Write-Info "starting $($Service.name) detached"
     $process = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $wrapperPath) -WindowStyle Hidden -PassThru
@@ -690,18 +795,49 @@ function Get-ListenerPid {
 }
 
 function Write-PidState {
-    param([System.Collections.IDictionary] $Config, [hashtable] $WrapperPids, [hashtable] $ListenerPids)
+    param([System.Collections.IDictionary] $Config, [hashtable] $WrapperPids, [hashtable] $ListenerPids, [AllowNull()][string] $RunId)
     $services = [ordered]@{}
     foreach ($serviceName in $Config.services.Keys) {
+        $listenerPid = if ($ListenerPids.ContainsKey($serviceName)) { $ListenerPids[$serviceName] } else { $null }
         $services[$serviceName] = [ordered]@{
             wrapperPid = if ($WrapperPids.ContainsKey($serviceName)) { $WrapperPids[$serviceName] } else { $null }
-            listenerPid = if ($ListenerPids.ContainsKey($serviceName)) { $ListenerPids[$serviceName] } else { $null }
+            listenerPid = $listenerPid
+            listenerStartedAt = if ($null -ne $listenerPid) { Get-ProcessCreationTimeText -ProcessId ([int] $listenerPid) } else { $null }
             port = $Config.services[$serviceName].port
         }
     }
     Write-JsonFile -Path $Script:PidfilePath -Value ([ordered]@{
         schemaVersion = $Script:SchemaVersion
         profile = $Profile
+        runId = $RunId
+        updatedAt = (Get-Date).ToString("o")
+        services = $services
+    })
+}
+
+function Write-OwnershipState {
+    param([System.Collections.IDictionary] $Config, [string] $RunId, [hashtable] $WrapperPids, [hashtable] $ListenerPids)
+    $services = [ordered]@{}
+    foreach ($serviceName in $Config.services.Keys) {
+        $listenerPid = if ($ListenerPids.ContainsKey($serviceName)) { $ListenerPids[$serviceName] } else { $null }
+        $services[$serviceName] = [ordered]@{
+            port = $Config.services[$serviceName].port
+            wrapperPid = if ($WrapperPids.ContainsKey($serviceName)) { $WrapperPids[$serviceName] } else { $null }
+            listenerPid = $listenerPid
+            listenerStartedAt = if ($null -ne $listenerPid) { Get-ProcessCreationTimeText -ProcessId ([int] $listenerPid) } else { $null }
+            env = [ordered]@{
+                LOCAL_ENV_OWNED = $RunId
+                LOCAL_ENV_PROFILE = $Profile
+                LOCAL_ENV_SERVICE = $serviceName
+            }
+        }
+    }
+
+    Write-JsonFile -Path $Script:OwnershipPath -Value ([ordered]@{
+        schemaVersion = $Script:SchemaVersion
+        profile = $Profile
+        runId = $RunId
+        marker = "LOCAL_ENV_OWNED"
         updatedAt = (Get-Date).ToString("o")
         services = $services
     })
@@ -813,28 +949,50 @@ function Write-Descriptor {
 function Get-ExistingReadyDescriptor {
     param([System.Collections.IDictionary] $Config)
     $descriptor = Read-JsonFile $Script:DescriptorPath
-    if ($null -eq $descriptor -or -not (Has-Property $descriptor "services")) {
-        return $null
-    }
+    $listenerPids = @{}
+    $health = @{}
+    $readySeconds = @{}
+    $ownershipSources = @()
 
     foreach ($serviceName in $Config.services.Keys) {
-        if (-not (Has-Property $descriptor.services $serviceName)) {
-            return $null
-        }
         $service = $Config.services[$serviceName]
         $listenerPid = Get-ListenerPid -Service $service
         if ($null -eq $listenerPid) {
             return $null
         }
-        if ([int] $descriptor.services.$serviceName.pid -ne [int] $listenerPid) {
+
+        $ownership = Get-ListenerOwnership -Service $service -ProcessId ([int] $listenerPid)
+        if (-not $ownership.owned) {
             return $null
         }
+
         $ready = Test-ServiceReady -Service $service
         if (-not $ready.ready) {
             return $null
         }
+
+        $listenerPids[$serviceName] = [int] $listenerPid
+        $health[$serviceName] = $ready.health
+        $readySeconds[$serviceName] = $null
+        $ownershipSources += ("{0}:{1}" -f $serviceName, $ownership.source)
     }
-    return $descriptor
+
+    if ($null -ne $descriptor -and (Has-Property $descriptor "services") -and (Has-Property $descriptor "status") -and [string] $descriptor.status -eq "ready") {
+        $descriptorMatches = $true
+        foreach ($serviceName in $Config.services.Keys) {
+            if ((-not (Has-Property $descriptor.services $serviceName)) -or (-not (Has-Property $descriptor.services.$serviceName "pid")) -or [int] $descriptor.services.$serviceName.pid -ne [int] $listenerPids[$serviceName]) {
+                $descriptorMatches = $false
+                break
+            }
+        }
+        if ($descriptorMatches) {
+            return $descriptor
+        }
+    }
+
+    Write-ManagerLog ("reconstructing ready descriptor from ownership state: {0}" -f ($ownershipSources -join ", "))
+    $now = Get-Date
+    return (Write-Descriptor -Config $Config -ListenerPids $listenerPids -Health $health -ReadySeconds $readySeconds -StartedAt $now -ReadyAt $now)
 }
 
 function Invoke-Up {
@@ -856,14 +1014,16 @@ function Invoke-Up {
     }
 
     $startedAt = Get-Date
+    $runId = [guid]::NewGuid().ToString("n")
     $wrapperPids = @{}
     $listenerPids = @{}
 
     try {
         foreach ($serviceName in $Config.services.Keys) {
-            $wrapperPids[$serviceName] = Start-ServiceDetached -Service $Config.services[$serviceName]
+            $wrapperPids[$serviceName] = Start-ServiceDetached -Service $Config.services[$serviceName] -RunId $runId
         }
-        Write-PidState -Config $Config -WrapperPids $wrapperPids -ListenerPids $listenerPids
+        Write-PidState -Config $Config -WrapperPids $wrapperPids -ListenerPids $listenerPids -RunId $runId
+        Write-OwnershipState -Config $Config -RunId $runId -WrapperPids $wrapperPids -ListenerPids $listenerPids
 
         $readyInfo = Wait-AllReady -Config $Config -WrapperPids $wrapperPids -StartedAt $startedAt
 
@@ -874,7 +1034,8 @@ function Invoke-Up {
             }
             $listenerPids[$serviceName] = [int] $listenerPid
         }
-        Write-PidState -Config $Config -WrapperPids $wrapperPids -ListenerPids $listenerPids
+        Write-PidState -Config $Config -WrapperPids $wrapperPids -ListenerPids $listenerPids -RunId $runId
+        Write-OwnershipState -Config $Config -RunId $runId -WrapperPids $wrapperPids -ListenerPids $listenerPids
 
         $descriptor = Write-Descriptor -Config $Config -ListenerPids $listenerPids -Health $readyInfo.health -ReadySeconds $readyInfo.readySeconds -StartedAt $startedAt -ReadyAt (Get-Date)
         Write-JsonOutput $descriptor
@@ -932,7 +1093,8 @@ function Invoke-Down {
     if ($allClear) {
         $descriptorRemoved = Remove-FileIfExists -Path $Script:DescriptorPath
         $pidfileRemoved = Remove-FileIfExists -Path $Script:PidfilePath
-        if ($descriptorRemoved -and $pidfileRemoved) {
+        $ownershipRemoved = Remove-FileIfExists -Path $Script:OwnershipPath
+        if ($descriptorRemoved -and $pidfileRemoved -and $ownershipRemoved) {
             Write-ManagerLog "down completed"
             if (-not $Quiet) {
                 Write-Host "down completed"
