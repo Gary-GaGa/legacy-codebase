@@ -15,7 +15,7 @@
 - Harness report: `docs/verification/phase-v-api-selfverify-report.md`
 - Response dump: `docs/verification/phase-v-api-selfverify-responses/RI-2-response.json`
 - Fixture:
-  - RI-2 applicationNo: `00011009201901010001`
+  - RI-2 applicationNo: `<fixture-B 空revised-item>`（真案號留本機證據、不進 repo）
   - `TB_REVISED_ITEM` row count: `0`
   - revised item option SQL count: `9`
 - Actual response excerpt:
