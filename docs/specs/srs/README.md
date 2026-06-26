@@ -25,7 +25,7 @@
   〔4. qa-cases.md：2026-06-24 暫拔除。〕
 
 ## 閘門編號對照（⚠️ 本表＝兩套編號的**唯一**對齊處）
-> 權威編號＝DoD 閘門牆 ①–⑦（`../../assets/ai-workflow.mmd`，code 階段）。`check-srs-bundle.py` 的 **數字** gate（①②⑤）＝牆上**同位、同義**項在 SRS 定稿階段的 pre-check（同號、不同階段）。腳本的 **SRS 階段專屬**檢查（牆上無對應格）改用**字母標**（gateⒷ/gateⓅ）+ 非數字名（xfile/doc-paths），**刻意不接續 ⑥⑦** 以免與牆上 ⑥Build/⑦LLM-advisory 撞號（2026-06-12 改）。涵蓋細節一律見**腳本檔頭**。
+> 權威編號＝DoD 閘門牆 ①②③⑥⑦⑧（`../../assets/ai-workflow.mmd`，code 階段；④⑤ QA 暫拔、⑧ runtime conformance）。`check-srs-bundle.py` 的 **數字** gate（①②⑤）＝牆上**同位、同義**項在 SRS 定稿階段的 pre-check（同號、不同階段）。腳本的 **SRS 階段專屬**檢查（牆上無對應格）改用**字母標**（gateⒷ/gateⓅ）+ 非數字名（xfile/doc-paths），**刻意不接續 ⑥⑦** 以免與牆上 ⑥Build/⑦LLM-advisory 撞號（2026-06-12 改）。涵蓋細節一律見**腳本檔頭**。
 
 | DoD 閘門牆（code 階段，產品 repo）| SRS 定稿 pre-check（本 repo，`scripts/check-srs-bundle.py`）|
 |---|---|

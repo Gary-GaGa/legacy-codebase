@@ -21,7 +21,7 @@
 | **as-is 驗證**（brownfield loop） | 驗 migrated 碼 vs 舊系統/PRD | 唯讀 audit 任務單 | `build-tasks/<funcId>-verification-findings.md`（如 `00800-verification-findings.md`）、`build-tasks/*-investigation.md` | — |
 | ~~**QA cases**~~〔暫拔除〕 | QA 產生/驗收暫停（恢復見 git history） | — | ~~`specs/srs/<funcId>/qa-cases.md`~~（不再產） | ~~④⑤~~（暫停） |
 | **RD-Agent**（開發+測試） | Codex 照任務單實作 | Codex（母資料夾） | **產品碼在 repo 外**；in-repo＝**任務單** `build-tasks/*.md`（live）、`build-tasks/done/`（歷史 22 份） | ⑥ |
-| **DoD 閘門牆** | RD 過 SA/QA 邊界 | — | SRS 機械 pre-gate `scripts/check-srs-bundle.py`（涵蓋見腳本檔頭；與 DoD ①–⑦ 編號對照見 `specs/srs/README.md`）；**③** `scripts/verify-c0.py`；**⑦語意** `.claude/agents/spec-reviewer.md` ∥ `docs/env/codex/spec-reviewer.toml`+`reviewer-c0.toml`；**自動觸發** `.claude/settings.json`(Stop hook) ∥ `docs/env/codex/hooks.json` | ①–⑦ |
+| **DoD 閘門牆** | RD 過 SA/QA 邊界 | — | SRS 機械 pre-gate `scripts/check-srs-bundle.py`（涵蓋見腳本檔頭；與 DoD ①②③⑥⑦⑧ 編號對照見 `specs/srs/README.md`）；**③** `scripts/verify-c0.py`；**⑦語意** `.claude/agents/spec-reviewer.md` ∥ `docs/env/codex/spec-reviewer.toml`+`reviewer-c0.toml`；**⑧ runtime conformance** `tools/phase-v-run.ps1`（有 harness 即 blocking）；**自動觸發** `.claude/settings.json`(Stop hook) ∥ `docs/env/codex/hooks.json` | ①②③⑥⑦⑧ |
 | **裁定 / escalation** | 判斷題交人 | — | SRS 的 `@PENDING`；`decisions.md`；`pending-register.md`；`disbursement/disbursement-domain-escalations.md` | — |
 | **Done → 回歸** | 回填狀態（bug→回歸 case 隨 QA 暫拔除） | — | `feature-inventory.md` 回填；~~bug → 新 `qa-cases.md` case~~（QA 暫停） | — |
 | **盤點 / 校正**（drift loop，非主線一站）| zero-based 重推總量、對 SSOT 做 diff（只報不改）| **`.claude/skills/refactor-audit/`** ∥ `docs/env/codex/prompts/refactor-audit.md` | `build-tasks/refactor-audit/`（diff-vs-inventory + QC 日誌）；回填 `feature-inventory.md` §1「audit 驗證」欄 | — |

@@ -240,7 +240,7 @@ flow 裡每條鐵律幾乎都對應一次**踩過的雷**（收斂表＝[`spec-a
 | **@PENDING** | 待人裁的判斷題，附 owner＋是否 blocking，聚合到 pending-register |
 | **N 軸（A–F）** | SRS 階段六正交語意驗證軸（blocking）；A＝spec-reviewer（原 G 隨 QA 暫拔除）|
 | **三軸驗證** | code 階段三正交審（contract/scope/regression，advisory） |
-| **DoD 閘門牆** | RD 過 SA/QA 邊界的 7 道閘（①–⑥ 機械、⑦ LLM advisory） |
+| **DoD 閘門牆** | RD 過 SA 邊界的閘：①②③⑥ 機械 + ⑦ LLM advisory + ⑧ runtime conformance（有 harness 即 blocking）（④⑤ QA 暫拔） |
 | **雙軌** | Claude（權威）↔ Codex（薄殼指標），同角色兩載具 |
 | **SSOT** | single source of truth；狀態＝feature-inventory、待決＝pending-register |
 
