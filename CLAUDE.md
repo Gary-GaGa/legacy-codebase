@@ -1,7 +1,7 @@
 # CLAUDE.md — spec workflow 操作守則（Claude Code 側）
 
 > 本 repo＝**治理 / 方法論 canon / 狀態 trackers**（無原始碼）。本檔是 spec 工作流（Bible→PRD→SRS→RD→DoD；**QA 產生/驗收暫拔除**，待主線跑順再納入）的輕量 constitution。
-> **🧭 Model A（owner 2026-06-26）**：**Bible/PRD/SRS bundle 本體已移母資料夾、Codex 擁/產/驗**（本 repo 不再留 spec bundle、不再常態同步）。本 repo 留：**範本**（`docs/specs/srs/spec-template.md`/`digest-template.md`）、**機械閘腳本**（`scripts/check-srs-bundle.py`/`verify-c0.py`＝canonical 源，部署到母資料夾跑）、方法論（`spec-architecture`/SKILL/`orchestration-playbook`）、治理（本檔/AGENTS/`decisions.md`）、trackers。**SRS 機械閘 + spec-reviewer 在母資料夾跑**（Codex `.codex/hooks.json`）；本 repo Stop-hook 改驗 parity（prompt/dualtrack）。**coverage/status SSOT＝`build-tasks/refactor-audit/per-page-reinventory-matrix.md` ledger**（不再靠 bundle Status）。spec 內容需複查時臨時拉特定 bundle，不常態同步。
+> **🧭 Model A**：Bible/PRD/SRS spec bundle 在**母資料夾、Codex 擁/產/驗**（不在本 repo）。本 repo＝**治理 / 方法論 canon**（範本 `specs/srs/spec-template.md`+`digest-template.md`、機械閘腳本 `scripts/`、process）＋ **trackers**。SRS 機械閘+spec-reviewer 在母資料夾跑（Codex hooks）；本 repo Stop-hook 驗 parity。**coverage/status SSOT＝`build-tasks/refactor-audit/per-page-reinventory-matrix.md` ledger**。決策見 `decisions.md`。
 > **底層開發規則**（registry/版本鎖定/策略）見 [`AGENTS.md`](AGENTS.md)、[`backend/AGENTS.md`](backend/AGENTS.md)。
 > **文件導覽**見 [`docs/README.md`](docs/README.md)；**檔案×flow 地圖**見 [`docs/repo-structure.md`](docs/repo-structure.md)；**狀態 SSOT**＝`docs/feature-inventory.md`。
 

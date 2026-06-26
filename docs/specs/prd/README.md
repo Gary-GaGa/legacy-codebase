@@ -1,6 +1,6 @@
 # `specs/prd/` — 產品需求（PRD）
 
-> 🧭 **Model A（2026-06-26）**：PRD 快照 + trace **已移母資料夾、Codex 擁**（PRD 本即外部 CDC-EPRO 權威）；本 repo 僅留本導覽。
+> 🧭 **Model A**：PRD 快照 + trace **已移母資料夾、Codex 擁**（PRD 本即外部 CDC-EPRO 權威）；本 repo 僅留本導覽。
 
 > flow 第 ② 層：PM/PO + AI 寫 **what / why**（REQ-nnn、業務規則、TBD）。
 > ⚠️ **權威版在 repo 外**（公司文管，如 `CDC-EPRO-0001`）；**此處放「工作快照」**——讓 `/prd-to-srs`、`spec-reviewer`、追溯檢查在 repo 內讀得到。

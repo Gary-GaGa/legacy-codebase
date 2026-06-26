@@ -1,6 +1,6 @@
 # `docs/specs/` — 規格 pipeline（依 flow 分層）
 
-> 🧭 **Model A（2026-06-26）**：Bible/PRD/SRS **bundle 本體已移母資料夾、Codex 擁/產/驗**；本 repo 留**範本/README/方法論**（`srs/spec-template.md`/`digest-template.md`、機械閘腳本 `scripts/`）。內容需複查時臨時拉特定 bundle。
+> 🧭 **Model A**：Bible/PRD/SRS **bundle 本體已移母資料夾、Codex 擁/產/驗**；本 repo 留**範本/README/方法論**（`srs/spec-template.md`/`digest-template.md`、機械閘腳本 `scripts/`）。內容需複查時臨時拉特定 bundle。
 
 > 資料夾結構＝AI flow 的精煉層級（`assets/ai-workflow.mmd`）。每層一個資料夾、**由上往下讀就是流程**：
 > 方法論（三軸、行為 vs 長相、強制點）見 [`../spec-architecture.md`](../spec-architecture.md)。
