@@ -158,7 +158,7 @@
 | LT-4 | 403 | - | `/epl-list-deviation` | `zh_TW=293`、`en_US=293`、DB `293` | PASS |
 | LT-5 | 403 | - | `/epl-list-cancelreport` | `zh_TW=10`、`en_US=10`、DB `10` | PASS |
 | RI-1 | 403 | `<fixture-A 有revised-item>` | `/epl-case-query-reviseditem` | API `item1`-`item14`/`reasonMemo` = DB row | PASS |
-| RI-2 | 403 | `<fixture-B 空revised-item>` | `/epl-case-query-reviseditem` | 有 case、無 `TB_REVISED_ITEM` row；option SQL count `9`；response data envelope 缺 openapi required `revisedType/revisedTypeSize` | assertion FAIL → RD contract card |
+| RI-2 | 403 | `<fixture-B 空revised-item>` | `/epl-case-query-reviseditem` | 有 case、無 `TB_REVISED_ITEM` row；option SQL count `9`；契約缺口已 RD 修（query path 無條件組 required `revisedType/revisedTypeSize`）| **PASS（row=0 options=9；2026-06-26 RD 修畢，gate ⑧ 閉環，見 RD 卡）** |
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`），不影響「程式補完」里程碑。

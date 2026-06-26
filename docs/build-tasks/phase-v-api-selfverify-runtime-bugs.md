@@ -31,7 +31,7 @@
 | LT-4 | - | PASS | `293=293=293` |
 | LT-5 | - | PASS | `10=10=10` |
 | RI-1 | - | PASS | API row matches DB row |
-| RI-2 | assertion | FAIL | success data envelope missing required `revisedType/revisedTypeSize`; RD contract card opened |
+| RI-2 | assertion | **PASS（2026-06-26 RD 修畢）** | 原缺 required `revisedType/revisedTypeSize`→RD 於母資料夾 query path 無條件組選項字典；重跑 row=0 options=9 PASS（gate ⑧ 閉環，見 `phase-v-ri2-query-reviseditem-contract-gap.md`）|
 
 ## RB-1 manifest path mismatch
 - Status 2026-06-26: fixed.
@@ -80,8 +80,7 @@
 
 ## 待驗收條件
 - RB-1/RB-2/RB-3 已驗收：default manifest 正確、per-case role 可單次跑完、RI-1 不再被 SQLPlus BOM 污染。
-- 剩餘產品契約缺口：RI-2 empty-case response contract 與 manifest/openapi assertion 不一致。
-- RD 修 RI-2 後重跑 `tools/phase-v-run.ps1`，目標為 LT-1～5 + RI-1 + RI-2 全 PASS。
+- ✅ RI-2 契約缺口 **2026-06-26 RD 修畢**（母資料夾 query path 無條件組 required 選項字典）→ 重跑 LT-1~5 + RI-1 + RI-2 **全 PASS**（gate ⑧ 閉環）。pending owner Done @ DoD 閘門牆。
 
 ## 可貼 Codex 啟動（v1.1 harness 修復 + 重跑；母資料夾、全唯讀）
 ```

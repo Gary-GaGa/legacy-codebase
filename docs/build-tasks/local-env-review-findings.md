@@ -24,5 +24,11 @@
 - 但注入的 `status=UP` 是**靜態值、非真健康信號** → env 的 ready 實質＝**liveness（app 能回 200）**，非「BE+DB 真能服務」。**這符合兩層 readiness 設計（env=liveness、serviceability=消費者）**，可接受。
 - ⚠️ **因此第二張 harness/runner 派工的 serviceability smoke（打一條碰 DB 的唯讀 endpoint 得 200+非錯誤碼）變成必做**——別把 env 的 UP 當「app 真能服務」的證據。已在 `local-env-manager.md §4.4` / 歸因三分類載明。
 
+### 🟡 LE-4 runner 被 local-env「歸屬判定」卡住（RI-2 RD 修時浮現 2026-06-26）
+- RI-2 RD 驗證時 `tools/phase-v-run.ps1 -SkipBuild` **卡在 local-env listener ownership 檢查**；dev 改直接跑既有 `tools/phase-v-api-selfverify.ps1`（對已可達服務）才完成驗證。
+- 即：批判複審加的「pre-flight 只殺認得的、認不得 fail-fast」（`local-env-manager.md §4.2`）**過嚴/誤判**，擋掉了正常 runner 路徑 → **gate ⑧ 的「經 runner 跑」未被完整走到**（本次靠直跑 harness 繞過）。
+- **影響**：gate ⑧ 要靠 runner（env up→smoke→harness→down）才成立；ownership 檢查若常誤判，RD 每次都得手動繞過＝破「單一入口」。
+- **待修（dev/env-manager 下一輪）**：調 ownership 判定——對「本工具 pidfile/descriptor 記錄的、或 cmdline 明確是 spring-boot.run/ng serve 且本工作目錄」者放行重用/清理，別把自己起的服務誤判成「認不得」而 fail-fast；fail-fast 應限「真不明的第三方占用」。修前 RD 可用 `-Force` 或直跑 harness 暫繞（已知 workaround）。
+
 ## 關聯
 - 工具契約＝`docs/process/local-env-manager.md`；Phase V 消費＝`phase-v-env-manager.md`。

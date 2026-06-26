@@ -1,9 +1,16 @@
 # RD Contract Gap — EPROZ00800 RI-2 query revised item required options
 
-> Status: RD_READY_CONTRACT_GAP  
+> Status: **RESOLVED**（fix in 母資料夾 backend；gate ⑧ runtime conformance PASS 2026-06-26；**pending owner Done @ DoD 閘門牆**）  
 > Created: 2026-06-26  
 > Source: Phase V API selfverify harness v1.1, read-only runtime run  
 > Scope: report only in this card; product code change must go through RD flow
+
+## Resolution（2026-06-26；gate ⑧ 首例閉環）
+- **as-is 對位**：legacy init 無條件先放 `revisedType`/`revisedTypeSize` 再放案件資料（`EPROZ0_0800.java:75`）；現行 query 是 `TB_LON_SUMMARY_INFO LEFT JOIN TB_REVISED_ITEM`、空案件本可回 blank items——根因＝query response path 原本沒組 required 選項字典。**openapi 確認權威**（required）後才修＝符 gate ⑧「先確認 openapi 權威」。
+- **修（assertion-conformance、母資料夾 backend）**：response DTO 補 `revisedType/revisedTypeSize`；新增 DB-D5 選項查詢（`TB_COMMON_FIELD_OPTIONS` `MSG_CODE='REVISED_ITEM'`+langType label）；query path **無條件組 options**；**不改 GET/request shape**；**langType 只用於 option label、不套案件資料 WHERE**（守 LT 守門）；補單元測試（有效案件/無 row/blank items/options 仍回）。
+- **驗證（gate ⑧）**：`tools/phase-v-run.ps1` → **RI-2 PASS（row=0 options=9）、RI-1+LT-1~5 不回歸**；mvn 單元測試 14/0/0、`mvn clean package` BUILD SUCCESS。
+- **harness 配套**：`Get-ObjectMemberCount` 修為 `@(...).Count`（PowerShell 單屬性 `.Count` 失準的正當修正、**非弱化斷言**，commit `dd16262`，已複驗）。
+- ✅ **gate ⑧ 模型端到端成立**：assertion-conformance → RD 自修（先確認契約權威）→ 不放寬契約/不抑制斷言 → harness 轉綠、無回歸。owner Done 仍待 DoD 閘門牆。
 
 ## Problem assessment
 - `docs/specs/srs/EPROZ00800/openapi.yaml` defines `QueryRevisedItemResponse.data.revisedType` and `data.revisedTypeSize` as required fields.
