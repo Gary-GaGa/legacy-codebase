@@ -73,3 +73,9 @@ legacy-epro/
 # Python bytecode
 __pycache__/
 *.pyc
+
+# === local-env manager（本機 only：profile 含 DB 帳密、descriptor/pidfile 不進版控）===
+# （dev 宣稱已加但實際未同步到 repo，補上）
+.local-env/
+tools/local-env*.local.json
+*.pidfile
