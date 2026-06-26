@@ -22,6 +22,18 @@
 - [ ] **FE `environment`** API base 指向 local BE（**勿 commit 進正式 profile**）。
 
 ## 2. Bring-up 順序
+
+### 2.0 Bring-up 強健性鐵則（防「起不來/卡死/上次沒關停擺」——每次起服務前後必遵）
+> 已知兩大坑：① **埠殘留**——上次 BE/FE 沒 teardown，5500/4200 被佔 → 本次 bind 失敗、整個停擺；② **起服務卡住**——前景長程序或等不到 ready 卻無逾時 → 卡死 turn。對策：
+
+1. **Pre-flight 埠清場（起服務前必做、idempotent）**：先掃並清掉 5500(BE)/4200(FE) 殘留 listener + 舊 pidfile，**才**起新服務。
+   - PS：`Get-NetTCPConnection -LocalPort 5500,4200 -State Listen -EA SilentlyContinue | Select -Expand OwningProcess | Sort -Unique | %{ Stop-Process -Id $_ -Force -EA SilentlyContinue }`（fallback：`netstat -ano | findstr ":5500 :4200"` 取 PID → `taskkill /PID <pid> /F`）。
+   - 若偵測到既有 Phase V BE/FE 仍在跑＝上次未收尾 → **先全清再起**（單跑互斥）。
+2. **起服務 fail-fast（防卡死）**：背景 detached 起、stdout/stderr 重導到 log 檔；**health-poll 帶逾時**（BE ≤180s、FE ng serve 編譯較久 ≤300s）；逾時 → tail log 回報 → teardown → 標 FAIL，**絕不無限等**。
+3. **健康判定看 readiness、非只看 port**：BE 打 health/ready endpoint 得 200；FE 打 `http://localhost:4200` 得 200（首頁/asset）才算 ready。
+4. **保證 teardown（finally/trap，成敗都收）**：把 harness 包在 try/finally（PS：`try{..}finally{..}` 或 trap）→ 無論 PASS/FAIL/例外都 teardown；**kill 記錄 pid ＋ kill-by-port**（pid 可能遺失，雙保險）＋**驗證 5500/4200 已無 listener** 才算收尾。
+5. **pidfile 紀律**：起服務即寫 pidfile（含啟動時間）；teardown 後刪。下次 pre-flight 讀到舊 pidfile＝上次沒收乾淨 → 一併清。
+
 > **分工（v1 唯讀 self-driving）**：原「AI 只設定、人起服務」是為避開**前景長程序卡死 session**；改用**背景 detached 程序**即可解 → **v1 唯讀由 Codex 自啟動全跑**（不再需人手起服務）。
 ```
 v1 自啟動（Codex，全背景、不阻塞 turn）：
