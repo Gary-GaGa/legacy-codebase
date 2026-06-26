@@ -3,7 +3,7 @@
 > **用途**：pilot（已歸檔 `done/prd-to-srs-orchestrator-pilot.md`）已過（`EPROZ00100`/`EPROC00118`→Approved）後的**批量 drain 運行卡**。一次標多頁 `prd-ready`，orchestrator **序列一次一頁**逐頁產 SRS，**drain 到所有既有 `prd-ready` 都 → `in-review`** 才停。
 > **迴圈權威＝`docs/process/orchestration-playbook.md §5b/§6b`**（本卡＝可貼運行殼，內容權威在 playbook，勿在他處改語意）；殼 ↔ 權威的迴圈不變式由 `python scripts/check-prompt-parity.py` 機械驗（anchor 漏在一邊＝FAIL）。
 > **單頁轉換 prompt＝`prd-to-srs-codex-dispatch.md`**（orchestrator 逐頁套它）。
-> **在哪跑**：母資料夾 Codex（產品碼 + 規劃 repo 可寫 + local `docs/db-diff/`+`docs/refactor-spec/` 在）。本 remote planning repo 無原始碼、跑不了。
+> **在哪跑**：母資料夾 Codex（產品碼 + `docs/specs/`〔Model A：specs 在母資料夾 local、gitignored〕 + local `docs/db-diff/`+`docs/refactor-spec/`）。spec 產出落母資料夾 local、規劃 repo 僅回填 ledger；本 remote planning repo 無原始碼/無 spec 本體、跑不了。
 
 ---
 
@@ -27,7 +27,7 @@
 
 1. DRAIN 迴圈——只要 ledger 還有 status=prd-ready 列（可多頁）就繼續：
    a. 取 risk-tier 最前、同 risk 依表序的【一頁】（序列、一次只一頁、不並行、不一次吞整批）。
-   b. spawn 獨立 sub-agent 跑 docs/build-tasks/prd-to-srs-codex-dispatch.md 的單頁 prompt（填該 funcId / PRD 路徑）→ 產 bundle 到 docs/specs/srs/<funcId>/。
+   b. spawn 獨立 sub-agent 跑 docs/build-tasks/prd-to-srs-codex-dispatch.md 的單頁 prompt（填該 funcId / PRD 路徑）→ 產 bundle 到母資料夾 docs/specs/srs/<funcId>/（Model A：local、gitignored）。
    c. 機械 gate：python scripts/check-srs-bundle.py docs/specs/srs/<funcId> 必 exit 0（含 gateⓇ reconcile）。
    d. SRS N 軸驗證（playbook §4b 全 A–F，**pilot 同級、不因批量降軸**）：**每頁一律跑全 A–F 六軸**（原 G 可測試性隨 QA 暫拔除）；**每軸各 spawn 一隻 read-only、獨立 session、不同指示、跨模型 sub-agent**（A 綜合/B as-is parity/C 錯誤碼/D 安全授權/E DB reconcile/F 金錢精度截斷，brief=§4b 表「只看」欄）。軸多時可叢集成 **≥3 隻**（如 A+B｜C+D｜E+F），但每隻仍獨立 session、跨模型——**同質多隻＝theater 不算**。各軸回 PASS/Blocker(file:line) → **採納修正後再跑受影響軸一輪**。〔不再「低風險頁減軸」；F/D 綁欄位不可省。〕**每軸把 {提出 Blocker／確認為真／誤報} append 進 docs/process/n-axis-findings-ledger.md §1**（含再審輪；度量驅動軸配置，playbook §4b）。
    e. 達標（exit 0 + N 軸無 Blocker）→ 回填該頁 ledger status=in-review、填 srs 路徑（覆蓋計數由此衍生）→ 回 1a 取下一個 prd-ready。

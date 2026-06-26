@@ -10,7 +10,7 @@
 
 | 檔案 | 放哪 | 由誰 |
 |---|---|---|
-| Bible v1.1 | `docs/specs/bible/bible-eproposal.md` | 已在 repo |
+| Bible v1.1 | `docs/specs/bible/bible-eproposal.md` | 母資料夾 local（Model A）|
 | **PRD 快照** | `docs/specs/prd/`（**扁平放、可一次 bulk**），名 `PRD-*<funcId>*.md`（rename 腳本 `scripts/rename-prd.ps1`）| **PM 放** |
 | trace | `docs/specs/prd/trace-*<funcId>*.md` | **prd-to-srs 產**（PM 不放）|
 | **SRS bundle** | `docs/specs/srs/<funcId>/`（spec.md/openapi.yaml/schema.sql；**qa-cases.md 暫拔除**）| **prd-to-srs 產**（PM 不放、目錄名＝funcId）|
@@ -98,7 +98,7 @@ frontmatter），照其〔輸入 / 輸出 spec/openapi/schema + README(人類 di
      （指回 decisions/pending）。
    - 每條 delta 附來源（db-diff 檔行 / refactor-spec 段 / decisions 列 / parity `file:line`）+ 三判 tag。
 
-【輸出 bundle → 規劃 repo `docs/specs/srs/<funcId>/`】
+【輸出 bundle → 母資料夾 `docs/specs/srs/<funcId>/`（gitignored local、Model A）】
 - **結構照 canonical 範本 `docs/specs/srs/spec-template.md`**（複製起手、段名/順序/Rn 格式一致）；**一檔兩半**＝上半 Contract（to-be only）/ 下半 `Appendix — Evidence & Decisions`（佐證）；新包須過 `check-srs-bundle.py` 結構檢查 warn-clean（含 Contract 純淨度 + `[ev→Rn]`）。
 - spec.md **上半 Contract**（Metadata header〔Status 雙軸/Owner/Slug/版本/上游 PRD/as-is 來源〕、
   Scope+Non-Goals、Assumptions/Deps、Endpoints〔epl-*〕、業務規則 Rn〔**to-be only**：每條
@@ -155,5 +155,5 @@ frontmatter），照其〔輸入 / 輸出 spec/openapi/schema + README(人類 di
 ## 備註
 - **序列一次一頁、但 drain 整批**（drain 改）：不並行吞整批；每頁各自過閘門＋N 軸＋回填，但 orchestrator **一頁達標即接下一頁、不在每頁停**，drain 完所有 `prd-ready`→`in-review` 才停在 batch checkpoint **一次交人審/裁 TBD**（非每頁人審）。終點仍是 `in-review`、不自升 approved（人裁 TBD 才升）。迴圈權威＝`orchestration-playbook §5b/§6b`。
 - **parity 與 SRS 互補**：企金線 18 頁 parity 卡（`c0-legacy-parity-recheck.md`）的 findings 餵 SRS 的 as-is 欄；兩者可並行，但同頁建議 parity 先（as-is 才實）。
-- **SRS 落點是規劃 repo**（`docs/specs/srs/`）：Codex 要能寫到規劃 repo；**Bible v1.1 已在 repo**（`docs/specs/bible/`），新版 PRD 放 `docs/specs/prd/`（舊 00800 PRD 已封存 `docs/archive/EPROZ00800-v0.9-superseded/`）。
+- **SRS 落點＝母資料夾 `docs/specs/srs/<funcId>/`（Model A：gitignored local、不上 GitHub）**；Bible/PRD 同在母資料夾 `docs/specs/{bible,prd}/`（local）。Codex cwd＝母資料夾，相對路徑即落 local（舊 00800 PRD 封存 `docs/archive/EPROZ00800-v0.9-superseded/`）。
 - **00800 重產**：v0.9 SRS 已封存（`docs/archive/EPROZ00800-v0.9-superseded/srs/`）；用新版 PRD 從新 Bible v1.1 **重產**——封存內 RP1-10 裁定 + SR-B1/B2（2 錯誤碼）+ RP8/RP11 為重產輸入，一併承載。
