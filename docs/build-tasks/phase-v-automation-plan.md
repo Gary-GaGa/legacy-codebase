@@ -7,7 +7,7 @@
 
 ## 三層架構
 ### L1 Bring-up（v1 唯讀 self-driving）
-> **元件化（owner 定）**：L1 起停服務＝獨立 **env manager**（`phase-v-env-manager.md`、`tools/phase-v-env.ps1` up/down/status），**與 L2 harness/L3 Playwright 解耦**——三層共用同一 env descriptor（base URL）、不各自起停。
+> **元件化（owner 定）**：L1 起停服務＝**通用可選工具** local-env manager（權威 `docs/process/local-env-manager.md`、`tools/local-env.ps1` up/down/status；不綁 Phase V），**與 L2 harness/L3 Playwright 解耦**——三層共用同一 descriptor（base URL）、不各自起停。Phase V 消費見 `phase-v-env-manager.md`。
 - **Codex 自啟動全跑**（v1 唯讀）：背景 detached 起 BE（`spring-boot:run`）+ FE（`ng serve`）、記 pid（**不前景阻塞 turn**）→ 輪詢 health 至 ready → 帳密（env、不進 repo）login 拿 JWT → 跑 harness → **teardown kill pid（不留殭屍）**。詳見 `local-phase-v-bringup.md`「可貼 Codex 自啟動殼」。
 - 原「人觸發起服務」是避**前景長程序卡死 session**，已用**背景程序**解。**fallback**：帳密不可放 env → JWT 人貼一次、其餘自動。
 - **v3 寫入**：teardown SQL/DML 仍人審（打正式新庫 OVSLXLON02），非全自動；v1 唯讀零寫入故可全自動。
