@@ -2,8 +2,12 @@
   "id": "phase-v-api-selfverify-harness-v1",
   "version": 1,
   "description": "Read-only Phase V API to DB consistency harness manifest. JWT, DB runner, and fixture application numbers are supplied by environment variables.",
-  "baseUrl": "${env:PHASE_V_BASE_URL|http://localhost:8080}",
+  "baseUrl": "${env:PHASE_V_BASE_URL|http://localhost:5500}",
   "jwt": "${env:PHASE_V_JWT}",
+  "auth": {
+    "loginEndpoint": "/epl-ut-login",
+    "tokenPath": "data.eproToken"
+  },
   "dbRunner": "${env:PHASE_V_DB_RUNNER}",
   "langTypes": [
     "zh_TW",
@@ -20,6 +24,9 @@
       "title": "TODO List langType count parity",
       "endpoint": "/epl-list-todolist",
       "method": "POST",
+      "auth": {
+        "requiredRole": "101"
+      },
       "source": {
         "controller": "backend/src/main/java/khd/svc/epro/controller/common/ToDoListController.java:64",
         "service": "backend/src/main/java/khd/svc/epro/service/common/impl/ToDoListServiceImpl.java:277-294",
@@ -107,6 +114,9 @@
       "title": "Case Distribution langType count parity",
       "endpoint": "/epl-list-casedistribution",
       "method": "POST",
+      "auth": {
+        "requiredRole": "405"
+      },
       "source": {
         "controller": "backend/src/main/java/khd/svc/epro/controller/common/CaseDistributionController.java:38-39",
         "service": "backend/src/main/java/khd/svc/epro/service/common/impl/CaseDistributionServiceImpl.java:107-117",
@@ -163,6 +173,9 @@
       "title": "New Case Application langType count parity",
       "endpoint": "/epl-list-caseapplication",
       "method": "POST",
+      "auth": {
+        "requiredRole": "403"
+      },
       "source": {
         "controller": "backend/src/main/java/khd/svc/epro/controller/common/NewCaseApplicationController.java:37-40",
         "service": "backend/src/main/java/khd/svc/epro/service/common/impl/NewCaseApplicationServiceImpl.java:113-121",
@@ -252,6 +265,9 @@
       "title": "Deviation Case Report langType count parity",
       "endpoint": "/epl-list-deviation",
       "method": "POST",
+      "auth": {
+        "requiredRole": "403"
+      },
       "source": {
         "controller": "backend/src/main/java/khd/svc/epro/controller/common/DeviationCaseReportController.java:35-38",
         "service": "backend/src/main/java/khd/svc/epro/service/common/impl/DeviationCaseReportServiceImpl.java:91-104",
@@ -328,6 +344,9 @@
       "title": "Application Cancel Report langType count parity",
       "endpoint": "/epl-list-cancelreport",
       "method": "POST",
+      "auth": {
+        "requiredRole": "403"
+      },
       "source": {
         "controller": "backend/src/main/java/khd/svc/epro/controller/common/ApplicationCancelReportController.java:47-49",
         "service": "backend/src/main/java/khd/svc/epro/service/common/impl/ApplicationCancelReportServiceImpl.java:70-94",
@@ -417,6 +436,9 @@
       "title": "EPROZ00800 Revised Item row mirrors TB_REVISED_ITEM",
       "endpoint": "/epl-case-query-reviseditem",
       "method": "GET",
+      "auth": {
+        "requiredRole": "403"
+      },
       "source": {
         "controller": "backend/src/main/java/khd/svc/epro/controller/common/RevisedItemController.java:39-40",
         "service": "backend/src/main/java/khd/svc/epro/service/common/impl/RevisedItemServiceImpl.java:175-190",
@@ -488,6 +510,9 @@
       "title": "EPROZ00800 Revised Item empty row and option count",
       "endpoint": "/epl-case-query-reviseditem",
       "method": "GET",
+      "auth": {
+        "requiredRole": "403"
+      },
       "source": {
         "controller": "backend/src/main/java/khd/svc/epro/controller/common/RevisedItemController.java:39-40",
         "service": "backend/src/main/java/khd/svc/epro/service/common/impl/RevisedItemServiceImpl.java:175-190",
@@ -545,6 +570,7 @@
         ],
         "optionPath": "revisedType",
         "optionSizePath": "revisedTypeSize",
+        "dumpResponse": true,
         "primary": "TB_REVISED_ITEM count is zero, item fields are empty, and response revisedType option count equals TB_COMMON_FIELD_OPTIONS"
       }
     }

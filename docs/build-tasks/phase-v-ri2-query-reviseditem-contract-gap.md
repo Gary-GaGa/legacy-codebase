@@ -1,31 +1,50 @@
-# RD 契約缺口卡 — `epl-case-query-reviseditem` 空案件漏必填 `revisedType`（Phase V RI-2）
+# RD Contract Gap — EPROZ00800 RI-2 query revised item required options
 
-> 來源：Phase V harness v1.1 自驗 RI-2（assertion FAIL）。**planning 側補建**（dev v1.1 報告稱已建此卡，實際未進 repo → 補上，免真 bug 遺失）。性質＝**產品契約缺口、走 RD flow 修**（非 harness 範圍）。
-> Status：Open，待 SA/owner 裁權威方向 → RD 修。
+> Status: RD_READY_CONTRACT_GAP  
+> Created: 2026-06-26  
+> Source: Phase V API selfverify harness v1.1, read-only runtime run  
+> Scope: report only in this card; product code change must go through RD flow
 
-## 發現（去敏）
-- endpoint：`epl-case-query-reviseditem`（GET，EPROZ00800 revised-item init-query）。
-- fixture：**有 case、但無 `TB_REVISED_ITEM` 列**的有效案號（去敏＝fixture-B；真案號留本機證據）。
-- 實際 response：**HTTP 200 / `code=0000` / Success**（success data envelope），`data` 有 `lonTypeCode`/`secureAttribute`、`item1`–`item14` 與 `reasonMemo` 皆 blank，**但缺 `data.revisedType` 與 `data.revisedTypeSize`**。
-- 對照契約：現行 `docs/specs/srs/EPROZ00800/openapi.yaml` 的 `QueryRevisedItemResponse` 將 **`revisedType`/`revisedTypeSize` 列為 `required`**（`:216`-`:217`、`:236`/`:241`）。
-- 原始完整 dump＝本機證據（gitignore，含真案號，不進 repo）；上述去敏摘錄足供 RD 判讀。
+## Problem assessment
+- `docs/specs/srs/EPROZ00800/openapi.yaml` defines `QueryRevisedItemResponse.data.revisedType` and `data.revisedTypeSize` as required fields.
+- Phase V RI-2 uses an application that exists in `TB_LON_SUMMARY_INFO` and has no row in `TB_REVISED_ITEM`.
+- Runtime response is a success data envelope with blank item fields, but it does not include `revisedType` or `revisedTypeSize`.
+- This is no longer an auth or infra failure. The harness used role `403`, serviceability smoke passed, and the endpoint returned HTTP 200 + `code=0000`.
 
-## 為何是真缺口（非 harness/fixture 問題，已消歧）
-- 回的是 **success envelope（code 0000）非 `MSG_DATA_NOT_FOUND`** → fixture 確為「有效 case、僅無 revised-item 列」，非「無 case」。
-- `revisedType` 是**選項字典（下拉來源）**，源自 `TB_COMMON_FIELD_OPTIONS`/`TB_MULTI_LANG`（spec DB-D5），**與案件有無 revised-item 列無關**——空案件仍需渲染下拉。
-- spec R2（`spec.md:42`）：「case 存在但無 revised item 列時回 **blank items**」＝仍是 data envelope；契約要求該 envelope 含 required `revisedType`。
-- 已排除：path 取錯（harness 取 `data.revisedType`、與 openapi envelope 一致）；BOM/授權（RI-1 同 endpoint 同 role PASS）。
+## Evidence
+- Harness report: `docs/verification/phase-v-api-selfverify-report.md`
+- Response dump: `docs/verification/phase-v-api-selfverify-responses/RI-2-response.json`
+- Fixture:
+  - RI-2 applicationNo: `00011009201901010001`
+  - `TB_REVISED_ITEM` row count: `0`
+  - revised item option SQL count: `9`
+- Actual response excerpt:
+  - `code`: `0000`
+  - `message`: `Success`
+  - `data.lonTypeCode`: `01`
+  - `data.secureAttribute`: `S`
+  - `data.item1`-`data.item14`: blank strings
+  - `data.reasonMemo`: blank string
+  - missing: `data.revisedType`
+  - missing: `data.revisedTypeSize`
 
-## 裁決方向（SA/owner 定權威；別自動斷定哪邊錯）
-契約 vs 實作不一致，兩種收法：
-1. **（建議）改 API**：空 revised-item 案件的 success envelope **仍回 `revisedType`/`revisedTypeSize`** 選項字典（理由：選項是表單渲染資料、非案件資料，空案件也要；DB-D5 來源獨立於 revised-item 列）。→ RD 改 BE query service。
-2. **（替代）改 spec**：若業務確認空案件可省選項，則 openapi 將二欄改非 required（須業務依據）。→ SA 改 openapi + 註 delta。
-> 預設傾向 1（多數 FE 表單需要選項字典渲染），但**由 SA/owner 拍板**，不在此自決。
+## Expected behavior
+- For an existing case with no `TB_REVISED_ITEM` row, `/epl-case-query-reviseditem` should still return a success data envelope.
+- The response should include the required revised item option dictionary and size:
+  - `data.revisedType`
+  - `data.revisedTypeSize`
+- `revisedTypeSize` should match the read-only option SQL count for `MSG_CODE='REVISED_ITEM'` and the selected langType.
 
-## 範圍 / 落點
-- 修點＝**產品 BE**（母資料夾 `RevisedItemController`/`RevisedItemServiceImpl` 的 query 組裝），走 **RD flow**；非 Phase V harness。
-- harness 端：RI-2 斷言**正確**（忠實抓到契約缺口）；待方向 1 修後 RI-2 應轉 PASS（或方向 2 則同步改斷言）。
+## Recommended approach
+- Enter RD flow for `EPROZ00800`.
+- Keep endpoint method and request shape aligned with the current SRS/openapi (`GET` query by `applicationNo`).
+- Fix product behavior only after RD review confirms the current SRS required fields remain authoritative.
 
-## 關聯
-- 契約＝`docs/specs/srs/EPROZ00800/openapi.yaml` `QueryRevisedItemResponse`；行為＝`spec.md` R2/R5/R6、DB-D5（選項來源）。
-- 偵測＝`phase-v-api-selfverify-runtime-bugs.md`（RB-4→本卡）、`verification/verification-handoff.md §6.3` RI-2 列。
+## Trade-offs
+- Treating this as a harness path bug is now ruled out: the harness reads `data.revisedType`, and the dumped `data` object lacks that field.
+- Treating this as an invalid fixture is also ruled out: the endpoint returned a success data envelope for an existing case, and DB row count for `TB_REVISED_ITEM` is zero.
+- Product fix may need to decide the authoritative langType for option labels; current harness uses `PHASE_V_RI_OPTION_LANG_TYPE|en_US`.
+
+## Minimal viable next step
+- Assign RD owner to reconcile `QueryRevisedItemResponse` implementation with `docs/specs/srs/EPROZ00800/openapi.yaml`.
+- Re-run `tools/phase-v-run.ps1` after the RD fix; RI-2 should pass with `row=0 options=9`.
