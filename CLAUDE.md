@@ -38,7 +38,7 @@ funcId（如 `EPROZ00800`）＝**追溯 slug**，串 Bible→PRD→SRS→code/te
 | **審核** | 定稿前必跑 | **`spec-reviewer`**〔=SRS N 軸 axis A，§4b〕 + `/code-review` | **`spec-reviewer.toml`**〔N 軸 axis A〕 |
 | 定稿 | 過門檻 | spec.md `Status: Approved` | 同 |
 | **RD 開發** | SRS Approved→code（編排化、母資料夾執行）→ DoD 閘門牆 | `build-tasks/rd-codex-dispatch`／`rd-orchestrator-drain`〔迴圈 §5c/§6c、軸 §4c〕 | 同 |
-| **DoD** | code 過閘（①契約②schema③verify-c0⑥build⑦LLM審；**④QA驗收⑤覆蓋率 隨 QA 暫拔除**）→ owner 蓋 Done | DoD 閘門牆（`docs/ai-flow-guide.md ⑥`） | 同 |
+| **DoD** | code 過閘（①契約②schema③verify-c0⑥build⑦LLM審 ⑧runtime conformance〔有 harness 的頁 blocking；＝runtime API↔DB、非 QA〕；**④QA驗收⑤覆蓋率 隨 QA 暫拔除**）→ owner 蓋 Done | DoD 閘門牆（`docs/ai-flow-guide.md ⑥`） | 同 |
 | **盤點/校正** | 里程碑後重對 inventory（drift 校正回路，非主線一站）| **`/refactor-audit`** | **`/refactor-audit`** |
 
 ## 4. 品質門檻（`Status: Approved` 前必過）— DoD

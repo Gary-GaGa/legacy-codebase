@@ -47,6 +47,7 @@ PAIRS = [
     ("RD", PLAYBOOK, "docs/build-tasks/rd-orchestrator-drain.md", [
         ("rd-ready", "入口閘＝approved 衍生的 rd-ready"),
         ("rd-done", "終點態＝rd-done"),
+        ("runtime conformance", "gate ⑧ runtime conformance（有 harness 即 blocking、三分類自修界線）"),
         ("自宣 Done", "不得自宣 Done（QA 還沒跑）"),
         ("強制點", "RD 軸含強制點落實（BE 權威 enforce）"),
         ("circuit-breaker", "系統性失敗暫停整批"),

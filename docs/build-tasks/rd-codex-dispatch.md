@@ -50,13 +50,20 @@ checkpoint 用 Cs/Cu 非 Is/Iu、endpoint -c0- 非 -i0-）。
 - 不改既有 i0/個金頁（路徑含 /individual/）、不改既有 Csu*.java（除非該 funcId 就是它）。
 - 不臆造 file:line；未證標「待核對」。不自宣 Done。
 - 不碰 C 類（風險/架構/domain 裁定）——遇到回報，不自決。
+- ⑧ runtime 失敗：**不靠放寬 openapi/抑制斷言/改 fixture「湊綠」**（守斷言失敗只報）；只在 assertion-conformance 範圍修碼，契約模糊/infra/auth → escalate、不改產品碼。
 
 【過 DoD 機械閘門（blocking，全綠才算 rd-done）】
 1. ① 契約：openapi snapshot 對齊（FE↔BE DTO/method 一致）。
 2. ② schema：entity ↔ DB（型別長度）。
 3. ③ verify-c0：python scripts/verify-c0.py --git exit 0（鏡像/禁樣式/只新增）。
 4. ⑥ build：mvn（BE）、ng build（FE）各 exit 0。
-（④QA驗收 ⑤覆蓋率 隨 QA 暫拔除；rd-done 後 DoD 閘門牆現＝①契約②schema③verify-c0⑥build⑦LLM審 + owner。）
+5. ⑧ runtime conformance（**有 harness manifest 的頁＝blocking**；補靜態閘抓不到的 runtime 行為，如 RI-2）：
+   跑 tools/phase-v-run.ps1（local-env up→serviceability smoke→per-role JWT→harness→finally down）→ 三分類歸因：
+   - assertion（200 但內容/契約不符）＝conformance gap → **自修**（碼對齊已核准 openapi/SRS/DB；如 RI-2 選項移出空分支）；
+     **但揭露契約模糊/判斷/需改 openapi/安全 → escalate、不自裁**（開 RD/契約卡、@PENDING、owner）。
+   - infra（ENV_NOT_READY）/auth（AUTH_FAILED）＝env/role 問題、**非產品碼 bug → 不得改產品碼湊綠**（修 env/harness/role manifest）。
+   - 無 harness manifest 的頁：略過 ⑧、標「待補 harness」（不阻 rd-done）；可從 SRS 抽讀型 API↔DB 一致斷言順手產 manifest。
+（④QA驗收 ⑤覆蓋率 隨 QA 暫拔除；⑧≠QA＝runtime conformance。rd-done 後 DoD 閘門牆現＝①契約②schema③verify-c0⑥build⑦LLM審〔+⑧〕 + owner。）
 
 【RD 軸（§4c；advisory、跨模型、各 read-only）】
 spawn：verifier-contract（契約對齊）／verifier-scope（commit 範圍、誤動 OUT、聚焦）／
@@ -72,7 +79,7 @@ verifier-regression（舊系統/i0 偏離、既有回歸、reflection）／verif
 
 【回報格式】
 - funcId + code commit/PR 路徑 + 改動 BE/FE 檔清單。
-- DoD ①②③⑥：各 exit code / PASS。
+- DoD ①②③⑥：各 exit code / PASS。⑧ runtime conformance（有 harness 者）：PASS/FAIL（三分類 infra/auth/assertion）+ 自修或 escalate。
 - RD 軸：每軸一行（PASS / Blocker+file:line）+ 採納修正結果。
 - ledger 回填 diff（status→rd-done、code 路徑）。
 - 仍待 C 類/未決：彙總（不自決）。
@@ -84,5 +91,5 @@ verifier-regression（舊系統/i0 偏離、既有回歸、reflection）／verif
 ## 備註
 - **序列一次一頁、drain 整批**（同 SRS）：每頁各自過閘門＋軸＋回填，一頁達標即接下一頁（T1＝per-page 多 agent 驗、drain 不停人），drain 完 `rd-ready` 才停 batch checkpoint（含批次多 agent 驗證）。
 - **強制點是拆工主軸**：FE/BE/both 決定該頁拆幾個子任務、誰是權威驗證層（`spec-architecture §5.5`）。
-- **terminal＝rd-done**，進 DoD 閘門牆（①契約②schema③verify-c0⑥build⑦LLM審 + 人審；**④QA驗收⑤覆蓋率 隨 QA 暫拔除**）→ owner 蓋 Done。
+- **terminal＝rd-done**，進 DoD 閘門牆（①契約②schema③verify-c0⑥build⑦LLM審〔+⑧ runtime conformance，有 harness 者〕 + 人審；**④QA驗收⑤覆蓋率 隨 QA 暫拔除**）→ owner 蓋 Done。
 - 卡歸檔 `done/`：本批 drain 跑完、回填完成後移。

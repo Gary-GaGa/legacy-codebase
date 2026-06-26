@@ -1,6 +1,7 @@
 # Build Task — Phase V API 自驗 harness（啟動後自動驗 API；v1 唯讀）
 
 > **性質**：runtime 層自動驗證——人起服務後，跑一支 harness 打活的 `epl-*` + 斷言，出 PASS/FAIL。**與既有兩層互補**：`qa-to-test.md` Testcontainers＝**單元層**（隔離 DB）；`verification-execution.md`＝**唯讀碼/語意比對**；本卡＝**真的跑 endpoint 對真 OVSLXLON02**（找「跑不跑得動 / API 是否忠實反映 DB」，RV-1/RV-2 那層）。
+> **定位（owner 定）**：本 harness ＝ **DoD gate ⑧ runtime conformance**（第四種驗證、**非 QA**），**併入 RD per-page 迴圈**——有 harness manifest 的頁 rd-done 前 blocking；失敗三分類×自修界線見 `process/orchestration-playbook.md §4c`（assertion-conformance 自修、契約模糊/infra/auth escalate）。
 > **載具**：harness 由 AI 產（腳本/manifest + 斷言，來源＝各頁 `qa-cases.md`）；**執行在你機器/母資料夾**（Codex 或你跑——同 localhost）。⚠️ **規劃 repo 的 agent（remote）打不到你本機 localhost**，故只產不跑。
 > **長程序鐵則不變**：起服務（`spring-boot:run`/`ng serve`）仍人/腳本（`local-phase-v-bringup.md`）；本 harness ＝**啟動後的短命呼叫**（curl + 唯讀 SELECT），不持有程序 → 可自動連跑。
 > **與生命週期解耦（owner 定）**：起停服務＝**通用可選工具** local-env manager（權威 `docs/process/local-env-manager.md`、`tools/local-env.ps1`；Phase V 消費見 `phase-v-env-manager.md`）；本 harness **不起停**、只吃 `-BaseUrl`（讀 descriptor `services.be.url`）跑斷言；打不到→回 `ENV_NOT_READY`（**與 test FAIL 區分**）。組合靠 `tools/phase-v-run.ps1`（env up→login→harness→finally down）。

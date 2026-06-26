@@ -27,11 +27,15 @@ orchestration-playbook §5c/§6c、§4c（RD 軸）。
    a. 取 risk-tier 最前、同 risk 依表序的【一頁】（序列、一次只一頁、不並行、不吞整批）。
    b. spawn 獨立 sub-agent 跑 rd-codex-dispatch.md 的單頁 prompt（填 funcId）→ 產 code 到產品 repo。
    c. DoD 機械閘門（blocking）：① 契約 openapi 對齊 ② schema entity↔DB ③ verify-c0.py --git exit 0
-      ⑥ build：mvn + ng build exit 0。（④⑤ 在 rd-done 後的 DoD 閘門牆跑。）
+      ⑥ build：mvn + ng build exit 0。（④⑤ QA 暫拔除。）
+   c2. ⑧ runtime conformance（§4c；有 harness manifest 的頁 blocking）：跑 tools/phase-v-run.ps1
+      （local-env up→serviceability smoke→per-role JWT→harness→finally down）→ 三分類歸因：
+      assertion-conformance 自修（碼對齊已核准契約）；infra(ENV_NOT_READY)/auth(AUTH_FAILED)/契約模糊
+      → escalate、不改產品碼湊綠。無 manifest 的頁略過、標待補 harness。
    d. RD 軸（§4c，跨模型、advisory）：spawn verifier-contract/scope/regression/enforcement（強制點
       落實：BE 權威 enforce、mutating 非 FE-only、決策欄 client 不可送）各一隻 read-only、獨立
       session、不同指示 → 採納修正後再審一輪。
-   e. 達標（①②③⑥ 綠 + RD 軸無 Blocker）→ ledger status=rd-done、填 code 路徑（commit/PR）→ 回 1a。
+   e. 達標（①②③⑥ 綠 + ⑧ runtime conformance 綠〔有 harness 者〕 + RD 軸無 Blocker）→ ledger status=rd-done、填 code 路徑（commit/PR）→ 回 1a。
    f. 未達標（build 紅 / verify-c0 違規 / 軸 Blocker 需 C 類）→ status=blocked+原因（離開 rd-ready
       集合→不重取）→ 續下一頁（單頁失敗不擋整批）。
    g. ⚠️ T1 頁（金錢/評分/授權；撥貸 0920/0921/0922+T24、c0 評分線）＝**per-page 多 agent 驗證點**
@@ -72,7 +76,7 @@ orchestration-playbook §5c/§6c、§4c（RD 軸）。
 | 項 | 值 |
 |---|---|
 | 並行? | ❌ 序列一次一頁（context 衛生） |
-| 每頁 gate+軸? | ✅ DoD ①②③⑥ + RD 軸（§4c，跨模型、advisory）；採納修正後再審一輪 |
+| 每頁 gate+軸? | ✅ DoD ①②③⑥ + ⑧ runtime conformance（有 harness 即 blocking）+ RD 軸（§4c，跨模型、advisory）；採納修正後再審一輪 |
 | 自動到哪? | `rd-done`（**不自宣 Done**） |
 | 停點 | 人審＝批末（batch checkpoint，含批次多 agent 驗證）；T1 頁每頁＝多 agent 驗證（drain 不停人）|
 | 單頁 FAIL | 標因→`status=blocked`（離開 rd-ready）、續下一頁 |
