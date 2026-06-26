@@ -74,6 +74,14 @@ legacy-epro/
 __pycache__/
 *.pyc
 
+# === Model A：spec bundle 本體在母資料夾 local（Codex 擁）、不進 GitHub ===
+# 母資料夾＝本 repo 的 working clone（+產品碼）→ 用 gitignore 讓 specs 留 local-untracked、
+# 不被刪除 commit 連帶清掉、新產的也不上 GitHub。保留 README/spec-template/digest-template（tracked）。
+docs/specs/srs/EPRO*/
+docs/specs/bible/bible-*.md
+docs/specs/prd/PRD-*.md
+docs/specs/prd/trace-*.md
+
 # === local-env manager（本機 only：profile 含 DB 帳密、descriptor/pidfile 不進版控）===
 # （dev 宣稱已加但實際未同步到 repo，補上）
 .local-env/

@@ -2,7 +2,7 @@
 
 > flow 第 ③ 層（分層見 [`../README.md`](../README.md)、方法論見 [`../../spec-architecture.md`](../../spec-architecture.md)）。
 > **一個 story/page = 一束 artifacts**，全靠同一個 ID（funcId，如 `EPROZ00800`）串起來，讓 RD agent 能**機器證明**自己通過 SA/QA 邊界。
-> Worked examples: `EPROZ00100` and `EPROC00118` are Approved after 2026-06-20 RD/DBA contract closeout. DB seed direct apply and SELECT-only recheck passed; coverage remains 2/67. `EPROZ00800` v0.9 remains archived for rebuild.
+> coverage/status SSOT＝`build-tasks/refactor-audit/per-page-reinventory-matrix.md` ledger（非此處內嵌數字）。bundle 本體在母資料夾（Model A）。
 
 ## 結構
 ```

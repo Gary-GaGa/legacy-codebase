@@ -33,7 +33,7 @@ flowchart TB
   PRD --> XD
   SRS -->|"契約 openapi/schema（機器可餵）"| Code
   XD -->|"人摘成 config/prompt（AI 不臆測像素）"| Code
-  SRS -.->|"機械閘門①②⑤ + spec-reviewer（語意）"| Gate
+  SRS -.->|"機械閘門①②〔⑤ 覆蓋率隨 QA 暫拔 skip〕 + spec-reviewer（語意）"| Gate
   XD -.->|"人審 / 視覺回歸"| Gate
   Code --> Gate
 ```
@@ -67,7 +67,7 @@ flowchart LR
 | 類型 | 規範什麼 | 消費者 | 怎麼驗 | 載體 |
 |---|---|---|---|---|
 | **PRD** | 要做什麼/為何（業務 what/why） | PM→SA | 人審 | `write-spec` |
-| **SRS** | 行為 + 契約（系統 how） | RD + QA | **機械閘門①②⑤ + spec-reviewer** | `boundary-bundle/`（`Rn`/openapi/schema/qa） |
+| **SRS** | 行為 + 契約（系統 how） | RD + QA | **機械閘門①②〔⑤ 覆蓋率隨 QA 暫拔 skip〕 + spec-reviewer** | `boundary-bundle/`（`Rn`/openapi/schema/qa） |
 | **UI/UX 設計規格** | 長相/版面/互動/狀態/文案/RWD | FE RD | **人審 / 視覺回歸** | **Adobe XD** + `frontend/AGENTS.md §5` |
 
 ## 5. 兩個切面原則
@@ -147,7 +147,7 @@ flowchart LR
 |---|---|
 | SRS bundle（範本/實例） | **重產中**（00100/00118 已全清〔2026-06-18〕、待母資料夾重產）；~~`EPROZ00800/`~~ **v0.9 已封存**（`docs/archive/EPROZ00800-v0.9-superseded/srs/{spec,openapi,schema,qa-cases}`，2026-06-17，待重產）。分層資料夾＝`docs/specs/`：bible→prd→srs |
 | 設計規格慣例 | `frontend/AGENTS.md §5`（Adobe XD） |
-| 機械閘門 | `scripts/check-srs-bundle.py`（①②⑤）、`scripts/verify-c0.py` |
+| 機械閘門 | `scripts/check-srs-bundle.py`（①②；⑤ skip）、`scripts/verify-c0.py`（Model A：在母資料夾跑） |
 | 語意審查 | `.claude/agents/spec-reviewer.md`（Codex：`docs/env/codex/spec-reviewer.toml`） |
 | PRD→SRS 產出 | `.claude/skills/prd-to-srs/`（Codex：`docs/env/codex/prompts/prd-to-srs.md`） |
 | 流程圖 / 決策 | `docs/assets/ai-workflow.mmd`、`docs/adr/ADR-0001-spec-workflow-dual-stack.md`、**`docs/adr/ADR-0002-srs-sot-precedence.md`（來源優先序）** |

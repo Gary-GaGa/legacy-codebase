@@ -91,7 +91,7 @@
 1. tools/local-env.ps1：實作 -Action up/down/status、-Profile（預設 epro）、-SkipBuild。
    （wait-ready/restart 為 up 的內部步驟/糖衣，不必獨立 verb——精簡。）
    - BE/FE 兩 service 寫成預設（BE 5500 spring-boot:run / FE 4200 ng serve），profile 只當 env/DB/timeout 薄覆寫。
-   - up：① pre-flight 清各 port 殘留——**但只殺認得的**（OwningProcess cmdline 含 spring-boot.run/ng serve+本工作目錄，或對得上舊 pidfile）；認不得→fail-fast 報（要 -Force 才清）、kill 留 log。
+   - up：① pre-flight 清各 port 殘留——**但只殺認得的**（歸屬判定見 §4.2：**pidfile/descriptor 對得上 → 重用/清理；marker `LOCAL_ENV_OWNED` 確認；不靠子程序 cmdline 字串**〔LE-4〕）；認不得→fail-fast 報（要 -Force 才清）、kill 留 log。
      ② (─SkipBuild 否則 build，**build 也帶逾時**) → 背景 detached 起、log 重導。
      ③ wait-ready 帶逾時＝**BE health 200 且 body status:UP；FE 等 log「Compiled successfully」**（非只首頁 200）。
      ④ **ready 後反查 Get-NetTCPConnection -LocalPort 5500/4200 的 OwningProcess 當 descriptor pid**（⚠️ 非 Start-Process 回傳的 mvn/yarn wrapper pid）。

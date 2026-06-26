@@ -3,7 +3,7 @@
 > 🧭 **Model A**：PRD 快照 + trace **已移母資料夾、Codex 擁**（PRD 本即外部 CDC-EPRO 權威）；本 repo 僅留本導覽。
 
 > flow 第 ② 層：PM/PO + AI 寫 **what / why**（REQ-nnn、業務規則、TBD）。
-> ⚠️ **權威版在 repo 外**（公司文管，如 `CDC-EPRO-0001`）；**此處放「工作快照」**——讓 `/prd-to-srs`、`spec-reviewer`、追溯檢查在 repo 內讀得到。
+> ⚠️ **權威版在 repo 外**（公司文管，如 `CDC-EPRO-0001`）；**工作快照在母資料夾**（Model A、Codex 擁、gitignored local）——`/prd-to-srs`/`spec-reviewer`/追溯檢查在母資料夾讀。本 repo 不留 PRD 快照本體（下列放置規則＝Codex 在母資料夾遵循的慣例）。
 
 ## 放置規則
 - 命名：`PRD-<docId>-<funcId>-v<版>.md`（**`PRD-` 開頭、含 funcId**＝gateⒷ/Ⓔ glob `PRD-*<funcId>*.md` 的硬性要求；例：`PRD-CDC-EPRO-0001-EPROC00120-v1.0.md`）。批次改名＝`scripts/rename-prd.ps1`。
@@ -18,7 +18,7 @@
 ## 已知 PRD（快照狀態）
 | docId | 版本 | funcId | 快照 | 備註 |
 |---|---|---|---|---|
-| `CDC-EPRO-0001` | v1.0（工作快照） | `EPROZ00100` / `EPROC00118` | ✅ **已重產 in-review（2026-06-18）**：兩頁 PRD 快照＋SRS bundle＋trace sidecar 全在 repo、機械閘門 PASS、Status=Draft（覆蓋 2/67）；跨模型複審 Blocker 已修(06-19)；**06-20 owner-decision pending 全關、bundle 無 open pending → Approved 殘 blocker＝contract 軸 RD/DBA 實作 gap（非裁定缺）** | TO DO LIST / Corporate Scorecard；見 `decisions` 06-18 重產驗收列 + 06-19 複審列 + 06-20 pending 全關列 |
+| `CDC-EPRO-0001` | v1.0+ | （多 funcId）| **快照在母資料夾**（Model A）；coverage/status SSOT＝`build-tasks/refactor-audit/per-page-reinventory-matrix.md` ledger | — |
 | `CDC-EPRO-0001` | v1.1（PM Review Draft） | `EPROZ00800` | ⛔ **封存 2026-06-17**（[`../../archive/EPROZ00800-v0.9-superseded/`](../../archive/EPROZ00800-v0.9-superseded/)）| spec 層重置：舊 PRD（由 code 反推、未承載新 Bible v1.1 案件類型 gating/0173 映射）+ v0.9 SRS 退場 → **待新版 PRD 重產**（owner local；承載 Bible v1.1 BR-014~017/SC-002~005）|
 
 ## 下游
