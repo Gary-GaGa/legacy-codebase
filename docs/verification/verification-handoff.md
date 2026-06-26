@@ -157,8 +157,8 @@
 | LT-3 | 403 | - | `/epl-list-caseapplication` | `zh_TW=0`、`en_US=0`、DB `0` | PASS |
 | LT-4 | 403 | - | `/epl-list-deviation` | `zh_TW=293`、`en_US=293`、DB `293` | PASS |
 | LT-5 | 403 | - | `/epl-list-cancelreport` | `zh_TW=10`、`en_US=10`、DB `10` | PASS |
-| RI-1 | 403 | `00011A01202005IS030009` | `/epl-case-query-reviseditem` | API `item1`-`item14`/`reasonMemo` = DB row | PASS |
-| RI-2 | 403 | `00011009201901010001` | `/epl-case-query-reviseditem` | 有 case、無 `TB_REVISED_ITEM` row；option SQL count `9`；response data envelope 缺 openapi required `revisedType/revisedTypeSize` | assertion FAIL → RD contract card |
+| RI-1 | 403 | `<fixture-A 有revised-item>` | `/epl-case-query-reviseditem` | API `item1`-`item14`/`reasonMemo` = DB row | PASS |
+| RI-2 | 403 | `<fixture-B 空revised-item>` | `/epl-case-query-reviseditem` | 有 case、無 `TB_REVISED_ITEM` row；option SQL count `9`；response data envelope 缺 openapi required `revisedType/revisedTypeSize` | assertion FAIL → RD contract card |
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`），不影響「程式補完」里程碑。

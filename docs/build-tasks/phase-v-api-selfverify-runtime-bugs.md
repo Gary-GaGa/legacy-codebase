@@ -104,3 +104,9 @@
 ```
 
 > **獨立複驗定調**：v1 核心（langType RV-2 回歸守門）**已綠**（LT 五頁全 PASS）；本卡修的是 harness/env（RB-1/2/3）+ 釐清 RB-4 真假。RB-4 若確認＝產品契約缺口，走 RD flow 修（非本 harness 卡範圍）。
+
+## v1.1 獨立複驗（planning 側，dev a317d08 同步後）
+- ✅ **RB-1/2/3 + LE-2 修畢、跑得動**：LT-1~5 + RI-1 PASS；`tools/phase-v-run.ps1` 三分類 sentinel（`ENV_NOT_READY:infra:`/`AUTH_FAILED:auth:`）、JWT 形狀驗、temp SQL `UTF8Encoding($false)` no-BOM、`local-env.ps1` Get-Node16Root 改 `NODE16_ROOT/NODE_ROOT` env——皆到位。serviceability smoke（`/epl-list-casedistribution` 200+code 0000）PASS、teardown 乾淨。
+- ✅ **RB-4 RI-2 確認＝真產品契約缺口**（success envelope 缺 required `revisedType`）→ **RD 契約卡＝`phase-v-ri2-query-reviseditem-contract-gap.md`**（dev 報告稱已建、實際未進 repo → planning 側補建）。
+- 🟡 **dev 宣稱 vs 實際落差（第 3 次，記憶模式）**：① RI-2 RD 卡宣稱已建實際無 → 補建；② 真案號（applicationNo）進了 committed `report.md`/`handoff.md` → planning 側去敏為 `<fixture-A/B>`（raw dump 已被 gitignore 擋下未進 GitHub）。**dev 端往後**：報告改吐**去敏 fixture 標籤**、真案號只留本機證據。
+- 待 dev：RI-2 走 RD flow（依 RD 卡裁決方向 1＝改 API 回選項字典為主）。
