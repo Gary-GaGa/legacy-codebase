@@ -1,6 +1,6 @@
 # RD Contract Gap — EPROZ00800 RI-2 query revised item required options
 
-> Status: **RESOLVED**（fix in 母資料夾 backend；gate ⑧ runtime conformance PASS 2026-06-26；**pending owner Done @ DoD 閘門牆**）  
+> Status: **DONE**（owner Done 2026-06-26；過 DoD 閘門牆 ①②③⑥⑦+⑧ 全綠；gate ⑧ 首例完整閉環）  
 > Created: 2026-06-26  
 > Source: Phase V API selfverify harness v1.1, read-only runtime run  
 > Scope: report only in this card; product code change must go through RD flow

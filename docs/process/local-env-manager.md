@@ -40,7 +40,11 @@
 
 ## 4. 鐵則（強健性，集中於此元件）
 1. **PID 真相＝聽埠的 OwningProcess，不信 wrapper pid**（⚠️ 最關鍵、否則痛點復發）：`mvn spring-boot:run` 預設 fork 子 JVM、`yarn ng serve` 起 node/webpack 子程序——`Start-Process -PassThru` 拿到的是 **mvn/yarn wrapper pid，不是真正聽 5500/4200 的 java/node**。故：wait-ready 成功後**反查 `Get-NetTCPConnection -LocalPort <port>` 的 OwningProcess 回填 descriptor pid**；teardown **以 kill-by-port 為主**（殺真聽埠者）＋ `taskkill /PID <wrapperpid> /T /F` 殺整棵 process tree 為輔。殺 wrapper 留 orphan listener＝下次 bind 失敗＝「上次沒關停擺」復發。
-2. **pre-flight 清埠要有歸屬判定**（防誤殺無辜程序）：起前清各 port 殘留，但**只殺認得的**（OwningProcess cmdline 含 `spring-boot.run`/`ng serve` + 本工具工作目錄，或對得上舊 pidfile）；**認不得的占用 → fail-fast 報明（PID+cmdline），要 `-Force` 才無條件清**，不靜默強殺；每次 kill 留 log（誰/cmdline/為何）。
+2. **pre-flight 歸屬判定（防誤殺、且不卡自家服務）**——判定優先序：
+   1. 聽埠 OwningProcess pid **對得上本工具 pidfile/descriptor 紀錄**（＝我們起的）→ **idempotent 重用**（health 綠就用，承鐵則 8）或要重起時清理；**不 fail**。
+   2. pidfile 遺失時，比對該 pid 的**可執行/working-dir/本工具啟動時注入的 marker**（如獨有環境變數或 marker 檔）確認是本工具的 → 同上重用/清理。
+   3. **唯有 listener ∉ 本工具紀錄、且無本工具 marker ＝真第三方占用 → fail-fast 報明（PID+cmdline），`-Force` 才清**；每次 kill 留 log。
+   - ⚠️ **不可靠：拿『child cmdline 含 `spring-boot.run`/`ng serve`』判歸屬**——聽埠的是子 java/node、cmdline 是 `java …`/`node …` 不含 wrapper 字串（**LE-4 即此誤判**：自家服務被當「認不得」fail-fast、卡住 runner）→ 改以 **pidfile/marker** 為準、不靠子程序 cmdline 字串。
 3. **fail-fast、永不前景阻塞**：背景 detached + log 重導；**build 與 wait-ready 都帶逾時**（首次 `mvn`/`yarn` 可能 10min+ 或卡 Nexus；逾時 tail log → 自動 down → 非0）。首次建議先手動 build 過、之後 `-SkipBuild`。
 4. **readiness 兩層、避免假綠**（解耦製造的接縫漏洞）：
    - **liveness（env manager 管、保持不碰 DB）**：BE health 200 **且 body `status:UP`**；FE **等 `ng serve` log 出 `Compiled successfully`**（非只首頁 200——bind 4200 早於編譯完成，會白屏/缺 chunk）。
