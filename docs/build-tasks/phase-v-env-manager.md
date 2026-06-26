@@ -23,7 +23,7 @@ tools/phase-v-run.ps1：
 
 ## 派工順序（owner 定：分兩次、先確認 env manager 正常）
 1. **先** materialize + 自測 **通用 local-env manager**（殼＝`process/local-env-manager.md §7`）→ 回報自測 a~e 過＝正常。
-2. **後** harness v1.1：改吃 `-BaseUrl`、修 RB-1/3、per-case role(RB-2)、RI-2 消歧(RB-4)，加 `phase-v-run.ps1` 組合（殼＝`phase-v-api-selfverify-runtime-bugs.md`）。
+2. **後** harness v1.1：改吃 `-BaseUrl`、修 RB-1/3、per-case role(RB-2)、RI-2 消歧(RB-4)，加 `phase-v-run.ps1` 組合（殼＝`done/phase-v-api-selfverify-runtime-bugs.md`，已完成歸檔）。
 
 ## 關聯
 - 通用工具＝`process/local-env-manager.md`（權威）；強健性鐵則脈絡＝`local-phase-v-bringup.md §2.0`；harness＝`phase-v-api-selfverify-harness.md` + runtime-bug 卡。

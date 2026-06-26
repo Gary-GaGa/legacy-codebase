@@ -141,7 +141,7 @@
 - 00600 已修為樣板（不算候選）。
 
 ### 6.3 Phase V API 自驗 harness v1.1（2026-06-26 executed；RI-2_CONTRACT_GAP）
-> 範圍：唯讀短命呼叫；`tools/phase-v-run.ps1` 依 `local-env` 起 BE/FE、讀 descriptor `services.be.url`、serviceability smoke、per-case role login、跑 harness，finally down。腳本只輸出三分類 PASS/FAIL，不自動改產品碼；RI-2 已開 RD 契約缺口卡：`docs/build-tasks/phase-v-ri2-query-reviseditem-contract-gap.md`。
+> 範圍：唯讀短命呼叫；`tools/phase-v-run.ps1` 依 `local-env` 起 BE/FE、讀 descriptor `services.be.url`、serviceability smoke、per-case role login、跑 harness，finally down。腳本只輸出三分類 PASS/FAIL，不自動改產品碼；RI-2 已開 RD 契約缺口卡：`docs/build-tasks/done/phase-v-ri2-query-reviseditem-contract-gap.md`（已 owner Done、歸檔）。
 
 - Runner：`tools/phase-v-run.ps1 -SkipBuild`（本次 `mvn clean` 重跑遇 Windows file lock：`ValidationUtilsTest.class` 無法刪除；產品碼未改，沿用既有 build artifact 啟動 runtime）。
 - Harness：`tools/phase-v-api-selfverify.ps1`；預設 manifest 已改為 `docs/build-tasks/phase-v-api-selfverify-harness-v1.json`，並支援 `-BaseUrl` / per-case role / `ENV_NOT_READY`、`AUTH_FAILED`、assertion `FAIL` 三分類。
