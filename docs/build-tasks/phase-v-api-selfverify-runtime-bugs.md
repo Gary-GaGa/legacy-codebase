@@ -62,25 +62,45 @@
 - RI-2 empty-case response contract 與 manifest assertion 一致。
 
 ## 可貼 Codex 啟動（v1.1 harness 修復 + 重跑；母資料夾、全唯讀）
+> 起停服務改用已驗收的 **`tools/local-env.ps1`**（`process/local-env-manager.md`）；harness 不起停、只吃 `-BaseUrl`。
 ```
-任務：修 Phase V harness v1 的 RB-1/2/3 + 消歧 RB-4，重跑至全 PASS（或 RI-2 開 RD 契約卡）。
-照 docs/build-tasks/phase-v-api-selfverify-runtime-bugs.md。全唯讀、零寫 DB、背景起服務、結束 teardown。
-1. RB-1：tools/phase-v-api-selfverify.ps1 的 -ManifestPath 預設改指
-   docs/build-tasks/phase-v-api-selfverify-harness-v1.json（或把檔案 rename 對齊預設），
-   使免帶 -ManifestPath 即可跑。
-2. RB-3（RI-1 BOM）：harness 寫 temp SQL 改 UTF-8 **no BOM**（.NET UTF8Encoding($false) 或 -Encoding ascii；
-   或要求 PowerShell 7）→ SQLPlus 不再吐 SP2-0734、DB JSON 可解析。修後 RI-1 才真正跑得出逐欄比對。
-3. RB-2（授權覆蓋）：**首選**＝manifest 每 case 標所需 role、harness per-case 用對應 role 登入
-   （open /epl-ut-login 對既有 TB_EMP_PROFILE role 拿 JWT＝唯讀、不建 role、不寫 DB）→ 單次跑涵蓋全 v1。
-   〔不採「新建 verification role」：那需 TB_API_AUTH DML、須人審 SQL，與 v1 唯讀原則相違。〕
-4. RB-4（RI-2 消歧）：對「有 case、無 revised-item 列」的有效空案號跑，**dump 完整 response JSON**：
-   - 若回 data envelope 但缺 required revisedType（對 docs/specs/srs/EPROZ00800/openapi.yaml QueryRevisedItemResponse）
-     → **開 RD 契約缺口卡（只報不修產品碼）**：API 漏必填 revisedType option 字典。
-   - 若回 error envelope MSG_DATA_NOT_FOUND → 該 fixture 是「無 case」、改取有效空案號重跑；
-   - 若 revisedType 在 data.* 而 harness 取錯 path → 修 assertion path 對齊 openapi envelope。
-5. 重跑 LT-1~5 + RI-1 + RI-2（per-case role）→ 出 PASS/FAIL 表 → 回填 verification-handoff §6.3、
-   更新本卡狀態；teardown kill BE/FE pid（不留殭屍）。
-鐵則：全唯讀；JWT/帳密走 env 不進 repo；斷言失敗只報不自動改產品碼；起服務背景不前景阻塞；結束必 teardown。
+任務：harness v1.1——改吃 local-env 的 BaseUrl、修 RB-1/3、per-case role(RB-2)、消歧 RB-4，
+加歸因三分類 + serviceability smoke，重跑至全 PASS（或 RI-2 開 RD 契約卡）。
+照 docs/build-tasks/phase-v-api-selfverify-runtime-bugs.md + process/local-env-manager.md。
+全唯讀、零寫 DB、結束必 down。
+
+0. 順手修 LE-2：tools/local-env.ps1 line 91 Get-Node16Root 的硬編 C:\Users\00596357\...node\v16.20.2
+   改走 -Profile/env（如 NODE16_ROOT），找不到再 fallback PATH node；不在腳本內留機器路徑/工號。
+1. RB-1：tools/phase-v-api-selfverify.ps1 -ManifestPath 預設改指
+   docs/build-tasks/phase-v-api-selfverify-harness-v1.json（或 rename 對齊），免帶參數即可跑。
+2. RB-3（RI-1 BOM）：harness 寫 temp SQL 改 UTF-8 no BOM（.NET UTF8Encoding($false) 或 -Encoding ascii；
+   或用 PS7）→ SQLPlus 不吐 SP2-0734、DB JSON 可解析。修後 RI-1 才真正跑得出逐欄比對。
+3. RB-2（授權覆蓋）：manifest 每 case 標所需 role、harness per-case 用對應 role 登入
+   （open /epl-ut-login 對既有 TB_EMP_PROFILE role 拿 JWT＝唯讀、不建 role、不寫 DB）→ 單次涵蓋全 v1。
+   〔不新建 verification role：需 TB_API_AUTH DML 須人審、違 v1 唯讀。〕
+4. 歸因三分類 sentinel（讓 401 不被算成 test FAIL）：
+   - infra（env 起不來/打不到/serviceability 不過）→ ENV_NOT_READY
+   - auth（401/403、role 覆蓋不足）→ AUTH_FAILED（與 assertion 分開！）
+   - assertion（200 但內容/契約不符）→ test FAIL
+5. RB-4（RI-2 消歧）：對「有 case、無 revised-item 列」的有效空案號跑，dump 完整 response JSON：
+   - data envelope 但缺 required revisedType（對 docs/specs/srs/EPROZ00800/openapi.yaml QueryRevisedItemResponse）
+     → 開 RD 契約缺口卡（只報不修產品碼）。
+   - error envelope MSG_DATA_NOT_FOUND → 該 fixture 是「無 case」、改取有效空案號重跑。
+   - revisedType 在 data.* 而 harness 取錯 path → 修 assertion path 對齊 openapi envelope。
+6. runner（tools/phase-v-run.ps1）組合：
+   try {
+     tools/local-env.ps1 -Action up -Profile epro        # 已驗收的 env manager（含 pre-flight/逾時/真 pid）
+     $d = read local-env descriptor；校驗 schemaVersion + status==ready，否則 ENV_NOT_READY
+     serviceability smoke：打一條唯讀、會碰 DB 的代表性 endpoint 得 200+非錯誤碼（env 的 UP 只是 liveness、非真健康）
+                           → 不過＝ENV_NOT_READY（infra，非 assertion）
+     login → per-role JWT（env，不進 repo）
+     tools/phase-v-api-selfverify.ps1 -BaseUrl $d.services.be.url -ManifestPath ...harness-v1.json
+   } finally { tools/local-env.ps1 -Action down }        # 成敗都收（kill-by-port 為主）
+7. 重跑 LT-1~5 + RI-1 + RI-2 → 出 PASS/FAIL 表（三分類標明）→ 回填 verification-handoff §6.3、更新本卡。
+回報：PASS/FAIL 表（infra/auth/assertion 分類）+ 用的 role/fixture 案號 + RI-2 完整 response 摘錄（去敏）
+     + serviceability smoke 結果 + LE-2 修畢確認 + down 後無 5500/4200 listener。
+鐵則：全唯讀；JWT/帳密走 env 不進 repo；斷言失敗只報不自動改產品碼；harness 不起停（靠 local-env）；
+     finally 必 down；c0 授權列已套 OVSLXLON02、c0 不再 403。
 ```
 
 > **獨立複驗定調**：v1 核心（langType RV-2 回歸守門）**已綠**（LT 五頁全 PASS）；本卡修的是 harness/env（RB-1/2/3）+ 釐清 RB-4 真假。RB-4 若確認＝產品契約缺口，走 RD flow 修（非本 harness 卡範圍）。
