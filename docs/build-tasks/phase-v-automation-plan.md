@@ -16,7 +16,7 @@
 > **定位升級（owner 定）**：L2 API↔DB conformance ＝**DoD gate ⑧ runtime conformance**，**併入 RD per-page 迴圈**（有 harness manifest 的頁 rd-done 前 blocking；`orchestration-playbook §4c`）——不再只是 RD 後的段③。**段③殘留＝跨頁整合 + L3 FE Playwright**（無法 per-page 者）。harness＝第四種驗證（非 QA）。
 - 來源＝`phase-v-api-selfverify-harness.md` + `phase-v-harness-manifest-v1.md`（manifest 已 grounded）。endpoint/method/params 以 openapi 為準；唯讀帳號 SELECT 比對。
 - **v1**：i0/z0 唯讀「API↔DB 一致性」（read/list/init-query 比筆數/關鍵欄；含 **langType 五頁回歸守門**）。內容穩定、不依賴 110–120 RD，但**時機＝RD 批次後**（守不交錯）。
-- **v2**：納 c0/csu（110–120）——需先套 `c0-authz-sql` 授權列（否則 403）+ 110–120 **rd-done**（契約定型）。
+- **v2**：納 c0/csu（110–120）——前置✅（c0-authz 已套+驗 2026-06-25、110–120 rd-done）→ **已派工**（gate ⑧ 覆蓋擴到 9 c0 頁；Codex 從母資料夾 specs 產 manifest+跑；**回溯跑、可能像 RI-2 抓 build-綠/runtime-錯**）。讀型 only（sele/info/init-query/list；calc 須唯讀 R7、save＝v3）。
 - **v3**：寫入（save/submit）——帶 `local-phase-v-bringup §0.1` 護欄 + teardown SQL + 測試案件號段。
 
 ### L3 FE 畫面 Playwright（全新建置）
