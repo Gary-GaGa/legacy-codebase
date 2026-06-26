@@ -193,7 +193,7 @@
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 
-**⑥ 授權列（owner：DB/ops）**：✅ **SQL 全就緒**（`c0-authz-sql.sql`，06-12 審過）——32 mappings/預期 insert 16、冪等；唯一 gap＝`epl-pxls-c0-financial-statement-comments`（UNSURE 交 ops）。**下一步＝ops 簽核→以 `OVSLXLON02` 套用→Phase V 開門**（403 解除）。
+**⑥ 授權列（owner：DB/ops）**：✅ **已套+DBA 驗 `OVSLXLON02` 2026-06-25**（403 前置解除；pxls==ppdf、confirm==save 驗畢）；service-guard 層仍 RD code-stage。原 SQL `c0-authz-sql.sql`（32 mappings/insert 16、冪等）。
 
 **⑦ 暫緩 track（需先拍板）**：R2 報表服務（→0181/i0·c0 PDF/z0 PDF）、檔案上傳 API（→collateral/審批上傳）。〔CBC 已釐清＝頁內、非獨立 track〕
 
@@ -213,7 +213,7 @@
 
 ## 5. 建議排程（依依賴與風險）— cross-check 後更新
 > 新增 **Phase F（c0 評分前端）**。原則：先坐實缺口 →（驗證已完成 ‖ 補 c0 FE，可並行）→ 攻撥貸 domain → 暫緩 track 待決策（spec 層 PRD→SRS 重產＝前置就緒、owner local 並行）。
-> **✅ DB 連線已打通（2026-06-12）**——Phase V 解鎖。①②③（SQL 就緒/RP6 取數/A-1 DB 實查）✅ 06-12；**只等 ① ops 以 `OVSLXLON02` 套用**（未套 c0 endpoint 全 403）→ ④ Phase V 開跑（`verification-execution.md`；deferred-to-DB QA 群、00119 三條、map-key runtime 複測、M7/M9）。agent 驗 DB 用唯讀帳號、帳密走環境變數（CLAUDE.md §7）。
+> **✅ DB 連線已打通（2026-06-12）**——Phase V 解鎖。①②③（SQL 就緒/RP6 取數/A-1 DB 實查）✅；**c0-authz 已套+DBA 驗 `OVSLXLON02` 2026-06-25**（403 解除）→ ④ Phase V 開跑中（harness v1.1 已跑、gate ⑧ 首例 RI-2 閉環；`verification-handoff.md §6`）。agent 驗 DB 用唯讀帳號、帳密走環境變數（CLAUDE.md §7）。
 
 **Phase 0 — 坐實缺口（c0 FE ✅ 已坐實）**
 0. ✅ c0 評分 FE 範圍已坐實（容器 + 8 子頁）；✅ `CS 0240` 裁定**不開發**。**Phase 0 清空。**
