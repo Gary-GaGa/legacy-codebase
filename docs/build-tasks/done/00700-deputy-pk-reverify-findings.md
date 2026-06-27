@@ -10,8 +10,8 @@ Status: 等人審
 
 | Evidence | DB reality |
 |---|---|
-| `C:\Users\00596357\Documents\project\kh\epro\epro-db\out\legacy_schema_reverify_new02_pk.tsv:139-140` | `TB_EMP_PROXY_PK` column order is `EMP_ID`, `STR_TIME`. |
-| `C:\Users\00596357\Documents\project\kh\epro\epro-db\out\legacy_schema_reverify_new02_columns.tsv:1023-1029` | `EMP_ID VARCHAR2(10) NOT NULL`, `STR_TIME TIMESTAMP(6) NOT NULL`, plus non-key columns `PROXY_ID`, `END_TIME`, `UPDATE_EMP_ID`, `UPDATE_DATE`, `RETURN_CASE_TO_CA`. |
+| `<epro-db>\out\legacy_schema_reverify_new02_pk.tsv:139-140` | `TB_EMP_PROXY_PK` column order is `EMP_ID`, `STR_TIME`. |
+| `<epro-db>\out\legacy_schema_reverify_new02_columns.tsv:1023-1029` | `EMP_ID VARCHAR2(10) NOT NULL`, `STR_TIME TIMESTAMP(6) NOT NULL`, plus non-key columns `PROXY_ID`, `END_TIME`, `UPDATE_EMP_ID`, `UPDATE_DATE`, `RETURN_CASE_TO_CA`. |
 | `docs/build-tasks/legacy-schema-db-reverify-findings.md:45` | Earlier single-key assertion was DB-pushed back; correct PK is `PK(EMP_ID, STR_TIME)`. |
 | `docs/build-tasks/legacy-schema-db-reverify-findings.md:70` | Linked impact explicitly names deputy entity identity and upsert/delete assumptions. |
 

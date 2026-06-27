@@ -10,7 +10,7 @@ then Codex re-ran SELECT-only verification against `OVSLXLON02`.
 - SELECT-only precheck: `docs/build-tasks/phase-v-v2c0-page-column-auth-precheck.sql`
 - DBA-reviewed seed candidate: `docs/build-tasks/phase-v-v2c0-page-column-auth-seed.sql`
 - Runtime source report: `docs/verification/phase-v-api-selfverify-report-v2-c0.md`
-- Original gap card: `docs/build-tasks/phase-v-v2c0-eproc00119-page-auth-seed-gap.md`
+- Original gap card: `docs/build-tasks/done/phase-v-v2c0-eproc00119-page-auth-seed-gap.md`
 
 ## Decision Applied To The Artifact
 
@@ -24,7 +24,7 @@ then Codex re-ran SELECT-only verification against `OVSLXLON02`.
 Command:
 
 ```powershell
-C:\Users\00596357\Documents\project\kh\epro\epro-db\new.cmd @docs\build-tasks\phase-v-v2c0-page-column-auth-precheck.sql
+<epro-db>/new.cmd @docs\build-tasks\phase-v-v2c0-page-column-auth-precheck.sql
 ```
 
 Physical columns confirmed:
@@ -94,7 +94,7 @@ Expected post-apply condition:
 Command:
 
 ```powershell
-C:\Users\00596357\Documents\project\kh\epro\epro-db\new.cmd @docs\build-tasks\phase-v-v2c0-page-column-auth-precheck.sql
+<epro-db>/new.cmd @docs\build-tasks\phase-v-v2c0-page-column-auth-precheck.sql
 ```
 
 Post-apply coverage:

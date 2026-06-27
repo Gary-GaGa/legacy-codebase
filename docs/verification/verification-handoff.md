@@ -186,9 +186,9 @@
 | EPROC00120 | `C0-120-INFO` | - | PASS |
 
 Opened cards:
-- `docs/build-tasks/phase-v-v2c0-langtype-option-count-gap.md`
-- `docs/build-tasks/phase-v-v2c0-eproc00117-financial-business-ratios-gap.md`
-- `docs/build-tasks/phase-v-v2c0-eproc00119-page-auth-seed-gap.md`
+- `docs/build-tasks/done/phase-v-v2c0-langtype-option-count-gap.md`
+- `docs/build-tasks/done/phase-v-v2c0-eproc00117-financial-business-ratios-gap.md`
+- `docs/build-tasks/done/phase-v-v2c0-eproc00119-page-auth-seed-gap.md`
 
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`），不影響「程式補完」里程碑。

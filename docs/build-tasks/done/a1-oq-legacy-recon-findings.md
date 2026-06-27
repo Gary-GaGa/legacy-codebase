@@ -63,7 +63,7 @@
 - 新 `funcIsuT24Authorize` 的 E 段等價處已讀 `EX_RATE_BUY/EX_RATE_SELL`：`backend/src/main/java/khd/svc/epro/service/individual/impl/SummaryServiceImpl.java:2146-2161`。
 - 新 G/H 對應處卻讀 `EXCHANGR_RATE`：`backend/src/main/java/khd/svc/epro/service/individual/impl/SummaryServiceImpl.java:2221-2224`、`backend/src/main/java/khd/svc/epro/service/individual/impl/SummaryServiceImpl.java:2285-2288`。
 - 新 entity 也只映射 `EX_RATE_BUY/EX_RATE_SELL`：`backend/src/main/java/khd/svc/epro/entity/TBDisburDateEntity.java:66-70`。
-- 舊/新 DB 實查輸出都沒有 `TB_DISBUR_DATE.EXCHANGR_RATE`，實欄為 `EX_RATE_BUY/EX_RATE_SELL`：`C:/Users/00596357/Documents/project/kh/epro/epro-db/out/columns_old_OVSLXLON01.psv:1244-1245`、`C:/Users/00596357/Documents/project/kh/epro/epro-db/out/columns_new_OVSLXLON02.psv:939-940`。
+- 舊/新 DB 實查輸出都沒有 `TB_DISBUR_DATE.EXCHANGR_RATE`，實欄為 `EX_RATE_BUY/EX_RATE_SELL`：`<epro-db>/out/columns_old_OVSLXLON01.psv:1244-1245`、`<epro-db>/out/columns_new_OVSLXLON02.psv:939-940`。
 
 ### 舊 named SQL
 - `EPRO_TB_DISBUR_DATE.SQL_UPDATE_001` 與 `EPRO_TB_EXCHANGE_RATE.SQL_INSERT_001` SQL 定義檔在 source/config text 內 `UNFOUND`；只找到 DAO 常數：`legacy-epro/JavaSource/com/cathaybk/epro/dao/EPRO_TB_DISBUR_DATE.java:35`、`legacy-epro/JavaSource/com/cathaybk/epro/dao/EPRO_TB_EXCHANGE_RATE.java:34`。

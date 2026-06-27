@@ -4,9 +4,9 @@
 
 ## Extraction checkpoint
 
-- Wrapper rule: used only `C:\Users\00596357\Documents\project\kh\epro\epro-db\old.cmd` and `C:\Users\00596357\Documents\project\kh\epro\epro-db\new.cmd`.
+- Wrapper rule: used only `<epro-db>\old.cmd` and `<epro-db>\new.cmd`.
 - SQL scope: `SELECT owner, COUNT(*) FROM all_tables WHERE table_name LIKE 'TB_%' GROUP BY owner;` and `all_tab_columns` projection only.
-- Spool root: `C:\Users\00596357\Documents\project\kh\epro\epro-db\out\`.
+- Spool root: `<epro-db>\out\`.
 - Spool files:
   - `owners_old.lst`
   - `owners_new.lst`

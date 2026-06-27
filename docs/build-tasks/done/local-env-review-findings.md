@@ -15,7 +15,7 @@
 - **dev 端**：若你本機也改過 `.gitignore`，以 repo 為準（別各改各的造成分叉）；確認本機 profile 檔名符合 `tools/local-env*.local.json` 或落 `.local-env/`。
 
 ### 🟡 LE-2 ps1 硬編本機路徑 + 工號（line 91）
-- `Get-Node16Root` 寫死 `C:\Users\00596357\Documents\project\pkg\node\v16.20.2`（含**工號 00596357** + 特定機器路徑）→ 不可攜、且違「本機 only、不 commit」。
+- `Get-Node16Root` 寫死 `C:\Users\<dev>\Documents\project\pkg\node\v16.20.2`（含**工號 <dev>** + 特定機器路徑）→ 不可攜、且違「本機 only、不 commit」。
 - **修法**：改走 `-Profile`/env（如 `NODE16_ROOT`）覆寫，腳本不內含機器路徑；找不到再 fallback PATH 的 node。
 - 註：此值已在 git history（58b5075）；屬內部工號非憑證，**不值得 force-push 改史**（且 force push 被 deny）——往後版本移除即可。
 

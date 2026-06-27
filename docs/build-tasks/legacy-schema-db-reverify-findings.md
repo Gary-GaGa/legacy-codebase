@@ -7,13 +7,13 @@ Scope: read-only reverify of schema/entity data facts in `docs/legacy/*` against
 DB authority used:
 - Primary: `docs/build-tasks/schema-diff-findings.md`
 - Fresh read-only spool from `OVSLXLON02.ALL_TAB_COLUMNS`:
-  - `C:\Users\00596357\Documents\project\kh\epro\epro-db\out\legacy_schema_reverify_new02_columns.tsv`
-  - `C:\Users\00596357\Documents\project\kh\epro\epro-db\out\legacy_schema_reverify_new02_pk.tsv`
-  - `C:\Users\00596357\Documents\project\kh\epro\epro-db\out\legacy_schema_reverify_new02_defaults.txt`
+  - `<epro-db>\out\legacy_schema_reverify_new02_columns.tsv`
+  - `<epro-db>\out\legacy_schema_reverify_new02_pk.tsv`
+  - `<epro-db>\out\legacy_schema_reverify_new02_defaults.txt`
 - Existing full extracts:
-  - `C:\Users\00596357\Documents\project\kh\epro\epro-db\out\schema_diff_result.json`
-  - `C:\Users\00596357\Documents\project\kh\epro\epro-db\out\columns_old_OVSLXLON01.psv`
-  - `C:\Users\00596357\Documents\project\kh\epro\epro-db\out\columns_new_OVSLXLON02.psv`
+  - `<epro-db>\out\schema_diff_result.json`
+  - `<epro-db>\out\columns_old_OVSLXLON01.psv`
+  - `<epro-db>\out\columns_new_OVSLXLON02.psv`
 
 ## Summary
 

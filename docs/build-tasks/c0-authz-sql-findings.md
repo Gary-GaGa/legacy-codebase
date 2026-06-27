@@ -14,8 +14,8 @@ Status: **APPLIED to `OVSLXLON02` 2026-06-25 (ops reported)** — `TB_API_AUTH` 
 
 ## Pattern Evidence
 
-- `TB_API_AUTH` columns are `API_ID`, `ROLE`, `REF_FUNCTION_ID`, `UPDATE_USER`, `UPDATE_DATE`: `C:/Users/00596357/Documents/project/kh/epro/epro-db/out/columns_new_OVSLXLON01.psv:1-5`.
-- `TB_ROLE_TASK` columns are `PAGE_CODE`, `ROLE`, `FUNCTION`, `PAGE_NAME`: `C:/Users/00596357/Documents/project/kh/epro/epro-db/out/columns_new_OVSLXLON01.psv:2777-2780`.
+- `TB_API_AUTH` columns are `API_ID`, `ROLE`, `REF_FUNCTION_ID`, `UPDATE_USER`, `UPDATE_DATE`: `<epro-db>/out/columns_new_OVSLXLON01.psv:1-5`.
+- `TB_ROLE_TASK` columns are `PAGE_CODE`, `ROLE`, `FUNCTION`, `PAGE_NAME`: `<epro-db>/out/columns_new_OVSLXLON01.psv:2777-2780`.
 - R7 model defines `TB_API_AUTH` as endpoint access and `TB_ROLE_TASK` as page operation/edit access; `TB_API_AUTH` uses `API_ID` as the documented key and `TB_ROLE_TASK` uses `PAGE_CODE` + `FUNCTION` as the documented key: `docs/legacy/db-schema-catalog.md:75-76`.
 - Migration rule says `TB_API_AUTH` links `API_ID` to role and `REF_FUNCTION_ID`, and page migration uses funcId to build API auth: `docs/legacy/migration-backlog.md:65`.
 - Runtime API auth compares `ROLE LIKE %:role%` and exact `API_ID`: `backend/src/main/java/khd/svc/epro/repository/TBApiAuthRepository.java:14`.

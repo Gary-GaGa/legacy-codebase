@@ -10,7 +10,7 @@ Runtime update (2026-06-27): v2-c0 rerun completed with `tools/phase-v-run.ps1
 listener.
 
 ## A. 修 v2 三缺口（A① 與 A② 可並行）
-- [x] **A① #3 seed（你/DBA @ OVSLXLON02）** — `phase-v-v2c0-eproc00119-page-auth-seed-gap.md` 已收斂：
+- [x] **A① #3 seed（你/DBA @ OVSLXLON02）** — `done/phase-v-v2c0-eproc00119-page-auth-seed-gap.md` 已收斂：
   - DBA 已套 seed；SELECT-only 複驗 `EPROC00119` 與順帶缺漏的 `EPROC00120` 均已補齊 page-column-auth。
   - **gate**：`EPROC00119` category/detail = `3/46`、`EPROC00120` category/detail = `3/64`，且 transformed mirror parity 均為 `0/0`。
 - [x] **A② #1+#2 RD 修（母資料夾 Codex）** — 貼「v2-c0 三缺口修復」dispatch 的 #1/#2：
@@ -20,7 +20,7 @@ listener.
 
 ## B. 重跑 v2 + 複驗
 - [x] **B③ 重跑 v2（母資料夾）** — `tools/phase-v-run.ps1`（v2 manifest）→ **17 cases 全 PASS**（LT/RI + 5 assertion + 2 auth〔119〕）。**gate**：無 assertion FAIL、119 不再 AUTH_FAILED、down 後無 5500/4200 listener。
-- [x] **B④ 回報 → planning 複驗** — `phase-v-v2c0-b4-planning-reverify.md`：langType 真改 label（非改 fixture 湊綠）、#2 對現行 openapi 為真缺口、#3 seed 完整、全綠。
+- [x] **B④ 回報 → planning 複驗** — `done/phase-v-v2c0-b4-planning-reverify.md`：langType 真改 label（非改 fixture 湊綠）、#2 對現行 openapi 為真缺口、#3 seed 完整、全綠。
 
 ## C. RD-gate-⑧ 讀型收尾（v2 綠即達成）
 > **owner 2026-06-27（在 v2-c0 PASS 之後定）：gate ⑧（RD Flow）＝讀型 v1/v2 only**。A+B 完成（v2 17/17 全綠）＝**9 c0 頁讀型 runtime conformance 收尾**＝RD 端 gate ⑧ 這批達標。〔註：v2-c0 結果是此決策前跑的；下方 v3/L3 已依新決策改歸屬。〕
@@ -32,6 +32,6 @@ listener.
 - **RD 端收尾**：gate ⑧ 讀型(v1/v2)綠即收；寫入/整合 → QA Flow（未來）。→ **下一步＝B 段全 SRS 轉換**（撥貸 0920/CSU 主流程/SU0170 finalize/ISU·i0·z0；母資料夾 Codex orchestrator drain）。**B 段不被 v3/L3 阻擋。**
 
 ## 關聯卡
-- 缺口（已 resolved）：`phase-v-v2c0-langtype-option-count-gap.md`、`-eproc00117-financial-business-ratios-gap.md`、`-eproc00119-page-auth-seed-gap.md`；複驗＝`phase-v-v2c0-b4-planning-reverify.md`、seed＝`phase-v-v2c0-page-column-auth-seed-findings.md`
+- 缺口（已 resolved）：`done/phase-v-v2c0-langtype-option-count-gap.md`、`done/-eproc00117…`、`done/-eproc00119…`；複驗＝`done/phase-v-v2c0-b4-planning-reverify.md`、seed＝`done/phase-v-v2c0-page-column-auth-seed-findings.md`
 - v3/L3（移出 RD）：`phase-v-l2-v3-writes.md`（PARKED→QA Flow）、`phase-v-l3-fe-playwright.md`（PARKED→QA Flow）
 - 機制：gate ⑧＝`orchestration-playbook §4c`（讀型 only）；分層決策＝`decisions.md`
