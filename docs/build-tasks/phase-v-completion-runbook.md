@@ -33,5 +33,5 @@ listener.
 
 ## 關聯卡
 - 缺口（已 resolved）：`phase-v-v2c0-langtype-option-count-gap.md`、`-eproc00117-financial-business-ratios-gap.md`、`-eproc00119-page-auth-seed-gap.md`；複驗＝`phase-v-v2c0-b4-planning-reverify.md`、seed＝`phase-v-v2c0-page-column-auth-seed-findings.md`
-- v3/L3（移出 RD）：`phase-v-l2-v3-writes.md`（PARKED→QA Flow）、`phase-v-l3-fe-playwright.md`（DRAFT，歸屬待定）
+- v3/L3（移出 RD）：`phase-v-l2-v3-writes.md`（PARKED→QA Flow）、`phase-v-l3-fe-playwright.md`（PARKED→QA Flow）
 - 機制：gate ⑧＝`orchestration-playbook §4c`（讀型 only）；分層決策＝`decisions.md`

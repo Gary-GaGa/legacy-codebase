@@ -1,6 +1,6 @@
 # Phase V v2-c0 Auth Gap: EPROC00119 page auth seed mismatch
 
-Status: Open
+Status: **Resolved**（v2-c0 17/17 PASS；待 Phase V 收尾一併歸檔 done/）
 Owner: Auth/DBA + RD
 Classification: auth / AUTH_FAILED
 Source report: `docs/verification/phase-v-api-selfverify-report-v2-c0.md`

@@ -20,7 +20,7 @@
 | **SRS**（how） | SA 轉系統規格 | **`.claude/skills/prd-to-srs/SKILL.md`** ∥ `docs/env/codex/prompts/prd-to-srs.md` | **〔Model A：spec bundle 本體在母資料夾、Codex 擁〕** 結構＝`<funcId>/`：`spec.md`(Rn)・`openapi.yaml`・`schema.sql`＋`README.md`(digest)；本 repo 留**範本** `specs/srs/{spec-template,digest-template}.md`＋方法論 `spec-architecture.md`；重大取捨 `adr/ADR-*.md` | ①②⑤（+字母 Ⓑ/Ⓟ/Ⓢ/Ⓔ/Ⓡ；**在母資料夾跑**，見 `specs/srs/README.md §閘門編號對照`）|
 | **as-is 驗證**（brownfield loop） | 驗 migrated 碼 vs 舊系統/PRD | 唯讀 audit 任務單 | `build-tasks/<funcId>-verification-findings.md`（如 `00800-verification-findings.md`）、`build-tasks/*-investigation.md` | — |
 | ~~**QA cases**~~〔暫拔除〕 | QA 產生/驗收暫停（恢復見 git history） | — | ~~`specs/srs/<funcId>/qa-cases.md`~~（不再產） | ~~④⑤~~（暫停） |
-| **RD-Agent**（開發+測試） | Codex 照任務單實作 | Codex（母資料夾） | **產品碼在 repo 外**；in-repo＝**任務單** `build-tasks/*.md`（live）、`build-tasks/done/`（歷史 22 份） | ⑥ |
+| **RD-Agent**（開發+測試） | Codex 照任務單實作 | Codex（母資料夾） | **產品碼在 repo 外**；in-repo＝**任務單** `build-tasks/*.md`（live）、`build-tasks/done/`（歷史歸檔；數量以 `ls` 為準） | ⑥ |
 | **DoD 閘門牆** | RD 過 SA/QA 邊界 | — | SRS 機械 pre-gate `scripts/check-srs-bundle.py`（涵蓋見腳本檔頭；與 DoD ①②③⑥⑦⑧ 編號對照見 `specs/srs/README.md`）；**③** `scripts/verify-c0.py`；**⑦語意** `.claude/agents/spec-reviewer.md` ∥ `docs/env/codex/spec-reviewer.toml`+`reviewer-c0.toml`；**⑧ runtime conformance** `tools/phase-v-run.ps1`（有 harness 即 blocking）；**自動觸發** `.claude/settings.json`(Stop hook) ∥ `docs/env/codex/hooks.json` | ①②③⑥⑦⑧ |
 | **裁定 / escalation** | 判斷題交人 | — | SRS 的 `@PENDING`；`decisions.md`；`pending-register.md`；`disbursement/disbursement-domain-escalations.md` | — |
 | **Done → 回歸** | 回填狀態（bug→回歸 case 隨 QA 暫拔除） | — | `feature-inventory.md` 回填；~~bug → 新 `qa-cases.md` case~~（QA 暫停） | — |
@@ -84,7 +84,7 @@
 >
 > 判準演進：~~有無引用~~ → ~~引用死活~~ → ~~資料復驗~~ → **結論是否已進 SSOT**。**「被引用」不再是「該留」的理由**（證據被引很正常）；**「結論已進 SSOT」才是「可收」的理由**。⚠️ 例外：一份 findings 若**被某個 open 項當『來源』長期依賴**（如 as-is 來源、open AUD 的證據），即使其本身 card 已 done 仍**留 live**（如 `00800-verification-findings`＝RP8/RP11 as-is 來源、`legacy-schema-db-reverify-findings`＝open AUD-7 證據）。
 
-- **active（依「結論未進 SSOT／仍為 open 項長期來源」留 live；現 19 份）**：
+- **active（依「結論未進 SSOT／仍為 open 項長期來源」留 live；數量以 `ls build-tasks/*.md` 為準、不硬記避漂移）**：
   1. **open 工單／進行中 sweep**：`get-body-contract-sweep.md`+`-findings.md`（#3 待修）、`local-phase-v-bringup.md`、`phase-v-api-selfverify-harness.md`+`phase-v-harness-manifest-v1.md`（Phase V 自驗 harness v1）、`c0-legacy-parity-recheck.md`（企金線 18 頁 parity reopen）。
   2. **ops artifact**：`c0-authz-sql-findings.md`（授權列對照——**SQL 已套+DBA 驗 `OVSLXLON02`**〔pxls==ppdf〕；service-guard 層仍 code-stage）。
   3. **長青參考／SSOT**：`schema-diff-findings.md`（schema SSOT，AUD-7/8 還開）、`full-refactor-audit.md`+`refactor-audit/`（audit 工作集，待 AUD 收口）、`refactor-audit-qc.md`（QC 日誌）。

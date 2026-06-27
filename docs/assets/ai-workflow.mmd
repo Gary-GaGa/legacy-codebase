@@ -48,14 +48,15 @@ flowchart LR
     G1["① Contract · OpenAPI snapshot"]
     G2["② Schema · entity ↔ DB"]
     G3["③ verify-c0 · 結構 / 只新增 / UTF-8·BOM"]
-    G4["④ QA 驗收 · 跑 QA cases<br/>（Testcontainers oracle-xe；橋接 specs/qa-to-test.md）"]
-    G5["⑤ 覆蓋率 · ID 對表"]
+    G4["④ QA 驗收 ·〔QA 2026-06-24 暫拔〕"]
+    G5["⑤ 覆蓋率 ·〔QA 暫拔〕"]
     G6["⑥ Build 綠"]
     G7["⑦ LLM 語意審查 · advisory（code 階段）<br/>三軸 contract / scope / regression（read-only·真獨立·跨模型）<br/>※SRS 階段的 spec-reviewer＝blocking（見 SRSCHK）"]
-    G1 ~~~ G2 ~~~ G3 ~~~ G4 ~~~ G5 ~~~ G6 ~~~ G7
+    G8["⑧ runtime conformance · 跑活 endpoint 對真 DB<br/>（API↔等價SQL/openapi required；harness，有 harness 即 blocking；RD gate＝讀型 v1/v2）"]
+    G1 ~~~ G2 ~~~ G3 ~~~ G4 ~~~ G5 ~~~ G6 ~~~ G7 ~~~ G8
   end
 
-  GATE -->|①–⑥ 全綠| Done["✅ Done"]
+  GATE -->|①②③⑥⑦⑧ 綠（④⑤ QA 暫拔）| Done["✅ Done"]
   GATE -.->|❌ FAIL → 修，重跑| RD_WORK
   Done --> Issue["Issue<br/>bug → 回歸 case"]
   Issue -.->|新 QA case · 回歸 1~∞| QA_DEC
@@ -99,4 +100,4 @@ flowchart LR
   class Findings findings; class SRSCHK chk; class Decide decide;
   class QA_IN,QA_DEC,QA_ORA,QA_BE,QA_OUT qa;
   class RD_IN,RD_SPLIT,RD_ASIS,RD_GREEN,RD_WORK rd;
-  class G1,G2,G3,G4,G5,G6,G7 gate;
+  class G1,G2,G3,G4,G5,G6,G7,G8 gate;

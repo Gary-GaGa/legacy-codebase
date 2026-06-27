@@ -189,7 +189,7 @@
 - ✅ D1–D5 硬缺陷已修（`88328f9`；卡 `done/00800-fix-step1-tbd-independent.md`）。
 - ✅ TBD-001~007 全裁（06-11）；✅ **RI-MAT 修復包 F1–F9 落地**（`5580eb7`，06-12 審過；卡 `done/00800-rimat-fix.md`）。
 - SRS 重產：`docs/specs/srs/EPROZ00800/` 已回填 `in-review`；RP8/RP11/BP1-5 已裁入。
-- Implementation closeout：code/test/build 已通；`TB_API_AUTH` final query/save rows SELECT-only PASS。仍開：R7 page-column DB config 缺 `reason.item`，待 DBA/RD 套 `docs/build-tasks/00800-contract-closeout-authz-backfill.sql` 或等價修正後重跑 `docs/build-tasks/00800-contract-closeout-authz.sql`。
+- Implementation closeout：code/test/build 已通；`TB_API_AUTH` final query/save rows SELECT-only PASS。仍開：R7 page-column DB config 缺 `reason.item`，待 DBA/RD 套 `docs/build-tasks/done/00800-contract-closeout-authz-backfill.sql` 或等價修正後重跑 `docs/build-tasks/done/00800-contract-closeout-authz.sql`。
 
 **⑤ c0 escalation（owner：信用決策 domain）— 2 條**：E1 CU-return checkpoint（`:2985`）、E2 `crScoreCardCompleted` 覆寫（`:2890`）。
 

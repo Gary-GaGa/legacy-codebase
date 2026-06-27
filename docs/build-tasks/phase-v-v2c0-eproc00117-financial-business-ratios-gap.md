@@ -1,6 +1,6 @@
 # Phase V v2-c0 RD Contract Gap: EPROC00117 financial-business ratios missing
 
-Status: Open
+Status: **Resolved**（v2-c0 17/17 PASS；待 Phase V 收尾一併歸檔 done/）
 Owner: RD
 Classification: assertion / conformance gap
 Source report: `docs/verification/phase-v-api-selfverify-report-v2-c0.md`
