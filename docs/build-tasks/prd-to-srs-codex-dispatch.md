@@ -1,19 +1,19 @@
 # PRD → SRS dispatch prompt（給 Codex；新版 Bible/PRD 用）
 
-> **用法**：在母資料夾（產品碼 + 規劃 repo 可讀 + 新版 Bible/PRD 放好）開 Codex。下方 prompt＝**單頁轉換單元**（填 `<funcId>` / `<PRD 路徑>`）；產 SRS bundle → 過閘門 → 回填。
+> **用法**：在母資料夾開 Codex（產品碼 + repo clone；**Model A：Bible/PRD/SRS bundle 皆母資料夾 local、gitignored，db-diff/refactor-spec 同**）。下方 prompt＝**單頁轉換單元**（填 `<funcId>` / `<PRD 路徑>`）；產 SRS bundle → 過閘門 → 回填。
 > **批量 = drain**：規模化由 SRS orchestrator（`orchestration-playbook §5b/§6b`）驅動——允許**多頁同時 `prd-ready`**，orchestrator **序列**逐頁套用本 prompt（一次一頁、每頁各自過 gate＋N 軸＋回填），**持續 drain 直到所有既有 `prd-ready` 都轉成 `in-review`** 才停（batch checkpoint）。本 prompt 本身不變、仍是單頁；改的是外層迴圈不再每頁停。
 > **依賴**：① 新版 PRD（必）+ Bible（有則接上游追溯）② 該頁產品碼（as-is）③ 規劃 repo 的 skill/SOP（prompt 已內聯關鍵，不可讀亦能跑）④ **對比輸入 md**（新舊 DB 差異/新 schema + 既有重構 spec，見 prompt 內 §5）。
 > **risk-tier 批次順序**：① 企金線 T1〔`EPROC00118`/`EPROC00120`/`EPROCSU0170`〕→ ② 企金線 T2/T3（見 `c0-legacy-parity-recheck.md`）→ ③ 撥貸〔0921/0922+T24；**re-open 頁別 overlay＝`done/disbursement-reopen-srs-dispatch.md`**〕→ ④ `EPROZ00800` 重產（新版 PRD；v0.9 已封存）→ ⑤ 主流程 ISU/i0/z0 增量。
 
 ## PRD 放置與對應（PM 貼給 Codex 前；EPROZ00100 首跑實測歸納）
-> **對應鍵＝funcId**（如 `EPROZ00100`）。PRD 檔名含 funcId → SRS 自動產到 `srs/<funcId>/`、db-diff 用 table_name、refactor-spec 用 module_code（EPRO* 碼、≈funcId）反查、trace 配同 funcId。**一頁一 PRD、funcId 不重複**（同 funcId 多版會被 gateⒷ glob 同時命中、取字典序最後一個 → **只留最新一份在資料夾**）。
+> **對應鍵＝funcId**（如 `EPROZ00100`）。PRD 檔名含 funcId → SRS 自動產到母資料夾 `docs/specs/srs/<funcId>/`（local）、db-diff 用 table_name、refactor-spec 用 module_code（EPRO* 碼、≈funcId）反查、trace 配同 funcId。**一頁一 PRD、funcId 不重複**（同 funcId 多版會被 gateⒷ glob 同時命中、取字典序最後一個 → **只留最新一份在資料夾**）。
 
 | 檔案 | 放哪 | 由誰 |
 |---|---|---|
 | Bible v1.1 | `docs/specs/bible/bible-eproposal.md` | 母資料夾 local（Model A）|
-| **PRD 快照** | `docs/specs/prd/`（**扁平放、可一次 bulk**），名 `PRD-*<funcId>*.md`（rename 腳本 `scripts/rename-prd.ps1`）| **PM 放** |
-| trace | `docs/specs/prd/trace-*<funcId>*.md` | **prd-to-srs 產**（PM 不放）|
-| **SRS bundle** | `docs/specs/srs/<funcId>/`（spec.md/openapi.yaml/schema.sql；**qa-cases.md 暫拔除**）| **prd-to-srs 產**（PM 不放、目錄名＝funcId）|
+| **PRD 快照** | 母資料夾 `docs/specs/prd/`（local、Model A；**扁平放、可一次 bulk**），名 `PRD-*<funcId>*.md`（rename 腳本 `scripts/rename-prd.ps1`）| **PM 放** |
+| trace | 母資料夾 `docs/specs/prd/trace-*<funcId>*.md`（local）| **prd-to-srs 產**（PM 不放）|
+| **SRS bundle** | 母資料夾 `docs/specs/srs/<funcId>/`（local、Model A；spec.md/openapi.yaml/schema.sql；**qa-cases.md 暫拔除**）| **prd-to-srs 產**（PM 不放、目錄名＝funcId）|
 | 新 DB schema | local `docs/db-diff/`（**留母資料夾、不進規劃 repo**）| owner（dev host）|
 | 70% baseline | local `docs/refactor-spec/`（**留母資料夾**）| owner（dev host）|
 
