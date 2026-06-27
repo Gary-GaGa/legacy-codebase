@@ -63,6 +63,7 @@
 | `process/vision-pipeline.md` | flow 願景與原則 |
 | `process/orchestration-playbook.md` | Codex 多任務編排方法論（A/B/C 三類、依賴 DAG、完成定義、三軸驗證；orchestrator 停在等人審）|
 | `process/local-env-manager.md` | **可選 flow 工具**：本機 app 環境生命週期管理器（`tools/local-env.ps1` up/down/status；起停 BE+FE、pre-flight 埠清場/fail-fast/雙保險 teardown）。RD runtime 驗、Phase V、手動 smoke 共用；與測試解耦 |
+| `.claude/agents/repo-janitor.md` | **維護 agent（唯讀）**：掃 repo 廢棄/過期/矛盾/可刪歸檔/冗餘（守保留政策：open 待決/audit-trail/史料/open-AUD/方法論不動）。里程碑後或定期清理用；只報不改、人審後處置 |
 
 ## 5. 子域 / 階段專屬（已分資料夾）
 - **[`disbursement/`](disbursement/)**：`disbursement-triage.md`（0921/0922/T24 triage）、`disbursement-domain-escalations.md`（待 domain/T24/DBA 裁決）；A-1 ✅ 已實作＋conformance PASS（`daae4c3`）→ 規格/recon 收 `build-tasks/done/`（`a1-funcGetExchangeRate-spec.md` 等）。
