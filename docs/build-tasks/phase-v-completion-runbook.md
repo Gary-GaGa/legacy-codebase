@@ -28,7 +28,7 @@ listener.
 
 ## D. 移出 RD 的部分（不阻 B 段）
 - **v3 寫入＝PARKED → QA Flow**（owner 2026-06-27；案件流程耦合、單頁難孤立）：**不在 RD gate ⑧**、**不是 v2 後的下一步**。卡＝`phase-v-l2-v3-writes.md`（QA Flow 整合 tier 草稿）。過渡：高風險 save fixture-case 半自動 + 廣面 UAT。
-- **L3 FE Playwright**：草稿＝`phase-v-l3-fe-playwright.md`；**歸屬待定**（留 Phase V 獨立段 or 歸 QA Flow？owner 定）。
+- **L3 FE Playwright＝PARKED → QA Flow**（owner 2026-06-27；FE 整合層，與 v3 同歸）：**不在 RD gate ⑧**。卡＝`phase-v-l3-fe-playwright.md`。
 - **RD 端收尾**：gate ⑧ 讀型(v1/v2)綠即收；寫入/整合 → QA Flow（未來）。→ **下一步＝B 段全 SRS 轉換**（撥貸 0920/CSU 主流程/SU0170 finalize/ISU·i0·z0；母資料夾 Codex orchestrator drain）。**B 段不被 v3/L3 阻擋。**
 
 ## 關聯卡

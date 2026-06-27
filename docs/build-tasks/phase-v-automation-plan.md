@@ -20,6 +20,7 @@
 - **v3**：寫入（save/submit）——**owner 2026-06-27：移出 RD gate ⑧、歸未來 QA Flow 整合 tier**（案件流程耦合、單頁難孤立）。卡＝`phase-v-l2-v3-writes.md`（PARKED）；過渡＝高風險 fixture-case 半自動 + 廣面 UAT。
 
 ### L3 FE 畫面 Playwright（全新建置）
+> **owner 2026-06-27：L3 移出 RD gate ⑧、與 v3 同歸未來 QA Flow 整合 tier（FE 部分）**——FE 瀏覽器層屬整合、非 per-page 讀型 API 閘。卡＝`phase-v-l3-fe-playwright.md`（PARKED）。
 - 瀏覽器層自動測：render/載入、dialog（`mat-dialog` 0174/0175 類）、輸入驗證/顯示條件（**強制點 FE/both 的 UX 規則**）。
 - spec 來源＝各頁 SRS Contract 半的 `強制點: FE/both` Rn + 原 smoke 清單（V-2~V-6）。
 - 抓 build+靜態驗**漏的 runtime FE bug**（RV-1/RV-2 類：langType 砍資料、GET-body、render 斷料）。

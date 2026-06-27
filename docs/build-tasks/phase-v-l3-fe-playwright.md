@@ -1,6 +1,6 @@
-# Build Task（DRAFT）— Phase V L3：FE Playwright（瀏覽器層 render/dialog/強制點-FE）
+# Build Task（PARKED → QA Flow）— L3：FE Playwright（瀏覽器層 render/dialog/強制點-FE）
 
-> Status: **DRAFT**（待 v2 過後或並行派）。性質＝gate ⑧ runtime conformance 的 **FE 畫面層**（瀏覽器測 render/互動/顯示條件；抓靜態+API 層看不到的 FE runtime bug，如 langType 砍資料畫面、render 斷料、dialog 回歸）。
+> Status: **PARKED（owner 2026-06-27：L3 不在 RD gate ⑧，與 v3 同歸未來 QA Flow 整合 tier 的 FE 部分）**。理由＝FE 瀏覽器層屬整合、非 per-page 讀型 API 閘；RD gate ⑧ 維持 v1/v2 讀型 only。見 `decisions.md`「gate ⑧ 範圍＝讀型」列。本卡＝QA Flow FE tier 測法草稿（render/dialog/強制點-FE、Windows 安裝坑）。
 > 依據：`phase-v-automation-plan.md §L3` + `process/local-env-manager.md`（FE 起停）+ 各頁 SRS 的「強制點 FE/both」Rn。
 
 ## 範圍
