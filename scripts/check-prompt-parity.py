@@ -34,6 +34,7 @@ PAIRS = [
     ("SRS", PLAYBOOK, "docs/build-tasks/prd-to-srs-orchestrator-drain.md", [
         ("一次只一頁", "序列、一次一頁（context 衛生）"),
         ("prd-ready", "佇列狀態驅動 drain"),
+        ("實檔不存在", "prd-ready 但 PRD 實檔不存在＝跳過不 pick（placeholder 守門、不臆造 PRD）"),
         ("batch checkpoint", "低風險頁批末停一次"),
         ("per-page checkpoint", "T1/金錢/授權頁每頁停"),
         ("A–F", "每頁全 A–F 七正交軸"),
