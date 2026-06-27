@@ -141,20 +141,65 @@
 | `EPROC00116` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00116-v1.0.md` | rd-done | `docs/specs/srs/EPROC00116/`; code:`fix(eproc00116): harden financial statement GI contract` |
 | `EPROC00117` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00117-v1.0.md` | rd-done | `docs/specs/srs/EPROC00117/`; code:`fix(eproc00117): align GI evaluation contract` |
 | `EPROC00119` | T1 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROC00119-v1.0.md` | rd-done | `docs/specs/srs/EPROC00119/`; code:`fix(eproc00119): enforce FI statement contract` |
-| `EPROCSU0110` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROCSU0120` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROCSU0130` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROCSU0150` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROCSU0160` | T2 企金線 | — | not-started | 待 parity 碼驗餵入(+AUD-11 routing) |
-| `EPROCSU0171` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROCSU0172` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROCSU0173` | T2 企金線 | — | not-started | 待 parity 碼驗餵入 |
-| `EPROISU0920` | 撥貸 T1 | — | not-started | 差異源已備(triage/db-diff)·只缺 PRD |
 | `EPROISU0921` | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md` | Approved (2026-06-23) | `docs/specs/srs/EPROISU0921/` |
 | `EPROISU0922`(+T24) | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | Approved (2026-06-23) | `docs/specs/srs/EPROISU0922/` |
-| `EPROZ00800` | 00800 重產 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md`| Approved (2026-06-23) | `docs/specs/srs/EPROZ00800/` |
-| 主流程 ISU/i0/z0 增量 | 增量 | — | not-started（佔位·待拆列）| — |
-> ⚠️ 一頁一列、funcId 不重複；新頁 PRD 放進來→該列 `status=prd-ready`+填 `prd`。**2026-06-20 回填**：決策頁（企金線 18 + 撥貸 3 + 00800 ≈22，＝有未決差異需 owner 裁者）已**拆成逐 funcId 列**（規劃展開視圖已歸檔＝`docs/archive/srs-production-queue-2026-06-20.md`，2026-06-20 快照；本 ledger 為 live SSOT），含各頁「要餵的輸入」，仍 `not-started`（待 PRD 才升 `prd-ready`；orchestrator 只 pick `prd-ready`，故 not-started 列不影響迭代）。**僅剩 `主流程 ISU/i0/z0 增量`＝佔位**（KEEP/增量、無待裁差異、非派工單位，隨 PRD 進場再拆）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`。⚠️ 企金線各列 `prd-ready` 前須先有 `c0-legacy-parity-recheck` 碼驗結果餵入 as-is parity 軸，否則 SRS 漏載對舊 cs/cu 差異。
+| `EPROZ00800` | 00800 重產 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md` | Approved (2026-06-23) | `docs/specs/srs/EPROZ00800/` |
+| `EPROISU0920` | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0920-v1.0.md` | prd-ready | ⟳待產 `docs/specs/srs/EPROISU0920/` |
+| `EPROCSU0110` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0110-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
+| `EPROCSU0120` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0120-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
+| `EPROCSU0130` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0130-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
+| `EPROCSU0150` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0150-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
+| `EPROCSU0160` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0160-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
+| `EPROCSU0171` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0171-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
+| `EPROCSU0172` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0172-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
+| `EPROCSU0173` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0173-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
+| `EPROISU0110` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0110-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0120` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0120-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0130` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0130-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0140` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0140-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0150` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0150-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0160` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0160-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0170` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0170-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0171` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0171-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0172` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0172-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0173` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0173-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0910` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0910-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0911` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0911-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0912` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0912-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0913` | T2 個金主流程 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0913-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00110` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00110-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00111` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00111-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00112` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00112-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00113` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00113-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00114` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00114-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00115` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00115-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00116` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00116-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00117` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00117-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00118` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00118-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00119` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00119-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROI00120` | T2 i0 評分 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROI00120-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00200` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00200-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00300` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00300-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00400` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00400-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00410` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00410-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00500` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00500-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00600` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00600-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00610` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00610-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00620` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00620-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00630` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00630-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00640` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00640-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00650` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00650-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROZ00660` | T3 z0 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00660-v1.0.md` | prd-ready | ⟳待產 |
+| `EPROISU0181` | ⏸ R2 | — | ⏸ 暫緩 | ⏸ R2 報表服務未定 |
+| `EPROZ00700` | deputy | — | N/A | N/A（=golden deputy、KEEP，無需 SRS） |
+
+> ⚠️ 一頁一列、funcId 不重複。**owner 全列入（2026-06-28）**：所有未轉 SRS 的頁（CSU 8 + ISU 主流程 14 + i0 11 + z0 12 + 撥貸 0920）已**全部展開逐 funcId 列、設 `status=prd-ready`**，prd 欄填 approve 命名慣例 `PRD-CDC-EPRO-0001-<funcId>-v1.0.md`。**⏸/N/A 除外**：`EPROISU0181`（R2 報表服務未定）、`EPROZ00700`（=golden deputy、KEEP、無需 SRS）。完整 67 頁清單＝owner 權威盤點 `docs/legacy/legacy-function-inventory.md`；規劃展開視圖快照＝`docs/archive/srs-production-queue-2026-06-20.md`。
+>
+> **🚧 placeholder PRD caveat（drain 前必讀）**：上列 `prd-ready` 的 prd 路徑為 **placeholder 命名（檔案尚未落地）**——除已 Approved/rd-done/in-review 的 14 頁外，**實 PRD 尚未放入母資料夾**。orchestrator drain 真要轉某頁前，**該 funcId 的實 PRD 必須先落母資料夾 `docs/specs/prd/`（Model A local）**，否則無真 PRD 可轉。`prd-ready` 在此表＝**owner 已 greenlit 排程**，**≠ PRD 已備齊**。
+>
+> ⚠️ **企金線（CSU/c0）各列轉 SRS 前**仍須先有 `c0-legacy-parity-recheck` 碼驗結果餵入 as-is parity 軸，否則 SRS 漏載對舊 cs/cu 差異。
+>
+> 📊 **覆蓋計數不受影響**：分子＝`status∈{in-review,approved,rd-*,done}` 涵蓋頁數（prd-ready **不計入**），故 §覆蓋仍＝ **14/67**（prd-ready 是排程、非已產出）。
 
 ## 派工（填實本矩陣）
 - **企金線對舊 parity**（Codex 帶 source）：擴 `c0-legacy-parity-recheck.md` 涵蓋範圍 → c0 評分 **+ CSU 主流程**；risk-tier 00118/00120/0170 先。
