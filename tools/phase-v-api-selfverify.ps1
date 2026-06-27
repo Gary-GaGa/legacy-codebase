@@ -27,6 +27,53 @@ function Get-EnvOrDefault {
     throw "Required environment variable is missing: $Name"
 }
 
+function ConvertTo-CaseSensitiveJsonObject {
+    param([AllowNull()][object]$Value)
+
+    if ($null -eq $Value) {
+        return $null
+    }
+
+    if ($Value -is [System.Collections.IDictionary]) {
+        $dict = New-Object System.Collections.Specialized.OrderedDictionary -ArgumentList ([System.StringComparer]::Ordinal)
+        foreach ($key in $Value.Keys) {
+            $dict[[string]$key] = ConvertTo-CaseSensitiveJsonObject -Value $Value[$key]
+        }
+        return $dict
+    }
+
+    if ($Value -is [System.Collections.IEnumerable] -and $Value -isnot [string]) {
+        $items = @()
+        foreach ($item in $Value) {
+            $items += ConvertTo-CaseSensitiveJsonObject -Value $item
+        }
+        return $items
+    }
+
+    return $Value
+}
+
+function ConvertFrom-JsonCompat {
+    param([AllowNull()][string]$Json)
+
+    if ([string]::IsNullOrWhiteSpace($Json)) {
+        return $null
+    }
+
+    try {
+        return $Json | ConvertFrom-Json
+    } catch {
+        if ($_.Exception.Message -notmatch 'duplicat') {
+            throw
+        }
+
+        Add-Type -AssemblyName System.Web.Extensions
+        $serializer = New-Object System.Web.Script.Serialization.JavaScriptSerializer
+        $serializer.MaxJsonLength = [int]::MaxValue
+        return ConvertTo-CaseSensitiveJsonObject -Value ($serializer.DeserializeObject($Json))
+    }
+}
+
 function ConvertFrom-JwtPayload {
     param([Parameter(Mandatory = $true)][string]$Jwt)
 
@@ -43,7 +90,7 @@ function ConvertFrom-JwtPayload {
     }
 
     $json = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($payload))
-    return $json | ConvertFrom-Json
+    return ConvertFrom-JsonCompat -Json $json
 }
 
 function Get-OptionalEnv {
@@ -207,6 +254,45 @@ function Get-JsonPathValue {
     return $current
 }
 
+function Test-JsonPathExists {
+    param(
+        [AllowNull()][object]$Object,
+        [string]$Path
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        return $true
+    }
+
+    $current = $Object
+    foreach ($part in $Path.Split('.')) {
+        if ($null -eq $current) {
+            return $false
+        }
+        if ($current -is [System.Collections.IDictionary]) {
+            if (-not $current.Contains($part)) {
+                return $false
+            }
+            $current = $current[$part]
+            continue
+        }
+        if ($current -is [System.Collections.IList] -and $part -match '^\d+$') {
+            $index = [int]$part
+            if ($index -lt 0 -or $index -ge $current.Count) {
+                return $false
+            }
+            $current = $current[$index]
+            continue
+        }
+        $prop = $current.PSObject.Properties[$part]
+        if ($null -eq $prop) {
+            return $false
+        }
+        $current = $prop.Value
+    }
+    return $true
+}
+
 function Get-CollectionCount {
     param([AllowNull()][object]$Value)
 
@@ -300,7 +386,7 @@ function Invoke-RoleLogin {
         $status = [int]([string]$statusRaw).Trim()
         $json = $null
         if (![string]::IsNullOrWhiteSpace($raw)) {
-            $json = $raw | ConvertFrom-Json
+            $json = ConvertFrom-JsonCompat -Json $raw
         }
 
         if ($status -eq 401 -or $status -eq 403 -or (Test-AuthErrorEnvelope -Body $json)) {
@@ -396,6 +482,9 @@ function Get-CaseFixtureSummary {
     )
 
     try {
+        if ($Case.PSObject.Properties['fixtureLabel'] -and -not [string]::IsNullOrWhiteSpace([string]$Case.fixtureLabel)) {
+            return [string]$Case.fixtureLabel
+        }
         $resolvedParams = Resolve-TokenValue -Value $Case.params -Context $Context
         $applicationNo = $null
         if ($resolvedParams.contentType -eq 'query') {
@@ -485,7 +574,7 @@ function Invoke-ApiCase {
         $raw = Get-Content -Path $outFile.FullName -Raw -Encoding UTF8
         $json = $null
         if (![string]::IsNullOrWhiteSpace($raw)) {
-            $json = $raw | ConvertFrom-Json
+            $json = ConvertFrom-JsonCompat -Json $raw
         }
 
         if ($status -eq 401 -or $status -eq 403 -or (Test-AuthErrorEnvelope -Body $json)) {
@@ -650,7 +739,7 @@ function Invoke-DbJsonRow {
     if ([string]::IsNullOrWhiteSpace($raw)) {
         throw 'DB JSON row query returned no rows.'
     }
-    return $raw | ConvertFrom-Json
+    return ConvertFrom-JsonCompat -Json $raw
 }
 
 function Add-Result {
@@ -895,6 +984,170 @@ function Test-EmptyAndOptionsCase {
     }
 }
 
+function Format-CountMap {
+    param([AllowNull()][object]$Map)
+
+    if ($null -eq $Map -or $Map.Count -eq 0) {
+        return '-'
+    }
+
+    $parts = @()
+    foreach ($entry in $Map.GetEnumerator()) {
+        $parts += ('{0}={1}' -f $entry.Key, $entry.Value)
+    }
+    return ($parts -join ';')
+}
+
+function Test-ResponseContractCase {
+    param(
+        [object]$Case,
+        [object]$Manifest,
+        [string]$BaseUrl,
+        [object]$AuthContext,
+        [string]$DbRunner,
+        [switch]$SkipDb,
+        [System.Collections.Generic.List[object]]$Rows
+    )
+
+    $baseContext = @{
+        jwt = $AuthContext.jwt
+        langType = $null
+    }
+    $fixture = Get-CaseFixtureSummary -Case $Case -Context $baseContext
+
+    try {
+        $langTypeParity = $false
+        if ($Case.assert.PSObject.Properties['langTypeParity']) {
+            $langTypeParity = [bool]$Case.assert.langTypeParity
+        }
+
+        $langTypes = @($null)
+        if ($langTypeParity) {
+            $langTypes = @($Manifest.langTypes)
+        }
+
+        $successCodePath = 'code'
+        if ($Case.assert.PSObject.Properties['successCodePath']) {
+            $successCodePath = [string]$Case.assert.successCodePath
+        }
+
+        $successCodes = @('0000')
+        if ($Case.assert.PSObject.Properties['successCodes']) {
+            $successCodes = @($Case.assert.successCodes | ForEach-Object { [string]$_ })
+        }
+
+        $requiredPaths = @()
+        if ($Case.assert.PSObject.Properties['requiredPaths']) {
+            $requiredPaths = @($Case.assert.requiredPaths)
+        }
+
+        $countChecks = @()
+        if ($Case.assert.PSObject.Properties['countChecks']) {
+            $countChecks = @($Case.assert.countChecks)
+        }
+
+        $issues = @()
+        $responseCountsByLang = @{}
+        $responseTextByLang = @{}
+
+        foreach ($langType in $langTypes) {
+            $context = $baseContext.Clone()
+            $context.langType = $langType
+            $api = Invoke-ApiCase -Case $Case -BaseUrl $BaseUrl -Jwt $AuthContext.jwtValue -Context $context
+
+            $code = Get-JsonPathValue -Object $api.Body -Path $successCodePath
+            if ($null -eq $code -or ($successCodes -notcontains [string]$code)) {
+                $issues += "response code path $successCodePath expected $($successCodes -join ',') actual $code"
+            }
+
+            foreach ($path in $requiredPaths) {
+                if (-not (Test-JsonPathExists -Object $api.Body -Path ([string]$path))) {
+                    $issues += "missing required path $path"
+                }
+            }
+
+            $countMap = [ordered]@{}
+            foreach ($check in $countChecks) {
+                $countName = [string]$check.name
+                $responsePath = [string]$check.responsePath
+                $pathExists = Test-JsonPathExists -Object $api.Body -Path $responsePath
+                $value = Get-JsonPathValue -Object $api.Body -Path $responsePath
+                $apiCount = if ($pathExists -and $null -eq $value) { 0 } else { Get-CollectionCount -Value $value }
+                if ($null -eq $apiCount) {
+                    $issues += "cannot count response path $responsePath"
+                } else {
+                    $countMap[$countName] = [int]$apiCount
+                }
+            }
+
+            $langKey = '_single'
+            if ($null -ne $langType) {
+                $langKey = [string]$langType
+            }
+            $responseCountsByLang[$langKey] = $countMap
+            $responseTextByLang[$langKey] = Format-CountMap -Map $countMap
+        }
+
+        $dbText = '-'
+        if ($countChecks.Count -gt 0) {
+            $dbText = 'SKIP'
+        }
+
+        if (!$SkipDb -and $countChecks.Count -gt 0) {
+            $dbMap = [ordered]@{}
+            foreach ($check in $countChecks) {
+                $paramsSpec = [pscustomobject]@{}
+                if ($check.PSObject.Properties['params']) {
+                    $paramsSpec = $check.params
+                } elseif ($null -ne $Case.equiv_sql -and $Case.equiv_sql.PSObject.Properties['params']) {
+                    $paramsSpec = $Case.equiv_sql.params
+                }
+
+                $dbCount = Invoke-DbScalar -SqlSpec $check.sql -ParamsSpec $paramsSpec -Context $baseContext -DbRunner $DbRunner
+                $dbMap[[string]$check.name] = $dbCount
+            }
+            $dbText = Format-CountMap -Map $dbMap
+
+            foreach ($langKey in $responseCountsByLang.Keys) {
+                $countMap = $responseCountsByLang[$langKey]
+                foreach ($entry in $dbMap.GetEnumerator()) {
+                    if ($countMap.Contains($entry.Key) -and [int]$countMap[$entry.Key] -ne [int]$entry.Value) {
+                        $issues += "$langKey count mismatch $($entry.Key) api=$($countMap[$entry.Key]) db=$($entry.Value)"
+                    }
+                }
+            }
+        }
+
+        if ($langTypeParity -and $countChecks.Count -gt 0 -and $responseCountsByLang.ContainsKey('zh_TW') -and $responseCountsByLang.ContainsKey('en_US')) {
+            $zhMap = $responseCountsByLang['zh_TW']
+            $enMap = $responseCountsByLang['en_US']
+            foreach ($entry in $zhMap.GetEnumerator()) {
+                if ($enMap.Contains($entry.Key) -and [int]$entry.Value -ne [int]$enMap[$entry.Key]) {
+                    $issues += "langType count mismatch $($entry.Key) zh_TW=$($entry.Value) en_US=$($enMap[$entry.Key])"
+                }
+            }
+        }
+
+        $zh = '-'
+        $en = '-'
+        if ($langTypeParity) {
+            if ($responseTextByLang.ContainsKey('zh_TW')) { $zh = $responseTextByLang['zh_TW'] }
+            if ($responseTextByLang.ContainsKey('en_US')) { $en = $responseTextByLang['en_US'] }
+        } elseif ($responseTextByLang.ContainsKey('_single')) {
+            $zh = $responseTextByLang['_single']
+        }
+
+        if ($issues.Count -gt 0) {
+            Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh $zh -En $en -Db $dbText -Category 'assertion' -Status 'FAIL' -Detail ($issues -join '; ') -DumpFile $null
+        } else {
+            Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh $zh -En $en -Db $dbText -Category '-' -Status 'PASS' -Detail 'response contract and DB counts match' -DumpFile $null
+        }
+    } catch {
+        $result = ConvertTo-ResultStatus -ErrorRecord $_
+        Add-Result -Rows $Rows -Id $Case.id -Role $AuthContext.role -Fixture $fixture -Endpoint $Case.endpoint -Zh '-' -En '-' -Db '-' -Category $result.category -Status $result.status -Detail $result.detail -DumpFile $null
+    }
+}
+
 function ConvertTo-MarkdownTable {
     param([System.Collections.Generic.List[object]]$Rows)
 
@@ -917,7 +1170,7 @@ function Test-ManifestOnly {
     )
 
     foreach ($case in $Manifest.cases) {
-        if ($case.assert.kind -eq 'langtype_count') {
+        if ($case.assert.kind -eq 'langtype_count' -or ($case.assert.kind -eq 'response_contract' -and $case.assert.PSObject.Properties['langTypeParity'] -and [bool]$case.assert.langTypeParity)) {
             foreach ($langType in $Manifest.langTypes) {
                 $context = $BaseContext.Clone()
                 $context.langType = [string]$langType
@@ -945,6 +1198,22 @@ function Test-ManifestOnly {
             $params = Resolve-TokenValue -Value $case.equiv_sql.params -Context $BaseContext
             $sql = Expand-SqlParams -Sql (Get-SqlText -SqlSpec $optionCountSqlProp.Value) -Params $params
             Assert-ReadOnlySql -Sql $sql
+        }
+        if ($case.assert.kind -eq 'response_contract' -and $case.assert.PSObject.Properties['countChecks']) {
+            foreach ($check in @($case.assert.countChecks)) {
+                if (-not $check.PSObject.Properties['sql']) {
+                    continue
+                }
+                $paramsSpec = [pscustomobject]@{}
+                if ($check.PSObject.Properties['params']) {
+                    $paramsSpec = $check.params
+                } elseif ($case.equiv_sql.PSObject.Properties['params']) {
+                    $paramsSpec = $case.equiv_sql.params
+                }
+                $params = Resolve-TokenValue -Value $paramsSpec -Context $BaseContext
+                $sql = Expand-SqlParams -Sql (Get-SqlText -SqlSpec $check.sql) -Params $params
+                Assert-ReadOnlySql -Sql $sql
+            }
         }
     }
 
@@ -989,6 +1258,9 @@ foreach ($case in $manifest.cases) {
         }
         'empty_and_options' {
             Test-EmptyAndOptionsCase -Case $case -BaseUrl $baseUrl -AuthContext $authContext -DbRunner $dbRunner -SkipDb:$SkipDb -Rows $results
+        }
+        'response_contract' {
+            Test-ResponseContractCase -Case $case -Manifest $manifest -BaseUrl $baseUrl -AuthContext $authContext -DbRunner $dbRunner -SkipDb:$SkipDb -Rows $results
         }
         default {
             Add-Result -Rows $results -Id $case.id -Role $authContext.role -Fixture '-' -Endpoint $case.endpoint -Zh '-' -En '-' -Db '-' -Category 'assertion' -Status 'FAIL' -Detail "Unsupported assert kind: $($case.assert.kind)" -DumpFile $null

@@ -160,5 +160,35 @@
 | RI-1 | 403 | `<fixture-A 有revised-item>` | `/epl-case-query-reviseditem` | API `item1`-`item14`/`reasonMemo` = DB row | PASS |
 | RI-2 | 403 | `<fixture-B 空revised-item>` | `/epl-case-query-reviseditem` | 有 case、無 `TB_REVISED_ITEM` row；option SQL count `9`；契約缺口已 RD 修（query path 無條件組 required `revisedType/revisedTypeSize`）| **PASS → owner Done 2026-06-26（過 DoD ①②③⑥⑦+⑧；gate ⑧ 首例閉環）** |
 
+### 6.4 Phase V API 自驗 harness v2-c0（2026-06-27 executed；c0/csu 00110–00120 read-only）
+> 範圍：`EPROC00110/112/114/115/116/117/118/119/120` 讀型 endpoint；排除 `calc`、`save`、`submit`、export。JWT 由 `/epl-ut-login` 對既有 `TB_EMP_PROFILE` role 產生；DB 只跑 SELECT；真案號只以 fixture label 記錄。
+
+- Runner：`tools/phase-v-run.ps1 -SkipBuild -ManifestPath docs/build-tasks/phase-v-api-selfverify-harness-v2-c0.json -OutFile docs/verification/phase-v-api-selfverify-report-v2-c0.md`。
+- Manifest：`docs/build-tasks/phase-v-api-selfverify-harness-v2-c0.json`，17 cases，支援 `response_contract` required paths、countChecks、langType parity。
+- Role / fixture：role `405`、`001`；`<c0-G-fixture>`、`<c0-G-reference-fixture>`、`<c0-F-fixture>`。JWT/empId/appNo 未寫入 repo。
+- Serviceability smoke：PASS，`/epl-list-casedistribution` HTTP 200 + `code=0000`。
+- Teardown：runner finally 已 kill 5500/4200 listeners；因 Windows file ACL 導致 `.local-env/epro/*.json` 刪除先回 `Access denied`，已用提升權限清除 gitignored runtime state；最終 `local-env status=down`，descriptor/pidfile/ownership 均不存在，5500/4200 無 LISTENING。
+
+| page | endpoint/case | 分類 | 狀態 |
+|---|---|---|---|
+| EPROC00110 | `C0-110-INFO-G` `/epl-info-c0-credit-investigation-tab` | - | PASS |
+| EPROC00112 | `C0-112-INFO` `/epl-info-c0-cbc-banking-relationship` | - | PASS |
+| EPROC00114 | `C0-114-SELE` / `C0-114-INFO` | - | PASS |
+| EPROC00115 | `C0-115-SELE` | assertion | FAIL：`zh_TW` option count 0 vs `en_US`/DB non-zero |
+| EPROC00115 | `C0-115-INFO` | - | PASS |
+| EPROC00116 | `C0-116-SELE` | assertion | FAIL：`zh_TW` option count 0 vs `en_US`/DB non-zero |
+| EPROC00116 | `C0-116-INFO` / `C0-116-QUER` | - | PASS |
+| EPROC00117 | `C0-117-SELE` | assertion | FAIL：`zh_TW ccyList=0` vs `en_US/DB=2` |
+| EPROC00117 | `C0-117-INFO` | assertion | FAIL：`ratios` API count 0 vs DB count 1 |
+| EPROC00118 | `C0-118-SELE` / `C0-118-INFO` | - | PASS |
+| EPROC00119 | `C0-119-SELE` | assertion | FAIL：`zh_TW` option count 0 vs `en_US`/DB non-zero |
+| EPROC00119 | `C0-119-INFO` / `C0-119-QUER` | auth | AUTH_FAILED：HTTP 401 body `{"code":"E405","message":"Access denied: You do not have permission to access this resource.","data":{}}`; page-column auth has `EPROI00119`, runtime checks `EPROC00119` |
+| EPROC00120 | `C0-120-INFO` | - | PASS |
+
+Opened cards:
+- `docs/build-tasks/phase-v-v2c0-langtype-option-count-gap.md`
+- `docs/build-tasks/phase-v-v2c0-eproc00117-financial-business-ratios-gap.md`
+- `docs/build-tasks/phase-v-v2c0-eproc00119-page-auth-seed-gap.md`
+
 ---
 > 驗完逐項打勾，回填本檔 + `page-mapping.md` §2B。整合驗證為**獨立後續階段**（`verification-execution.md`），不影響「程式補完」里程碑。

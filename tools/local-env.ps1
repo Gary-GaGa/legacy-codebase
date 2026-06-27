@@ -356,7 +356,30 @@ function Remove-FileIfExists {
 
 function Get-Listeners {
     param([int] $Port)
-    return @(Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
+    $listeners = @(Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
+    if ($listeners.Count -gt 0) {
+        return $listeners
+    }
+
+    $fallback = New-Object System.Collections.Generic.List[object]
+    $seenPids = @{}
+    foreach ($line in @(netstat -ano -p tcp 2>$null)) {
+        if ($line -notmatch '\bLISTENING\b') {
+            continue
+        }
+        if ($line -match '^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)\s*$' -and [int] $Matches[1] -eq $Port) {
+            $listenerProcessId = [int] $Matches[2]
+            if ($seenPids.ContainsKey($listenerProcessId)) {
+                continue
+            }
+            $seenPids[$listenerProcessId] = $true
+            $fallback.Add([pscustomobject]@{
+                LocalPort = $Port
+                OwningProcess = $listenerProcessId
+            }) | Out-Null
+        }
+    }
+    return @($fallback.ToArray())
 }
 
 function Get-ProcessCommandLine {

@@ -1,0 +1,888 @@
+{
+  "id": "phase-v-api-selfverify-harness-v2-c0",
+  "version": "2.0.0-c0-read",
+  "baseUrl": "${env:PHASE_V_BASE_URL|http://127.0.0.1:5500}",
+  "dbRunner": "${env:PHASE_V_DB_RUNNER}",
+  "auth": {
+    "loginEndpoint": "/epl-ut-login",
+    "tokenPath": "data.eproToken"
+  },
+  "langTypes": ["zh_TW", "en_US"],
+  "defaults": {
+    "successCodePath": "code",
+    "successCodes": ["0000"]
+  },
+  "cases": [
+    {
+      "id": "C0-110-INFO-G",
+      "title": "EPROC00110 credit investigation tab info for GI branch",
+      "endpoint": "/epl-info-c0-credit-investigation-tab",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00110",
+        "openapi": "docs/specs/srs/EPROC00110/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00110/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "sourceFrame": "GENERAL_0110"
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.sourceFrame",
+          "data.businessType",
+          "data.assessmentType",
+          "data.visibleTabs",
+          "data.sourceTabMap",
+          "data.pageMap"
+        ]
+      }
+    },
+    {
+      "id": "C0-112-INFO",
+      "title": "EPROC00112 CBC banking relationship info",
+      "endpoint": "/epl-info-c0-cbc-banking-relationship",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00112",
+        "openapi": "docs/specs/srs/EPROC00112/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00112/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "legacyFunctionId": "EPROC0_0112",
+          "isQuery": true
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.bBL",
+          "data.bGL",
+          "data.gBGL"
+        ]
+      }
+    },
+    {
+      "id": "C0-114-SELE",
+      "title": "EPROC00114 collateral assessment options",
+      "endpoint": "/epl-sele-c0-collateral-assessment",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00114",
+        "openapi": "docs/specs/srs/EPROC00114/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00114/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "langType": "${langType}"
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "langTypeParity": true,
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.districtList",
+          "data.documentList",
+          "data.areaList",
+          "data.classificationList",
+          "data.loathsomeList",
+          "data.landShapeList",
+          "data.incomeList",
+          "data.addressList"
+        ],
+        "countChecks": [
+          {
+            "name": "districtList",
+            "responsePath": "data.districtList",
+            "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "C_V1" },
+            "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)"
+          },
+          {
+            "name": "documentList",
+            "responsePath": "data.documentList",
+            "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "C_V2" },
+            "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)"
+          },
+          {
+            "name": "areaList",
+            "responsePath": "data.areaList",
+            "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "C_V3" },
+            "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)"
+          },
+          {
+            "name": "classificationList",
+            "responsePath": "data.classificationList",
+            "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "C_V4" },
+            "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)"
+          },
+          {
+            "name": "loathsomeList",
+            "responsePath": "data.loathsomeList",
+            "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "C_V5" },
+            "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)"
+          },
+          {
+            "name": "landShapeList",
+            "responsePath": "data.landShapeList",
+            "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "C_V6" },
+            "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)"
+          },
+          {
+            "name": "incomeList",
+            "responsePath": "data.incomeList",
+            "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "C_V7" },
+            "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)"
+          },
+          {
+            "name": "addressList",
+            "responsePath": "data.addressList",
+            "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "C_V8" },
+            "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-114-INFO",
+      "title": "EPROC00114 collateral assessment info",
+      "endpoint": "/epl-info-c0-collateral-assessment",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00114",
+        "openapi": "docs/specs/srs/EPROC00114/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00114/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "isQuery": true
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.assistMap",
+          "data.reviewerMap"
+        ]
+      }
+    },
+    {
+      "id": "C0-115-SELE",
+      "title": "EPROC00115 borrower group exposure options",
+      "endpoint": "/epl-sele-c0-borrower-group-exposure",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "-",
+      "source": {
+        "funcId": "EPROC00115",
+        "openapi": "docs/specs/srs/EPROC00115/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00115/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "langType": "${langType}"
+        }
+      },
+      "equiv_sql": {
+        "params": {}
+      },
+      "assert": {
+        "kind": "response_contract",
+        "langTypeParity": true,
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.facilityList",
+          "data.loanLimitTypeList",
+          "data.ccyList",
+          "data.titleDeedTypeList"
+        ],
+        "countChecks": [
+          {
+            "name": "facilityList",
+            "responsePath": "data.facilityList",
+            "params": { "msgCode": "FACILITY_TYPE_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          },
+          {
+            "name": "loanLimitTypeList",
+            "responsePath": "data.loanLimitTypeList",
+            "params": { "msgCode": "LOAN_LIMIT_TYPE_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          },
+          {
+            "name": "ccyList",
+            "responsePath": "data.ccyList",
+            "params": { "msgCode": "CCY_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          },
+          {
+            "name": "titleDeedTypeList",
+            "responsePath": "data.titleDeedTypeList",
+            "params": { "msgCode": "TITLE_DEED_TYPE_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-115-INFO",
+      "title": "EPROC00115 borrower group exposure info",
+      "endpoint": "/epl-info-c0-borrower-group-exposure",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00115",
+        "openapi": "docs/specs/srs/EPROC00115/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00115/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "isQuery": true
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.facility",
+          "data.facilitiesList"
+        ],
+        "countChecks": [
+          {
+            "name": "facilitiesList",
+            "responsePath": "data.facilitiesList",
+            "sql": "SELECT COUNT(*) FROM TB_GROUP_EXPOSURE WHERE APPLICATION_NO = :applicationNo"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-116-SELE",
+      "title": "EPROC00116 financial statement comments options",
+      "endpoint": "/epl-sele-c0-financial-statement-comments",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00116",
+        "openapi": "docs/specs/srs/EPROC00116/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00116/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "langType": "${langType}"
+        }
+      },
+      "equiv_sql": {
+        "params": {}
+      },
+      "assert": {
+        "kind": "response_contract",
+        "langTypeParity": true,
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.currencyList",
+          "data.currencyUnitList",
+          "data.typeOfYearList"
+        ],
+        "countChecks": [
+          {
+            "name": "currencyList",
+            "responsePath": "data.currencyList",
+            "params": { "msgCode": "CCY_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          },
+          {
+            "name": "currencyUnitList",
+            "responsePath": "data.currencyUnitList",
+            "params": { "msgCode": "CCY_UNIT_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          },
+          {
+            "name": "typeOfYearList",
+            "responsePath": "data.typeOfYearList",
+            "params": { "msgCode": "TYPE_OF_YEAR_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-116-INFO",
+      "title": "EPROC00116 financial statement comments info",
+      "endpoint": "/epl-info-c0-financial-statement-comments",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00116",
+        "openapi": "docs/specs/srs/EPROC00116/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00116/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "isQuery": true
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.haveData",
+          "data.mainMap",
+          "data.balanceMap",
+          "data.incomeMap",
+          "data.cashflowMap"
+        ],
+        "countChecks": [
+          {
+            "name": "balanceMap",
+            "responsePath": "data.balanceMap",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_BALANCE_GI WHERE APPLICATION_NO = :applicationNo"
+          },
+          {
+            "name": "incomeMap",
+            "responsePath": "data.incomeMap",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_INCOME_GI WHERE APPLICATION_NO = :applicationNo"
+          },
+          {
+            "name": "cashflowMap",
+            "responsePath": "data.cashflowMap",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_CASHFLOW_GI WHERE APPLICATION_NO = :applicationNo"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-116-QUER",
+      "title": "EPROC00116 financial statement comments query",
+      "endpoint": "/epl-quer-c0-financial-statement-comments",
+      "method": "POST",
+      "auth": { "requiredRole": "001" },
+      "fixtureLabel": "<c0-G-reference-fixture>",
+      "source": {
+        "funcId": "EPROC00116",
+        "openapi": "docs/specs/srs/EPROC00116/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00116/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "reApplicationNo": "${env:PHASE_V_C0_G_RE_APP_NO|${env:PHASE_V_C0_G_APP_NO}}"
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_RE_APP_NO|${env:PHASE_V_C0_G_APP_NO}}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.mainMap",
+          "data.balanceMap",
+          "data.incomeMap",
+          "data.cashflowMap"
+        ],
+        "countChecks": [
+          {
+            "name": "balanceMap",
+            "responsePath": "data.balanceMap",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_BALANCE_GI WHERE APPLICATION_NO = :applicationNo"
+          },
+          {
+            "name": "incomeMap",
+            "responsePath": "data.incomeMap",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_INCOME_GI WHERE APPLICATION_NO = :applicationNo"
+          },
+          {
+            "name": "cashflowMap",
+            "responsePath": "data.cashflowMap",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_CASHFLOW_GI WHERE APPLICATION_NO = :applicationNo"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-117-SELE",
+      "title": "EPROC00117 financial list options",
+      "endpoint": "/epl-sele-c0-financial-list",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00117",
+        "openapi": "docs/specs/srs/EPROC00117/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00117/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "langType": "${langType}"
+        }
+      },
+      "equiv_sql": {
+        "params": {}
+      },
+      "assert": {
+        "kind": "response_contract",
+        "langTypeParity": true,
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.ccyList"
+        ],
+        "countChecks": [
+          {
+            "name": "ccyList",
+            "responsePath": "data.ccyList",
+            "params": { "msgCode": "CCY_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-117-INFO",
+      "title": "EPROC00117 financial business info",
+      "endpoint": "/epl-info-c0-financial-business",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00117",
+        "openapi": "docs/specs/srs/EPROC00117/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00117/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "isQuery": true
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.currency",
+          "data.financialList",
+          "data.ratios"
+        ],
+        "countChecks": [
+          {
+            "name": "financialList",
+            "responsePath": "data.financialList",
+            "sql": "SELECT COUNT(*) FROM TB_FINANCIAL_EVALUATION_INFO WHERE APPLICATION_NO = :applicationNo"
+          },
+          {
+            "name": "ratios",
+            "responsePath": "data.ratios",
+            "sql": "SELECT COUNT(*) FROM TB_FINANCIAL_EVALUATION_GI WHERE APPLICATION_NO = :applicationNo"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-118-SELE",
+      "title": "EPROC00118 corporate scorecard options",
+      "endpoint": "/epl-sele-c0-corporateScorecard-list",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00118",
+        "openapi": "docs/specs/srs/EPROC00118/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00118/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "langType": "${langType}"
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "langTypeParity": true,
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.managementExecutivesAgeRangeList",
+          "data.ageRangeOfGuarantorList",
+          "data.companyTypeList",
+          "data.industryList",
+          "data.yearsInOperationList",
+          "data.loanPurposeList",
+          "data.repaymentSourceList",
+          "data.kScoreCbcConsumerCreditReportList",
+          "data.maxOverdueDaysList",
+          "data.noOfLateTransactionInList",
+          "data.substantiationOfRepaymentSourceList",
+          "data.companyWithPositiveNetIncomeList",
+          "data.companyWithConsecutiveSalesGrowthRatioList",
+          "data.companyWithConsecutiveNetProfitMarginGrowthRatioList",
+          "data.changesInAPList",
+          "data.changesInARList",
+          "data.changesInInventoryList"
+        ],
+        "countChecks": [
+          { "name": "managementExecutivesAgeRangeList", "responsePath": "data.managementExecutivesAgeRangeList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V4" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "ageRangeOfGuarantorList", "responsePath": "data.ageRangeOfGuarantorList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V5" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "companyTypeList", "responsePath": "data.companyTypeList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V20" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "industryList", "responsePath": "data.industryList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V19" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "yearsInOperationList", "responsePath": "data.yearsInOperationList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V9" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "loanPurposeList", "responsePath": "data.loanPurposeList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V6" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "repaymentSourceList", "responsePath": "data.repaymentSourceList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V7" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "kScoreCbcConsumerCreditReportList", "responsePath": "data.kScoreCbcConsumerCreditReportList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V8" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "maxOverdueDaysList", "responsePath": "data.maxOverdueDaysList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V2" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "noOfLateTransactionInList", "responsePath": "data.noOfLateTransactionInList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V3" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "substantiationOfRepaymentSourceList", "responsePath": "data.substantiationOfRepaymentSourceList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V22" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "companyWithPositiveNetIncomeList", "responsePath": "data.companyWithPositiveNetIncomeList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V15" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "companyWithConsecutiveSalesGrowthRatioList", "responsePath": "data.companyWithConsecutiveSalesGrowthRatioList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V16" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "companyWithConsecutiveNetProfitMarginGrowthRatioList", "responsePath": "data.companyWithConsecutiveNetProfitMarginGrowthRatioList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V17" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "changesInAPList", "responsePath": "data.changesInAPList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V11" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "changesInARList", "responsePath": "data.changesInARList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V12" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" },
+          { "name": "changesInInventoryList", "responsePath": "data.changesInInventoryList", "params": { "applicationNo": "${env:PHASE_V_C0_G_APP_NO}", "varName": "B_V13" }, "sql": "SELECT COUNT(*) FROM TB_SCORE_CARD_PARAM_DETAIL SCPD WHERE SCPD.VAR_NAME = :varName AND SCPD.ST_DATE = (SELECT MAX(ST_DATE) FROM TB_SCORE_CARD_PARAM_DETAIL WHERE ST_DATE <= (SELECT APPLICATION_DATE FROM TB_LON_SUMMARY_INFO WHERE APPLICATION_NO = :applicationNo) AND VAR_NAME = :varName)" }
+        ]
+      }
+    },
+    {
+      "id": "C0-118-INFO",
+      "title": "EPROC00118 corporate scorecard info",
+      "endpoint": "/epl-info-c0-corporateScorecard",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-G-fixture>",
+      "source": {
+        "funcId": "EPROC00118",
+        "openapi": "docs/specs/srs/EPROC00118/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00118/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}",
+          "isQuery": true
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_G_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.mainBorrowerName",
+          "data.checkpointStatus",
+          "data.aoRiskLevelMap",
+          "data.crRiskLevelMap"
+        ]
+      }
+    },
+    {
+      "id": "C0-119-SELE",
+      "title": "EPROC00119 FI financial statement options via shared c0 select endpoint",
+      "endpoint": "/epl-sele-c0-financial-statement-comments",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-F-fixture>",
+      "source": {
+        "funcId": "EPROC00119",
+        "openapi": "docs/specs/srs/EPROC00119/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00119/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_F_APP_NO}",
+          "langType": "${langType}"
+        }
+      },
+      "equiv_sql": {
+        "params": {}
+      },
+      "assert": {
+        "kind": "response_contract",
+        "langTypeParity": true,
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.currencyList",
+          "data.currencyUnitList",
+          "data.typeOfYearList"
+        ],
+        "countChecks": [
+          {
+            "name": "currencyList",
+            "responsePath": "data.currencyList",
+            "params": { "msgCode": "CCY_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          },
+          {
+            "name": "currencyUnitList",
+            "responsePath": "data.currencyUnitList",
+            "params": { "msgCode": "CCY_UNIT_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          },
+          {
+            "name": "typeOfYearList",
+            "responsePath": "data.typeOfYearList",
+            "params": { "msgCode": "TYPE_OF_YEAR_MENU" },
+            "sql": "SELECT COUNT(DISTINCT O.MSG_OPTION) FROM TB_COMMON_FIELD_OPTIONS O WHERE O.SYS_CODE = 'EPRO' AND O.IS_SHOW = 'Y' AND O.MSG_CODE = :msgCode"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-119-INFO",
+      "title": "EPROC00119 FI financial statement comments info",
+      "endpoint": "/epl-info-c0-financial-statement-cmts-fi",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-F-fixture>",
+      "source": {
+        "funcId": "EPROC00119",
+        "openapi": "docs/specs/srs/EPROC00119/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00119/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_F_APP_NO}",
+          "isQuery": true
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_F_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.haveData",
+          "data.balanceList",
+          "data.incomeList",
+          "data.cashflowList"
+        ],
+        "countChecks": [
+          {
+            "name": "balanceList",
+            "responsePath": "data.balanceList",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_BALANCE_FI WHERE APPLICATION_NO = :applicationNo"
+          },
+          {
+            "name": "incomeList",
+            "responsePath": "data.incomeList",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_INCOME_FI WHERE APPLICATION_NO = :applicationNo"
+          },
+          {
+            "name": "cashflowList",
+            "responsePath": "data.cashflowList",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_CASHFLOW_FI WHERE APPLICATION_NO = :applicationNo"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-119-QUER",
+      "title": "EPROC00119 FI financial statement comments query",
+      "endpoint": "/epl-quer-c0-financial-statement-cmts-fi",
+      "method": "POST",
+      "auth": { "requiredRole": "001" },
+      "fixtureLabel": "<c0-F-fixture>",
+      "source": {
+        "funcId": "EPROC00119",
+        "openapi": "docs/specs/srs/EPROC00119/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00119/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_F_APP_NO}",
+          "isQuery": true
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_F_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.balanceList",
+          "data.incomeList",
+          "data.cashflowList"
+        ],
+        "countChecks": [
+          {
+            "name": "balanceList",
+            "responsePath": "data.balanceList",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_BALANCE_FI WHERE APPLICATION_NO = :applicationNo"
+          },
+          {
+            "name": "incomeList",
+            "responsePath": "data.incomeList",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_INCOME_FI WHERE APPLICATION_NO = :applicationNo"
+          },
+          {
+            "name": "cashflowList",
+            "responsePath": "data.cashflowList",
+            "sql": "SELECT COUNT(*) FROM TB_FIN_STATEMENT_CASHFLOW_FI WHERE APPLICATION_NO = :applicationNo"
+          }
+        ]
+      }
+    },
+    {
+      "id": "C0-120-INFO",
+      "title": "EPROC00120 FI financial evaluation table info",
+      "endpoint": "/epl-info-c0-financial-evaluation-table-fi",
+      "method": "POST",
+      "auth": { "requiredRole": "405" },
+      "fixtureLabel": "<c0-F-fixture>",
+      "source": {
+        "funcId": "EPROC00120",
+        "openapi": "docs/specs/srs/EPROC00120/openapi.yaml",
+        "schema": "docs/specs/srs/EPROC00120/schema.sql"
+      },
+      "params": {
+        "contentType": "json",
+        "body": {
+          "applicationNo": "${env:PHASE_V_C0_F_APP_NO}",
+          "isQuery": true
+        }
+      },
+      "equiv_sql": {
+        "params": {
+          "applicationNo": "${env:PHASE_V_C0_F_APP_NO}"
+        }
+      },
+      "assert": {
+        "kind": "response_contract",
+        "requiredPaths": [
+          "code",
+          "message",
+          "data",
+          "data.applicationName",
+          "data.checkpoint",
+          "data.financialList"
+        ],
+        "countChecks": [
+          {
+            "name": "financialList",
+            "responsePath": "data.financialList",
+            "sql": "SELECT COUNT(*) FROM TB_FINANCIAL_EVALUATION_FI WHERE APPLICATION_NO = :applicationNo"
+          }
+        ]
+      }
+    }
+  ]
+}

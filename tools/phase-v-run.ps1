@@ -220,7 +220,17 @@ function Get-ListenerCount {
     param([int[]]$Ports)
     $count = 0
     foreach ($port in $Ports) {
-        $count += @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue).Count
+        $listeners = @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue)
+        if ($listeners.Count -gt 0) {
+            $count += $listeners.Count
+            continue
+        }
+
+        foreach ($line in @(netstat -ano -p tcp 2>$null)) {
+            if ($line -match '^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)\s*$' -and [int]$Matches[1] -eq $port) {
+                $count++
+            }
+        }
     }
     return $count
 }
