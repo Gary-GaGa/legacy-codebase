@@ -17,7 +17,7 @@
 - 來源＝`phase-v-api-selfverify-harness.md` + `phase-v-harness-manifest-v1.md`（manifest 已 grounded）。endpoint/method/params 以 openapi 為準；唯讀帳號 SELECT 比對。
 - **v1**：i0/z0 唯讀「API↔DB 一致性」（read/list/init-query 比筆數/關鍵欄；含 **langType 五頁回歸守門**）。內容穩定、不依賴 110–120 RD，但**時機＝RD 批次後**（守不交錯）。
 - **v2**：納 c0/csu（110–120）——前置✅（c0-authz 已套+驗 2026-06-25、110–120 rd-done）→ **已派工**（gate ⑧ 覆蓋擴到 9 c0 頁；Codex 從母資料夾 specs 產 manifest+跑；**回溯跑、可能像 RI-2 抓 build-綠/runtime-錯**）。讀型 only（sele/info/init-query/list；calc 須唯讀 R7、save＝v3）。
-- **v3**：寫入（save/submit）——帶 `local-phase-v-bringup §0.1` 護欄 + teardown SQL + 測試案件號段。
+- **v3**：寫入（save/submit）——**owner 2026-06-27：移出 RD gate ⑧、歸未來 QA Flow 整合 tier**（案件流程耦合、單頁難孤立）。卡＝`phase-v-l2-v3-writes.md`（PARKED）；過渡＝高風險 fixture-case 半自動 + 廣面 UAT。
 
 ### L3 FE 畫面 Playwright（全新建置）
 - 瀏覽器層自動測：render/載入、dialog（`mat-dialog` 0174/0175 類）、輸入驗證/顯示條件（**強制點 FE/both 的 UX 規則**）。

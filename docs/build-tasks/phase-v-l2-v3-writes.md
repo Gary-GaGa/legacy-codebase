@@ -1,7 +1,10 @@
-# Build Task（DRAFT）— Phase V L2 v3：寫入 conformance（save/submit）
+# Build Task（PARKED → QA Flow）— v3：寫入 conformance（save/submit）
 
-> Status: **DRAFT**（待 v2 過後派；最敏感＝寫**正式新庫 OVSLXLON02**）。性質＝gate ⑧ runtime conformance 的**寫入路徑**（半自動：寫入用 app 端點、teardown DML 人審）。
-> 依據：`local-phase-v-bringup.md §0.1`（寫測護欄，強制）+ `process/local-env-manager.md` + `orchestration-playbook §4c`（gate ⑧）。
+> Status: **PARKED（owner 2026-06-27：v3 不當 RD-per-page gate ⑧，改歸未來 QA Flow 整合 tier）**。
+> **為何移出 gate ⑧**：save/submit 是**案件流程耦合**（CASE_PROGRESS 狀態/角色/上游頁/checkpoint 鏈），單頁難孤立驗 → 本質整合/acceptance、非 RD per-page 閘。RD Flow 的 gate ⑧ 維持**讀型 v1/v2 only**。見 `decisions.md`「gate ⑧ 範圍＝讀型」列。
+> **未來歸屬**：QA Flow 回來時的**整合 conformance tier**（吸收 Phase V harness/真庫）；本卡內容＝該 tier 的寫入測法草稿（護欄/手法）。
+> **過渡（QA 未回）**：高風險 save（評分 save、00800 insert）用 **fixture-case 半自動**；廣面流程耦合 save 交 **UAT 人跑真案件**（同 `verification-handoff §2` domain 驗法）。
+> 依據：`local-phase-v-bringup.md §0.1`（寫測護欄，強制）+ `process/local-env-manager.md`。
 
 ## 範圍
 - **納入**：已 v2 過的頁的**寫入端點**（save / insert / submit；如 c0 評分 save、EPROZ00800 insert-reviseditem、主流程 save）。
