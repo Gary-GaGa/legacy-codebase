@@ -21,7 +21,7 @@
 ### 撥貸 + T24 + 批次
 | 頁/單位 | 舊對應 | FE/BE | parity vs 舊 | disposition | SRS |
 |---|---|---|---|---|---|
-| EPROISU0920 Disbursement(頁框) | IS 0920 | ✅/✅ | 🟡 | **FIX**(domain-gated) | ⟳需產 |
+| EPROISU0920 Disbursement(頁框) | IS 0920 | ✅/✅ | 🟡 | **FIX**(domain-gated) | `docs/specs/srs/EPROISU0920/` |
 | EPROISU0921 Data Input | IS 0921 | ✅/✅ | 🔶(7P/15F/5U;A-4/M6/Product/Return/collproSize closed) | **FIX**(SRS in-review) | `docs/specs/srs/EPROISU0921/` |
 | EPROISU0922 Summary/T24 | IS 0922 | ✅/🟡 | 🔶(A-1✅·B-1 開) | **FIX**+UAT | ⟳需產 |
 | T24 組檔(A–H) | createTransferA–H | —/✅ | 🔶(B-group 照舊修畢) | **FIX done**+UAT | ⟳需產 |
@@ -57,7 +57,7 @@
 |---|---|---|---|---|---|
 | EPROCSU0110–0130 | cs/cu 0110–0130 | ✅/✅ | 🟡(鏡像 twin·未對舊驗) | **❓**(納 parity-recheck) | ⟳需產 |
 | EPROCSU0150 Collateral | cs 0150+0250 | ✅/✅ | 🟡(Phase G·照舊 cs 結構) | **❓** | ⟳需產 |
-| EPROCSU0160 Loan Condition(+0261) | cs/cu 0160+0260 | ✅/✅ | 🟡(+AUD-11 routing 待證) | **❓** | ⟳需產 |
+| EPROCSU0160 Loan Condition(+0261) | cs/cu 0160+0260 | ✅/✅ | 🟡(owner merge 已裁；仍需五維度補比) | **KEEP(b/c)**：CS/CU→CSU；`:597` checkpoint key 另驗 | ⟳需產 |
 | EPROCSU0170–0173 | cs/cu 0170–0173 | ✅/✅ | 🟡(Phase G 鏡像 ISU) | **❓**(0170 SRS in-review；0171-0173 待) | `docs/specs/srs/EPROCSU0170/` |
 > **建議**：把 CSU 主流程**併入 c0-parity 同一波**（企金線整體對舊 cs/cu 驗）——目前只 reopen 了 c0 評分，主流程同樣未對舊。
 
@@ -113,7 +113,7 @@
 ---
 
 ## PRD→SRS backlog（接「新版 Bible/PRD 跑 to SRS」）
-> Current repo SRS coverage = **14/67** bundles exist & pass `check-srs-bundle`; **13 規格定版 Approved** (`EPROZ00100`, `EPROC00118`, `EPROISU0921`, `EPROISU0922`, `EPROZ00800`, `EPROC00110`, `EPROC00112`, `EPROC00114`, `EPROC00115`, `EPROC00116`, `EPROC00117`, `EPROC00119`, `EPROC00120` — `00115`/`00119`/`00120` owner-stamped 2026-06-25 after fix-round 🟡 真修 + axis A–F re-review 0 Blocker), **1 in-review** (`EPROCSU0170`). Coverage counting remains defined by the PRD-to-SRS queue + ledger table below.
+> Current repo SRS coverage = **15/67** bundles exist & pass `check-srs-bundle`; **13 規格定版 Approved** (`EPROZ00100`, `EPROC00118`, `EPROISU0921`, `EPROISU0922`, `EPROZ00800`, `EPROC00110`, `EPROC00112`, `EPROC00114`, `EPROC00115`, `EPROC00116`, `EPROC00117`, `EPROC00119`, `EPROC00120` — `00115`/`00119`/`00120` owner-stamped 2026-06-25 after fix-round 🟡 真修 + axis A–F re-review 0 Blocker), **2 in-review** (`EPROCSU0170`, `EPROISU0920`). Coverage counting remains defined by the PRD-to-SRS queue + ledger table below.
 > **⚠️ 新版 PRD 放 `docs/specs/prd/` 或 local Codex 讀才跑得了**——Bible v1.1 已在 repo、舊 00800 PRD 已封存 `archive/`；DB/refactor 對比輸入＝local `docs/db-diff/`+`docs/refactor-spec/`。
 > **risk-tier 產 SRS 順序**（= rebuild/fix 最需規格者先）：
 > 1. **企金線**（CSU 主流程 + c0 評分，~18 頁）—— parity 回來若判 rebuild，立即需 SRS。
@@ -144,7 +144,7 @@
 | `EPROISU0921` | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0921-v1.0.md` | Approved (2026-06-23) | `docs/specs/srs/EPROISU0921/` |
 | `EPROISU0922`(+T24) | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0922-v1.0.md` | Approved (2026-06-23) | `docs/specs/srs/EPROISU0922/` |
 | `EPROZ00800` | 00800 重產 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROZ00800-v1.0.md` | Approved (2026-06-23) | `docs/specs/srs/EPROZ00800/` |
-| `EPROISU0920` | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0920-v1.0.md` | prd-ready | ⟳待產 `docs/specs/srs/EPROISU0920/` |
+| `EPROISU0920` | 撥貸 T1 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROISU0920-v1.0.md` | in-review | `docs/specs/srs/EPROISU0920/` |
 | `EPROCSU0110` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0110-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
 | `EPROCSU0120` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0120-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
 | `EPROCSU0130` | T2 企金線 | `docs/specs/prd/PRD-CDC-EPRO-0001-EPROCSU0130-v1.0.md` | prd-ready | ⟳待產（建議先 parity recheck 餵 as-is） |
@@ -199,7 +199,7 @@
 >
 > ⚠️ **企金線（CSU/c0）各列轉 SRS 前**仍須先有 `c0-legacy-parity-recheck` 碼驗結果餵入 as-is parity 軸，否則 SRS 漏載對舊 cs/cu 差異。
 >
-> 📊 **覆蓋計數不受影響**：分子＝`status∈{in-review,approved,rd-*,done}` 涵蓋頁數（prd-ready **不計入**），故 §覆蓋仍＝ **14/67**（prd-ready 是排程、非已產出）。
+> 📊 **覆蓋計數更新**：分子＝`status∈{in-review,approved,rd-*,done}` 涵蓋頁數（prd-ready **不計入**），`EPROISU0920` 已轉 `in-review`，故 §覆蓋＝ **15/67**（剩餘 prd-ready 是排程、非已產出）。
 
 ## 派工（填實本矩陣）
 - **企金線對舊 parity**（Codex 帶 source）：擴 `c0-legacy-parity-recheck.md` 涵蓋範圍 → c0 評分 **+ CSU 主流程**；risk-tier 00118/00120/0170 先。

@@ -4,7 +4,9 @@ Date: 2026-06-17
 
 ## Conclusion
 
-**總判：UNFOUND，先不關 AUD-11。**
+**2026-06-28 closeout：AUD-11「併 vs 分」已關；下列 2026-06-17 UNFOUND 結論保留為歷史碼驗。**
+
+Original 2026-06-17 conclusion:
 
 - 新 FE/BE source 未找到獨立 `EPROCU0160`；實際 corporate Loan Condition pageCode、route、endpoint 都指向 `EPROCSU0160` / `epl-*-csu-*`。
 - 但本 checkout 未包含 `TB_PAGE_MENU` row data，只有 schema 與查詢邏輯；無法用決定性 routing row 證明 CU 0160 的 `PAGE_CODE` 實際為 `EPROCSU0160`。
@@ -32,7 +34,18 @@ Date: 2026-06-17
 
 ## Disposition
 
-**AUD-11 建議先維持 open / pending。**
+**2026-06-28 closeout：AUD-11「併 vs 分」改判 close。**
+
+- 新版 owner Excel `function-review.xlsx` / `查核總表` 以 target 欄 merged-cell 視覺值為準：`E137:E140` 全歸 `EPROCSU0160`。
+- 覆蓋範圍：`EPROCS_0160`、`EPROCS_0260`、`EPROCU_0160`、`EPROCU_0260` → `EPROCSU0160`。
+- 三判：**(b) 刻意演進·縮編**（CS/CU→CSU，keep new）＋ **(c) DB 結構差**（CS/CU checkpoint table 以新欄位 `EPROCSU0160` 為準）。
+- `EPROCU0160` 不列新 target；`feature-inventory.md §1A/§2B` 已回填 owner merge ledger。
+
+**不一起關的風險**：`CsuLoanConditionServiceImpl.java:597` 讀 `EPROISU0160` 仍是獨立 checkpoint potential regression，併入企金線 parity 補比處理。
+
+## Superseded Minimal Next Step
+
+以下為 2026-06-17 UNFOUND 狀態下的原 minimal next step；已由 2026-06-28 owner Excel merged-cell 裁決 supersede（保留作歷史證據）。
 
 Minimal viable next step:
 

@@ -1,14 +1,16 @@
-# Build Task — AUD-11 收尾：`TB_PAGE_MENU` routing 證據（DBA）＋ `:597` checkpoint key（RD）
+# Build Task — AUD-11 收尾：併頁裁決已關；`:597` checkpoint key 轉企金 parity
 
-> **性質**：非 Codex 能單方結案的兩點——需 **DBA 唯讀 SQL** ＋ **RD 碼判斷**。**接續** `aud11-cu0160-page-reverify.md`（Codex 唯讀碼驗 06-17 ＝ **UNFOUND·先不關**，findings＝`done/aud11-cu0160-page-reverify-findings.md`）。
-> **一句話**：新 source 查無獨立 `EPROCU0160`、全指向 `EPROCSU0160`（**傾向 typo/已併**），但**兩點擋住結案**——① 缺 `TB_PAGE_MENU` row data 證 routing；② `CsuLoanConditionServiceImpl:597` 讀 `EPROISU0160`（個金 key）疑誤。
-> **背景全文**：`refactor-audit/owner-inventory-reconcile.md §3 F-OWN-4`、`pending-register` AUD-11、`done/aud11-cu0160-page-reverify-findings.md`（50 行，含 file:line 證據表）。
+> **2026-06-28 closeout**：新版 owner Excel `function-review.xlsx` / `查核總表` target 欄 `E137:E140` 是 merged cell，視覺值全為 `EPROCSU0160`；因此 `EPROCU_0160/0260` 併入 `EPROCSU0160`，`EPROCU0160` 非新 target。AUD-11「併 vs 分」三判＝(b) 刻意演進·縮編 + (c) DB 結構差，已關。
+> **剩餘風險**：`CsuLoanConditionServiceImpl:597` 讀 `EPROISU0160`（個金 key）仍是 checkpoint potential regression，轉入 `c0-legacy-parity-recheck.md` 的 EPROCSU0160 五維度補比，不再作為 AUD-11 開口。
+> **背景全文**：`refactor-audit/owner-inventory-reconcile.md §3 F-OWN-4`、`pending-register` AUD-11 closed row、`done/aud11-cu0160-page-reverify-findings.md` closeout。
 >
 > 命名前綴：`CS`＝企金有擔、`CU`＝企金無擔、`CSU`＝新併頁（CS+CU）、`ISU`／`IS`／`I0`＝**個金**（individual）。企金服務讀到 `ISU` key ＝跨域、可疑。
 
 ---
 
-## 任務 A（DBA）— `TB_PAGE_MENU` routing row 唯讀查證
+## 任務 A（DBA）— `TB_PAGE_MENU` routing row 唯讀查證（superseded）
+
+> Superseded by owner Excel 2026-06-28 merged-cell target 裁決；保留本節作歷史派工背景。
 
 **為什麼**：新系統頁籤顯示由「`TB_PAGE_MENU` 查 `PAGE_CODE` → 拆 `pageMap`」決定（`backend/.../repository/TBPageMenuRepository.java:16-24` 以 `lonAttribute/secureAttribute/productCode/lonTypeCode` 查 `PAGE_CODE`；`TBPageMenuEntity.java:21-34` 定義欄位）。本 checkout **只有 schema＋查詢邏輯、無 row data** → 無法決定性證明「企金無擔 × 0160」這條 routing 的 `PAGE_CODE` 究竟是 `EPROCSU0160`（併）還是 `EPROCU0160`（分）。
 
@@ -28,7 +30,7 @@ WHERE LON_ATTRIBUTE  = 'C'     -- C = 企金
 
 ---
 
-## 任務 B（RD）— `CsuLoanConditionServiceImpl:597` checkpoint key 判 bug
+## 任務 B（RD）— `CsuLoanConditionServiceImpl:597` checkpoint key 判 bug（轉企金 parity）
 
 **為什麼**：服務先依 `secureAttribute` 選 CS 或 CU checkpoint 表（`backend/src/main/java/khd/svc/epro/service/corporate/impl/CsuLoanConditionServiceImpl.java:590-596`，分流**存在**），但 **`:597` 讀的 key 是 `StringUtil.nvl(sql9Entity.get("EPROISU0160"))`**——`ISU`＝**個金**前綴，而新企金 CS/CU checkpoint 表欄位皆為 **`EPROCSU0160`**（`TBCheckPointsCsEntity.java:53-54`、`TBCheckPointsCuEntity.java:50-51`；CS/CU 建案 `NewCaseUtil.java:556-564/628-635` 也都寫 `insertCheckMap.get("EPROCSU0160")`）。→ 像是**從個金 twin 複製忘了改前綴**，使「CU 分流完全正確」不能成立。
 
@@ -39,11 +41,13 @@ WHERE LON_ATTRIBUTE  = 'C'     -- C = 企金
    - **刻意共用**：若 `sql9Entity` 真有 `EPROISU0160` 欄且設計上共用個金 key（需有依據）→ 文件化原因、不改。
 3. **影響評估**：此 key 若讀錯，企金 0160 Loan Condition 的 checkpoint 狀態判斷可能失準（不只分類問題、是 runtime 正確性）→ 不論 AUD-11 typo 結論如何，這條都該獨立判。
 
-**回報**：`:597` 結論（bug→已修 commit / 刻意→原因），附修正 `file:line` 或佐證。
+**回報**：`:597` 結論（bug→已修 commit / 刻意→原因），附修正 `file:line` 或佐證；落點改為 `c0-legacy-parity-recheck.md` / `per-page-reinventory-matrix.md` 的 EPROCSU0160 disposition。
 
 ---
 
-## 結案門檻（A＋B 合判）
+## 舊結案門檻（superseded）
+
+> 2026-06-28 起不再以任務 A 決定 AUD-11；`EPROCU0160` vs `EPROCSU0160` 已由 owner Excel 裁定。下表保留歷史。
 
 | 任務 A（SQL `PAGE_CODE`）| 任務 B（`:597`）| → AUD-11 |
 |---|---|---|

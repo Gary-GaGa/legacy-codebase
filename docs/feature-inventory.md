@@ -34,22 +34,49 @@
 
 ---
 
+## 1A. Owner Merge Ledger（`function-review.xlsx`）
+> 來源：`C:\Users\00596357\Downloads\function-review.xlsx` / `查核總表`；`對應重構系統頁籤` 欄以 merged cell 視覺值為準（例：`E137:E140` 全歸 `EPROCSU0160`）。
+| 新頁 / target | owner 裁定來源 |
+|---|---|
+| EPROISU0160 | `EPROIS_0160` + `EPROIS_0260` + `EPROIU_0160` + `EPROIU_0260` |
+| EPROISU0180 | `EPROIS_0180` + `EPROIU_0180` + `EPROCS_0180` + `EPROCU_0180` |
+| EPROISU0181 | `EPROIS_0181` + `EPROIU_0181` + `EPROCS_0181` + `EPROCU_0181` |
+| EPROISU0182 | `EPROIS_0182` |
+| EPROISU0183 | `EPROIS_0183` |
+| EPROISU0184 | `EPROIS_0184` |
+| EPROCSU0110 | `EPROCS_0110` + `EPROCS_0210` + `EPROCU_0110` + `EPROCU_0210` |
+| EPROCSU0120 | `EPROCS_0120` + `EPROCS_0220` + `EPROCU_0120` + `EPROCU_0220` |
+| EPROCSU0130 | `EPROCS_0130` + `EPROCS_0230` + `EPROCU_0130` + `EPROCU_0230` |
+| EPROCSU0150 | `EPROCS_0150` + `EPROCS_0250` |
+| EPROCSU0160 | `EPROCS_0160` + `EPROCS_0260` + `EPROCU_0160` + `EPROCU_0260` |
+| EPROCSU0170 | `EPROCS_0170` + `EPROCS_0270` + `EPROCU_0170` + `EPROCU_0270` |
+| EPROCSU0171 | `EPROCS_0171` + `EPROCU_0171` |
+| EPROCSU0172 | `EPROCS_0172` + `EPROCU_0172` |
+| EPROCSU0173 | `EPROCS_0173` + `EPROCU_0173` |
+| EPROZ00670 | 舊系統無 |
+
+---
+
 ## 2. 逐頁清單
 
 ### 2A. 個金主流程 `EPROISU*`（M2 is + M3 iu 合併；有擔/無擔 × 申請/覆核）
 | 新頁 | 合併舊 funcId | 名稱 | FE | BE | 剩餘 / 備註 |
 |---|---|---|:--:|:--:|---|
-| EPROISU0110 | IS/IU 0110+0210 | Main Borrower（內層 3 tab：Personal/Work/Family）| ✅ | ✅ | 🟡 驗證 |
-| EPROISU0120 | 0120+0220 | Co-Borrower | ✅ | ✅ | 🟡 驗證 |
-| EPROISU0130 | 0130+0230 | Guarantor | ✅ | ✅ | 🟡 驗證 |
-| EPROISU0140 | IS 0190+0290 | Collateral Provider（僅有擔）| ✅ | ✅ | 🟡 驗證 |
-| EPROISU0150 | 0150+0250 | Collateral（僅有擔；含上傳）| ✅ | ✅ | 🟡 驗證；⏸ 檔案 API |
-| EPROISU0160 | 0160+0260 | Loan Condition | ✅ | ✅ | 🟡 驗證 |
-| EPROISU0170 | 0170+0270 | Credit Eval & Decision（審批 hub；含列印/上傳）| ✅ | ✅ | 🟡 驗證；❓ 審批段欄位細節(B1)；⏸ 檔案/列印 |
-| EPROISU0171 | 0171 | Loan Committee Conclusion（上傳）| ✅ | ✅ | 🟡；⏸ 檔案 API |
-| EPROISU0172 | 0172 | Approved Loan Condition（檢視/列印）| ✅ | ✅ | 🟡；⏸ 列印 R2 |
-| EPROISU0173 | 0173 | Credit Evaluation Old | ✅ | ✅ | 🟡 驗證 |
-| EPROISU0181 | 0181 | TLOD/CAD Report（R2 報表）| ⏸ | ⏸ | ⏸ **R2 報表服務未定** |
+| EPROISU0110 | `EPROIS_0110`/`0210` + `EPROIU_0110`/`0210` | Main Borrower（內層 3 tab：Personal/Work/Family）| ✅ | ✅ | 🟡 驗證 |
+| EPROISU0120 | `EPROIS_0120`/`0220` + `EPROIU_0120`/`0220` | Co-Borrower | ✅ | ✅ | 🟡 驗證 |
+| EPROISU0130 | `EPROIS_0130`/`0230` + `EPROIU_0130`/`0230` | Guarantor | ✅ | ✅ | 🟡 驗證 |
+| EPROISU0140 | `EPROIS_0190`/`0290` | Collateral Provider（僅有擔）| ✅ | ✅ | 🟡 驗證 |
+| EPROISU0150 | `EPROIS_0150`/`0250` | Collateral（僅有擔；含上傳）| ✅ | ✅ | 🟡 驗證；⏸ 檔案 API |
+| EPROISU0160 | `EPROIS_0160`/`0260` + `EPROIU_0160`/`0260` | Loan Condition | ✅ | ✅ | 🟡 驗證 |
+| EPROISU0170 | `EPROIS_0170`/`0270` + `EPROIU_0170`/`0270` | Credit Eval & Decision（審批 hub；含列印/上傳）| ✅ | ✅ | 🟡 驗證；❓ 審批段欄位細節(B1)；⏸ 檔案/列印 |
+| EPROISU0171 | `EPROIS_0171` + `EPROIU_0171` | Loan Committee Conclusion（上傳）| ✅ | ✅ | 🟡；⏸ 檔案 API |
+| EPROISU0172 | `EPROIS_0172` + `EPROIU_0172` | Approved Loan Condition（檢視/列印）| ✅ | ✅ | 🟡；⏸ 列印 R2 |
+| EPROISU0173 | `EPROIS_0173` + `EPROIU_0173` | Credit Evaluation Old | ✅ | ✅ | 🟡 驗證 |
+| EPROISU0180 | `EPROIS_0180` + `EPROIU_0180` + `EPROCS_0180` + `EPROCU_0180` | 報表/SQL 支援 | ⏸ | ⏸ | R2 報表服務 |
+| EPROISU0181 | `EPROIS_0181` + `EPROIU_0181` + `EPROCS_0181` + `EPROCU_0181` | TLOD/CAD Report（R2 報表）| ⏸ | ⏸ | ⏸ **R2 報表服務未定** |
+| EPROISU0182 | `EPROIS_0182` | 報表/SQL 支援 | ⏸ | ⏸ | R2 報表服務 |
+| EPROISU0183 | `EPROIS_0183` | 報表/SQL 支援 | ⏸ | ⏸ | R2 報表服務 |
+| EPROISU0184 | `EPROIS_0184` | 報表模板 | ⏸ | ⏸ | R2 報表服務 |
 | EPROISU0910 | IS 0910 | Contract Preparation（頁框）| ✅ | ✅ | cross-check ✅ |
 | EPROISU0911 | IS 0911 | Condition Confirmation | ✅ | ✅ | FE+BE 確認 |
 | EPROISU0912 | IS 0912 | Contract Production | ✅ | ✅ | 多 save/submit/auth/upload/download endpoint |
@@ -62,15 +89,15 @@
 ### 2B. 企金主流程 `EPROCSU*`（M4 cs + M5 cu 合併）
 | 新頁 | 合併舊 funcId | 名稱 | FE | BE | 剩餘 / 備註 |
 |---|---|---|:--:|:--:|---|
-| EPROCSU0110 | CS/CU 0110+0210 | Main Borrower（單 tab）| ✅ | ✅ | 🟡 驗證 |
-| EPROCSU0120 | 0120+0220 | Co-Borrower | ✅ | ✅ | 🟡 驗證 |
-| EPROCSU0130 | 0130+0230 | Guarantor | ✅ | ✅ | **✅ 2026-06-05 收尾（ng build 綠）** |
-| EPROCSU0150 | 0150+0250 | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| ✅ | ✅ | ✅ FE 補建 G2（`14b254e`）；⏸ 檔案 API；Phase V 待測 |
-| EPROCSU0160 | 0160+0260 | Loan Condition（+0261 popup）| ✅ | ✅ | ✅ FE 補建 G1（`809d25d`，pilot；+0261 popup）；Phase V 待測 |
-| EPROCSU0170 | 0170+0270 | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | ✅ FE 補建 G3（`646e178`；+0174/0175 popup）；SRS in-review：`docs/specs/srs/EPROCSU0170/`（RP12-RP24 open，gate+AG PASS，待人審）；Phase V 待測（❓ 審批段細節 B1、CSU download route 無）|
-| EPROCSU0171 | 0171 | Loan Committee Conclusion | ✅ | ✅ | ✅ FE 補建 G4（`8badefc`）；Phase V 待測（檔案 upload/download 無 CSU route）|
-| EPROCSU0172 | 0172 | Approved Loan Condition | ✅ | ✅ | ✅ FE 補建 G5（`0ff2140`）；⏸ 列印 R2；Phase V 待測 |
-| EPROCSU0173 | 0173 | Credit Evaluation Old | ✅ | ✅ | ✅ FE 補建 G6（`4429551`）；Phase V 待測 |
+| EPROCSU0110 | `EPROCS_0110`/`0210` + `EPROCU_0110`/`0210` | Main Borrower（單 tab）| ✅ | ✅ | 🟡 驗證 |
+| EPROCSU0120 | `EPROCS_0120`/`0220` + `EPROCU_0120`/`0220` | Co-Borrower | ✅ | ✅ | 🟡 驗證 |
+| EPROCSU0130 | `EPROCS_0130`/`0230` + `EPROCU_0130`/`0230` | Guarantor | ✅ | ✅ | **✅ 2026-06-05 收尾（ng build 綠）** |
+| EPROCSU0150 | `EPROCS_0150`/`0250` | Collateral（僅有擔；內層 3 tab：Info/Valuation/Site Visit）| ✅ | ✅ | ✅ FE 補建 G2（`14b254e`）；⏸ 檔案 API；Phase V 待測 |
+| EPROCSU0160 | `EPROCS_0160`/`0260` + `EPROCU_0160`/`0260` | Loan Condition（+0261 popup）| ✅ | ✅ | ✅ FE 補建 G1（`809d25d`，pilot；+0261 popup）；Phase V 待測 |
+| EPROCSU0170 | `EPROCS_0170`/`0270` + `EPROCU_0170`/`0270` | Credit Eval & Decision（+0174/0175 popup）| ✅ | ✅ | ✅ FE 補建 G3（`646e178`；+0174/0175 popup）；SRS in-review：`docs/specs/srs/EPROCSU0170/`（RP12-RP24 open，gate+AG PASS，待人審）；Phase V 待測（❓ 審批段細節 B1、CSU download route 無）|
+| EPROCSU0171 | `EPROCS_0171` + `EPROCU_0171` | Loan Committee Conclusion | ✅ | ✅ | ✅ FE 補建 G4（`8badefc`）；Phase V 待測（檔案 upload/download 無 CSU route）|
+| EPROCSU0172 | `EPROCS_0172` + `EPROCU_0172` | Approved Loan Condition | ✅ | ✅ | ✅ FE 補建 G5（`0ff2140`）；⏸ 列印 R2；Phase V 待測 |
+| EPROCSU0173 | `EPROCS_0173` + `EPROCU_0173` | Credit Evaluation Old | ✅ | ✅ | ✅ FE 補建 G6（`4429551`）；Phase V 待測 |
 | ~~CS 0240~~ | CS 0240 | 公司核心資料（舊 cs 0200 端）| — | — | **不開發**：2026-06-06 owner 確認新系統無使用（舊有、未遷移）|
 | CAD 報表 | CS/CU 0181 | TLOD(CAD)→ 共用 `EPROISU0181` | ⏸ | ⏸ | ⏸ R2 |
 > 不開發：`EPROCS_0240` 公司核心資料（✅ 2026-06-06 確認新系統無使用、舊有未遷移）、`EPROIS_0140` Property Info；待確認 `EPROC0_0211/0213`（流程無對應頁籤）。
@@ -126,6 +153,7 @@
 | EPROZ00640 | Scorecard Report | ✅ | ✅ | export 介面已對齊（sweep①）；BE PDF 改回 blob（`ResponseEntity<byte[]>`，openhtmltopdf/FileService），Excel 正常且未動；Phase V 待實測 PDF |
 | EPROZ00650 | Application Cancel Report | ✅ | ✅ | 🟡 |
 | EPROZ00660 | CAD On Hand Status | ✅ | ✅ | ✅ F-12 已修（product `5a47038`，FE endpoint 改 CAD）→ 復稱 CR 範本；Phase V 實測查詢一條 |
+| EPROZ00670 | TLOD Report 查詢畫面 | ⏸ | ⏸ | owner xlsx：舊系統無 |
 | EPROZ00700 | Assign Substitute | ✅ | ✅ | ✅（= `pages/deputy`）；**DB 複合 PK 已對齊**（06-16 reverify，`@EmbeddedId` EMP_ID+STR_TIME，AUD-9 關）|
 | EPROZ00800 | Revised Item | ✅ | ✅ | **SRS bundle Approved 2026-06-23**（規格定版軸；實作完成軸由 DoD 閘門牆另裁）。RP1–RP11/BP1–BP5 全 closed；機械閘門 PASS、N 軸 spec-reviewer 兩輪 0🔴/0🟡。Implementation closeout 全綠：GET query、`isCorporateUnsecured`、backend mutation guard 已實作並測過；`TB_API_AUTH` query/save SELECT-only PASS；R7 `TB_PAGE_COLUMN_AUTH_DETAIL.reason.item` backfill 06-23 DBA/RD 套用、closeout 重跑 `PAGE_COLUMN_RESULT=PASS`/`MATCHED_ROWS=4`。 |
 > 共用 API `EPROZZ_0100`（查地址欄位選單）。

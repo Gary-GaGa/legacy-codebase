@@ -49,7 +49,7 @@
 | **EPROC00116** FinStmt GI | `EPROC0_0116`（+0216）| **calc 保留**正確性、comments 取數 |
 | **EPROC00119** FinStmt FI | `EPROC0_0119`（+0219）| 同上（F-8 修過→確認對舊）|
 | **EPROC00115** Borrower Group Exposure | `EPROC0_0115`（+0215）| 曝險計算/取數 |
-| **EPROCSU0160** Loan Condition(+0261) | `EPROCS_0160+0260`/`EPROCU_0160+0260` | checkpoint 分流 + **AUD-11 合流**（CU0160 routing/`:597`，見下）|
+| **EPROCSU0160** Loan Condition(+0261) | `EPROCS_0160+0260`/`EPROCU_0160+0260` | checkpoint 分流；AUD-11 併 vs 分已裁 keep CSU，`:597` checkpoint key 另驗 |
 | **EPROCSU0150** Collateral（僅有擔）| `EPROCS_0150+0250` | 三 mat-tab（Info/Valuation/Site Visit）欄位/side-effect、檔案區現狀 |
 
 ### T3（borrower 核心 + 其餘評分頁）
@@ -79,7 +79,7 @@
 
 ## 合流的既有 escalation（一起做、findings 互引）
 - **E1/E2 → T1 00118**：`CsuCreditEvalAndCreditDecisionServiceImpl:2985`（CU-return 只清 CS）、`:2890`（`crScoreCardCompleted` 整欄覆寫 `"NN"`）——卡 `c0-crediteval-e1-e2-escalation.md`；「比舊系統 Return/覆寫行為」即本卡 00118 判準的具體化。
-- **AUD-11 → T2 CSU0160**：`TB_PAGE_MENU` 無擔×0160 routing、`CsuLoanConditionServiceImpl:597` 讀 `EPROISU0160`——卡 `aud11-closeout-dba-rd.md`；CSU0160 對舊比時一併坐實。
+- **AUD-11 → T2 CSU0160**：併 vs 分已由 owner Excel（2026-06-28）裁定 `EPROCU_0160/0260` 併入 `EPROCSU0160`；`CsuLoanConditionServiceImpl:597` 讀 `EPROISU0160` 仍作 checkpoint potential regression，CSU0160 對舊比時一併坐實。
 
 ## 鐵則
 1. **唯讀**；每結論附**新舊** `file:line`；推不出＝UNFOUND，**不拿個金 i0/ISU audit 或 inventory 當證據**（待驗對象是「對舊企金忠實度」）。

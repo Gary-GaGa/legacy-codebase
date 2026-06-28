@@ -10,6 +10,16 @@
 |---|---|---|---|---|---:|---:|---:|---|
 | _(範例)_ 2026-06-18 | EPROC00118 | T1 | F | 1 | 1 | 1 | 0 | deRatio `NUMBER(9,2)` 逐欄 numeric contract 缺（pilot 跨模型 F 軸） |
 | _(範例)_ 2026-06-24 | EPROC00110 | T1 | A | 2 | 2 | 2 | 0 | merge 接縫 QA-006 polarity 措辭、metadata 領先複審（再審輪抓到→一輪未必夠的證據） |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | A | 1 | 3 | 3 | 0 | missing-summary/openapi 矛盾、child handoff 未定、covers-prd trace 錯 |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | B | 1 | 0 | 0 | 0 | PASS；role tabs、Summary guard、popup、lazy init parity 無 blocker |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | C | 1 | 2 | 2 | 0 | validation/no-data/init-fail code/status 錯配 |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | D | 1 | 0 | 0 | 0 | PASS；auth context、server pageMap、child guard 分離已承載 |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | E | 1 | 1 | 1 | 0 | `TB_LON_SUMMARY_INFO` tab-control 欄位承載不完整 |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | F | 1 | 0 | 0 | 0 | PASS；0920 未引入金額/精度/截斷規則 |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | A | 2 | 1 | 1 | 0 | R9 covers-prd trace 仍錯掛 AC |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | C | 2 | 0 | 0 | 0 | PASS；error-code envelope 已對齊 `E102`/`E999` HTTP 200 |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | E | 2 | 0 | 0 | 0 | PASS；tab-control 欄位已補齊 |
+| 2026-06-28 | EPROISU0920 | 撥貸 T1 | A | 3 | 0 | 0 | 0 | PASS；R9 改綁 PRD §6 非 AC 邊界 |
 | | | | | | | | | |
 
 > **欄義**：
